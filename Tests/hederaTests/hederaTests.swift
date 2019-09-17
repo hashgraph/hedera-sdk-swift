@@ -6,7 +6,7 @@ final class hederaTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct
         // results.
-        XCTAssertEqual(hedera.Ed25519PrivateKey(), "Hello, World!")
+//        XCTAssertEqual(hedera.Ed25519PrivateKey(), "Hello, World!")
     }
 
     static var allTests = [
