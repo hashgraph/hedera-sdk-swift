@@ -1,5 +1,5 @@
 import XCTest
-import hederaTests
+@testable import hederaTests
 
 var tests = [XCTestCaseEntry]()
 tests += hederaTests.allTests()

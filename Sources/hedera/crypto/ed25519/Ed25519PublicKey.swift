@@ -3,7 +3,6 @@ import Foundation
 
 // TODO: this may need to go somewhere more top-level
 let sodium = Sodium()
-
 let ed25519PublicKeyPrefix = "302a300506032b6570032100"
 
 public struct Ed25519PublicKey {
