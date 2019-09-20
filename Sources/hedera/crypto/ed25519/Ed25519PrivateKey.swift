@@ -4,7 +4,10 @@ let ed25519PrivateKeyPrefix = "302e020100300506032b657004220420"
 let ed25519PrivateKeyLength = 32
 let combinedEd25519KeyLength = 64
 
-// TODO
+// TODO: how to handle error possibilities???
+struct InvalidKeyBytes: Error {}
+struct InvalidKeyString: Error {}
+
 public struct Ed25519PrivateKey {
     var inner: Bytes
 
@@ -12,28 +15,32 @@ public struct Ed25519PrivateKey {
         inner = bytes
     }
 
-    public static func from(bytes: Bytes) -> Optional<Ed25519PrivateKey> {
-        if (bytes.count == ed25519PrivateKeyLength) {
-            return Ed25519PrivateKey(bytes: bytes)
-        } else if (bytes.count == combinedEd25519KeyLength) {
-            return Ed25519PrivateKey(bytes: Bytes(bytes.prefix(ed25519PrivateKeyLength)))
+    public static func from(bytes: Bytes) -> Result<Ed25519PrivateKey, Error> {
+        if bytes.count == ed25519PrivateKeyLength {
+            return .success(Ed25519PrivateKey(bytes: bytes))
+        } else if bytes.count == combinedEd25519KeyLength {
+            return .success(Ed25519PrivateKey(bytes: Bytes(bytes.prefix(ed25519PrivateKeyLength))))
         }
-        return nil
+        return .failure(InvalidKeyBytes())
     }
 
     // Recover from a hex encoded string. Does not support key derivation.
-    public static func from(string: String) -> Optional<Ed25519PrivateKey> {
+    public static func from(string: String) -> Result<Ed25519PrivateKey, Error> {
         switch string.count {
-        case 64: // lone private key
-            fallthrough
-        case 128: // private key + public key
-            return from(bytes: hexDecode(string)!)
-        case 96:
-            if string.startsWith(ed25519PrivateKeyPrefix) {
-                return from(bytes: string.suffix(32))
+        case ed25519PrivateKeyLength * 2, combinedEd25519KeyLength * 2: // lone key, or combined key
+            // This cannot fail to decode
+            // swiftlint:disable:next force_try
+            return from(bytes: try! hexDecode(string).get())
+        case ed25519PrivateKeyLength * 2 + ed25519PrivateKeyPrefix.count: // DER encoded key
+            if string.hasPrefix(ed25519PrivateKeyPrefix) {
+                // This cannot fail to decode
+                // swiftlint:disable:next force_try
+                return from(bytes: try! hexDecode(string[string.index(string.startIndex, offsetBy: ed25519PrivateKeyPrefix.count)...]).get())
+            } else {
+                return .failure(InvalidKeyString())
             }
         default:
-            return nil    
+            return .failure(InvalidKeyString())
         }
     }
 
@@ -42,19 +49,7 @@ public struct Ed25519PrivateKey {
     }
 
     // TODO
-    // func getPublicKey() -> Ed25519PublicKey {}
-}
-
-func hexDecode(_ string: String) -> Optional<Bytes> {
-    if hex.length % 2 != 0 {
-        // error, it must be even length
+    public func getPublicKey() -> Ed25519PublicKey {
+        return try! Ed25519PublicKey.from(bytes: sodium.box.keyPair(seed: inner)!.publicKey).get()
     }
-
-    let bytesLen = string.count / 2;
-    var bytes = Bytes(repeating: 0, count: bytesLen);
-    for i in 0...bytesLen {
-        bytes[i] = Int(string.slice(i*2, i*2+2), radix: 16)
-    }
-
-    return bytes
 }

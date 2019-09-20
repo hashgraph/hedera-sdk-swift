@@ -1,24 +1,27 @@
 import Sodium
 import Foundation
 
-// TODO: this may need to go somewhere more top-level
-let sodium = Sodium()
 let ed25519PublicKeyPrefix = "302a300506032b6570032100"
 
 public struct Ed25519PublicKey {
     var inner: Bytes
-    
+
     private init(bytes: Bytes) {
         inner = bytes
     }
-    
-    static func from(bytes: Bytes) throws -> Ed25519PublicKey {
-        if (bytes.count == 32) {
-            return Ed25519PublicKey(bytes: bytes)
+
+    static func from(bytes: Bytes) -> Result<Ed25519PublicKey, Error> {
+        if bytes.count == 32 {
+            return .success(Ed25519PublicKey(bytes: bytes))
         } else {
             // TODO: actual error "invalid public key"
-            throw HederaError()
+            return .failure(HederaError())
         }
+    }
+    
+    static func from(string: String) -> Result<Ed25519PublicKey, Error> {
+        // TODO: actually implement this
+        return .failure(HederaError())
     }
 }
 
@@ -32,7 +35,6 @@ extension Ed25519PublicKey: PublicKey {
 
 extension Ed25519PublicKey: CustomStringConvertible {
     public var description: String {
-        return "\(ed25519PublicKeyPrefix)\(sodium.utils.bin2hex(inner)!)"
+        return hexEncode(bytes: inner, prefixed: ed25519PublicKeyPrefix)
     }
 }
-

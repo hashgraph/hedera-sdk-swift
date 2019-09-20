@@ -15,7 +15,6 @@ let package = Package(
             targets: ["hedera"]),
     ],
     dependencies: [
-        // .package(url: /* package url */, from: "1.0.0"),
         .package(url: "https://github.com/jedisct1/swift-sodium", from: "0.8.0"),
         .package(url: "https://github.com/apple/swift-protobuf", from: "1.6.0")
     ],
