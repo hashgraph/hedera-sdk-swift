@@ -16,32 +16,36 @@ final class Ed25519PrivateKeyTests: XCTestCase {
     }
 
     func testFromBytes() {
-        let key = Ed25519PrivateKey.from(bytes: privateKeyBytes)
-        XCTAssertNoThrow(try key.get())
+        let key = Ed25519PrivateKey(bytes: privateKeyBytes)
+        XCTAssertNotNil(key)
     }
 
     func testFromCombinedBytes() {
-        let key = Ed25519PrivateKey.from(bytes: combinedKeyBytes)
-        XCTAssertNoThrow(try key.get())
+        let key = Ed25519PrivateKey(bytes: combinedKeyBytes)
+        XCTAssertNotNil(key)
     }
 
     func testFromBadBytes() {
-        let key = Ed25519PrivateKey.from(bytes: Array<UInt8>(arrayLiteral: 1, 2, 3))
-        XCTAssertThrowsError(try key.get())
+        let key = Ed25519PrivateKey(bytes: Array<UInt8>(arrayLiteral: 1, 2, 3))
+        XCTAssertNil(key)
     }
 
     func testFromString() {
         let key = Ed25519PrivateKey(privateKeyString)
-        let bytesKey = try! Ed25519PrivateKey.from(bytes: privateKeyBytes).get()
+        let bytesKey = Ed25519PrivateKey(bytes: privateKeyBytes)
+
         XCTAssertNotNil(key)
-        XCTAssertEqual(key!.inner, bytesKey.inner)
+        XCTAssertNotNil(bytesKey)
+        XCTAssertEqual(key!.bytes, bytesKey!.bytes)
     }
 
     func testFromRawString() {
         let key = Ed25519PrivateKey(rawPrivateKeyString)
-        let bytesKey = try! Ed25519PrivateKey.from(bytes: privateKeyBytes).get()
+        let bytesKey = Ed25519PrivateKey(bytes: privateKeyBytes)
+
         XCTAssertNotNil(key)
-        XCTAssertEqual(key!.inner, bytesKey.inner)
+        XCTAssertNotNil(bytesKey)
+        XCTAssertEqual(key!.bytes, bytesKey!.bytes)
     }
 
     func testFromBadString() {
@@ -50,10 +54,11 @@ final class Ed25519PrivateKeyTests: XCTestCase {
     }
 
     func testGetPublicKey() {
-        let key = try! Ed25519PrivateKey.from(bytes: privateKeyBytes).get()
-        let publicFromPrivate = key.getPublicKey()
-        let publicKey = try! Ed25519PublicKey.from(bytes: publicKeyBytes).get()
-        XCTAssertEqual(publicFromPrivate.description, publicKey.description)
+        let key = Ed25519PrivateKey(bytes: privateKeyBytes)
+        let publicFromPrivate = key!.publicKey
+        let publicKey = Ed25519PublicKey(bytes: publicKeyBytes)!
+
+        XCTAssertEqual(String(publicFromPrivate), String(publicKey))
     }
 
     static var allTests = [

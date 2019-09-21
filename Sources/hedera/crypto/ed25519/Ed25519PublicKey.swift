@@ -5,31 +5,18 @@ let ed25519PublicKeyPrefix = "302a300506032b6570032100"
 let ed25519PublicKeyLength = 32
 
 public struct Ed25519PublicKey {
-    let inner: Bytes
+    private let inner: Bytes
 
-    private init(bytes: Bytes) {
-        inner = bytes
-    }
-
-    static func from(bytes: Bytes) -> Result<Ed25519PublicKey, Error> {
+    public init?(bytes: Bytes) {
         if bytes.count == ed25519PublicKeyLength {
-            return .success(Ed25519PublicKey(bytes: bytes))
+            inner = bytes
         } else {
-            // TODO: actual error "invalid public key"
-            return .failure(HederaError())
+            return nil
         }
     }
-    
+
     var bytes: Bytes {
         return inner
-    }
-}
-
-extension Ed25519PublicKey: PublicKey {
-    public func toProtoKey() -> Proto_Key {
-        var proto = Proto_Key()
-        proto.ed25519 = Data(inner)
-        return proto
     }
 }
 
@@ -45,6 +32,7 @@ extension Ed25519PublicKey: CustomDebugStringConvertible {
     }
 }
 
+// TODO: Make this not explode on bad hex chars
 extension Ed25519PublicKey: LosslessStringConvertible {
     public init?(_ description: String) {
         switch description.count {
