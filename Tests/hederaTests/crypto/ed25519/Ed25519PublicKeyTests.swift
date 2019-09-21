@@ -7,35 +7,35 @@ let publicKeyBytes = Array<UInt8>(arrayLiteral: 224, 200, 236, 39, 88, 165, 135,
 
 final class Ed25519PublicKeyTests: XCTestCase {
     func testFromBytes() {
-        let key = Ed25519PublicKey.from(bytes: publicKeyBytes)
-        XCTAssertNoThrow(try key.get())
+        let key = Ed25519PublicKey(bytes: publicKeyBytes)
+        XCTAssertNotNil(key)
     }
-    
+
     func testFromBadBytes() {
-        let key = Ed25519PublicKey.from(bytes: Array<UInt8>(arrayLiteral: 1, 2, 3))
-        XCTAssertThrowsError(try key.get())
+        let key = Ed25519PublicKey(bytes: Array<UInt8>(arrayLiteral: 1, 2, 3))
+        XCTAssertNil(key)
     }
-    
+
     func testFromString() {
         let key = Ed25519PublicKey(publicKeyString)
         XCTAssertNotNil(key)
     }
-    
+
     func testFromRawString() {
         let key = Ed25519PublicKey(rawPublicKeyString)
         XCTAssertNotNil(key)
     }
-    
+
     func testFromBadString() {
-        let key = Ed25519PublicKey("notapublickey")
+        let key = Ed25519PublicKey("notapublickeynotapublickeylickey")
         XCTAssertNil(key)
     }
-    
+
     func testToString() {
         let key = Ed25519PublicKey(publicKeyString)
-        XCTAssertEqual(String(describing: key!), publicKeyString)
+        XCTAssertEqual(String(key!), publicKeyString)
     }
-    
+
     static var allTests = [
         ("testFromBytes", testFromBytes),
         ("testFromBadBytes", testFromBadBytes),

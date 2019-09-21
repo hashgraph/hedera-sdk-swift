@@ -1,7 +1,5 @@
 import Sodium
 
-let sodium = Sodium()
-
 struct HexDecodeError: Error {}
 
 func hexDecode<S>(_ hex: S) -> Result<Bytes, HexDecodeError> where S: StringProtocol {
