@@ -16,10 +16,17 @@ final class AccountIdTests: XCTestCase {
     func testFromString() {
         let id = AccountId("0.0.2")
         XCTAssertNotNil(id)
+
+        let otherId = AccountId("2")
+        XCTAssertNotNil(otherId)
+        XCTAssertEqual(otherId, id)
     }
     
     func testFromBadStrings() {
         var id = AccountId("0.0")
+        XCTAssertNil(id)
+
+        id = AccountId("a")
         XCTAssertNil(id)
         
         id = AccountId("a.2.3")
