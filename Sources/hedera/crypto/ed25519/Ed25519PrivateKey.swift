@@ -48,19 +48,15 @@ extension Ed25519PrivateKey: LosslessStringConvertible {
     public init?(_ description: String) {
         switch description.count {
         case ed25519PrivateKeyLength * 2, combinedEd25519KeyLength * 2: // lone key, or combined key
-            // This cannot fail to decode
-            // swiftlint:disable:next force_try
-            self = Ed25519PrivateKey(bytes: try! hexDecode(description).get())!
+            guard let decoded = try? hexDecode(description) else { return nil }
+            inner = decoded
 
         case ed25519PrivateKeyLength * 2 + ed25519PrivateKeyPrefix.count: // DER encoded key
-            if description.hasPrefix(ed25519PrivateKeyPrefix) {
-                let range = description.index(description.startIndex, offsetBy: ed25519PrivateKeyPrefix.count)...
-                // This cannot fail to decode
-                // swiftlint:disable:next force_try
-                self = Ed25519PrivateKey(bytes: try! hexDecode(description[range]).get())!
-            } else {
-                return nil
-            }
+            guard description.hasPrefix(ed25519PrivateKeyPrefix) else { return nil }
+    
+            let range = description.index(description.startIndex, offsetBy: ed25519PrivateKeyPrefix.count)...
+            guard let decoded = try? hexDecode(description[range]) else { return nil }
+            inner = decoded
 
         default:
             return nil

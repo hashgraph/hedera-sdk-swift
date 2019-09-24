@@ -32,19 +32,20 @@ extension Ed25519PublicKey: CustomDebugStringConvertible {
     }
 }
 
-// TODO: Make this not explode on bad hex chars
 extension Ed25519PublicKey: LosslessStringConvertible {
     public init?(_ description: String) {
         switch description.count {
         case ed25519PublicKeyLength * 2:
-            // This cannot fail
-            // swiftlint:disable:next force_try
-            inner = try! hexDecode(description).get()
+            guard let decoded = try? hexDecode(description) else { return nil }
+            inner = decoded
+
         case ed25519PublicKeyLength * 2 + ed25519PublicKeyPrefix.count:
+            guard description.hasPrefix(ed25519PublicKeyPrefix) else { return nil }
+
             let start = description.index(description.startIndex, offsetBy: ed25519PublicKeyPrefix.count)
-            // This cannot fail
-            // swiftlint:disable:next force_try
-            inner = try! hexDecode(description[start...]).get()
+            guard let decoded = try? hexDecode(description[start...]) else { return nil }
+            inner = decoded
+
         default:
             return nil
         }

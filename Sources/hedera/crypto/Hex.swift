@@ -2,9 +2,9 @@ import Sodium
 
 struct HexDecodeError: Error {}
 
-func hexDecode<S>(_ hex: S) -> Result<Bytes, HexDecodeError> where S: StringProtocol {
-    if hex.count % 2 != 0 {
-        return .failure(HexDecodeError())
+func hexDecode<S>(_ hex: S) throws -> Bytes where S: StringProtocol {
+    if !hex.count.isMultiple(of: 2) {
+        throw HexDecodeError()
     }
 
     let bytesLen = hex.count / 2
@@ -13,13 +13,15 @@ func hexDecode<S>(_ hex: S) -> Result<Bytes, HexDecodeError> where S: StringProt
     for index in 0 ..< bytesLen {
         let start = hex.index(hex.startIndex, offsetBy: index * 2)
         let end = hex.index(start, offsetBy: 2)
-        bytes[index] = UInt8(hex[start ..< end], radix: 16)!
+        
+        guard let byte = UInt8(hex[start ..< end], radix: 16) else { throw HexDecodeError() }
+        bytes[index] = byte
     }
 
-    return .success(bytes)
+    return bytes
 }
 
-func hexEncode<S>(bytes: Bytes, prefixed with: S) -> String where S: StringProtocol {
+func hexEncode(bytes: Bytes, prefixed with: String = "") -> String {
     var result = String(with)
     for byte in bytes {
         result.append(String(format: "%02x", byte))
