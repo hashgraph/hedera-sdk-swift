@@ -9,7 +9,7 @@ final class AccountIdTests: XCTestCase {
     ]
     
     func testToString() {
-        let id = AccountId(shard: 1, realm: 2, num: 3)
+        let id = AccountId(shard: 1, realm: 2, account: 3)
         XCTAssertEqual(String(id), "1.2.3")
     }
     
