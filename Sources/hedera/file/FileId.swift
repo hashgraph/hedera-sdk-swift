@@ -17,11 +17,11 @@ public struct FileId {
 
 extension FileId: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
-        return "\(shard).\(realm).\(file)"
+        "\(shard).\(realm).\(file)"
     }
     
     public var debugDescription: String {
-        return description
+        description
     }
 }
 
@@ -50,6 +50,6 @@ extension FileId: LosslessStringConvertible {
 
 extension FileId: Equatable {
     public static func == (lhs: FileId, rhs: FileId) -> Bool {
-        return lhs.shard == rhs.shard && lhs.realm == rhs.realm && lhs.file == rhs.file
+        lhs.shard == rhs.shard && lhs.realm == rhs.realm && lhs.file == rhs.file
     }
 }

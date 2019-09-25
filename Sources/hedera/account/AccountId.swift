@@ -17,11 +17,11 @@ public struct AccountId {
 
 extension AccountId: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
-        return "\(shard).\(realm).\(account)"
+        "\(shard).\(realm).\(account)"
     }
     
     public var debugDescription: String {
-        return description
+        description
     }
 }
 
@@ -50,8 +50,27 @@ extension AccountId: LosslessStringConvertible {
 
 extension AccountId: Equatable {
     public static func == (lhs: AccountId, rhs: AccountId) -> Bool {
-        return lhs.shard == rhs.shard && lhs.realm == rhs.realm && lhs.account == rhs.account
+        lhs.shard == rhs.shard && lhs.realm == rhs.realm && lhs.account == rhs.account
     }
 }
 
 extension AccountId: Hashable {}
+
+extension AccountId: ProtobufConvertible {
+    typealias Proto = Proto_AccountID
+
+    func toProto() -> Proto {
+        var proto = Proto()
+        proto.shardNum = Int64(shard)
+        proto.realmNum = Int64(realm)
+        proto.accountNum = Int64(account)
+
+        return proto
+    }
+
+    init(_ proto: Proto) {
+        shard = UInt64(proto.shardNum)
+        realm = UInt64(proto.realmNum)
+        account = UInt64(proto.accountNum)
+    }
+}

@@ -13,20 +13,45 @@ public struct TransactionId {
     }
 }
 
+extension TransactionId: CustomStringConvertible, CustomDebugStringConvertible {
+    public var description: String {
+        "\(accountId)@\(transactionValidStart.wholeSecondsSince1970).\(transactionValidStart.nanosSinceSecondSince1970)"
+    }
+
+    public var debugDescription: String {
+        description
+    }
+}
+
+extension TransactionId: LosslessStringConvertible {
+    public init?(_ description: String) {
+        let atParts = description.split(separator: "@")
+        guard atParts.count == 2 else { return nil }
+
+        guard let id = AccountId(String(atParts[atParts.startIndex])) else { return nil }
+        guard let start = Date(String(atParts[atParts.startIndex.advanced(by: 1)])) else { return nil }
+
+        accountId = id
+        transactionValidStart = start
+    }
+}
+
 
 extension TransactionId: ProtobufConvertible {
     typealias Proto = Proto_TransactionID
 
     func toProto() -> Proto {
-        let proto = Proto()
-
-        // TODO
+        var proto = Proto()
+        proto.accountID = accountId.toProto()
+        proto.transactionValidStart = transactionValidStart.toProto()
 
         return proto
     }
 
     init?(_ proto: Proto) {
-        // TODO
-        return nil
+        guard proto.hasTransactionValidStart && proto.hasAccountID else { return nil }
+        
+        accountId = AccountId(proto.accountID)
+        transactionValidStart = Date(proto.transactionValidStart)
     }
 }

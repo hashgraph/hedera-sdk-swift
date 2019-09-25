@@ -19,27 +19,25 @@ public struct Ed25519PrivateKey {
     }
 
     public var bytes: Bytes {
-        return inner
+        inner
     }
 
     public static func generate() -> Ed25519PrivateKey {
-        return Ed25519PrivateKey(bytes: sodium.sign.keyPair()!.secretKey)!
+        Ed25519PrivateKey(bytes: sodium.sign.keyPair()!.secretKey)!
     }
 
     public var publicKey: Ed25519PublicKey {
-        return Ed25519PublicKey(bytes: sodium.sign.keyPair(seed: inner)!.publicKey)!
+        Ed25519PublicKey(bytes: sodium.sign.keyPair(seed: inner)!.publicKey)!
     }
 }
 
-extension Ed25519PrivateKey: CustomStringConvertible {
+extension Ed25519PrivateKey: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
-        return hexEncode(bytes: inner, prefixed: ed25519PrivateKeyPrefix)
+        hexEncode(bytes: inner, prefixed: ed25519PrivateKeyPrefix)
     }
-}
 
-extension Ed25519PrivateKey: CustomDebugStringConvertible {
     public var debugDescription: String {
-        return description
+        description
     }
 }
 

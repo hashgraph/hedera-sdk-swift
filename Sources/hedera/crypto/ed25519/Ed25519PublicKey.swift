@@ -16,19 +16,17 @@ public struct Ed25519PublicKey {
     }
 
     var bytes: Bytes {
-        return inner
+        inner
     }
 }
 
-extension Ed25519PublicKey: CustomStringConvertible {
+extension Ed25519PublicKey: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
-        return hexEncode(bytes: inner, prefixed: ed25519PublicKeyPrefix)
+         hexEncode(bytes: inner, prefixed: ed25519PublicKeyPrefix)
     }
-}
-
-extension Ed25519PublicKey: CustomDebugStringConvertible {
+    
     public var debugDescription: String {
-        return description
+        description
     }
 }
 

@@ -6,31 +6,51 @@ import Foundation
 extension Date {
     static let nanosPerSecond: Double = 1_000_000_000
 
+    var wholeSecondsSince1970: Int64 {
+        Int64(timeIntervalSince1970)
+    }
+
+    var nanosSinceSecondSince1970: Int32 {
+        Int32(timeIntervalSince1970.truncatingRemainder(dividingBy: 1) * Date.nanosPerSecond)
+    }
+
     func toProto() -> Proto_Timestamp {
         var proto = Proto_Timestamp()
-        proto.seconds = Int64(timeIntervalSince1970)
-        proto.nanos = Int32(timeIntervalSince1970.truncatingRemainder(dividingBy: 1) * Date.nanosPerSecond)
+        proto.seconds = wholeSecondsSince1970
+        proto.nanos = nanosSinceSecondSince1970
 
         return proto
     }
 
     func toProto() -> Proto_TimestampSeconds {
         var proto = Proto_TimestampSeconds()
-        proto.seconds = Int64(timeIntervalSince1970)
+        proto.seconds = wholeSecondsSince1970
 
         return proto
     }
     
-    init?(_ proto: Proto_Timestamp) {
+    init(_ proto: Proto_Timestamp) {
         let seconds = Double(proto.seconds) + (Double(proto.nanos) / Date.nanosPerSecond)
         
         self = Date(timeIntervalSince1970: seconds)
     }
 
-    init?(_ proto: Proto_TimestampSeconds) {
+    init(_ proto: Proto_TimestampSeconds) {
         let seconds = Double(proto.seconds)
 
         self = Date(timeIntervalSince1970: seconds)
     }
     
+}
+
+extension Date: LosslessStringConvertible {
+    public init?(_ description: String) {
+        let parts = description.split(separator: ".")
+        guard parts.count == 2 else { return nil }
+
+        guard let seconds = Int64(parts[parts.startIndex]) else { return nil }
+    guard let nanos = Int32(parts[parts.startIndex.advanced(by: 1)]) else { return nil }
+
+        self = Date(timeIntervalSince1970: Double(seconds) + (Double(nanos) / Date.nanosPerSecond))
+    }
 }
