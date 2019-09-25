@@ -4,10 +4,11 @@ import Foundation
 public struct TransactionId {
    let accountId: AccountId
    let transactionValidStart: Date
-    
+
     public init(account id: AccountId) {
         accountId = id
-        // Allow the transaction to be accepted as long as the 
+
+        // Allow the transaction to be accepted as long as the
         // server is not more than 10 seconds behind us
         transactionValidStart = Date(timeIntervalSinceNow: -10)
     }
@@ -36,7 +37,6 @@ extension TransactionId: LosslessStringConvertible {
     }
 }
 
-
 extension TransactionId: ProtobufConvertible {
     typealias Proto = Proto_TransactionID
 
@@ -50,7 +50,7 @@ extension TransactionId: ProtobufConvertible {
 
     init?(_ proto: Proto) {
         guard proto.hasTransactionValidStart && proto.hasAccountID else { return nil }
-        
+
         accountId = AccountId(proto.accountID)
         transactionValidStart = Date(proto.transactionValidStart)
     }

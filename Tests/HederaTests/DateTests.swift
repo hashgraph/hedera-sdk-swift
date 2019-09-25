@@ -1,6 +1,6 @@
 import XCTest
 import SwiftProtobuf
-@testable import hedera
+@testable import Hedera
 
 final class DateTests: XCTestCase {
     static var allTests = [

@@ -1,6 +1,6 @@
 import XCTest
-@testable import hederaTests
+@testable import HederaTests
 
 var tests = [XCTestCaseEntry]()
-tests += hederaTests.allTests()
+tests += HederaTests.allTests()
 XCTMain(tests)
