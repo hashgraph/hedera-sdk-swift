@@ -56,7 +56,7 @@ extension AccountId: Equatable {
 
 extension AccountId: Hashable {}
 
-extension AccountId: ProtobufConvertible {
+extension AccountId: ProtoConvertible {
     typealias Proto = Proto_AccountID
 
     func toProto() -> Proto {

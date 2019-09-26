@@ -1,7 +1,7 @@
 import SwiftProtobuf
 import Foundation
 
-// We can't have Date conform to ProtobufConvertible because Date can be used
+// We can't have Date conform to ProtoConvertible because Date can be used
 // for _both_ `Proto_Timestamp` and `Proto_TimestampSeconds`
 extension Date {
     static let nanosPerSecond: Double = 1_000_000_000
@@ -56,7 +56,7 @@ extension Date: LosslessStringConvertible {
 
 
 // TODO: move to its own file?
-extension TimeInterval: ProtobufConvertible {
+extension TimeInterval: ProtoConvertible {
     typealias Proto = Proto_Duration
 
     func toProto() -> Proto {

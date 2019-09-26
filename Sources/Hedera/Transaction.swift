@@ -33,7 +33,7 @@ public struct Transaction {
     }
 }
 
-extension Transaction: ProtobufConvertible {
+extension Transaction: ProtoConvertible {
     func toProto() -> Proto_Transaction {
         inner
     }

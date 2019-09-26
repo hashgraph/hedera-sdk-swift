@@ -37,7 +37,7 @@ extension TransactionId: LosslessStringConvertible {
     }
 }
 
-extension TransactionId: ProtobufConvertible {
+extension TransactionId: ProtoConvertible {
     typealias Proto = Proto_TransactionID
 
     func toProto() -> Proto {
