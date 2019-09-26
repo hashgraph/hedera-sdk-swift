@@ -12,7 +12,7 @@ let combinedKeyBytes = Array<UInt8>(arrayLiteral: 219, 72, 75, 130, 142, 100, 17
 
 final class Ed25519PrivateKeyTests: XCTestCase {
     func testGenerate() {
-        XCTAssertNoThrow(Ed25519PrivateKey.generate())
+        XCTAssertNoThrow(Ed25519PrivateKey())
     }
 
     func testFromBytes() {
