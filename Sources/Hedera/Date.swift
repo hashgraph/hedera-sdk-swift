@@ -53,3 +53,20 @@ extension Date: LosslessStringConvertible {
         self = Date(timeIntervalSince1970: Double(seconds) + (Double(nanos) / Date.nanosPerSecond))
     }
 }
+
+
+// TODO: move to its own file?
+extension TimeInterval: ProtobufConvertible {
+    typealias Proto = Proto_Duration
+
+    func toProto() -> Proto {
+        var proto = Proto()
+        proto.seconds = Int64(self)
+
+        return proto
+    }
+
+    init?(_ proto: Proto) {
+        self = Double(proto.seconds)
+    }
+}
