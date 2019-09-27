@@ -1,11 +1,12 @@
 import SwiftProtobuf
 import Sodium
+import Foundation
 
 // TODO: this should probably be its own file, and possibly an enum instead
 struct HederaError: Error {}
 
 public struct Transaction {
-    let inner: Proto_Transaction
+    var inner: Proto_Transaction
 
     init(_ tx: Proto_Transaction) {
         inner = tx
@@ -15,19 +16,26 @@ public struct Transaction {
         Bytes(inner.bodyBytes)
     }
 
-    public func sign(with key: Ed25519PrivateKey) throws -> Self {
+    // TODO: definitely test this function to make sure this works as it should
+    public mutating func sign(with key: Ed25519PrivateKey) throws -> Self {
+        if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
+        
         let pubKey = key.publicKey.bytes
-        let sigMap = inner.sigMap
 
-        if sigMap.sigPair.contains(where: { (sig) in 
+        if inner.sigMap.sigPair.contains(where: { (sig) in 
             let pubKeyPrefix = sig.pubKeyPrefix
             return pubKey.starts(with: pubKeyPrefix)
         }) {
+            // Transaction was already signed with this key!
             throw HederaError()
         }
 
-        // TODO: write the rest of the function
-        // TODO: private key needs to hold onto keypair from sodium
+        let sig = key.sign(message: Bytes(inner.bodyBytes))
+        var sigPair = Proto_SignaturePair()
+        sigPair.pubKeyPrefix = Data(pubKey)
+        sigPair.ed25519 = Data(sig)
+
+        inner.sigMap.sigPair.append(sigPair)
 
         return self
     }
@@ -39,5 +47,4 @@ extension Transaction: ProtoConvertible {
     }
 }
 
-// TODO: Add #sign -> Self
 // TODO: Add #execute -> TransactionId

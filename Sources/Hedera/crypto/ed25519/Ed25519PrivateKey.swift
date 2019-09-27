@@ -32,6 +32,10 @@ public struct Ed25519PrivateKey {
     public var publicKey: Ed25519PublicKey {
         Ed25519PublicKey(bytes: inner.publicKey)!
     }
+
+    func sign(message bytes: Bytes) -> Bytes {
+        sodium.sign.signature(message: bytes, secretKey: inner.secretKey)!        
+    }
 }
 
 extension Ed25519PrivateKey: CustomStringConvertible, CustomDebugStringConvertible {

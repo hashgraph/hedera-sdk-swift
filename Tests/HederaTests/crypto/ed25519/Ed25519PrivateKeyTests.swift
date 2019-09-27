@@ -10,6 +10,9 @@ let combinedKeyBytes = Array<UInt8>(arrayLiteral: 219, 72, 75, 130, 142, 100, 17
 
 //let testKeyPem = "-----BEGIN PRIVATE KEY-----\nMC4CAQAwBQYDK2VwBCIEINtIS4KOZLLY8SzjwKDpOguMznrxu485yXcyOUSCU44Q\n-----END PRIVATE KEY-----\n"
 
+let message = "This is a message about the world."
+let signature = "73bea53f31ca9c42a422ecb7516ec08d0bbd1a6bfd630ccf10ec1872454814d29f4a8011129cd007eab544af01a75f508285b591e5bed24b68f927751e49e30e"
+
 final class Ed25519PrivateKeyTests: XCTestCase {
     func testGenerate() {
         XCTAssertNoThrow(Ed25519PrivateKey())
@@ -61,6 +64,13 @@ final class Ed25519PrivateKeyTests: XCTestCase {
         XCTAssertEqual(String(publicFromPrivate), String(publicKey))
     }
 
+    func testSign() {
+        let key = Ed25519PrivateKey(privateKeyString)!
+        let sig = key.sign(message: message.bytes)
+
+        XCTAssertEqual(hexEncode(bytes: sig), signature)
+    }
+
     static var allTests = [
         ("testGenerate", testGenerate),
         ("testFromBytes", testFromBytes),
@@ -69,5 +79,6 @@ final class Ed25519PrivateKeyTests: XCTestCase {
         ("testFromRawString", testFromRawString),
         ("testFromBadString", testFromBadString),
         ("testGetPublicKey", testGetPublicKey),
+        ("testSign", testSign),
     ]
 }

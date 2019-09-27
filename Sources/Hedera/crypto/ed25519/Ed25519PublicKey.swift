@@ -18,6 +18,10 @@ public struct Ed25519PublicKey {
     var bytes: Bytes {
         inner
     }
+
+    func verify(signature: Bytes, of message: Bytes) -> Bool {
+        sodium.sign.verify(message: message, publicKey: inner, signature: signature)
+    }
 }
 
 extension Ed25519PublicKey: CustomStringConvertible, CustomDebugStringConvertible {

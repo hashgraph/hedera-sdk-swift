@@ -36,6 +36,12 @@ final class Ed25519PublicKeyTests: XCTestCase {
         XCTAssertEqual(String(key!), publicKeyString)
     }
 
+    func testVerify() {
+        let key = Ed25519PublicKey(publicKeyString)!
+        let verified =  key.verify(signature: try! hexDecode(signature), of: message.bytes)
+        XCTAssertTrue(verified)
+    }
+
     static var allTests = [
         ("testFromBytes", testFromBytes),
         ("testFromBadBytes", testFromBadBytes),
@@ -43,5 +49,6 @@ final class Ed25519PublicKeyTests: XCTestCase {
         ("testFromRawString", testFromRawString),
         ("testFromBadString", testFromBadString),
         ("testToString", testToString),
+        ("testVerify", testVerify),
     ]
 }
