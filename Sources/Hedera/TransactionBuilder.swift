@@ -7,9 +7,11 @@ let maxValidDuration = TimeInterval(2 * 60)
 public class TransactionBuilder {
     var body = Proto_TransactionBody()
 
-    // TODO: set transactionValidDuration to max
-    // TODO: set transactionFee to something? Client.maxTransactionFee?
-
+    init() {
+        // TODO: set transactionFee to something? Client.maxTransactionFee?
+        body.transactionValidDuration = maxValidDuration.toProto()
+    }
+    
     public func setTransactionId(_ id: TransactionId) -> Self {
         body.transactionID = id.toProto()
         return self
@@ -25,6 +27,7 @@ public class TransactionBuilder {
         return self
     }
 
+    // TODO: should this allow setting a longer duration than max?
     public func setTransactionValidDuration(_ duration: TimeInterval) -> Self {
         body.transactionValidDuration = duration.toProto()
         return self
