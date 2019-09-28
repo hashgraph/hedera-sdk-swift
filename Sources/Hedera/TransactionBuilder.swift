@@ -7,8 +7,8 @@ let maxValidDuration = TimeInterval(2 * 60)
 public class TransactionBuilder {
     var body = Proto_TransactionBody()
 
-    init() {
-        // TODO: set transactionFee to something? Client.maxTransactionFee?
+    init(client: Client) {
+        body.transactionFee = client.maxTransactionFee
         body.transactionValidDuration = maxValidDuration.toProto()
     }
     

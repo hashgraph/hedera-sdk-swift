@@ -53,3 +53,17 @@ extension Ed25519PublicKey: LosslessStringConvertible {
         }
     }
 }
+
+extension Ed25519PublicKey: ProtoConvertible {
+    typealias Proto = Proto_Key
+    
+    func toProto() -> Proto_Key {
+        var proto = Proto()
+        proto.ed25519 = Data(bytes)
+        return proto
+    }
+
+    init?(_ proto: Proto) {
+        self = Ed25519PublicKey(bytes: Bytes(proto.ed25519))!
+    }
+}

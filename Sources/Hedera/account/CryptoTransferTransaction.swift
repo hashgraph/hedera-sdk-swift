@@ -1,8 +1,8 @@
 import SwiftProtobuf
 
 public class CryptoTransferTransaction: TransactionBuilder {
-    public override init() {
-        super.init()
+    public override init(client: Client) {
+        super.init(client: client)
 
         var inner = Proto_CryptoTransferTransactionBody()
         inner.transfers = Proto_TransferList()
