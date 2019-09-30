@@ -20,80 +20,80 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Modify a smart contract instance to have the given parameter values. Any null field is ignored (left unchanged). If only the contractInstanceExpirationTime is being modified, then no signature is needed on this transaction other than for the account paying for the transaction itself. But if any of the other fields are being modified, then it must be signed by the adminKey. The use of adminKey is not currently supported in this API, but in the future will be implemented to allow these fields to be modified, and also to make modifications to the state of the instance. If the contract is created with no admin key, then none of the fields can be changed that need an admin signature, and therefore no admin key can ever be added. So if there is no admin key, then things like the bytecode are immutable. But if there is an admin key, then they can be changed. For example, the admin key might be a threshold key, which requires 3 of 5 binding arbitration judges to agree before the bytecode can be changed. This can be used to add flexibility to the management of smart contract behavior. But this is optional. If the smart contract is created without an admin key, then such a key can never be added, and its bytecode will be immutable. 
-public struct Proto_ContractUpdateTransactionBody {
+struct Proto_ContractUpdateTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The Contract ID instance to update (this can't be changed)
-  public var contractID: Proto_ContractID {
+  var contractID: Proto_ContractID {
     get {return _storage._contractID ?? Proto_ContractID()}
     set {_uniqueStorage()._contractID = newValue}
   }
   /// Returns true if `contractID` has been explicitly set.
-  public var hasContractID: Bool {return _storage._contractID != nil}
+  var hasContractID: Bool {return _storage._contractID != nil}
   /// Clears the value of `contractID`. Subsequent reads from it will return its default value.
-  public mutating func clearContractID() {_uniqueStorage()._contractID = nil}
+  mutating func clearContractID() {_uniqueStorage()._contractID = nil}
 
   /// Extend the expiration of the instance and its account to this time (no effect if it already is this time or later)
-  public var expirationTime: Proto_Timestamp {
+  var expirationTime: Proto_Timestamp {
     get {return _storage._expirationTime ?? Proto_Timestamp()}
     set {_uniqueStorage()._expirationTime = newValue}
   }
   /// Returns true if `expirationTime` has been explicitly set.
-  public var hasExpirationTime: Bool {return _storage._expirationTime != nil}
+  var hasExpirationTime: Bool {return _storage._expirationTime != nil}
   /// Clears the value of `expirationTime`. Subsequent reads from it will return its default value.
-  public mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
+  mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
 
   /// The state of the instance can be modified arbitrarily if this key signs a transaction to modify it. If this is null, then such modifications are not possible, and there is no administrator that can override the normal operation of this smart contract instance.
-  public var adminKey: Proto_Key {
+  var adminKey: Proto_Key {
     get {return _storage._adminKey ?? Proto_Key()}
     set {_uniqueStorage()._adminKey = newValue}
   }
   /// Returns true if `adminKey` has been explicitly set.
-  public var hasAdminKey: Bool {return _storage._adminKey != nil}
+  var hasAdminKey: Bool {return _storage._adminKey != nil}
   /// Clears the value of `adminKey`. Subsequent reads from it will return its default value.
-  public mutating func clearAdminKey() {_uniqueStorage()._adminKey = nil}
+  mutating func clearAdminKey() {_uniqueStorage()._adminKey = nil}
 
   /// ID of the account to which this account is proxy staked. If proxyAccountID is null, or is an invalid account, or is an account that isn't a node, then this account is automatically proxy staked to a node chosen by the network, but without earning payments. If the proxyAccountID account refuses to accept proxy staking , or if it is not currently running a node, then it will behave as if proxyAccountID was null.
-  public var proxyAccountID: Proto_AccountID {
+  var proxyAccountID: Proto_AccountID {
     get {return _storage._proxyAccountID ?? Proto_AccountID()}
     set {_uniqueStorage()._proxyAccountID = newValue}
   }
   /// Returns true if `proxyAccountID` has been explicitly set.
-  public var hasProxyAccountID: Bool {return _storage._proxyAccountID != nil}
+  var hasProxyAccountID: Bool {return _storage._proxyAccountID != nil}
   /// Clears the value of `proxyAccountID`. Subsequent reads from it will return its default value.
-  public mutating func clearProxyAccountID() {_uniqueStorage()._proxyAccountID = nil}
+  mutating func clearProxyAccountID() {_uniqueStorage()._proxyAccountID = nil}
 
   /// The instance will charge its account every this many seconds to renew for this long
-  public var autoRenewPeriod: Proto_Duration {
+  var autoRenewPeriod: Proto_Duration {
     get {return _storage._autoRenewPeriod ?? Proto_Duration()}
     set {_uniqueStorage()._autoRenewPeriod = newValue}
   }
   /// Returns true if `autoRenewPeriod` has been explicitly set.
-  public var hasAutoRenewPeriod: Bool {return _storage._autoRenewPeriod != nil}
+  var hasAutoRenewPeriod: Bool {return _storage._autoRenewPeriod != nil}
   /// Clears the value of `autoRenewPeriod`. Subsequent reads from it will return its default value.
-  public mutating func clearAutoRenewPeriod() {_uniqueStorage()._autoRenewPeriod = nil}
+  mutating func clearAutoRenewPeriod() {_uniqueStorage()._autoRenewPeriod = nil}
 
   /// The file ID of file containing the smart contract byte code. A copy will be made and held by the contract instance, and have the same expiration time as the instance. The file is referenced one of two ways:
-  public var fileID: Proto_FileID {
+  var fileID: Proto_FileID {
     get {return _storage._fileID ?? Proto_FileID()}
     set {_uniqueStorage()._fileID = newValue}
   }
   /// Returns true if `fileID` has been explicitly set.
-  public var hasFileID: Bool {return _storage._fileID != nil}
+  var hasFileID: Bool {return _storage._fileID != nil}
   /// Clears the value of `fileID`. Subsequent reads from it will return its default value.
-  public mutating func clearFileID() {_uniqueStorage()._fileID = nil}
+  mutating func clearFileID() {_uniqueStorage()._fileID = nil}
 
   /// The memo associated with the contract (max 100 bytes)
-  public var memo: String {
+  var memo: String {
     get {return _storage._memo}
     set {_uniqueStorage()._memo = newValue}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -103,8 +103,8 @@ public struct Proto_ContractUpdateTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_ContractUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ContractUpdateTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".ContractUpdateTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "contractID"),
     2: .same(proto: "expirationTime"),
     3: .same(proto: "adminKey"),
@@ -145,7 +145,7 @@ extension Proto_ContractUpdateTransactionBody: SwiftProtobuf.Message, SwiftProto
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -163,7 +163,7 @@ extension Proto_ContractUpdateTransactionBody: SwiftProtobuf.Message, SwiftProto
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._contractID {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -190,7 +190,7 @@ extension Proto_ContractUpdateTransactionBody: SwiftProtobuf.Message, SwiftProto
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_ContractUpdateTransactionBody, rhs: Proto_ContractUpdateTransactionBody) -> Bool {
+  static func ==(lhs: Proto_ContractUpdateTransactionBody, rhs: Proto_ContractUpdateTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

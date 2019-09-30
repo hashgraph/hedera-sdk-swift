@@ -20,51 +20,51 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Get all accounts, claims, files, and smart contract instances whose associated keys include the given Key. The given Key must not be a contractID or a ThresholdKey. This is not yet implemented in the API, but will be in the future. 
-public struct Proto_GetByKeyQuery {
+struct Proto_GetByKeyQuery {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Standard info sent from client to node, including the signed payment, and what kind of response is requested (cost, state proof, both, or neither).
-  public var header: Proto_QueryHeader {
+  var header: Proto_QueryHeader {
     get {return _storage._header ?? Proto_QueryHeader()}
     set {_uniqueStorage()._header = newValue}
   }
   /// Returns true if `header` has been explicitly set.
-  public var hasHeader: Bool {return _storage._header != nil}
+  var hasHeader: Bool {return _storage._header != nil}
   /// Clears the value of `header`. Subsequent reads from it will return its default value.
-  public mutating func clearHeader() {_uniqueStorage()._header = nil}
+  mutating func clearHeader() {_uniqueStorage()._header = nil}
 
   /// The key to search for. It must not contain a contractID nor a ThresholdSignature.
-  public var key: Proto_Key {
+  var key: Proto_Key {
     get {return _storage._key ?? Proto_Key()}
     set {_uniqueStorage()._key = newValue}
   }
   /// Returns true if `key` has been explicitly set.
-  public var hasKey: Bool {return _storage._key != nil}
+  var hasKey: Bool {return _storage._key != nil}
   /// Clears the value of `key`. Subsequent reads from it will return its default value.
-  public mutating func clearKey() {_uniqueStorage()._key = nil}
+  mutating func clearKey() {_uniqueStorage()._key = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// the ID for a single entity (account, claim, file, or smart contract instance) 
-public struct Proto_EntityID {
+struct Proto_EntityID {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var entity: OneOf_Entity? {
+  var entity: OneOf_Entity? {
     get {return _storage._entity}
     set {_uniqueStorage()._entity = newValue}
   }
 
   /// The Account ID for the cryptocurrency account
-  public var accountID: Proto_AccountID {
+  var accountID: Proto_AccountID {
     get {
       if case .accountID(let v)? = _storage._entity {return v}
       return Proto_AccountID()
@@ -73,7 +73,7 @@ public struct Proto_EntityID {
   }
 
   /// The claim details attached to an account
-  public var claim: Proto_Claim {
+  var claim: Proto_Claim {
     get {
       if case .claim(let v)? = _storage._entity {return v}
       return Proto_Claim()
@@ -82,7 +82,7 @@ public struct Proto_EntityID {
   }
 
   /// The file ID of the file
-  public var fileID: Proto_FileID {
+  var fileID: Proto_FileID {
     get {
       if case .fileID(let v)? = _storage._entity {return v}
       return Proto_FileID()
@@ -91,7 +91,7 @@ public struct Proto_EntityID {
   }
 
   /// The smart contract ID that identifies instance
-  public var contractID: Proto_ContractID {
+  var contractID: Proto_ContractID {
     get {
       if case .contractID(let v)? = _storage._entity {return v}
       return Proto_ContractID()
@@ -99,9 +99,9 @@ public struct Proto_EntityID {
     set {_uniqueStorage()._entity = .contractID(newValue)}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_Entity: Equatable {
+  enum OneOf_Entity: Equatable {
     /// The Account ID for the cryptocurrency account
     case accountID(Proto_AccountID)
     /// The claim details attached to an account
@@ -112,7 +112,7 @@ public struct Proto_EntityID {
     case contractID(Proto_ContractID)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_EntityID.OneOf_Entity, rhs: Proto_EntityID.OneOf_Entity) -> Bool {
+    static func ==(lhs: Proto_EntityID.OneOf_Entity, rhs: Proto_EntityID.OneOf_Entity) -> Bool {
       switch (lhs, rhs) {
       case (.accountID(let l), .accountID(let r)): return l == r
       case (.claim(let l), .claim(let r)): return l == r
@@ -124,36 +124,36 @@ public struct Proto_EntityID {
   #endif
   }
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// Response when the client sends the node GetByKeyQuery 
-public struct Proto_GetByKeyResponse {
+struct Proto_GetByKeyResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///Standard response from node to client, including the requested fields: cost, or state proof, or both, or neither
-  public var header: Proto_ResponseHeader {
+  var header: Proto_ResponseHeader {
     get {return _storage._header ?? Proto_ResponseHeader()}
     set {_uniqueStorage()._header = newValue}
   }
   /// Returns true if `header` has been explicitly set.
-  public var hasHeader: Bool {return _storage._header != nil}
+  var hasHeader: Bool {return _storage._header != nil}
   /// Clears the value of `header`. Subsequent reads from it will return its default value.
-  public mutating func clearHeader() {_uniqueStorage()._header = nil}
+  mutating func clearHeader() {_uniqueStorage()._header = nil}
 
   /// The list of entities that include this public key in their associated Key list
-  public var entities: [Proto_EntityID] {
+  var entities: [Proto_EntityID] {
     get {return _storage._entities}
     set {_uniqueStorage()._entities = newValue}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -163,8 +163,8 @@ public struct Proto_GetByKeyResponse {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_GetByKeyQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".GetByKeyQuery"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".GetByKeyQuery"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "header"),
     2: .same(proto: "key"),
   ]
@@ -190,7 +190,7 @@ extension Proto_GetByKeyQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -203,7 +203,7 @@ extension Proto_GetByKeyQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._header {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -215,7 +215,7 @@ extension Proto_GetByKeyQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_GetByKeyQuery, rhs: Proto_GetByKeyQuery) -> Bool {
+  static func ==(lhs: Proto_GetByKeyQuery, rhs: Proto_GetByKeyQuery) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -232,8 +232,8 @@ extension Proto_GetByKeyQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
 }
 
 extension Proto_EntityID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".EntityID"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".EntityID"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "accountID"),
     2: .same(proto: "claim"),
     3: .same(proto: "fileID"),
@@ -259,7 +259,7 @@ extension Proto_EntityID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -302,7 +302,7 @@ extension Proto_EntityID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       switch _storage._entity {
       case .accountID(let v)?:
@@ -319,7 +319,7 @@ extension Proto_EntityID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_EntityID, rhs: Proto_EntityID) -> Bool {
+  static func ==(lhs: Proto_EntityID, rhs: Proto_EntityID) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -335,8 +335,8 @@ extension Proto_EntityID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
 }
 
 extension Proto_GetByKeyResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".GetByKeyResponse"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".GetByKeyResponse"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "header"),
     2: .same(proto: "entities"),
   ]
@@ -362,7 +362,7 @@ extension Proto_GetByKeyResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -375,7 +375,7 @@ extension Proto_GetByKeyResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._header {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -387,7 +387,7 @@ extension Proto_GetByKeyResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_GetByKeyResponse, rhs: Proto_GetByKeyResponse) -> Bool {
+  static func ==(lhs: Proto_GetByKeyResponse, rhs: Proto_GetByKeyResponse) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

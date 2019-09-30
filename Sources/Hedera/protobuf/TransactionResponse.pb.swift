@@ -20,17 +20,17 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// When the client sends the node a transaction of any kind, the node replies with this, which simply says that the transaction passed the precheck (so the node will submit it to the network) or it failed (so it won't). To learn the consensus result, the client should later obtain a receipt (free), or can buy a more detailed record (not free). 
-public struct Proto_TransactionResponse {
+struct Proto_TransactionResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The response code that indicates the current status of the transaction.
-  public var nodeTransactionPrecheckCode: Proto_ResponseCodeEnum = .ok
+  var nodeTransactionPrecheckCode: Proto_ResponseCodeEnum = .ok
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -38,12 +38,12 @@ public struct Proto_TransactionResponse {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_TransactionResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".TransactionResponse"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".TransactionResponse"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "nodeTransactionPrecheckCode"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularEnumField(value: &self.nodeTransactionPrecheckCode)
@@ -52,14 +52,14 @@ extension Proto_TransactionResponse: SwiftProtobuf.Message, SwiftProtobuf._Messa
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.nodeTransactionPrecheckCode != .ok {
       try visitor.visitSingularEnumField(value: self.nodeTransactionPrecheckCode, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_TransactionResponse, rhs: Proto_TransactionResponse) -> Bool {
+  static func ==(lhs: Proto_TransactionResponse, rhs: Proto_TransactionResponse) -> Bool {
     if lhs.nodeTransactionPrecheckCode != rhs.nodeTransactionPrecheckCode {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

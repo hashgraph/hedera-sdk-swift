@@ -20,121 +20,121 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Get all of the information about a file, except for its contents. When a file expires, it no longer exists, and there will be no info about it, and the fileInfo field will be blank. If a transaction or smart contract deletes the file, but it has not yet expired, then the fileInfo field will be non-empty, the deleted field will be true, its size will be 0, and its contents will be empty. Note that each file has a FileID, but does not have a filename. 
-public struct Proto_FileGetInfoQuery {
+struct Proto_FileGetInfoQuery {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Standard info sent from client to node, including the signed payment, and what kind of response is requested (cost, state proof, both, or neither).
-  public var header: Proto_QueryHeader {
+  var header: Proto_QueryHeader {
     get {return _storage._header ?? Proto_QueryHeader()}
     set {_uniqueStorage()._header = newValue}
   }
   /// Returns true if `header` has been explicitly set.
-  public var hasHeader: Bool {return _storage._header != nil}
+  var hasHeader: Bool {return _storage._header != nil}
   /// Clears the value of `header`. Subsequent reads from it will return its default value.
-  public mutating func clearHeader() {_uniqueStorage()._header = nil}
+  mutating func clearHeader() {_uniqueStorage()._header = nil}
 
   /// The file ID of the file for which information is requested
-  public var fileID: Proto_FileID {
+  var fileID: Proto_FileID {
     get {return _storage._fileID ?? Proto_FileID()}
     set {_uniqueStorage()._fileID = newValue}
   }
   /// Returns true if `fileID` has been explicitly set.
-  public var hasFileID: Bool {return _storage._fileID != nil}
+  var hasFileID: Bool {return _storage._fileID != nil}
   /// Clears the value of `fileID`. Subsequent reads from it will return its default value.
-  public mutating func clearFileID() {_uniqueStorage()._fileID = nil}
+  mutating func clearFileID() {_uniqueStorage()._fileID = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// Response when the client sends the node FileGetInfoQuery 
-public struct Proto_FileGetInfoResponse {
+struct Proto_FileGetInfoResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///Standard response from node to client, including the requested fields: cost, or state proof, or both, or neither
-  public var header: Proto_ResponseHeader {
+  var header: Proto_ResponseHeader {
     get {return _storage._header ?? Proto_ResponseHeader()}
     set {_uniqueStorage()._header = newValue}
   }
   /// Returns true if `header` has been explicitly set.
-  public var hasHeader: Bool {return _storage._header != nil}
+  var hasHeader: Bool {return _storage._header != nil}
   /// Clears the value of `header`. Subsequent reads from it will return its default value.
-  public mutating func clearHeader() {_uniqueStorage()._header = nil}
+  mutating func clearHeader() {_uniqueStorage()._header = nil}
 
   /// The information about the file (a state proof can be generated for this)
-  public var fileInfo: Proto_FileGetInfoResponse.FileInfo {
+  var fileInfo: Proto_FileGetInfoResponse.FileInfo {
     get {return _storage._fileInfo ?? Proto_FileGetInfoResponse.FileInfo()}
     set {_uniqueStorage()._fileInfo = newValue}
   }
   /// Returns true if `fileInfo` has been explicitly set.
-  public var hasFileInfo: Bool {return _storage._fileInfo != nil}
+  var hasFileInfo: Bool {return _storage._fileInfo != nil}
   /// Clears the value of `fileInfo`. Subsequent reads from it will return its default value.
-  public mutating func clearFileInfo() {_uniqueStorage()._fileInfo = nil}
+  mutating func clearFileInfo() {_uniqueStorage()._fileInfo = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public struct FileInfo {
+  struct FileInfo {
     // SwiftProtobuf.Message conformance is added in an extension below. See the
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
     /// The file ID of the file for which information is requested
-    public var fileID: Proto_FileID {
+    var fileID: Proto_FileID {
       get {return _storage._fileID ?? Proto_FileID()}
       set {_uniqueStorage()._fileID = newValue}
     }
     /// Returns true if `fileID` has been explicitly set.
-    public var hasFileID: Bool {return _storage._fileID != nil}
+    var hasFileID: Bool {return _storage._fileID != nil}
     /// Clears the value of `fileID`. Subsequent reads from it will return its default value.
-    public mutating func clearFileID() {_uniqueStorage()._fileID = nil}
+    mutating func clearFileID() {_uniqueStorage()._fileID = nil}
 
     /// Number of bytes in contents
-    public var size: Int64 {
+    var size: Int64 {
       get {return _storage._size}
       set {_uniqueStorage()._size = newValue}
     }
 
     /// The current time at which this account is set to expire
-    public var expirationTime: Proto_Timestamp {
+    var expirationTime: Proto_Timestamp {
       get {return _storage._expirationTime ?? Proto_Timestamp()}
       set {_uniqueStorage()._expirationTime = newValue}
     }
     /// Returns true if `expirationTime` has been explicitly set.
-    public var hasExpirationTime: Bool {return _storage._expirationTime != nil}
+    var hasExpirationTime: Bool {return _storage._expirationTime != nil}
     /// Clears the value of `expirationTime`. Subsequent reads from it will return its default value.
-    public mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
+    mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
 
     /// True if deleted but not yet expired
-    public var deleted: Bool {
+    var deleted: Bool {
       get {return _storage._deleted}
       set {_uniqueStorage()._deleted = newValue}
     }
 
     /// One of these keys must sign in order to modify or delete the file
-    public var keys: Proto_KeyList {
+    var keys: Proto_KeyList {
       get {return _storage._keys ?? Proto_KeyList()}
       set {_uniqueStorage()._keys = newValue}
     }
     /// Returns true if `keys` has been explicitly set.
-    public var hasKeys: Bool {return _storage._keys != nil}
+    var hasKeys: Bool {return _storage._keys != nil}
     /// Clears the value of `keys`. Subsequent reads from it will return its default value.
-    public mutating func clearKeys() {_uniqueStorage()._keys = nil}
+    mutating func clearKeys() {_uniqueStorage()._keys = nil}
 
-    public var unknownFields = SwiftProtobuf.UnknownStorage()
+    var unknownFields = SwiftProtobuf.UnknownStorage()
 
-    public init() {}
+    init() {}
 
     fileprivate var _storage = _StorageClass.defaultInstance
   }
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -144,8 +144,8 @@ public struct Proto_FileGetInfoResponse {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_FileGetInfoQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".FileGetInfoQuery"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".FileGetInfoQuery"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "header"),
     2: .same(proto: "fileID"),
   ]
@@ -171,7 +171,7 @@ extension Proto_FileGetInfoQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -184,7 +184,7 @@ extension Proto_FileGetInfoQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._header {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -196,7 +196,7 @@ extension Proto_FileGetInfoQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_FileGetInfoQuery, rhs: Proto_FileGetInfoQuery) -> Bool {
+  static func ==(lhs: Proto_FileGetInfoQuery, rhs: Proto_FileGetInfoQuery) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -213,8 +213,8 @@ extension Proto_FileGetInfoQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageI
 }
 
 extension Proto_FileGetInfoResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".FileGetInfoResponse"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".FileGetInfoResponse"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "header"),
     2: .same(proto: "fileInfo"),
   ]
@@ -240,7 +240,7 @@ extension Proto_FileGetInfoResponse: SwiftProtobuf.Message, SwiftProtobuf._Messa
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -253,7 +253,7 @@ extension Proto_FileGetInfoResponse: SwiftProtobuf.Message, SwiftProtobuf._Messa
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._header {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -265,7 +265,7 @@ extension Proto_FileGetInfoResponse: SwiftProtobuf.Message, SwiftProtobuf._Messa
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_FileGetInfoResponse, rhs: Proto_FileGetInfoResponse) -> Bool {
+  static func ==(lhs: Proto_FileGetInfoResponse, rhs: Proto_FileGetInfoResponse) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -282,8 +282,8 @@ extension Proto_FileGetInfoResponse: SwiftProtobuf.Message, SwiftProtobuf._Messa
 }
 
 extension Proto_FileGetInfoResponse.FileInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = Proto_FileGetInfoResponse.protoMessageName + ".FileInfo"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = Proto_FileGetInfoResponse.protoMessageName + ".FileInfo"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "fileID"),
     2: .same(proto: "size"),
     3: .same(proto: "expirationTime"),
@@ -318,7 +318,7 @@ extension Proto_FileGetInfoResponse.FileInfo: SwiftProtobuf.Message, SwiftProtob
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -334,7 +334,7 @@ extension Proto_FileGetInfoResponse.FileInfo: SwiftProtobuf.Message, SwiftProtob
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._fileID {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -355,7 +355,7 @@ extension Proto_FileGetInfoResponse.FileInfo: SwiftProtobuf.Message, SwiftProtob
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_FileGetInfoResponse.FileInfo, rhs: Proto_FileGetInfoResponse.FileInfo) -> Bool {
+  static func ==(lhs: Proto_FileGetInfoResponse.FileInfo, rhs: Proto_FileGetInfoResponse.FileInfo) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

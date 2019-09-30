@@ -20,66 +20,66 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// A single transaction. All transaction types are possible here. 
-public struct Proto_TransactionBody {
+struct Proto_TransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The ID for this transaction, which includes the payer's account (the account paying the transaction fee). If two transactions have the same transactionID, they won't both have an effect
-  public var transactionID: Proto_TransactionID {
+  var transactionID: Proto_TransactionID {
     get {return _storage._transactionID ?? Proto_TransactionID()}
     set {_uniqueStorage()._transactionID = newValue}
   }
   /// Returns true if `transactionID` has been explicitly set.
-  public var hasTransactionID: Bool {return _storage._transactionID != nil}
+  var hasTransactionID: Bool {return _storage._transactionID != nil}
   /// Clears the value of `transactionID`. Subsequent reads from it will return its default value.
-  public mutating func clearTransactionID() {_uniqueStorage()._transactionID = nil}
+  mutating func clearTransactionID() {_uniqueStorage()._transactionID = nil}
 
   /// The account of the node that submits the client's transaction to the network
-  public var nodeAccountID: Proto_AccountID {
+  var nodeAccountID: Proto_AccountID {
     get {return _storage._nodeAccountID ?? Proto_AccountID()}
     set {_uniqueStorage()._nodeAccountID = newValue}
   }
   /// Returns true if `nodeAccountID` has been explicitly set.
-  public var hasNodeAccountID: Bool {return _storage._nodeAccountID != nil}
+  var hasNodeAccountID: Bool {return _storage._nodeAccountID != nil}
   /// Clears the value of `nodeAccountID`. Subsequent reads from it will return its default value.
-  public mutating func clearNodeAccountID() {_uniqueStorage()._nodeAccountID = nil}
+  mutating func clearNodeAccountID() {_uniqueStorage()._nodeAccountID = nil}
 
   /// The maximum transaction fee the client is willing to pay, which is split between the network and the node
-  public var transactionFee: UInt64 {
+  var transactionFee: UInt64 {
     get {return _storage._transactionFee}
     set {_uniqueStorage()._transactionFee = newValue}
   }
 
   ///The transaction is invalid if consensusTimestamp > transactionID.transactionValidStart + transactionValidDuration
-  public var transactionValidDuration: Proto_Duration {
+  var transactionValidDuration: Proto_Duration {
     get {return _storage._transactionValidDuration ?? Proto_Duration()}
     set {_uniqueStorage()._transactionValidDuration = newValue}
   }
   /// Returns true if `transactionValidDuration` has been explicitly set.
-  public var hasTransactionValidDuration: Bool {return _storage._transactionValidDuration != nil}
+  var hasTransactionValidDuration: Bool {return _storage._transactionValidDuration != nil}
   /// Clears the value of `transactionValidDuration`. Subsequent reads from it will return its default value.
-  public mutating func clearTransactionValidDuration() {_uniqueStorage()._transactionValidDuration = nil}
+  mutating func clearTransactionValidDuration() {_uniqueStorage()._transactionValidDuration = nil}
 
   /// Should a record of this transaction be generated? (A receipt is always generated, but the record is optional)
-  public var generateRecord: Bool {
+  var generateRecord: Bool {
     get {return _storage._generateRecord}
     set {_uniqueStorage()._generateRecord = newValue}
   }
 
   /// Any notes or descriptions that should be put into the record (max length 100)
-  public var memo: String {
+  var memo: String {
     get {return _storage._memo}
     set {_uniqueStorage()._memo = newValue}
   }
 
-  public var data: OneOf_Data? {
+  var data: OneOf_Data? {
     get {return _storage._data}
     set {_uniqueStorage()._data = newValue}
   }
 
   /// Contains the call a function of a contract instance
-  public var contractCall: Proto_ContractCallTransactionBody {
+  var contractCall: Proto_ContractCallTransactionBody {
     get {
       if case .contractCall(let v)? = _storage._data {return v}
       return Proto_ContractCallTransactionBody()
@@ -88,7 +88,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Contains the create data a contract instance
-  public var contractCreateInstance: Proto_ContractCreateTransactionBody {
+  var contractCreateInstance: Proto_ContractCreateTransactionBody {
     get {
       if case .contractCreateInstance(let v)? = _storage._data {return v}
       return Proto_ContractCreateTransactionBody()
@@ -97,7 +97,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Contains contract modify info such as expiration date for a contract instance
-  public var contractUpdateInstance: Proto_ContractUpdateTransactionBody {
+  var contractUpdateInstance: Proto_ContractUpdateTransactionBody {
     get {
       if case .contractUpdateInstance(let v)? = _storage._data {return v}
       return Proto_ContractUpdateTransactionBody()
@@ -106,7 +106,7 @@ public struct Proto_TransactionBody {
   }
 
   ///Delete contract and transfer remaining balance into specified account
-  public var contractDeleteInstance: Proto_ContractDeleteTransactionBody {
+  var contractDeleteInstance: Proto_ContractDeleteTransactionBody {
     get {
       if case .contractDeleteInstance(let v)? = _storage._data {return v}
       return Proto_ContractDeleteTransactionBody()
@@ -115,7 +115,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Attach a new claim to an account
-  public var cryptoAddClaim: Proto_CryptoAddClaimTransactionBody {
+  var cryptoAddClaim: Proto_CryptoAddClaimTransactionBody {
     get {
       if case .cryptoAddClaim(let v)? = _storage._data {return v}
       return Proto_CryptoAddClaimTransactionBody()
@@ -124,7 +124,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Create a new cryptocurrency account
-  public var cryptoCreateAccount: Proto_CryptoCreateTransactionBody {
+  var cryptoCreateAccount: Proto_CryptoCreateTransactionBody {
     get {
       if case .cryptoCreateAccount(let v)? = _storage._data {return v}
       return Proto_CryptoCreateTransactionBody()
@@ -133,7 +133,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Delete a cryptocurrency account (mark as deleted, and transfer hbars out)
-  public var cryptoDelete: Proto_CryptoDeleteTransactionBody {
+  var cryptoDelete: Proto_CryptoDeleteTransactionBody {
     get {
       if case .cryptoDelete(let v)? = _storage._data {return v}
       return Proto_CryptoDeleteTransactionBody()
@@ -142,7 +142,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Remove a claim from an account
-  public var cryptoDeleteClaim: Proto_CryptoDeleteClaimTransactionBody {
+  var cryptoDeleteClaim: Proto_CryptoDeleteClaimTransactionBody {
     get {
       if case .cryptoDeleteClaim(let v)? = _storage._data {return v}
       return Proto_CryptoDeleteClaimTransactionBody()
@@ -151,7 +151,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Transfer amount between accounts
-  public var cryptoTransfer: Proto_CryptoTransferTransactionBody {
+  var cryptoTransfer: Proto_CryptoTransferTransactionBody {
     get {
       if case .cryptoTransfer(let v)? = _storage._data {return v}
       return Proto_CryptoTransferTransactionBody()
@@ -160,7 +160,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Modify information such as the expiration date for an account
-  public var cryptoUpdateAccount: Proto_CryptoUpdateTransactionBody {
+  var cryptoUpdateAccount: Proto_CryptoUpdateTransactionBody {
     get {
       if case .cryptoUpdateAccount(let v)? = _storage._data {return v}
       return Proto_CryptoUpdateTransactionBody()
@@ -169,7 +169,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Add bytes to the end of the contents of a file
-  public var fileAppend: Proto_FileAppendTransactionBody {
+  var fileAppend: Proto_FileAppendTransactionBody {
     get {
       if case .fileAppend(let v)? = _storage._data {return v}
       return Proto_FileAppendTransactionBody()
@@ -178,7 +178,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Create a new file
-  public var fileCreate: Proto_FileCreateTransactionBody {
+  var fileCreate: Proto_FileCreateTransactionBody {
     get {
       if case .fileCreate(let v)? = _storage._data {return v}
       return Proto_FileCreateTransactionBody()
@@ -187,7 +187,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Delete a file (remove contents and mark as deleted until it expires)
-  public var fileDelete: Proto_FileDeleteTransactionBody {
+  var fileDelete: Proto_FileDeleteTransactionBody {
     get {
       if case .fileDelete(let v)? = _storage._data {return v}
       return Proto_FileDeleteTransactionBody()
@@ -196,7 +196,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Modify information such as the expiration date for a file
-  public var fileUpdate: Proto_FileUpdateTransactionBody {
+  var fileUpdate: Proto_FileUpdateTransactionBody {
     get {
       if case .fileUpdate(let v)? = _storage._data {return v}
       return Proto_FileUpdateTransactionBody()
@@ -205,7 +205,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Hedera multisig system deletes a file or smart contract
-  public var systemDelete: Proto_SystemDeleteTransactionBody {
+  var systemDelete: Proto_SystemDeleteTransactionBody {
     get {
       if case .systemDelete(let v)? = _storage._data {return v}
       return Proto_SystemDeleteTransactionBody()
@@ -214,7 +214,7 @@ public struct Proto_TransactionBody {
   }
 
   ///To undelete an entity deleted by SystemDelete
-  public var systemUndelete: Proto_SystemUndeleteTransactionBody {
+  var systemUndelete: Proto_SystemUndeleteTransactionBody {
     get {
       if case .systemUndelete(let v)? = _storage._data {return v}
       return Proto_SystemUndeleteTransactionBody()
@@ -223,7 +223,7 @@ public struct Proto_TransactionBody {
   }
 
   /// Freeze the nodes
-  public var freeze: Proto_FreezeTransactionBody {
+  var freeze: Proto_FreezeTransactionBody {
     get {
       if case .freeze(let v)? = _storage._data {return v}
       return Proto_FreezeTransactionBody()
@@ -231,9 +231,9 @@ public struct Proto_TransactionBody {
     set {_uniqueStorage()._data = .freeze(newValue)}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_Data: Equatable {
+  enum OneOf_Data: Equatable {
     /// Contains the call a function of a contract instance
     case contractCall(Proto_ContractCallTransactionBody)
     /// Contains the create data a contract instance
@@ -270,7 +270,7 @@ public struct Proto_TransactionBody {
     case freeze(Proto_FreezeTransactionBody)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_TransactionBody.OneOf_Data, rhs: Proto_TransactionBody.OneOf_Data) -> Bool {
+    static func ==(lhs: Proto_TransactionBody.OneOf_Data, rhs: Proto_TransactionBody.OneOf_Data) -> Bool {
       switch (lhs, rhs) {
       case (.contractCall(let l), .contractCall(let r)): return l == r
       case (.contractCreateInstance(let l), .contractCreateInstance(let r)): return l == r
@@ -295,7 +295,7 @@ public struct Proto_TransactionBody {
   #endif
   }
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -305,8 +305,8 @@ public struct Proto_TransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".TransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".TransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "transactionID"),
     2: .same(proto: "nodeAccountID"),
     3: .same(proto: "transactionFee"),
@@ -363,7 +363,7 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -516,7 +516,7 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._transactionID {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -577,7 +577,7 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_TransactionBody, rhs: Proto_TransactionBody) -> Bool {
+  static func ==(lhs: Proto_TransactionBody, rhs: Proto_TransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

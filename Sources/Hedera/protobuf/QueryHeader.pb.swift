@@ -20,8 +20,8 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// The client uses the ResponseType to request that the node send it just the answer, or both the answer and a state proof. It can also ask for just the cost for getting the answer or both. If the payment in the query fails the precheck, then the response may have some fields blank. The state proof is only available for some types of information. It is available for a Record, but not a receipt. It is available for the information in each kind of *GetInfo request. 
-public enum Proto_ResponseType: SwiftProtobuf.Enum {
-  public typealias RawValue = Int
+enum Proto_ResponseType: SwiftProtobuf.Enum {
+  typealias RawValue = Int
 
   /// Response returns answer
   case answerOnly // = 0
@@ -36,11 +36,11 @@ public enum Proto_ResponseType: SwiftProtobuf.Enum {
   case costAnswerStateProof // = 3
   case UNRECOGNIZED(Int)
 
-  public init() {
+  init() {
     self = .answerOnly
   }
 
-  public init?(rawValue: Int) {
+  init?(rawValue: Int) {
     switch rawValue {
     case 0: self = .answerOnly
     case 1: self = .answerStateProof
@@ -50,7 +50,7 @@ public enum Proto_ResponseType: SwiftProtobuf.Enum {
     }
   }
 
-  public var rawValue: Int {
+  var rawValue: Int {
     switch self {
     case .answerOnly: return 0
     case .answerStateProof: return 1
@@ -66,7 +66,7 @@ public enum Proto_ResponseType: SwiftProtobuf.Enum {
 
 extension Proto_ResponseType: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_ResponseType] = [
+  static var allCases: [Proto_ResponseType] = [
     .answerOnly,
     .answerStateProof,
     .costAnswer,
@@ -77,30 +77,30 @@ extension Proto_ResponseType: CaseIterable {
 #endif  // swift(>=4.2)
 
 /// Each query from the client to the node will contain the QueryHeader, which gives the requested response type, and includes a payment for the response. It will sometimes leave payment blank: it is blank for TransactionGetReceiptQuery. It can also be left blank when the responseType is costAnswer or costAnswerStateProof. But it needs to be filled in for all other cases. The idea is that an answer that is only a few bytes (or that was paid for earlier) can be given for free. But if the answer is something that requires many bytes or much computation (like a state proof), then it should be paid for. 
-public struct Proto_QueryHeader {
+struct Proto_QueryHeader {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// A signed CryptoTransferTransaction to pay the node a fee for handling this query
-  public var payment: Proto_Transaction {
+  var payment: Proto_Transaction {
     get {return _storage._payment ?? Proto_Transaction()}
     set {_uniqueStorage()._payment = newValue}
   }
   /// Returns true if `payment` has been explicitly set.
-  public var hasPayment: Bool {return _storage._payment != nil}
+  var hasPayment: Bool {return _storage._payment != nil}
   /// Clears the value of `payment`. Subsequent reads from it will return its default value.
-  public mutating func clearPayment() {_uniqueStorage()._payment = nil}
+  mutating func clearPayment() {_uniqueStorage()._payment = nil}
 
   /// The requested response, asking for cost, state proof, both, or neither
-  public var responseType: Proto_ResponseType {
+  var responseType: Proto_ResponseType {
     get {return _storage._responseType}
     set {_uniqueStorage()._responseType = newValue}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -110,7 +110,7 @@ public struct Proto_QueryHeader {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_ResponseType: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "ANSWER_ONLY"),
     1: .same(proto: "ANSWER_STATE_PROOF"),
     2: .same(proto: "COST_ANSWER"),
@@ -119,8 +119,8 @@ extension Proto_ResponseType: SwiftProtobuf._ProtoNameProviding {
 }
 
 extension Proto_QueryHeader: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".QueryHeader"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".QueryHeader"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "payment"),
     2: .same(proto: "responseType"),
   ]
@@ -146,7 +146,7 @@ extension Proto_QueryHeader: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -159,7 +159,7 @@ extension Proto_QueryHeader: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._payment {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -171,7 +171,7 @@ extension Proto_QueryHeader: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_QueryHeader, rhs: Proto_QueryHeader) -> Bool {
+  static func ==(lhs: Proto_QueryHeader, rhs: Proto_QueryHeader) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

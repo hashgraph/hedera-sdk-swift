@@ -19,8 +19,8 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
-  public typealias RawValue = Int
+enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
+  typealias RawValue = Int
 
   /// The transaction passed the precheck validations.
   case ok // = 0
@@ -341,11 +341,11 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
   case exchangeRateChangeLimitExceeded // = 105
   case UNRECOGNIZED(Int)
 
-  public init() {
+  init() {
     self = .ok
   }
 
-  public init?(rawValue: Int) {
+  init?(rawValue: Int) {
     switch rawValue {
     case 0: self = .ok
     case 1: self = .invalidTransaction
@@ -457,7 +457,7 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
     }
   }
 
-  public var rawValue: Int {
+  var rawValue: Int {
     switch self {
     case .ok: return 0
     case .invalidTransaction: return 1
@@ -575,7 +575,7 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
 
 extension Proto_ResponseCodeEnum: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_ResponseCodeEnum] = [
+  static var allCases: [Proto_ResponseCodeEnum] = [
     .ok,
     .invalidTransaction,
     .payerAccountNotFound,
@@ -690,7 +690,7 @@ extension Proto_ResponseCodeEnum: CaseIterable {
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 extension Proto_ResponseCodeEnum: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "OK"),
     1: .same(proto: "INVALID_TRANSACTION"),
     2: .same(proto: "PAYER_ACCOUNT_NOT_FOUND"),

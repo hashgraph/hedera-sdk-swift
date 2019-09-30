@@ -20,18 +20,18 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Undelete a file or smart contract that was deleted by AdminDelete - can only be done with a Hedera admin multisig. When it is deleted, it immediately disappears from the system as seen by the user, but is still stored internally until the expiration time, at which time it is truly and permanently deleted. Until that time, it can be undeleted by the Hedera admin multisig. When a smart contract is deleted, the cryptocurrency account within it continues to exist, and is not affected by the expiration time here. 
-public struct Proto_SystemUndeleteTransactionBody {
+struct Proto_SystemUndeleteTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var id: OneOf_ID? {
+  var id: OneOf_ID? {
     get {return _storage._id}
     set {_uniqueStorage()._id = newValue}
   }
 
   /// The file ID to undelete, in the format used in transactions
-  public var fileID: Proto_FileID {
+  var fileID: Proto_FileID {
     get {
       if case .fileID(let v)? = _storage._id {return v}
       return Proto_FileID()
@@ -40,7 +40,7 @@ public struct Proto_SystemUndeleteTransactionBody {
   }
 
   /// The contract ID instance to undelete, in the format used in transactions
-  public var contractID: Proto_ContractID {
+  var contractID: Proto_ContractID {
     get {
       if case .contractID(let v)? = _storage._id {return v}
       return Proto_ContractID()
@@ -48,16 +48,16 @@ public struct Proto_SystemUndeleteTransactionBody {
     set {_uniqueStorage()._id = .contractID(newValue)}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_ID: Equatable {
+  enum OneOf_ID: Equatable {
     /// The file ID to undelete, in the format used in transactions
     case fileID(Proto_FileID)
     /// The contract ID instance to undelete, in the format used in transactions
     case contractID(Proto_ContractID)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_SystemUndeleteTransactionBody.OneOf_ID, rhs: Proto_SystemUndeleteTransactionBody.OneOf_ID) -> Bool {
+    static func ==(lhs: Proto_SystemUndeleteTransactionBody.OneOf_ID, rhs: Proto_SystemUndeleteTransactionBody.OneOf_ID) -> Bool {
       switch (lhs, rhs) {
       case (.fileID(let l), .fileID(let r)): return l == r
       case (.contractID(let l), .contractID(let r)): return l == r
@@ -67,7 +67,7 @@ public struct Proto_SystemUndeleteTransactionBody {
   #endif
   }
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -77,8 +77,8 @@ public struct Proto_SystemUndeleteTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_SystemUndeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".SystemUndeleteTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".SystemUndeleteTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "fileID"),
     2: .same(proto: "contractID"),
   ]
@@ -102,7 +102,7 @@ extension Proto_SystemUndeleteTransactionBody: SwiftProtobuf.Message, SwiftProto
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -129,7 +129,7 @@ extension Proto_SystemUndeleteTransactionBody: SwiftProtobuf.Message, SwiftProto
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       switch _storage._id {
       case .fileID(let v)?:
@@ -142,7 +142,7 @@ extension Proto_SystemUndeleteTransactionBody: SwiftProtobuf.Message, SwiftProto
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_SystemUndeleteTransactionBody, rhs: Proto_SystemUndeleteTransactionBody) -> Bool {
+  static func ==(lhs: Proto_SystemUndeleteTransactionBody, rhs: Proto_SystemUndeleteTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

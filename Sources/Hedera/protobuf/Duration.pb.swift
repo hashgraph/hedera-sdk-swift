@@ -20,17 +20,17 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 ///  The length of a period of time. This is an identical data structure to the protobuf Duration.proto (see the comments in https://github.com/google/protobuf/blob/master/src/google/protobuf/duration.proto) 
-public struct Proto_Duration {
+struct Proto_Duration {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// number of seconds
-  public var seconds: Int64 = 0
+  var seconds: Int64 = 0
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -38,12 +38,12 @@ public struct Proto_Duration {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_Duration: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Duration"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".Duration"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "seconds"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularInt64Field(value: &self.seconds)
@@ -52,14 +52,14 @@ extension Proto_Duration: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.seconds != 0 {
       try visitor.visitSingularInt64Field(value: self.seconds, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_Duration, rhs: Proto_Duration) -> Bool {
+  static func ==(lhs: Proto_Duration, rhs: Proto_Duration) -> Bool {
     if lhs.seconds != rhs.seconds {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

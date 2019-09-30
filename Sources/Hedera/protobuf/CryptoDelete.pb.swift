@@ -20,34 +20,34 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Mark an account as deleted, moving all its current hbars to another account. It will remain in the ledger, marked as deleted, until it expires. Transfers into it a deleted account fail. But a deleted account can still have its expiration extended in the normal way. 
-public struct Proto_CryptoDeleteTransactionBody {
+struct Proto_CryptoDeleteTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The account ID which will receive all remaining hbars
-  public var transferAccountID: Proto_AccountID {
+  var transferAccountID: Proto_AccountID {
     get {return _storage._transferAccountID ?? Proto_AccountID()}
     set {_uniqueStorage()._transferAccountID = newValue}
   }
   /// Returns true if `transferAccountID` has been explicitly set.
-  public var hasTransferAccountID: Bool {return _storage._transferAccountID != nil}
+  var hasTransferAccountID: Bool {return _storage._transferAccountID != nil}
   /// Clears the value of `transferAccountID`. Subsequent reads from it will return its default value.
-  public mutating func clearTransferAccountID() {_uniqueStorage()._transferAccountID = nil}
+  mutating func clearTransferAccountID() {_uniqueStorage()._transferAccountID = nil}
 
   /// The account ID which should be deleted
-  public var deleteAccountID: Proto_AccountID {
+  var deleteAccountID: Proto_AccountID {
     get {return _storage._deleteAccountID ?? Proto_AccountID()}
     set {_uniqueStorage()._deleteAccountID = newValue}
   }
   /// Returns true if `deleteAccountID` has been explicitly set.
-  public var hasDeleteAccountID: Bool {return _storage._deleteAccountID != nil}
+  var hasDeleteAccountID: Bool {return _storage._deleteAccountID != nil}
   /// Clears the value of `deleteAccountID`. Subsequent reads from it will return its default value.
-  public mutating func clearDeleteAccountID() {_uniqueStorage()._deleteAccountID = nil}
+  mutating func clearDeleteAccountID() {_uniqueStorage()._deleteAccountID = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -57,8 +57,8 @@ public struct Proto_CryptoDeleteTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_CryptoDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".CryptoDeleteTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".CryptoDeleteTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "transferAccountID"),
     2: .same(proto: "deleteAccountID"),
   ]
@@ -84,7 +84,7 @@ extension Proto_CryptoDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -97,7 +97,7 @@ extension Proto_CryptoDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._transferAccountID {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -109,7 +109,7 @@ extension Proto_CryptoDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_CryptoDeleteTransactionBody, rhs: Proto_CryptoDeleteTransactionBody) -> Bool {
+  static func ==(lhs: Proto_CryptoDeleteTransactionBody, rhs: Proto_CryptoDeleteTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

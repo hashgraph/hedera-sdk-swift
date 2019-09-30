@@ -22,42 +22,42 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// Call a function of the given smart contract instance, giving it functionParameters as its inputs. it can use the given amount of gas, and any unspent gas will be refunded to the paying account.
 ///
 /// If this function stores information, it is charged gas to store it. There is a fee in hbars to maintain that storage until the expiration time, and that fee is added as part of the transaction fee.
-public struct Proto_ContractCallTransactionBody {
+struct Proto_ContractCallTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// the contract instance to call, in the format used in transactions
-  public var contractID: Proto_ContractID {
+  var contractID: Proto_ContractID {
     get {return _storage._contractID ?? Proto_ContractID()}
     set {_uniqueStorage()._contractID = newValue}
   }
   /// Returns true if `contractID` has been explicitly set.
-  public var hasContractID: Bool {return _storage._contractID != nil}
+  var hasContractID: Bool {return _storage._contractID != nil}
   /// Clears the value of `contractID`. Subsequent reads from it will return its default value.
-  public mutating func clearContractID() {_uniqueStorage()._contractID = nil}
+  mutating func clearContractID() {_uniqueStorage()._contractID = nil}
 
   /// the maximum amount of gas to use for the call
-  public var gas: Int64 {
+  var gas: Int64 {
     get {return _storage._gas}
     set {_uniqueStorage()._gas = newValue}
   }
 
   /// number of tinybars sent (the function must be payable if this is nonzero)
-  public var amount: Int64 {
+  var amount: Int64 {
     get {return _storage._amount}
     set {_uniqueStorage()._amount = newValue}
   }
 
   /// which function to call, and the parameters to pass to the function
-  public var functionParameters: Data {
+  var functionParameters: Data {
     get {return _storage._functionParameters}
     set {_uniqueStorage()._functionParameters = newValue}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -67,8 +67,8 @@ public struct Proto_ContractCallTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_ContractCallTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ContractCallTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".ContractCallTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "contractID"),
     2: .same(proto: "gas"),
     3: .same(proto: "amount"),
@@ -100,7 +100,7 @@ extension Proto_ContractCallTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -115,7 +115,7 @@ extension Proto_ContractCallTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._contractID {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -133,7 +133,7 @@ extension Proto_ContractCallTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_ContractCallTransactionBody, rhs: Proto_ContractCallTransactionBody) -> Bool {
+  static func ==(lhs: Proto_ContractCallTransactionBody, rhs: Proto_ContractCallTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

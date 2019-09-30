@@ -20,60 +20,60 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// The consensus result for a transaction, which might not be currently known, or may  succeed or fail. 
-public struct Proto_TransactionReceipt {
+struct Proto_TransactionReceipt {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// whether the transaction succeeded or failed (or is unknown)
-  public var status: Proto_ResponseCodeEnum {
+  var status: Proto_ResponseCodeEnum {
     get {return _storage._status}
     set {_uniqueStorage()._status = newValue}
   }
 
   ///  The account ID, if a new account was created
-  public var accountID: Proto_AccountID {
+  var accountID: Proto_AccountID {
     get {return _storage._accountID ?? Proto_AccountID()}
     set {_uniqueStorage()._accountID = newValue}
   }
   /// Returns true if `accountID` has been explicitly set.
-  public var hasAccountID: Bool {return _storage._accountID != nil}
+  var hasAccountID: Bool {return _storage._accountID != nil}
   /// Clears the value of `accountID`. Subsequent reads from it will return its default value.
-  public mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
+  mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
 
   /// The file ID, if a new file was created
-  public var fileID: Proto_FileID {
+  var fileID: Proto_FileID {
     get {return _storage._fileID ?? Proto_FileID()}
     set {_uniqueStorage()._fileID = newValue}
   }
   /// Returns true if `fileID` has been explicitly set.
-  public var hasFileID: Bool {return _storage._fileID != nil}
+  var hasFileID: Bool {return _storage._fileID != nil}
   /// Clears the value of `fileID`. Subsequent reads from it will return its default value.
-  public mutating func clearFileID() {_uniqueStorage()._fileID = nil}
+  mutating func clearFileID() {_uniqueStorage()._fileID = nil}
 
   /// The contract ID, if a new smart contract instance was created
-  public var contractID: Proto_ContractID {
+  var contractID: Proto_ContractID {
     get {return _storage._contractID ?? Proto_ContractID()}
     set {_uniqueStorage()._contractID = newValue}
   }
   /// Returns true if `contractID` has been explicitly set.
-  public var hasContractID: Bool {return _storage._contractID != nil}
+  var hasContractID: Bool {return _storage._contractID != nil}
   /// Clears the value of `contractID`. Subsequent reads from it will return its default value.
-  public mutating func clearContractID() {_uniqueStorage()._contractID = nil}
+  mutating func clearContractID() {_uniqueStorage()._contractID = nil}
 
   /// exchange rate set of Hbar to cents (USD)
-  public var exchangeRate: Proto_ExchangeRateSet {
+  var exchangeRate: Proto_ExchangeRateSet {
     get {return _storage._exchangeRate ?? Proto_ExchangeRateSet()}
     set {_uniqueStorage()._exchangeRate = newValue}
   }
   /// Returns true if `exchangeRate` has been explicitly set.
-  public var hasExchangeRate: Bool {return _storage._exchangeRate != nil}
+  var hasExchangeRate: Bool {return _storage._exchangeRate != nil}
   /// Clears the value of `exchangeRate`. Subsequent reads from it will return its default value.
-  public mutating func clearExchangeRate() {_uniqueStorage()._exchangeRate = nil}
+  mutating func clearExchangeRate() {_uniqueStorage()._exchangeRate = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -83,8 +83,8 @@ public struct Proto_TransactionReceipt {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".TransactionReceipt"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".TransactionReceipt"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "status"),
     2: .same(proto: "accountID"),
     3: .same(proto: "fileID"),
@@ -119,7 +119,7 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -135,7 +135,7 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if _storage._status != .ok {
         try visitor.visitSingularEnumField(value: _storage._status, fieldNumber: 1)
@@ -156,7 +156,7 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_TransactionReceipt, rhs: Proto_TransactionReceipt) -> Bool {
+  static func ==(lhs: Proto_TransactionReceipt, rhs: Proto_TransactionReceipt) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

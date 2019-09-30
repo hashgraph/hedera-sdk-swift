@@ -20,147 +20,147 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Get information about a smart contract instance. This includes the account that it uses, the file containing its bytecode, and the time when it will expire. 
-public struct Proto_ContractGetInfoQuery {
+struct Proto_ContractGetInfoQuery {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// standard info sent from client to node, including the signed payment, and what kind of response is requested (cost, state proof, both, or neither).
-  public var header: Proto_QueryHeader {
+  var header: Proto_QueryHeader {
     get {return _storage._header ?? Proto_QueryHeader()}
     set {_uniqueStorage()._header = newValue}
   }
   /// Returns true if `header` has been explicitly set.
-  public var hasHeader: Bool {return _storage._header != nil}
+  var hasHeader: Bool {return _storage._header != nil}
   /// Clears the value of `header`. Subsequent reads from it will return its default value.
-  public mutating func clearHeader() {_uniqueStorage()._header = nil}
+  mutating func clearHeader() {_uniqueStorage()._header = nil}
 
   /// the contract for which information is requested
-  public var contractID: Proto_ContractID {
+  var contractID: Proto_ContractID {
     get {return _storage._contractID ?? Proto_ContractID()}
     set {_uniqueStorage()._contractID = newValue}
   }
   /// Returns true if `contractID` has been explicitly set.
-  public var hasContractID: Bool {return _storage._contractID != nil}
+  var hasContractID: Bool {return _storage._contractID != nil}
   /// Clears the value of `contractID`. Subsequent reads from it will return its default value.
-  public mutating func clearContractID() {_uniqueStorage()._contractID = nil}
+  mutating func clearContractID() {_uniqueStorage()._contractID = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// Response when the client sends the node ContractGetInfoQuery 
-public struct Proto_ContractGetInfoResponse {
+struct Proto_ContractGetInfoResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///standard response from node to client, including the requested fields: cost, or state proof, or both, or neither
-  public var header: Proto_ResponseHeader {
+  var header: Proto_ResponseHeader {
     get {return _storage._header ?? Proto_ResponseHeader()}
     set {_uniqueStorage()._header = newValue}
   }
   /// Returns true if `header` has been explicitly set.
-  public var hasHeader: Bool {return _storage._header != nil}
+  var hasHeader: Bool {return _storage._header != nil}
   /// Clears the value of `header`. Subsequent reads from it will return its default value.
-  public mutating func clearHeader() {_uniqueStorage()._header = nil}
+  mutating func clearHeader() {_uniqueStorage()._header = nil}
 
   /// the information about this contract instance (a state proof can be generated for this)
-  public var contractInfo: Proto_ContractGetInfoResponse.ContractInfo {
+  var contractInfo: Proto_ContractGetInfoResponse.ContractInfo {
     get {return _storage._contractInfo ?? Proto_ContractGetInfoResponse.ContractInfo()}
     set {_uniqueStorage()._contractInfo = newValue}
   }
   /// Returns true if `contractInfo` has been explicitly set.
-  public var hasContractInfo: Bool {return _storage._contractInfo != nil}
+  var hasContractInfo: Bool {return _storage._contractInfo != nil}
   /// Clears the value of `contractInfo`. Subsequent reads from it will return its default value.
-  public mutating func clearContractInfo() {_uniqueStorage()._contractInfo = nil}
+  mutating func clearContractInfo() {_uniqueStorage()._contractInfo = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public struct ContractInfo {
+  struct ContractInfo {
     // SwiftProtobuf.Message conformance is added in an extension below. See the
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
 
     /// ID of the contract instance, in the format used in transactions
-    public var contractID: Proto_ContractID {
+    var contractID: Proto_ContractID {
       get {return _storage._contractID ?? Proto_ContractID()}
       set {_uniqueStorage()._contractID = newValue}
     }
     /// Returns true if `contractID` has been explicitly set.
-    public var hasContractID: Bool {return _storage._contractID != nil}
+    var hasContractID: Bool {return _storage._contractID != nil}
     /// Clears the value of `contractID`. Subsequent reads from it will return its default value.
-    public mutating func clearContractID() {_uniqueStorage()._contractID = nil}
+    mutating func clearContractID() {_uniqueStorage()._contractID = nil}
 
     /// ID of the cryptocurrency account owned by the contract instance, in the format used in transactions
-    public var accountID: Proto_AccountID {
+    var accountID: Proto_AccountID {
       get {return _storage._accountID ?? Proto_AccountID()}
       set {_uniqueStorage()._accountID = newValue}
     }
     /// Returns true if `accountID` has been explicitly set.
-    public var hasAccountID: Bool {return _storage._accountID != nil}
+    var hasAccountID: Bool {return _storage._accountID != nil}
     /// Clears the value of `accountID`. Subsequent reads from it will return its default value.
-    public mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
+    mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
 
     /// ID of both the contract instance and the cryptocurrency account owned by the contract instance, in the format used by Solidity
-    public var contractAccountID: String {
+    var contractAccountID: String {
       get {return _storage._contractAccountID}
       set {_uniqueStorage()._contractAccountID = newValue}
     }
 
     /// the state of the instance and its fields can be modified arbitrarily if this key signs a transaction to modify it. If this is null, then such modifications are not possible, and there is no administrator that can override the normal operation of this smart contract instance. Note that if it is created with no admin keys, then there is no administrator to authorize changing the admin keys, so there can never be any admin keys for that instance. */
-    public var adminKey: Proto_Key {
+    var adminKey: Proto_Key {
       get {return _storage._adminKey ?? Proto_Key()}
       set {_uniqueStorage()._adminKey = newValue}
     }
     /// Returns true if `adminKey` has been explicitly set.
-    public var hasAdminKey: Bool {return _storage._adminKey != nil}
+    var hasAdminKey: Bool {return _storage._adminKey != nil}
     /// Clears the value of `adminKey`. Subsequent reads from it will return its default value.
-    public mutating func clearAdminKey() {_uniqueStorage()._adminKey = nil}
+    mutating func clearAdminKey() {_uniqueStorage()._adminKey = nil}
 
     /// the current time at which this contract instance (and its account) is set to expire
-    public var expirationTime: Proto_Timestamp {
+    var expirationTime: Proto_Timestamp {
       get {return _storage._expirationTime ?? Proto_Timestamp()}
       set {_uniqueStorage()._expirationTime = newValue}
     }
     /// Returns true if `expirationTime` has been explicitly set.
-    public var hasExpirationTime: Bool {return _storage._expirationTime != nil}
+    var hasExpirationTime: Bool {return _storage._expirationTime != nil}
     /// Clears the value of `expirationTime`. Subsequent reads from it will return its default value.
-    public mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
+    mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
 
     /// the expiration time will extend every this many seconds. If there are insufficient funds, then it extends as long as possible. If the account is empty when it expires, then it is deleted.
-    public var autoRenewPeriod: Proto_Duration {
+    var autoRenewPeriod: Proto_Duration {
       get {return _storage._autoRenewPeriod ?? Proto_Duration()}
       set {_uniqueStorage()._autoRenewPeriod = newValue}
     }
     /// Returns true if `autoRenewPeriod` has been explicitly set.
-    public var hasAutoRenewPeriod: Bool {return _storage._autoRenewPeriod != nil}
+    var hasAutoRenewPeriod: Bool {return _storage._autoRenewPeriod != nil}
     /// Clears the value of `autoRenewPeriod`. Subsequent reads from it will return its default value.
-    public mutating func clearAutoRenewPeriod() {_uniqueStorage()._autoRenewPeriod = nil}
+    mutating func clearAutoRenewPeriod() {_uniqueStorage()._autoRenewPeriod = nil}
 
     /// number of bytes of storage being used by this instance (which affects the cost to extend the expiration time)
-    public var storage: Int64 {
+    var storage: Int64 {
       get {return _storage._storage}
       set {_uniqueStorage()._storage = newValue}
     }
 
     /// the memo associated with the contract (max 100 bytes)
-    public var memo: String {
+    var memo: String {
       get {return _storage._memo}
       set {_uniqueStorage()._memo = newValue}
     }
 
-    public var unknownFields = SwiftProtobuf.UnknownStorage()
+    var unknownFields = SwiftProtobuf.UnknownStorage()
 
-    public init() {}
+    init() {}
 
     fileprivate var _storage = _StorageClass.defaultInstance
   }
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -170,8 +170,8 @@ public struct Proto_ContractGetInfoResponse {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_ContractGetInfoQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ContractGetInfoQuery"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".ContractGetInfoQuery"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "header"),
     2: .same(proto: "contractID"),
   ]
@@ -197,7 +197,7 @@ extension Proto_ContractGetInfoQuery: SwiftProtobuf.Message, SwiftProtobuf._Mess
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -210,7 +210,7 @@ extension Proto_ContractGetInfoQuery: SwiftProtobuf.Message, SwiftProtobuf._Mess
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._header {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -222,7 +222,7 @@ extension Proto_ContractGetInfoQuery: SwiftProtobuf.Message, SwiftProtobuf._Mess
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_ContractGetInfoQuery, rhs: Proto_ContractGetInfoQuery) -> Bool {
+  static func ==(lhs: Proto_ContractGetInfoQuery, rhs: Proto_ContractGetInfoQuery) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -239,8 +239,8 @@ extension Proto_ContractGetInfoQuery: SwiftProtobuf.Message, SwiftProtobuf._Mess
 }
 
 extension Proto_ContractGetInfoResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ContractGetInfoResponse"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".ContractGetInfoResponse"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "header"),
     2: .same(proto: "contractInfo"),
   ]
@@ -266,7 +266,7 @@ extension Proto_ContractGetInfoResponse: SwiftProtobuf.Message, SwiftProtobuf._M
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -279,7 +279,7 @@ extension Proto_ContractGetInfoResponse: SwiftProtobuf.Message, SwiftProtobuf._M
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._header {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -291,7 +291,7 @@ extension Proto_ContractGetInfoResponse: SwiftProtobuf.Message, SwiftProtobuf._M
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_ContractGetInfoResponse, rhs: Proto_ContractGetInfoResponse) -> Bool {
+  static func ==(lhs: Proto_ContractGetInfoResponse, rhs: Proto_ContractGetInfoResponse) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -308,8 +308,8 @@ extension Proto_ContractGetInfoResponse: SwiftProtobuf.Message, SwiftProtobuf._M
 }
 
 extension Proto_ContractGetInfoResponse.ContractInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = Proto_ContractGetInfoResponse.protoMessageName + ".ContractInfo"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = Proto_ContractGetInfoResponse.protoMessageName + ".ContractInfo"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "contractID"),
     2: .same(proto: "accountID"),
     3: .same(proto: "contractAccountID"),
@@ -353,7 +353,7 @@ extension Proto_ContractGetInfoResponse.ContractInfo: SwiftProtobuf.Message, Swi
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -372,7 +372,7 @@ extension Proto_ContractGetInfoResponse.ContractInfo: SwiftProtobuf.Message, Swi
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._contractID {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -402,7 +402,7 @@ extension Proto_ContractGetInfoResponse.ContractInfo: SwiftProtobuf.Message, Swi
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_ContractGetInfoResponse.ContractInfo, rhs: Proto_ContractGetInfoResponse.ContractInfo) -> Bool {
+  static func ==(lhs: Proto_ContractGetInfoResponse.ContractInfo, rhs: Proto_ContractGetInfoResponse.ContractInfo) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

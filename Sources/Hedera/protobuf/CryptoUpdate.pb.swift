@@ -20,54 +20,54 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Change properties for the given account. Any null field is ignored (left unchanged). This transaction must be signed by the existing key for this account. If the transaction is changing the key field, then the transaction must be signed by both the old key (from before the change) and the new key. The old key must sign for security. The new key must sign as a safeguard to avoid accidentally changing to an invalid key, and then having no way to recover. When extending the expiration date, the cost is affected by the size of the list of attached claims, and of the keys associated with the claims and the account. 
-public struct Proto_CryptoUpdateTransactionBody {
+struct Proto_CryptoUpdateTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The account ID which is being updated in this transaction
-  public var accountIdtoUpdate: Proto_AccountID {
+  var accountIdtoUpdate: Proto_AccountID {
     get {return _storage._accountIdtoUpdate ?? Proto_AccountID()}
     set {_uniqueStorage()._accountIdtoUpdate = newValue}
   }
   /// Returns true if `accountIdtoUpdate` has been explicitly set.
-  public var hasAccountIdtoUpdate: Bool {return _storage._accountIdtoUpdate != nil}
+  var hasAccountIdtoUpdate: Bool {return _storage._accountIdtoUpdate != nil}
   /// Clears the value of `accountIdtoUpdate`. Subsequent reads from it will return its default value.
-  public mutating func clearAccountIdtoUpdate() {_uniqueStorage()._accountIdtoUpdate = nil}
+  mutating func clearAccountIdtoUpdate() {_uniqueStorage()._accountIdtoUpdate = nil}
 
   /// The new key
-  public var key: Proto_Key {
+  var key: Proto_Key {
     get {return _storage._key ?? Proto_Key()}
     set {_uniqueStorage()._key = newValue}
   }
   /// Returns true if `key` has been explicitly set.
-  public var hasKey: Bool {return _storage._key != nil}
+  var hasKey: Bool {return _storage._key != nil}
   /// Clears the value of `key`. Subsequent reads from it will return its default value.
-  public mutating func clearKey() {_uniqueStorage()._key = nil}
+  mutating func clearKey() {_uniqueStorage()._key = nil}
 
   /// ID of the account to which this account is proxy staked. If proxyAccountID is null, or is an invalid account, or is an account that isn't a node, then this account is automatically proxy staked to a node chosen by the network, but without earning payments. If the proxyAccountID account refuses to accept proxy staking , or if it is not currently running a node, then it will behave as if proxyAccountID was null.
-  public var proxyAccountID: Proto_AccountID {
+  var proxyAccountID: Proto_AccountID {
     get {return _storage._proxyAccountID ?? Proto_AccountID()}
     set {_uniqueStorage()._proxyAccountID = newValue}
   }
   /// Returns true if `proxyAccountID` has been explicitly set.
-  public var hasProxyAccountID: Bool {return _storage._proxyAccountID != nil}
+  var hasProxyAccountID: Bool {return _storage._proxyAccountID != nil}
   /// Clears the value of `proxyAccountID`. Subsequent reads from it will return its default value.
-  public mutating func clearProxyAccountID() {_uniqueStorage()._proxyAccountID = nil}
+  mutating func clearProxyAccountID() {_uniqueStorage()._proxyAccountID = nil}
 
   /// [Deprecated]. payments earned from proxy staking are shared between the node and this account, with proxyFraction / 10000 going to this account
-  public var proxyFraction: Int32 {
+  var proxyFraction: Int32 {
     get {return _storage._proxyFraction}
     set {_uniqueStorage()._proxyFraction = newValue}
   }
 
-  public var sendRecordThresholdField: OneOf_SendRecordThresholdField? {
+  var sendRecordThresholdField: OneOf_SendRecordThresholdField? {
     get {return _storage._sendRecordThresholdField}
     set {_uniqueStorage()._sendRecordThresholdField = newValue}
   }
 
   /// [Deprecated]. The new threshold amount (in tinybars) for which an account record is created for any send/withdraw transaction
-  public var sendRecordThreshold: UInt64 {
+  var sendRecordThreshold: UInt64 {
     get {
       if case .sendRecordThreshold(let v)? = _storage._sendRecordThresholdField {return v}
       return 0
@@ -76,7 +76,7 @@ public struct Proto_CryptoUpdateTransactionBody {
   }
 
   /// The new threshold amount (in tinybars) for which an account record is created for any send/withdraw transaction
-  public var sendRecordThresholdWrapper: SwiftProtobuf.Google_Protobuf_UInt64Value {
+  var sendRecordThresholdWrapper: SwiftProtobuf.Google_Protobuf_UInt64Value {
     get {
       if case .sendRecordThresholdWrapper(let v)? = _storage._sendRecordThresholdField {return v}
       return SwiftProtobuf.Google_Protobuf_UInt64Value()
@@ -84,13 +84,13 @@ public struct Proto_CryptoUpdateTransactionBody {
     set {_uniqueStorage()._sendRecordThresholdField = .sendRecordThresholdWrapper(newValue)}
   }
 
-  public var receiveRecordThresholdField: OneOf_ReceiveRecordThresholdField? {
+  var receiveRecordThresholdField: OneOf_ReceiveRecordThresholdField? {
     get {return _storage._receiveRecordThresholdField}
     set {_uniqueStorage()._receiveRecordThresholdField = newValue}
   }
 
   /// [Deprecated]. The new threshold amount (in tinybars) for which an account record is created for any receive/deposit transaction.
-  public var receiveRecordThreshold: UInt64 {
+  var receiveRecordThreshold: UInt64 {
     get {
       if case .receiveRecordThreshold(let v)? = _storage._receiveRecordThresholdField {return v}
       return 0
@@ -99,7 +99,7 @@ public struct Proto_CryptoUpdateTransactionBody {
   }
 
   /// The new threshold amount (in tinybars) for which an account record is created for any receive/deposit transaction.
-  public var receiveRecordThresholdWrapper: SwiftProtobuf.Google_Protobuf_UInt64Value {
+  var receiveRecordThresholdWrapper: SwiftProtobuf.Google_Protobuf_UInt64Value {
     get {
       if case .receiveRecordThresholdWrapper(let v)? = _storage._receiveRecordThresholdField {return v}
       return SwiftProtobuf.Google_Protobuf_UInt64Value()
@@ -108,32 +108,32 @@ public struct Proto_CryptoUpdateTransactionBody {
   }
 
   /// The duration in which it will automatically extend the expiration period. If it doesn't have enough balance, it extends as long as possible. If it is empty when it expires, then it is deleted.
-  public var autoRenewPeriod: Proto_Duration {
+  var autoRenewPeriod: Proto_Duration {
     get {return _storage._autoRenewPeriod ?? Proto_Duration()}
     set {_uniqueStorage()._autoRenewPeriod = newValue}
   }
   /// Returns true if `autoRenewPeriod` has been explicitly set.
-  public var hasAutoRenewPeriod: Bool {return _storage._autoRenewPeriod != nil}
+  var hasAutoRenewPeriod: Bool {return _storage._autoRenewPeriod != nil}
   /// Clears the value of `autoRenewPeriod`. Subsequent reads from it will return its default value.
-  public mutating func clearAutoRenewPeriod() {_uniqueStorage()._autoRenewPeriod = nil}
+  mutating func clearAutoRenewPeriod() {_uniqueStorage()._autoRenewPeriod = nil}
 
   /// The new expiration time to extend to (ignored if equal to or before the current one)
-  public var expirationTime: Proto_Timestamp {
+  var expirationTime: Proto_Timestamp {
     get {return _storage._expirationTime ?? Proto_Timestamp()}
     set {_uniqueStorage()._expirationTime = newValue}
   }
   /// Returns true if `expirationTime` has been explicitly set.
-  public var hasExpirationTime: Bool {return _storage._expirationTime != nil}
+  var hasExpirationTime: Bool {return _storage._expirationTime != nil}
   /// Clears the value of `expirationTime`. Subsequent reads from it will return its default value.
-  public mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
+  mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
 
-  public var receiverSigRequiredField: OneOf_ReceiverSigRequiredField? {
+  var receiverSigRequiredField: OneOf_ReceiverSigRequiredField? {
     get {return _storage._receiverSigRequiredField}
     set {_uniqueStorage()._receiverSigRequiredField = newValue}
   }
 
   /// [Deprecated] Do NOT use this field to set a false value because the server cannot distinguish from the default value. Use receiverSigRequiredWrapper field for this purpose.
-  public var receiverSigRequired: Bool {
+  var receiverSigRequired: Bool {
     get {
       if case .receiverSigRequired(let v)? = _storage._receiverSigRequiredField {return v}
       return false
@@ -142,7 +142,7 @@ public struct Proto_CryptoUpdateTransactionBody {
   }
 
   /// If true, this account's key must sign any transaction depositing into this account (in addition to all withdrawals)
-  public var receiverSigRequiredWrapper: SwiftProtobuf.Google_Protobuf_BoolValue {
+  var receiverSigRequiredWrapper: SwiftProtobuf.Google_Protobuf_BoolValue {
     get {
       if case .receiverSigRequiredWrapper(let v)? = _storage._receiverSigRequiredField {return v}
       return SwiftProtobuf.Google_Protobuf_BoolValue()
@@ -150,16 +150,16 @@ public struct Proto_CryptoUpdateTransactionBody {
     set {_uniqueStorage()._receiverSigRequiredField = .receiverSigRequiredWrapper(newValue)}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_SendRecordThresholdField: Equatable {
+  enum OneOf_SendRecordThresholdField: Equatable {
     /// [Deprecated]. The new threshold amount (in tinybars) for which an account record is created for any send/withdraw transaction
     case sendRecordThreshold(UInt64)
     /// The new threshold amount (in tinybars) for which an account record is created for any send/withdraw transaction
     case sendRecordThresholdWrapper(SwiftProtobuf.Google_Protobuf_UInt64Value)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_CryptoUpdateTransactionBody.OneOf_SendRecordThresholdField, rhs: Proto_CryptoUpdateTransactionBody.OneOf_SendRecordThresholdField) -> Bool {
+    static func ==(lhs: Proto_CryptoUpdateTransactionBody.OneOf_SendRecordThresholdField, rhs: Proto_CryptoUpdateTransactionBody.OneOf_SendRecordThresholdField) -> Bool {
       switch (lhs, rhs) {
       case (.sendRecordThreshold(let l), .sendRecordThreshold(let r)): return l == r
       case (.sendRecordThresholdWrapper(let l), .sendRecordThresholdWrapper(let r)): return l == r
@@ -169,14 +169,14 @@ public struct Proto_CryptoUpdateTransactionBody {
   #endif
   }
 
-  public enum OneOf_ReceiveRecordThresholdField: Equatable {
+  enum OneOf_ReceiveRecordThresholdField: Equatable {
     /// [Deprecated]. The new threshold amount (in tinybars) for which an account record is created for any receive/deposit transaction.
     case receiveRecordThreshold(UInt64)
     /// The new threshold amount (in tinybars) for which an account record is created for any receive/deposit transaction.
     case receiveRecordThresholdWrapper(SwiftProtobuf.Google_Protobuf_UInt64Value)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_CryptoUpdateTransactionBody.OneOf_ReceiveRecordThresholdField, rhs: Proto_CryptoUpdateTransactionBody.OneOf_ReceiveRecordThresholdField) -> Bool {
+    static func ==(lhs: Proto_CryptoUpdateTransactionBody.OneOf_ReceiveRecordThresholdField, rhs: Proto_CryptoUpdateTransactionBody.OneOf_ReceiveRecordThresholdField) -> Bool {
       switch (lhs, rhs) {
       case (.receiveRecordThreshold(let l), .receiveRecordThreshold(let r)): return l == r
       case (.receiveRecordThresholdWrapper(let l), .receiveRecordThresholdWrapper(let r)): return l == r
@@ -186,14 +186,14 @@ public struct Proto_CryptoUpdateTransactionBody {
   #endif
   }
 
-  public enum OneOf_ReceiverSigRequiredField: Equatable {
+  enum OneOf_ReceiverSigRequiredField: Equatable {
     /// [Deprecated] Do NOT use this field to set a false value because the server cannot distinguish from the default value. Use receiverSigRequiredWrapper field for this purpose.
     case receiverSigRequired(Bool)
     /// If true, this account's key must sign any transaction depositing into this account (in addition to all withdrawals)
     case receiverSigRequiredWrapper(SwiftProtobuf.Google_Protobuf_BoolValue)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_CryptoUpdateTransactionBody.OneOf_ReceiverSigRequiredField, rhs: Proto_CryptoUpdateTransactionBody.OneOf_ReceiverSigRequiredField) -> Bool {
+    static func ==(lhs: Proto_CryptoUpdateTransactionBody.OneOf_ReceiverSigRequiredField, rhs: Proto_CryptoUpdateTransactionBody.OneOf_ReceiverSigRequiredField) -> Bool {
       switch (lhs, rhs) {
       case (.receiverSigRequired(let l), .receiverSigRequired(let r)): return l == r
       case (.receiverSigRequiredWrapper(let l), .receiverSigRequiredWrapper(let r)): return l == r
@@ -203,7 +203,7 @@ public struct Proto_CryptoUpdateTransactionBody {
   #endif
   }
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -213,8 +213,8 @@ public struct Proto_CryptoUpdateTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_CryptoUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".CryptoUpdateTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".CryptoUpdateTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     2: .same(proto: "accountIDToUpdate"),
     3: .same(proto: "key"),
     4: .same(proto: "proxyAccountID"),
@@ -264,7 +264,7 @@ extension Proto_CryptoUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -320,7 +320,7 @@ extension Proto_CryptoUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._accountIdtoUpdate {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
@@ -362,7 +362,7 @@ extension Proto_CryptoUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_CryptoUpdateTransactionBody, rhs: Proto_CryptoUpdateTransactionBody) -> Bool {
+  static func ==(lhs: Proto_CryptoUpdateTransactionBody, rhs: Proto_CryptoUpdateTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

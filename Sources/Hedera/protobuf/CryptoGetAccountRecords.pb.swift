@@ -20,73 +20,73 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Get all the records for an account for any transfers into it and out of it, that were above the threshold, during the last 25 hours. 
-public struct Proto_CryptoGetAccountRecordsQuery {
+struct Proto_CryptoGetAccountRecordsQuery {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Standard info sent from client to node, including the signed payment, and what kind of response is requested (cost, state proof, both, or neither).
-  public var header: Proto_QueryHeader {
+  var header: Proto_QueryHeader {
     get {return _storage._header ?? Proto_QueryHeader()}
     set {_uniqueStorage()._header = newValue}
   }
   /// Returns true if `header` has been explicitly set.
-  public var hasHeader: Bool {return _storage._header != nil}
+  var hasHeader: Bool {return _storage._header != nil}
   /// Clears the value of `header`. Subsequent reads from it will return its default value.
-  public mutating func clearHeader() {_uniqueStorage()._header = nil}
+  mutating func clearHeader() {_uniqueStorage()._header = nil}
 
   /// The account ID for which the records should be retrieved
-  public var accountID: Proto_AccountID {
+  var accountID: Proto_AccountID {
     get {return _storage._accountID ?? Proto_AccountID()}
     set {_uniqueStorage()._accountID = newValue}
   }
   /// Returns true if `accountID` has been explicitly set.
-  public var hasAccountID: Bool {return _storage._accountID != nil}
+  var hasAccountID: Bool {return _storage._accountID != nil}
   /// Clears the value of `accountID`. Subsequent reads from it will return its default value.
-  public mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
+  mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// Response when the client sends the node CryptoGetAccountRecordsQuery 
-public struct Proto_CryptoGetAccountRecordsResponse {
+struct Proto_CryptoGetAccountRecordsResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///Standard response from node to client, including the requested fields: cost, or state proof, or both, or neither
-  public var header: Proto_ResponseHeader {
+  var header: Proto_ResponseHeader {
     get {return _storage._header ?? Proto_ResponseHeader()}
     set {_uniqueStorage()._header = newValue}
   }
   /// Returns true if `header` has been explicitly set.
-  public var hasHeader: Bool {return _storage._header != nil}
+  var hasHeader: Bool {return _storage._header != nil}
   /// Clears the value of `header`. Subsequent reads from it will return its default value.
-  public mutating func clearHeader() {_uniqueStorage()._header = nil}
+  mutating func clearHeader() {_uniqueStorage()._header = nil}
 
   /// The account that this record is for
-  public var accountID: Proto_AccountID {
+  var accountID: Proto_AccountID {
     get {return _storage._accountID ?? Proto_AccountID()}
     set {_uniqueStorage()._accountID = newValue}
   }
   /// Returns true if `accountID` has been explicitly set.
-  public var hasAccountID: Bool {return _storage._accountID != nil}
+  var hasAccountID: Bool {return _storage._accountID != nil}
   /// Clears the value of `accountID`. Subsequent reads from it will return its default value.
-  public mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
+  mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
 
   /// List of records, each with CryptoRecordBody as their body
-  public var records: [Proto_TransactionRecord] {
+  var records: [Proto_TransactionRecord] {
     get {return _storage._records}
     set {_uniqueStorage()._records = newValue}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -96,8 +96,8 @@ public struct Proto_CryptoGetAccountRecordsResponse {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_CryptoGetAccountRecordsQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".CryptoGetAccountRecordsQuery"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".CryptoGetAccountRecordsQuery"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "header"),
     2: .same(proto: "accountID"),
   ]
@@ -123,7 +123,7 @@ extension Proto_CryptoGetAccountRecordsQuery: SwiftProtobuf.Message, SwiftProtob
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -136,7 +136,7 @@ extension Proto_CryptoGetAccountRecordsQuery: SwiftProtobuf.Message, SwiftProtob
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._header {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -148,7 +148,7 @@ extension Proto_CryptoGetAccountRecordsQuery: SwiftProtobuf.Message, SwiftProtob
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_CryptoGetAccountRecordsQuery, rhs: Proto_CryptoGetAccountRecordsQuery) -> Bool {
+  static func ==(lhs: Proto_CryptoGetAccountRecordsQuery, rhs: Proto_CryptoGetAccountRecordsQuery) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -165,8 +165,8 @@ extension Proto_CryptoGetAccountRecordsQuery: SwiftProtobuf.Message, SwiftProtob
 }
 
 extension Proto_CryptoGetAccountRecordsResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".CryptoGetAccountRecordsResponse"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".CryptoGetAccountRecordsResponse"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "header"),
     2: .same(proto: "accountID"),
     3: .same(proto: "records"),
@@ -195,7 +195,7 @@ extension Proto_CryptoGetAccountRecordsResponse: SwiftProtobuf.Message, SwiftPro
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -209,7 +209,7 @@ extension Proto_CryptoGetAccountRecordsResponse: SwiftProtobuf.Message, SwiftPro
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._header {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -224,7 +224,7 @@ extension Proto_CryptoGetAccountRecordsResponse: SwiftProtobuf.Message, SwiftPro
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_CryptoGetAccountRecordsResponse, rhs: Proto_CryptoGetAccountRecordsResponse) -> Bool {
+  static func ==(lhs: Proto_CryptoGetAccountRecordsResponse, rhs: Proto_CryptoGetAccountRecordsResponse) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

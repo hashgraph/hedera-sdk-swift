@@ -20,18 +20,18 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Delete a file or smart contract - can only be done with a Hedera admin multisig. When it is deleted, it immediately disappears from the system as seen by the user, but is still stored internally until the expiration time, at which time it is truly and permanently deleted. Until that time, it can be undeleted by the Hedera admin multisig. When a smart contract is deleted, the cryptocurrency account within it continues to exist, and is not affected by the expiration time here. 
-public struct Proto_SystemDeleteTransactionBody {
+struct Proto_SystemDeleteTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var id: OneOf_ID? {
+  var id: OneOf_ID? {
     get {return _storage._id}
     set {_uniqueStorage()._id = newValue}
   }
 
   /// The file ID of the file to delete, in the format used in transactions
-  public var fileID: Proto_FileID {
+  var fileID: Proto_FileID {
     get {
       if case .fileID(let v)? = _storage._id {return v}
       return Proto_FileID()
@@ -40,7 +40,7 @@ public struct Proto_SystemDeleteTransactionBody {
   }
 
   /// The contract ID instance to delete, in the format used in transactions
-  public var contractID: Proto_ContractID {
+  var contractID: Proto_ContractID {
     get {
       if case .contractID(let v)? = _storage._id {return v}
       return Proto_ContractID()
@@ -49,25 +49,25 @@ public struct Proto_SystemDeleteTransactionBody {
   }
 
   /// The timestamp in seconds at which the "deleted" file should truly be permanently deleted
-  public var expirationTime: Proto_TimestampSeconds {
+  var expirationTime: Proto_TimestampSeconds {
     get {return _storage._expirationTime ?? Proto_TimestampSeconds()}
     set {_uniqueStorage()._expirationTime = newValue}
   }
   /// Returns true if `expirationTime` has been explicitly set.
-  public var hasExpirationTime: Bool {return _storage._expirationTime != nil}
+  var hasExpirationTime: Bool {return _storage._expirationTime != nil}
   /// Clears the value of `expirationTime`. Subsequent reads from it will return its default value.
-  public mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
+  mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_ID: Equatable {
+  enum OneOf_ID: Equatable {
     /// The file ID of the file to delete, in the format used in transactions
     case fileID(Proto_FileID)
     /// The contract ID instance to delete, in the format used in transactions
     case contractID(Proto_ContractID)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_SystemDeleteTransactionBody.OneOf_ID, rhs: Proto_SystemDeleteTransactionBody.OneOf_ID) -> Bool {
+    static func ==(lhs: Proto_SystemDeleteTransactionBody.OneOf_ID, rhs: Proto_SystemDeleteTransactionBody.OneOf_ID) -> Bool {
       switch (lhs, rhs) {
       case (.fileID(let l), .fileID(let r)): return l == r
       case (.contractID(let l), .contractID(let r)): return l == r
@@ -77,7 +77,7 @@ public struct Proto_SystemDeleteTransactionBody {
   #endif
   }
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -87,8 +87,8 @@ public struct Proto_SystemDeleteTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_SystemDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".SystemDeleteTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".SystemDeleteTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "fileID"),
     2: .same(proto: "contractID"),
     3: .same(proto: "expirationTime"),
@@ -115,7 +115,7 @@ extension Proto_SystemDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -143,7 +143,7 @@ extension Proto_SystemDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       switch _storage._id {
       case .fileID(let v)?:
@@ -159,7 +159,7 @@ extension Proto_SystemDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_SystemDeleteTransactionBody, rhs: Proto_SystemDeleteTransactionBody) -> Bool {
+  static func ==(lhs: Proto_SystemDeleteTransactionBody, rhs: Proto_SystemDeleteTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

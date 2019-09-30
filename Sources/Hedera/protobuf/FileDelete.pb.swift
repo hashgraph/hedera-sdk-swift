@@ -20,24 +20,24 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Delete the given file. After deletion, it will be marked as deleted and will have no contents. But information about it will continue to exist until it expires. A list of keys  was given when the file was created. All the keys on that list must sign transactions to create or modify the file, but any single one of them can be used to delete the file. Each "key" on that list may itself be a threshold key containing other keys (including other threshold keys). 
-public struct Proto_FileDeleteTransactionBody {
+struct Proto_FileDeleteTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The file to delete. It will be marked as deleted until it expires. Then it will disappear.
-  public var fileID: Proto_FileID {
+  var fileID: Proto_FileID {
     get {return _storage._fileID ?? Proto_FileID()}
     set {_uniqueStorage()._fileID = newValue}
   }
   /// Returns true if `fileID` has been explicitly set.
-  public var hasFileID: Bool {return _storage._fileID != nil}
+  var hasFileID: Bool {return _storage._fileID != nil}
   /// Clears the value of `fileID`. Subsequent reads from it will return its default value.
-  public mutating func clearFileID() {_uniqueStorage()._fileID = nil}
+  mutating func clearFileID() {_uniqueStorage()._fileID = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -47,8 +47,8 @@ public struct Proto_FileDeleteTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_FileDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".FileDeleteTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".FileDeleteTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     2: .same(proto: "fileID"),
   ]
 
@@ -71,7 +71,7 @@ extension Proto_FileDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -83,7 +83,7 @@ extension Proto_FileDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._fileID {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
@@ -92,7 +92,7 @@ extension Proto_FileDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_FileDeleteTransactionBody, rhs: Proto_FileDeleteTransactionBody) -> Bool {
+  static func ==(lhs: Proto_FileDeleteTransactionBody, rhs: Proto_FileDeleteTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

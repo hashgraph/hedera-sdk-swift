@@ -20,8 +20,8 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// The functionality provided by hedera hashgraph 
-public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
-  public typealias RawValue = Int
+enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
+  typealias RawValue = Int
 
   /// UNSPECIFIED - Need to keep first value as unspecified because first element is ignored and not parsed (0 is ignored by parser)
   case none // = 0
@@ -135,11 +135,11 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
   case transactionGetReceipt // = 36
   case UNRECOGNIZED(Int)
 
-  public init() {
+  init() {
     self = .none
   }
 
-  public init?(rawValue: Int) {
+  init?(rawValue: Int) {
     switch rawValue {
     case 0: self = .none
     case 1: self = .cryptoTransfer
@@ -182,7 +182,7 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
     }
   }
 
-  public var rawValue: Int {
+  var rawValue: Int {
     switch self {
     case .none: return 0
     case .cryptoTransfer: return 1
@@ -231,7 +231,7 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
 
 extension Proto_HederaFunctionality: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_HederaFunctionality] = [
+  static var allCases: [Proto_HederaFunctionality] = [
     .none,
     .cryptoTransfer,
     .cryptoUpdate,
@@ -277,125 +277,125 @@ extension Proto_HederaFunctionality: CaseIterable {
 /// Each shard has a nonnegative shard number. Each realm within a given shard has a nonnegative realm number (that number might be reused in other shards). And each account, file, and smart contract instance within a given realm has a nonnegative number (which might be reused in other realms). Every account, file, and smart contract instance is within exactly one realm. So a FileID is a triplet of numbers, like 0.1.2 for entity number 2 within realm 1  within shard 0.  Each realm maintains a single counter for assigning numbers,  so if there is a file with ID 0.1.2, then there won't be an account or smart  contract instance with ID 0.1.2.
 ///
 ///Everything is partitioned into realms so that each Solidity smart contract can  access everything in just a single realm, locking all those entities while it's  running, but other smart contracts could potentially run in other realms in  parallel. So realms allow Solidity to be parallelized somewhat, even though the  language itself assumes everything is serial. 
-public struct Proto_ShardID {
+struct Proto_ShardID {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///the shard number (nonnegative)
-  public var shardNum: Int64 = 0
+  var shardNum: Int64 = 0
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 /// The ID for a realm. Within a given shard, every realm has a unique ID. Each account, file, and contract instance belongs to exactly one realm. 
-public struct Proto_RealmID {
+struct Proto_RealmID {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///The shard number (nonnegative)
-  public var shardNum: Int64 = 0
+  var shardNum: Int64 = 0
 
   ///The realm number (nonnegative)
-  public var realmNum: Int64 = 0
+  var realmNum: Int64 = 0
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 /// The ID for an a cryptocurrency account  
-public struct Proto_AccountID {
+struct Proto_AccountID {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///The shard number (nonnegative)
-  public var shardNum: Int64 = 0
+  var shardNum: Int64 = 0
 
   ///The realm number (nonnegative)
-  public var realmNum: Int64 = 0
+  var realmNum: Int64 = 0
 
   ///A nonnegative account number unique within its realm
-  public var accountNum: Int64 = 0
+  var accountNum: Int64 = 0
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 /// The ID for a file  
-public struct Proto_FileID {
+struct Proto_FileID {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///The shard number (nonnegative)
-  public var shardNum: Int64 = 0
+  var shardNum: Int64 = 0
 
   ///The realm number (nonnegative)
-  public var realmNum: Int64 = 0
+  var realmNum: Int64 = 0
 
   ///A nonnegative File number unique within its realm
-  public var fileNum: Int64 = 0
+  var fileNum: Int64 = 0
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 /// The ID for a smart contract instance  
-public struct Proto_ContractID {
+struct Proto_ContractID {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///The shard number (nonnegative)
-  public var shardNum: Int64 = 0
+  var shardNum: Int64 = 0
 
   ///The realm number (nonnegative)
-  public var realmNum: Int64 = 0
+  var realmNum: Int64 = 0
 
   ///A nonnegative number unique within its realm
-  public var contractNum: Int64 = 0
+  var contractNum: Int64 = 0
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 /// The ID for a transaction. This is used for retrieving receipts and records for a transaction, for appending to a file right after creating it, for instantiating a smart contract with bytecode in a file just created, and internally by the network for detecting when duplicate transactions are submitted. A user might get a transaction processed faster by submitting it to N nodes, each with a different node account, but all with the same TransactionID. Then, the transaction will take effect when the first of all those nodes submits the transaction and it reaches consensus. The other transactions will not take effect. So this could make the transaction take effect faster, if any given node might be slow. However, the full transaction fee is charged for each transaction, so the total fee is N times as much if the transaction is sent to N nodes. 
-public struct Proto_TransactionID {
+struct Proto_TransactionID {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The transaction is invalid if consensusTimestamp < transactionID.transactionStartValid
-  public var transactionValidStart: Proto_Timestamp {
+  var transactionValidStart: Proto_Timestamp {
     get {return _storage._transactionValidStart ?? Proto_Timestamp()}
     set {_uniqueStorage()._transactionValidStart = newValue}
   }
   /// Returns true if `transactionValidStart` has been explicitly set.
-  public var hasTransactionValidStart: Bool {return _storage._transactionValidStart != nil}
+  var hasTransactionValidStart: Bool {return _storage._transactionValidStart != nil}
   /// Clears the value of `transactionValidStart`. Subsequent reads from it will return its default value.
-  public mutating func clearTransactionValidStart() {_uniqueStorage()._transactionValidStart = nil}
+  mutating func clearTransactionValidStart() {_uniqueStorage()._transactionValidStart = nil}
 
   ///The Account ID that paid for this transaction
-  public var accountID: Proto_AccountID {
+  var accountID: Proto_AccountID {
     get {return _storage._accountID ?? Proto_AccountID()}
     set {_uniqueStorage()._accountID = newValue}
   }
   /// Returns true if `accountID` has been explicitly set.
-  public var hasAccountID: Bool {return _storage._accountID != nil}
+  var hasAccountID: Bool {return _storage._accountID != nil}
   /// Clears the value of `accountID`. Subsequent reads from it will return its default value.
-  public mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
+  mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -411,18 +411,18 @@ public struct Proto_TransactionID {
 /// A Key can contain a ThresholdKey or KeyList, which in turn contain a Key, so this mutual recursion would allow nesting arbitrarily deep. A ThresholdKey which contains a list of primitive keys (e.g., ed25519) has 3 levels: ThresholdKey -> KeyList -> Key. A KeyList which contains several primitive keys (e.g., ed25519) has 2 levels: KeyList -> Key. A Key with 2 levels of nested ThresholdKeys has 7 levels: Key -> ThresholdKey -> KeyList -> Key -> ThresholdKey -> KeyList -> Key.
 ///
 /// Each Key should not have more than 46 levels, which implies 15 levels of nested ThresholdKeys.
-public struct Proto_Key {
+struct Proto_Key {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var key: OneOf_Key? {
+  var key: OneOf_Key? {
     get {return _storage._key}
     set {_uniqueStorage()._key = newValue}
   }
 
   /// smart contract instance that is authorized as if it had signed with a key
-  public var contractID: Proto_ContractID {
+  var contractID: Proto_ContractID {
     get {
       if case .contractID(let v)? = _storage._key {return v}
       return Proto_ContractID()
@@ -431,7 +431,7 @@ public struct Proto_Key {
   }
 
   /// ed25519 public key bytes
-  public var ed25519: Data {
+  var ed25519: Data {
     get {
       if case .ed25519(let v)? = _storage._key {return v}
       return SwiftProtobuf.Internal.emptyData
@@ -440,7 +440,7 @@ public struct Proto_Key {
   }
 
   ///RSA-3072 public key bytes
-  public var rsa3072: Data {
+  var rsa3072: Data {
     get {
       if case .rsa3072(let v)? = _storage._key {return v}
       return SwiftProtobuf.Internal.emptyData
@@ -449,7 +449,7 @@ public struct Proto_Key {
   }
 
   ///ECDSA with the p-384 curve public key bytes
-  public var ecdsa384: Data {
+  var ecdsa384: Data {
     get {
       if case .ecdsa384(let v)? = _storage._key {return v}
       return SwiftProtobuf.Internal.emptyData
@@ -458,7 +458,7 @@ public struct Proto_Key {
   }
 
   /// a threshold N followed by a list of M keys, any N of which are required to form a valid signature
-  public var thresholdKey: Proto_ThresholdKey {
+  var thresholdKey: Proto_ThresholdKey {
     get {
       if case .thresholdKey(let v)? = _storage._key {return v}
       return Proto_ThresholdKey()
@@ -467,7 +467,7 @@ public struct Proto_Key {
   }
 
   /// A list of Keys of the Key type.
-  public var keyList: Proto_KeyList {
+  var keyList: Proto_KeyList {
     get {
       if case .keyList(let v)? = _storage._key {return v}
       return Proto_KeyList()
@@ -475,9 +475,9 @@ public struct Proto_Key {
     set {_uniqueStorage()._key = .keyList(newValue)}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_Key: Equatable {
+  enum OneOf_Key: Equatable {
     /// smart contract instance that is authorized as if it had signed with a key
     case contractID(Proto_ContractID)
     /// ed25519 public key bytes
@@ -492,7 +492,7 @@ public struct Proto_Key {
     case keyList(Proto_KeyList)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_Key.OneOf_Key, rhs: Proto_Key.OneOf_Key) -> Bool {
+    static func ==(lhs: Proto_Key.OneOf_Key, rhs: Proto_Key.OneOf_Key) -> Bool {
       switch (lhs, rhs) {
       case (.contractID(let l), .contractID(let r)): return l == r
       case (.ed25519(let l), .ed25519(let r)): return l == r
@@ -506,69 +506,69 @@ public struct Proto_Key {
   #endif
   }
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// A set of public keys that are used together to form a threshold signature. If the threshold is N and there are M keys, then this is an N of M threshold signature. If an account is associated with ThresholdKeys, then a transaction to move cryptocurrency out of it must be signed by a list of M signatures, where at most M-N of them are blank, and the other at least N of them are valid signatures corresponding to at least N of the public keys listed here. 
-public struct Proto_ThresholdKey {
+struct Proto_ThresholdKey {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// A valid signature set must have at least this many signatures
-  public var threshold: UInt32 {
+  var threshold: UInt32 {
     get {return _storage._threshold}
     set {_uniqueStorage()._threshold = newValue}
   }
 
   /// List of all the keys that can sign
-  public var keys: Proto_KeyList {
+  var keys: Proto_KeyList {
     get {return _storage._keys ?? Proto_KeyList()}
     set {_uniqueStorage()._keys = newValue}
   }
   /// Returns true if `keys` has been explicitly set.
-  public var hasKeys: Bool {return _storage._keys != nil}
+  var hasKeys: Bool {return _storage._keys != nil}
   /// Clears the value of `keys`. Subsequent reads from it will return its default value.
-  public mutating func clearKeys() {_uniqueStorage()._keys = nil}
+  mutating func clearKeys() {_uniqueStorage()._keys = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// A list of keys 
-public struct Proto_KeyList {
+struct Proto_KeyList {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// list of keys
-  public var keys: [Proto_Key] = []
+  var keys: [Proto_Key] = []
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 /// A Signature corresponding to a Key. It is a sequence of bytes holding a public key signature from one of the three supported systems (ed25519, RSA-3072,  ECDSA with p384). Or, it can be a list of signatures corresponding to a single threshold key. Or, it can be the ID of a smart contract instance, which is authorized to act as if it had a key. If an account has an ed25519 key associated with it, then the corresponding private key must sign any transaction to transfer cryptocurrency out of it. If it has a smart contract ID associated with it, then that smart contract is allowed to transfer cryptocurrency out of it. The smart contract doesn't actually have a key, and  doesn't actually sign a transaction. But it's as if a virtual transaction were created, and the smart contract signed it with a private key. A key can also be a "threshold key", which means a list of M keys, any N of which must sign in order for the threshold signature to be considered valid. The keys within a threshold signature may themselves be threshold signatures, to allow complex signature requirements (this nesting is not supported in the currently, but will be supported in a future version of API). If a Signature message is missing the "signature" field, then this is considered to be a null signature. That is useful in cases such as threshold signatures, where some of the signatures can be null.
 /// The definition of Key uses mutual recursion, so it allows nesting that is arbitrarily deep. But the current API only accepts Key messages up to 3 levels deep, such as a list of threshold keys, each of which is a list of primitive keys. Therefore, the matching Signature will have the same limitation. This restriction may be relaxed in future versions of the API, to allow deeper nesting.
 /// This message is deprecated and succeeded by SignaturePair and SignatureMap messages. 
-public struct Proto_Signature {
+struct Proto_Signature {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var signature: OneOf_Signature? {
+  var signature: OneOf_Signature? {
     get {return _storage._signature}
     set {_uniqueStorage()._signature = newValue}
   }
 
   /// smart contract virtual signature (always length zero)
-  public var contract: Data {
+  var contract: Data {
     get {
       if case .contract(let v)? = _storage._signature {return v}
       return SwiftProtobuf.Internal.emptyData
@@ -577,7 +577,7 @@ public struct Proto_Signature {
   }
 
   /// ed25519 signature bytes
-  public var ed25519: Data {
+  var ed25519: Data {
     get {
       if case .ed25519(let v)? = _storage._signature {return v}
       return SwiftProtobuf.Internal.emptyData
@@ -586,7 +586,7 @@ public struct Proto_Signature {
   }
 
   ///RSA-3072 signature bytes
-  public var rsa3072: Data {
+  var rsa3072: Data {
     get {
       if case .rsa3072(let v)? = _storage._signature {return v}
       return SwiftProtobuf.Internal.emptyData
@@ -595,7 +595,7 @@ public struct Proto_Signature {
   }
 
   ///ECDSA p-384 signature bytes
-  public var ecdsa384: Data {
+  var ecdsa384: Data {
     get {
       if case .ecdsa384(let v)? = _storage._signature {return v}
       return SwiftProtobuf.Internal.emptyData
@@ -604,7 +604,7 @@ public struct Proto_Signature {
   }
 
   /// A list of signatures for a single N-of-M threshold Key. This must be a list of exactly M signatures, at least N of which are non-null.
-  public var thresholdSignature: Proto_ThresholdSignature {
+  var thresholdSignature: Proto_ThresholdSignature {
     get {
       if case .thresholdSignature(let v)? = _storage._signature {return v}
       return Proto_ThresholdSignature()
@@ -613,7 +613,7 @@ public struct Proto_Signature {
   }
 
   /// A list of M signatures, each corresponding to a Key in a KeyList of the same length.
-  public var signatureList: Proto_SignatureList {
+  var signatureList: Proto_SignatureList {
     get {
       if case .signatureList(let v)? = _storage._signature {return v}
       return Proto_SignatureList()
@@ -621,9 +621,9 @@ public struct Proto_Signature {
     set {_uniqueStorage()._signature = .signatureList(newValue)}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_Signature: Equatable {
+  enum OneOf_Signature: Equatable {
     /// smart contract virtual signature (always length zero)
     case contract(Data)
     /// ed25519 signature bytes
@@ -638,7 +638,7 @@ public struct Proto_Signature {
     case signatureList(Proto_SignatureList)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_Signature.OneOf_Signature, rhs: Proto_Signature.OneOf_Signature) -> Bool {
+    static func ==(lhs: Proto_Signature.OneOf_Signature, rhs: Proto_Signature.OneOf_Signature) -> Bool {
       switch (lhs, rhs) {
       case (.contract(let l), .contract(let r)): return l == r
       case (.ed25519(let l), .ed25519(let r)): return l == r
@@ -652,64 +652,64 @@ public struct Proto_Signature {
   #endif
   }
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// A signature corresponding to a ThresholdKey. For an N-of-M threshold key, this is a list of M signatures, at least N of which must be non-null. 
 /// This message is deprecated and succeeded by SignaturePair and SignatureMap messages. 
-public struct Proto_ThresholdSignature {
+struct Proto_ThresholdSignature {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// for an N-of-M threshold key, this is a list of M signatures, at least N of which must be non-null
-  public var sigs: Proto_SignatureList {
+  var sigs: Proto_SignatureList {
     get {return _storage._sigs ?? Proto_SignatureList()}
     set {_uniqueStorage()._sigs = newValue}
   }
   /// Returns true if `sigs` has been explicitly set.
-  public var hasSigs: Bool {return _storage._sigs != nil}
+  var hasSigs: Bool {return _storage._sigs != nil}
   /// Clears the value of `sigs`. Subsequent reads from it will return its default value.
-  public mutating func clearSigs() {_uniqueStorage()._sigs = nil}
+  mutating func clearSigs() {_uniqueStorage()._sigs = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// The signatures corresponding to a KeyList of the same length.
 /// This message is deprecated and succeeded by SignaturePair and SignatureMap messages. 
-public struct Proto_SignatureList {
+struct Proto_SignatureList {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// each signature corresponds to a Key in the KeyList
-  public var sigs: [Proto_Signature] = []
+  var sigs: [Proto_Signature] = []
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 /// The client may use any number of bytes from 0 to the whole length of the public key for pubKeyPrefix. 
 /// If 0 bytes is used, then it is assumed that only one public key is used to sign.
-public struct Proto_SignaturePair {
+struct Proto_SignaturePair {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// First few bytes of the public key
-  public var pubKeyPrefix: Data = SwiftProtobuf.Internal.emptyData
+  var pubKeyPrefix: Data = SwiftProtobuf.Internal.emptyData
 
-  public var signature: Proto_SignaturePair.OneOf_Signature? = nil
+  var signature: Proto_SignaturePair.OneOf_Signature? = nil
 
   /// smart contract virtual signature (always length zero)
-  public var contract: Data {
+  var contract: Data {
     get {
       if case .contract(let v)? = signature {return v}
       return SwiftProtobuf.Internal.emptyData
@@ -718,7 +718,7 @@ public struct Proto_SignaturePair {
   }
 
   /// ed25519 signature
-  public var ed25519: Data {
+  var ed25519: Data {
     get {
       if case .ed25519(let v)? = signature {return v}
       return SwiftProtobuf.Internal.emptyData
@@ -727,7 +727,7 @@ public struct Proto_SignaturePair {
   }
 
   ///RSA-3072 signature
-  public var rsa3072: Data {
+  var rsa3072: Data {
     get {
       if case .rsa3072(let v)? = signature {return v}
       return SwiftProtobuf.Internal.emptyData
@@ -736,7 +736,7 @@ public struct Proto_SignaturePair {
   }
 
   ///ECDSA p-384 signature
-  public var ecdsa384: Data {
+  var ecdsa384: Data {
     get {
       if case .ecdsa384(let v)? = signature {return v}
       return SwiftProtobuf.Internal.emptyData
@@ -744,9 +744,9 @@ public struct Proto_SignaturePair {
     set {signature = .ecdsa384(newValue)}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_Signature: Equatable {
+  enum OneOf_Signature: Equatable {
     /// smart contract virtual signature (always length zero)
     case contract(Data)
     /// ed25519 signature
@@ -757,7 +757,7 @@ public struct Proto_SignaturePair {
     case ecdsa384(Data)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_SignaturePair.OneOf_Signature, rhs: Proto_SignaturePair.OneOf_Signature) -> Bool {
+    static func ==(lhs: Proto_SignaturePair.OneOf_Signature, rhs: Proto_SignaturePair.OneOf_Signature) -> Bool {
       switch (lhs, rhs) {
       case (.contract(let l), .contract(let r)): return l == r
       case (.ed25519(let l), .ed25519(let r)): return l == r
@@ -769,236 +769,236 @@ public struct Proto_SignaturePair {
   #endif
   }
 
-  public init() {}
+  init() {}
 }
 
 /// A set of signatures corresponding to every unique public key used to sign a given transaction. 
 /// If one public key matches more than one prefixes on the signature map, the transaction containing the map will fail immediately with the response code KEY_PREFIX_MISMATCH.  
-public struct Proto_SignatureMap {
+struct Proto_SignatureMap {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Each signature pair corresponds to a unique Key required to sign the transaction.
-  public var sigPair: [Proto_SignaturePair] = []
+  var sigPair: [Proto_SignaturePair] = []
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
-public struct Proto_FeeComponents {
+struct Proto_FeeComponents {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The minimum fees that needs to be paid
-  public var min: Int64 = 0
+  var min: Int64 = 0
 
   /// The maximum fees that can be submitted
-  public var max: Int64 = 0
+  var max: Int64 = 0
 
   /// A constant determined by the business to calculate the fees
-  public var constant: Int64 = 0
+  var constant: Int64 = 0
 
   /// Bytes per transaction
-  public var bpt: Int64 = 0
+  var bpt: Int64 = 0
 
   /// Verifications per transaction
-  public var vpt: Int64 = 0
+  var vpt: Int64 = 0
 
   /// Ram byte seconds
-  public var rbh: Int64 = 0
+  var rbh: Int64 = 0
 
   /// Storage byte seconds
-  public var sbh: Int64 = 0
+  var sbh: Int64 = 0
 
   /// Gas for the contract execution
-  public var gas: Int64 = 0
+  var gas: Int64 = 0
 
   /// Transaction value (crypto transfers amount, tv is in tiny bars divided by 1000, rounded down)
-  public var tv: Int64 = 0
+  var tv: Int64 = 0
 
   /// Bytes per response
-  public var bpr: Int64 = 0
+  var bpr: Int64 = 0
 
   /// Storage bytes per response
-  public var sbpr: Int64 = 0
+  var sbpr: Int64 = 0
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 /// The fees for a specific transaction or query based on the fee data. 
-public struct Proto_TransactionFeeSchedule {
+struct Proto_TransactionFeeSchedule {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Specific Transaction or Query
-  public var hederaFunctionality: Proto_HederaFunctionality {
+  var hederaFunctionality: Proto_HederaFunctionality {
     get {return _storage._hederaFunctionality}
     set {_uniqueStorage()._hederaFunctionality = newValue}
   }
 
   /// The fee information about the query/data
-  public var feeData: Proto_FeeData {
+  var feeData: Proto_FeeData {
     get {return _storage._feeData ?? Proto_FeeData()}
     set {_uniqueStorage()._feeData = newValue}
   }
   /// Returns true if `feeData` has been explicitly set.
-  public var hasFeeData: Bool {return _storage._feeData != nil}
+  var hasFeeData: Bool {return _storage._feeData != nil}
   /// Clears the value of `feeData`. Subsequent reads from it will return its default value.
-  public mutating func clearFeeData() {_uniqueStorage()._feeData = nil}
+  mutating func clearFeeData() {_uniqueStorage()._feeData = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// The total fees charged for a transaction. It contains three parts namely node data, network data and service data 
-public struct Proto_FeeData {
+struct Proto_FeeData {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Fee charged by Node for this functionality
-  public var nodedata: Proto_FeeComponents {
+  var nodedata: Proto_FeeComponents {
     get {return _storage._nodedata ?? Proto_FeeComponents()}
     set {_uniqueStorage()._nodedata = newValue}
   }
   /// Returns true if `nodedata` has been explicitly set.
-  public var hasNodedata: Bool {return _storage._nodedata != nil}
+  var hasNodedata: Bool {return _storage._nodedata != nil}
   /// Clears the value of `nodedata`. Subsequent reads from it will return its default value.
-  public mutating func clearNodedata() {_uniqueStorage()._nodedata = nil}
+  mutating func clearNodedata() {_uniqueStorage()._nodedata = nil}
 
   /// Fee charged for network operations by Hedera
-  public var networkdata: Proto_FeeComponents {
+  var networkdata: Proto_FeeComponents {
     get {return _storage._networkdata ?? Proto_FeeComponents()}
     set {_uniqueStorage()._networkdata = newValue}
   }
   /// Returns true if `networkdata` has been explicitly set.
-  public var hasNetworkdata: Bool {return _storage._networkdata != nil}
+  var hasNetworkdata: Bool {return _storage._networkdata != nil}
   /// Clears the value of `networkdata`. Subsequent reads from it will return its default value.
-  public mutating func clearNetworkdata() {_uniqueStorage()._networkdata = nil}
+  mutating func clearNetworkdata() {_uniqueStorage()._networkdata = nil}
 
   /// Fee charged for providing service by Hedera
-  public var servicedata: Proto_FeeComponents {
+  var servicedata: Proto_FeeComponents {
     get {return _storage._servicedata ?? Proto_FeeComponents()}
     set {_uniqueStorage()._servicedata = newValue}
   }
   /// Returns true if `servicedata` has been explicitly set.
-  public var hasServicedata: Bool {return _storage._servicedata != nil}
+  var hasServicedata: Bool {return _storage._servicedata != nil}
   /// Clears the value of `servicedata`. Subsequent reads from it will return its default value.
-  public mutating func clearServicedata() {_uniqueStorage()._servicedata = nil}
+  mutating func clearServicedata() {_uniqueStorage()._servicedata = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// The fee schedule for a specific hedera functionality and the time period this fee schedule will expire  
-public struct Proto_FeeSchedule {
+struct Proto_FeeSchedule {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Contains multiple functionality specific fee schedule.
-  public var transactionFeeSchedule: [Proto_TransactionFeeSchedule] {
+  var transactionFeeSchedule: [Proto_TransactionFeeSchedule] {
     get {return _storage._transactionFeeSchedule}
     set {_uniqueStorage()._transactionFeeSchedule = newValue}
   }
 
   /// FeeSchedule expiry time
-  public var expiryTime: Proto_TimestampSeconds {
+  var expiryTime: Proto_TimestampSeconds {
     get {return _storage._expiryTime ?? Proto_TimestampSeconds()}
     set {_uniqueStorage()._expiryTime = newValue}
   }
   /// Returns true if `expiryTime` has been explicitly set.
-  public var hasExpiryTime: Bool {return _storage._expiryTime != nil}
+  var hasExpiryTime: Bool {return _storage._expiryTime != nil}
   /// Clears the value of `expiryTime`. Subsequent reads from it will return its default value.
-  public mutating func clearExpiryTime() {_uniqueStorage()._expiryTime = nil}
+  mutating func clearExpiryTime() {_uniqueStorage()._expiryTime = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// This contains two Fee Schedules with expiry timestamp. 
-public struct Proto_CurrentAndNextFeeSchedule {
+struct Proto_CurrentAndNextFeeSchedule {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Contains current Fee Schedule
-  public var currentFeeSchedule: Proto_FeeSchedule {
+  var currentFeeSchedule: Proto_FeeSchedule {
     get {return _storage._currentFeeSchedule ?? Proto_FeeSchedule()}
     set {_uniqueStorage()._currentFeeSchedule = newValue}
   }
   /// Returns true if `currentFeeSchedule` has been explicitly set.
-  public var hasCurrentFeeSchedule: Bool {return _storage._currentFeeSchedule != nil}
+  var hasCurrentFeeSchedule: Bool {return _storage._currentFeeSchedule != nil}
   /// Clears the value of `currentFeeSchedule`. Subsequent reads from it will return its default value.
-  public mutating func clearCurrentFeeSchedule() {_uniqueStorage()._currentFeeSchedule = nil}
+  mutating func clearCurrentFeeSchedule() {_uniqueStorage()._currentFeeSchedule = nil}
 
   /// Contains next Fee Schedule
-  public var nextFeeSchedule: Proto_FeeSchedule {
+  var nextFeeSchedule: Proto_FeeSchedule {
     get {return _storage._nextFeeSchedule ?? Proto_FeeSchedule()}
     set {_uniqueStorage()._nextFeeSchedule = newValue}
   }
   /// Returns true if `nextFeeSchedule` has been explicitly set.
-  public var hasNextFeeSchedule: Bool {return _storage._nextFeeSchedule != nil}
+  var hasNextFeeSchedule: Bool {return _storage._nextFeeSchedule != nil}
   /// Clears the value of `nextFeeSchedule`. Subsequent reads from it will return its default value.
-  public mutating func clearNextFeeSchedule() {_uniqueStorage()._nextFeeSchedule = nil}
+  mutating func clearNextFeeSchedule() {_uniqueStorage()._nextFeeSchedule = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// The information about a node 
-public struct Proto_NodeAddress {
+struct Proto_NodeAddress {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The ip address of the Node with separator & octets
-  public var ipAddress: Data = SwiftProtobuf.Internal.emptyData
+  var ipAddress: Data = SwiftProtobuf.Internal.emptyData
 
   /// The port number of the grpc server for the node
-  public var portno: Int32 = 0
+  var portno: Int32 = 0
 
   /// The memo field of the node
-  public var memo: Data = SwiftProtobuf.Internal.emptyData
+  var memo: Data = SwiftProtobuf.Internal.emptyData
 
   /// The RSA public key of the node.
-  public var rsaPubKey: String = String()
+  var rsaPubKey: String = String()
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 /// Gives the node addresses in the address book 
-public struct Proto_NodeAddressBook {
+struct Proto_NodeAddressBook {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Contains multiple Node Address for the network
-  public var nodeAddress: [Proto_NodeAddress] = []
+  var nodeAddress: [Proto_NodeAddress] = []
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -1006,7 +1006,7 @@ public struct Proto_NodeAddressBook {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_HederaFunctionality: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     0: .same(proto: "NONE"),
     1: .same(proto: "CryptoTransfer"),
     2: .same(proto: "CryptoUpdate"),
@@ -1048,12 +1048,12 @@ extension Proto_HederaFunctionality: SwiftProtobuf._ProtoNameProviding {
 }
 
 extension Proto_ShardID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ShardID"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".ShardID"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "shardNum"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularInt64Field(value: &self.shardNum)
@@ -1062,14 +1062,14 @@ extension Proto_ShardID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.shardNum != 0 {
       try visitor.visitSingularInt64Field(value: self.shardNum, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_ShardID, rhs: Proto_ShardID) -> Bool {
+  static func ==(lhs: Proto_ShardID, rhs: Proto_ShardID) -> Bool {
     if lhs.shardNum != rhs.shardNum {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
@@ -1077,13 +1077,13 @@ extension Proto_ShardID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
 }
 
 extension Proto_RealmID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".RealmID"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".RealmID"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "shardNum"),
     2: .same(proto: "realmNum"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularInt64Field(value: &self.shardNum)
@@ -1093,7 +1093,7 @@ extension Proto_RealmID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.shardNum != 0 {
       try visitor.visitSingularInt64Field(value: self.shardNum, fieldNumber: 1)
     }
@@ -1103,7 +1103,7 @@ extension Proto_RealmID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_RealmID, rhs: Proto_RealmID) -> Bool {
+  static func ==(lhs: Proto_RealmID, rhs: Proto_RealmID) -> Bool {
     if lhs.shardNum != rhs.shardNum {return false}
     if lhs.realmNum != rhs.realmNum {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -1112,14 +1112,14 @@ extension Proto_RealmID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
 }
 
 extension Proto_AccountID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".AccountID"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".AccountID"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "shardNum"),
     2: .same(proto: "realmNum"),
     3: .same(proto: "accountNum"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularInt64Field(value: &self.shardNum)
@@ -1130,7 +1130,7 @@ extension Proto_AccountID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.shardNum != 0 {
       try visitor.visitSingularInt64Field(value: self.shardNum, fieldNumber: 1)
     }
@@ -1143,7 +1143,7 @@ extension Proto_AccountID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_AccountID, rhs: Proto_AccountID) -> Bool {
+  static func ==(lhs: Proto_AccountID, rhs: Proto_AccountID) -> Bool {
     if lhs.shardNum != rhs.shardNum {return false}
     if lhs.realmNum != rhs.realmNum {return false}
     if lhs.accountNum != rhs.accountNum {return false}
@@ -1153,14 +1153,14 @@ extension Proto_AccountID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
 }
 
 extension Proto_FileID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".FileID"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".FileID"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "shardNum"),
     2: .same(proto: "realmNum"),
     3: .same(proto: "fileNum"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularInt64Field(value: &self.shardNum)
@@ -1171,7 +1171,7 @@ extension Proto_FileID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.shardNum != 0 {
       try visitor.visitSingularInt64Field(value: self.shardNum, fieldNumber: 1)
     }
@@ -1184,7 +1184,7 @@ extension Proto_FileID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_FileID, rhs: Proto_FileID) -> Bool {
+  static func ==(lhs: Proto_FileID, rhs: Proto_FileID) -> Bool {
     if lhs.shardNum != rhs.shardNum {return false}
     if lhs.realmNum != rhs.realmNum {return false}
     if lhs.fileNum != rhs.fileNum {return false}
@@ -1194,14 +1194,14 @@ extension Proto_FileID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementat
 }
 
 extension Proto_ContractID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ContractID"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".ContractID"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "shardNum"),
     2: .same(proto: "realmNum"),
     3: .same(proto: "contractNum"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularInt64Field(value: &self.shardNum)
@@ -1212,7 +1212,7 @@ extension Proto_ContractID: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.shardNum != 0 {
       try visitor.visitSingularInt64Field(value: self.shardNum, fieldNumber: 1)
     }
@@ -1225,7 +1225,7 @@ extension Proto_ContractID: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_ContractID, rhs: Proto_ContractID) -> Bool {
+  static func ==(lhs: Proto_ContractID, rhs: Proto_ContractID) -> Bool {
     if lhs.shardNum != rhs.shardNum {return false}
     if lhs.realmNum != rhs.realmNum {return false}
     if lhs.contractNum != rhs.contractNum {return false}
@@ -1235,8 +1235,8 @@ extension Proto_ContractID: SwiftProtobuf.Message, SwiftProtobuf._MessageImpleme
 }
 
 extension Proto_TransactionID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".TransactionID"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".TransactionID"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "transactionValidStart"),
     2: .same(proto: "accountID"),
   ]
@@ -1262,7 +1262,7 @@ extension Proto_TransactionID: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1275,7 +1275,7 @@ extension Proto_TransactionID: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._transactionValidStart {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -1287,7 +1287,7 @@ extension Proto_TransactionID: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_TransactionID, rhs: Proto_TransactionID) -> Bool {
+  static func ==(lhs: Proto_TransactionID, rhs: Proto_TransactionID) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -1304,8 +1304,8 @@ extension Proto_TransactionID: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
 }
 
 extension Proto_Key: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Key"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".Key"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "contractID"),
     2: .same(proto: "ed25519"),
     3: .standard(proto: "RSA_3072"),
@@ -1333,7 +1333,7 @@ extension Proto_Key: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1383,7 +1383,7 @@ extension Proto_Key: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       switch _storage._key {
       case .contractID(let v)?:
@@ -1404,7 +1404,7 @@ extension Proto_Key: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_Key, rhs: Proto_Key) -> Bool {
+  static func ==(lhs: Proto_Key, rhs: Proto_Key) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -1420,8 +1420,8 @@ extension Proto_Key: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementation
 }
 
 extension Proto_ThresholdKey: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ThresholdKey"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".ThresholdKey"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "threshold"),
     2: .same(proto: "keys"),
   ]
@@ -1447,7 +1447,7 @@ extension Proto_ThresholdKey: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1460,7 +1460,7 @@ extension Proto_ThresholdKey: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if _storage._threshold != 0 {
         try visitor.visitSingularUInt32Field(value: _storage._threshold, fieldNumber: 1)
@@ -1472,7 +1472,7 @@ extension Proto_ThresholdKey: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_ThresholdKey, rhs: Proto_ThresholdKey) -> Bool {
+  static func ==(lhs: Proto_ThresholdKey, rhs: Proto_ThresholdKey) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -1489,12 +1489,12 @@ extension Proto_ThresholdKey: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
 }
 
 extension Proto_KeyList: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".KeyList"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".KeyList"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "keys"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeRepeatedMessageField(value: &self.keys)
@@ -1503,14 +1503,14 @@ extension Proto_KeyList: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.keys.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.keys, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_KeyList, rhs: Proto_KeyList) -> Bool {
+  static func ==(lhs: Proto_KeyList, rhs: Proto_KeyList) -> Bool {
     if lhs.keys != rhs.keys {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
@@ -1518,8 +1518,8 @@ extension Proto_KeyList: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
 }
 
 extension Proto_Signature: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Signature"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".Signature"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "contract"),
     2: .same(proto: "ed25519"),
     3: .standard(proto: "RSA_3072"),
@@ -1547,7 +1547,7 @@ extension Proto_Signature: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1594,7 +1594,7 @@ extension Proto_Signature: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       switch _storage._signature {
       case .contract(let v)?:
@@ -1615,7 +1615,7 @@ extension Proto_Signature: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_Signature, rhs: Proto_Signature) -> Bool {
+  static func ==(lhs: Proto_Signature, rhs: Proto_Signature) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -1631,8 +1631,8 @@ extension Proto_Signature: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
 }
 
 extension Proto_ThresholdSignature: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ThresholdSignature"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".ThresholdSignature"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     2: .same(proto: "sigs"),
   ]
 
@@ -1655,7 +1655,7 @@ extension Proto_ThresholdSignature: SwiftProtobuf.Message, SwiftProtobuf._Messag
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1667,7 +1667,7 @@ extension Proto_ThresholdSignature: SwiftProtobuf.Message, SwiftProtobuf._Messag
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._sigs {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
@@ -1676,7 +1676,7 @@ extension Proto_ThresholdSignature: SwiftProtobuf.Message, SwiftProtobuf._Messag
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_ThresholdSignature, rhs: Proto_ThresholdSignature) -> Bool {
+  static func ==(lhs: Proto_ThresholdSignature, rhs: Proto_ThresholdSignature) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -1692,12 +1692,12 @@ extension Proto_ThresholdSignature: SwiftProtobuf.Message, SwiftProtobuf._Messag
 }
 
 extension Proto_SignatureList: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".SignatureList"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".SignatureList"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     2: .same(proto: "sigs"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 2: try decoder.decodeRepeatedMessageField(value: &self.sigs)
@@ -1706,14 +1706,14 @@ extension Proto_SignatureList: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.sigs.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.sigs, fieldNumber: 2)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_SignatureList, rhs: Proto_SignatureList) -> Bool {
+  static func ==(lhs: Proto_SignatureList, rhs: Proto_SignatureList) -> Bool {
     if lhs.sigs != rhs.sigs {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
@@ -1721,8 +1721,8 @@ extension Proto_SignatureList: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
 }
 
 extension Proto_SignaturePair: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".SignaturePair"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".SignaturePair"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "pubKeyPrefix"),
     2: .same(proto: "contract"),
     3: .same(proto: "ed25519"),
@@ -1730,7 +1730,7 @@ extension Proto_SignaturePair: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     5: .standard(proto: "ECDSA_384"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularBytesField(value: &self.pubKeyPrefix)
@@ -1759,7 +1759,7 @@ extension Proto_SignaturePair: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.pubKeyPrefix.isEmpty {
       try visitor.visitSingularBytesField(value: self.pubKeyPrefix, fieldNumber: 1)
     }
@@ -1777,7 +1777,7 @@ extension Proto_SignaturePair: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_SignaturePair, rhs: Proto_SignaturePair) -> Bool {
+  static func ==(lhs: Proto_SignaturePair, rhs: Proto_SignaturePair) -> Bool {
     if lhs.pubKeyPrefix != rhs.pubKeyPrefix {return false}
     if lhs.signature != rhs.signature {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -1786,12 +1786,12 @@ extension Proto_SignaturePair: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
 }
 
 extension Proto_SignatureMap: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".SignatureMap"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".SignatureMap"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "sigPair"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeRepeatedMessageField(value: &self.sigPair)
@@ -1800,14 +1800,14 @@ extension Proto_SignatureMap: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.sigPair.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.sigPair, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_SignatureMap, rhs: Proto_SignatureMap) -> Bool {
+  static func ==(lhs: Proto_SignatureMap, rhs: Proto_SignatureMap) -> Bool {
     if lhs.sigPair != rhs.sigPair {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
@@ -1815,8 +1815,8 @@ extension Proto_SignatureMap: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
 }
 
 extension Proto_FeeComponents: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".FeeComponents"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".FeeComponents"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "min"),
     2: .same(proto: "max"),
     3: .same(proto: "constant"),
@@ -1830,7 +1830,7 @@ extension Proto_FeeComponents: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     11: .same(proto: "sbpr"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularInt64Field(value: &self.min)
@@ -1849,7 +1849,7 @@ extension Proto_FeeComponents: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.min != 0 {
       try visitor.visitSingularInt64Field(value: self.min, fieldNumber: 1)
     }
@@ -1886,7 +1886,7 @@ extension Proto_FeeComponents: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_FeeComponents, rhs: Proto_FeeComponents) -> Bool {
+  static func ==(lhs: Proto_FeeComponents, rhs: Proto_FeeComponents) -> Bool {
     if lhs.min != rhs.min {return false}
     if lhs.max != rhs.max {return false}
     if lhs.constant != rhs.constant {return false}
@@ -1904,8 +1904,8 @@ extension Proto_FeeComponents: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
 }
 
 extension Proto_TransactionFeeSchedule: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".TransactionFeeSchedule"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".TransactionFeeSchedule"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "hederaFunctionality"),
     2: .same(proto: "feeData"),
   ]
@@ -1931,7 +1931,7 @@ extension Proto_TransactionFeeSchedule: SwiftProtobuf.Message, SwiftProtobuf._Me
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -1944,7 +1944,7 @@ extension Proto_TransactionFeeSchedule: SwiftProtobuf.Message, SwiftProtobuf._Me
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if _storage._hederaFunctionality != .none {
         try visitor.visitSingularEnumField(value: _storage._hederaFunctionality, fieldNumber: 1)
@@ -1956,7 +1956,7 @@ extension Proto_TransactionFeeSchedule: SwiftProtobuf.Message, SwiftProtobuf._Me
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_TransactionFeeSchedule, rhs: Proto_TransactionFeeSchedule) -> Bool {
+  static func ==(lhs: Proto_TransactionFeeSchedule, rhs: Proto_TransactionFeeSchedule) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -1973,8 +1973,8 @@ extension Proto_TransactionFeeSchedule: SwiftProtobuf.Message, SwiftProtobuf._Me
 }
 
 extension Proto_FeeData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".FeeData"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".FeeData"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "nodedata"),
     2: .same(proto: "networkdata"),
     3: .same(proto: "servicedata"),
@@ -2003,7 +2003,7 @@ extension Proto_FeeData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -2017,7 +2017,7 @@ extension Proto_FeeData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._nodedata {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -2032,7 +2032,7 @@ extension Proto_FeeData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_FeeData, rhs: Proto_FeeData) -> Bool {
+  static func ==(lhs: Proto_FeeData, rhs: Proto_FeeData) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -2050,8 +2050,8 @@ extension Proto_FeeData: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
 }
 
 extension Proto_FeeSchedule: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".FeeSchedule"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".FeeSchedule"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "transactionFeeSchedule"),
     2: .same(proto: "expiryTime"),
   ]
@@ -2077,7 +2077,7 @@ extension Proto_FeeSchedule: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -2090,7 +2090,7 @@ extension Proto_FeeSchedule: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if !_storage._transactionFeeSchedule.isEmpty {
         try visitor.visitRepeatedMessageField(value: _storage._transactionFeeSchedule, fieldNumber: 1)
@@ -2102,7 +2102,7 @@ extension Proto_FeeSchedule: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_FeeSchedule, rhs: Proto_FeeSchedule) -> Bool {
+  static func ==(lhs: Proto_FeeSchedule, rhs: Proto_FeeSchedule) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -2119,8 +2119,8 @@ extension Proto_FeeSchedule: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
 }
 
 extension Proto_CurrentAndNextFeeSchedule: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".CurrentAndNextFeeSchedule"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".CurrentAndNextFeeSchedule"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "currentFeeSchedule"),
     2: .same(proto: "nextFeeSchedule"),
   ]
@@ -2146,7 +2146,7 @@ extension Proto_CurrentAndNextFeeSchedule: SwiftProtobuf.Message, SwiftProtobuf.
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -2159,7 +2159,7 @@ extension Proto_CurrentAndNextFeeSchedule: SwiftProtobuf.Message, SwiftProtobuf.
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._currentFeeSchedule {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -2171,7 +2171,7 @@ extension Proto_CurrentAndNextFeeSchedule: SwiftProtobuf.Message, SwiftProtobuf.
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_CurrentAndNextFeeSchedule, rhs: Proto_CurrentAndNextFeeSchedule) -> Bool {
+  static func ==(lhs: Proto_CurrentAndNextFeeSchedule, rhs: Proto_CurrentAndNextFeeSchedule) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -2188,15 +2188,15 @@ extension Proto_CurrentAndNextFeeSchedule: SwiftProtobuf.Message, SwiftProtobuf.
 }
 
 extension Proto_NodeAddress: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".NodeAddress"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".NodeAddress"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "ipAddress"),
     2: .same(proto: "portno"),
     3: .same(proto: "memo"),
     4: .standard(proto: "RSA_PubKey"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularBytesField(value: &self.ipAddress)
@@ -2208,7 +2208,7 @@ extension Proto_NodeAddress: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.ipAddress.isEmpty {
       try visitor.visitSingularBytesField(value: self.ipAddress, fieldNumber: 1)
     }
@@ -2224,7 +2224,7 @@ extension Proto_NodeAddress: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_NodeAddress, rhs: Proto_NodeAddress) -> Bool {
+  static func ==(lhs: Proto_NodeAddress, rhs: Proto_NodeAddress) -> Bool {
     if lhs.ipAddress != rhs.ipAddress {return false}
     if lhs.portno != rhs.portno {return false}
     if lhs.memo != rhs.memo {return false}
@@ -2235,12 +2235,12 @@ extension Proto_NodeAddress: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
 }
 
 extension Proto_NodeAddressBook: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".NodeAddressBook"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".NodeAddressBook"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "nodeAddress"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeRepeatedMessageField(value: &self.nodeAddress)
@@ -2249,14 +2249,14 @@ extension Proto_NodeAddressBook: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.nodeAddress.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.nodeAddress, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_NodeAddressBook, rhs: Proto_NodeAddressBook) -> Bool {
+  static func ==(lhs: Proto_NodeAddressBook, rhs: Proto_NodeAddressBook) -> Bool {
     if lhs.nodeAddress != rhs.nodeAddress {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

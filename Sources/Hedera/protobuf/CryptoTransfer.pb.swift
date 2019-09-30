@@ -20,67 +20,67 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// An account, and the amount that it sends or receives during a cryptocurrency transfer. 
-public struct Proto_AccountAmount {
+struct Proto_AccountAmount {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The Account ID that sends or receives cryptocurrency
-  public var accountID: Proto_AccountID {
+  var accountID: Proto_AccountID {
     get {return _storage._accountID ?? Proto_AccountID()}
     set {_uniqueStorage()._accountID = newValue}
   }
   /// Returns true if `accountID` has been explicitly set.
-  public var hasAccountID: Bool {return _storage._accountID != nil}
+  var hasAccountID: Bool {return _storage._accountID != nil}
   /// Clears the value of `accountID`. Subsequent reads from it will return its default value.
-  public mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
+  mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
 
   /// The amount of tinybars that the account sends(negative) or receives(positive)
-  public var amount: Int64 {
+  var amount: Int64 {
     get {return _storage._amount}
     set {_uniqueStorage()._amount = newValue}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// A list of accounts and amounts to transfer out of each account (negative) or into it (positive). 
-public struct Proto_TransferList {
+struct Proto_TransferList {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Multiple list of AccountAmount pairs, each of which has an account and an amount to transfer into it (positive) or out of it (negative)
-  public var accountAmounts: [Proto_AccountAmount] = []
+  var accountAmounts: [Proto_AccountAmount] = []
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 /// Transfer cryptocurrency from some accounts to other accounts. The accounts list can contain up to 10 accounts. The amounts list must be the same length as the accounts list. Each negative amount is withdrawn from the corresponding account (a sender), and each positive one is added to the corresponding account (a receiver). The amounts list must sum to zero. Each amount is a number of tinyBars (there are 100,000,000 tinyBars in one Hbar). If any sender account fails to have sufficient hbars to do the withdrawal, then the entire transaction fails, and none of those transfers occur, though the transaction fee is still charged. This transaction must be signed by the keys for all the sending accounts, and for any receiving accounts that have receiverSigRequired == true. The signatures are in the same order as the accounts, skipping those accounts that don't need a signature. 
-public struct Proto_CryptoTransferTransactionBody {
+struct Proto_CryptoTransferTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Accounts and amounts to transfer
-  public var transfers: Proto_TransferList {
+  var transfers: Proto_TransferList {
     get {return _storage._transfers ?? Proto_TransferList()}
     set {_uniqueStorage()._transfers = newValue}
   }
   /// Returns true if `transfers` has been explicitly set.
-  public var hasTransfers: Bool {return _storage._transfers != nil}
+  var hasTransfers: Bool {return _storage._transfers != nil}
   /// Clears the value of `transfers`. Subsequent reads from it will return its default value.
-  public mutating func clearTransfers() {_uniqueStorage()._transfers = nil}
+  mutating func clearTransfers() {_uniqueStorage()._transfers = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -90,8 +90,8 @@ public struct Proto_CryptoTransferTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_AccountAmount: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".AccountAmount"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".AccountAmount"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "accountID"),
     2: .same(proto: "amount"),
   ]
@@ -117,7 +117,7 @@ extension Proto_AccountAmount: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -130,7 +130,7 @@ extension Proto_AccountAmount: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._accountID {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -142,7 +142,7 @@ extension Proto_AccountAmount: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_AccountAmount, rhs: Proto_AccountAmount) -> Bool {
+  static func ==(lhs: Proto_AccountAmount, rhs: Proto_AccountAmount) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -159,12 +159,12 @@ extension Proto_AccountAmount: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
 }
 
 extension Proto_TransferList: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".TransferList"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".TransferList"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "accountAmounts"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeRepeatedMessageField(value: &self.accountAmounts)
@@ -173,14 +173,14 @@ extension Proto_TransferList: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if !self.accountAmounts.isEmpty {
       try visitor.visitRepeatedMessageField(value: self.accountAmounts, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_TransferList, rhs: Proto_TransferList) -> Bool {
+  static func ==(lhs: Proto_TransferList, rhs: Proto_TransferList) -> Bool {
     if lhs.accountAmounts != rhs.accountAmounts {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
@@ -188,8 +188,8 @@ extension Proto_TransferList: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
 }
 
 extension Proto_CryptoTransferTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".CryptoTransferTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".CryptoTransferTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "transfers"),
   ]
 
@@ -212,7 +212,7 @@ extension Proto_CryptoTransferTransactionBody: SwiftProtobuf.Message, SwiftProto
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -224,7 +224,7 @@ extension Proto_CryptoTransferTransactionBody: SwiftProtobuf.Message, SwiftProto
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._transfers {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -233,7 +233,7 @@ extension Proto_CryptoTransferTransactionBody: SwiftProtobuf.Message, SwiftProto
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_CryptoTransferTransactionBody, rhs: Proto_CryptoTransferTransactionBody) -> Bool {
+  static func ==(lhs: Proto_CryptoTransferTransactionBody, rhs: Proto_CryptoTransferTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

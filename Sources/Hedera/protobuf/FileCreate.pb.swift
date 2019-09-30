@@ -30,70 +30,70 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// An entity (account, file, or smart contract instance) must be created in a particular realm. If the realmID is left null, then a new realm will be created with the given admin key. If a new realm has a null adminKey, then anyone can create/modify/delete entities in that realm. But if an admin key is given, then any transaction to create/modify/delete an entity in that realm must be signed by that key, though anyone can still call functions on smart contract instances that exist in that realm. A realm ceases to exist when everything within it has expired and no longer exists.
 ///
 /// The current API ignores shardID, realmID, and newRealmAdminKey, and creates everything in shard 0 and realm 0, with a null key. Future versions of the API will support multiple realms and multiple shards.
-public struct Proto_FileCreateTransactionBody {
+struct Proto_FileCreateTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The time at which this file should expire (unless FileUpdateTransaction is used before then to extend its life)
-  public var expirationTime: Proto_Timestamp {
+  var expirationTime: Proto_Timestamp {
     get {return _storage._expirationTime ?? Proto_Timestamp()}
     set {_uniqueStorage()._expirationTime = newValue}
   }
   /// Returns true if `expirationTime` has been explicitly set.
-  public var hasExpirationTime: Bool {return _storage._expirationTime != nil}
+  var hasExpirationTime: Bool {return _storage._expirationTime != nil}
   /// Clears the value of `expirationTime`. Subsequent reads from it will return its default value.
-  public mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
+  mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
 
   /// All these keys must sign to create or modify the file. Any one of them can sign to delete the file.
-  public var keys: Proto_KeyList {
+  var keys: Proto_KeyList {
     get {return _storage._keys ?? Proto_KeyList()}
     set {_uniqueStorage()._keys = newValue}
   }
   /// Returns true if `keys` has been explicitly set.
-  public var hasKeys: Bool {return _storage._keys != nil}
+  var hasKeys: Bool {return _storage._keys != nil}
   /// Clears the value of `keys`. Subsequent reads from it will return its default value.
-  public mutating func clearKeys() {_uniqueStorage()._keys = nil}
+  mutating func clearKeys() {_uniqueStorage()._keys = nil}
 
   /// The bytes that are the contents of the file
-  public var contents: Data {
+  var contents: Data {
     get {return _storage._contents}
     set {_uniqueStorage()._contents = newValue}
   }
 
   /// Shard in which this file is created
-  public var shardID: Proto_ShardID {
+  var shardID: Proto_ShardID {
     get {return _storage._shardID ?? Proto_ShardID()}
     set {_uniqueStorage()._shardID = newValue}
   }
   /// Returns true if `shardID` has been explicitly set.
-  public var hasShardID: Bool {return _storage._shardID != nil}
+  var hasShardID: Bool {return _storage._shardID != nil}
   /// Clears the value of `shardID`. Subsequent reads from it will return its default value.
-  public mutating func clearShardID() {_uniqueStorage()._shardID = nil}
+  mutating func clearShardID() {_uniqueStorage()._shardID = nil}
 
   /// The Realm in which to the file is created (leave this null to create a new realm)
-  public var realmID: Proto_RealmID {
+  var realmID: Proto_RealmID {
     get {return _storage._realmID ?? Proto_RealmID()}
     set {_uniqueStorage()._realmID = newValue}
   }
   /// Returns true if `realmID` has been explicitly set.
-  public var hasRealmID: Bool {return _storage._realmID != nil}
+  var hasRealmID: Bool {return _storage._realmID != nil}
   /// Clears the value of `realmID`. Subsequent reads from it will return its default value.
-  public mutating func clearRealmID() {_uniqueStorage()._realmID = nil}
+  mutating func clearRealmID() {_uniqueStorage()._realmID = nil}
 
   /// If realmID is null, then this the admin key for the new realm that will be created
-  public var newRealmAdminKey: Proto_Key {
+  var newRealmAdminKey: Proto_Key {
     get {return _storage._newRealmAdminKey ?? Proto_Key()}
     set {_uniqueStorage()._newRealmAdminKey = newValue}
   }
   /// Returns true if `newRealmAdminKey` has been explicitly set.
-  public var hasNewRealmAdminKey: Bool {return _storage._newRealmAdminKey != nil}
+  var hasNewRealmAdminKey: Bool {return _storage._newRealmAdminKey != nil}
   /// Clears the value of `newRealmAdminKey`. Subsequent reads from it will return its default value.
-  public mutating func clearNewRealmAdminKey() {_uniqueStorage()._newRealmAdminKey = nil}
+  mutating func clearNewRealmAdminKey() {_uniqueStorage()._newRealmAdminKey = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -103,8 +103,8 @@ public struct Proto_FileCreateTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_FileCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".FileCreateTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".FileCreateTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     2: .same(proto: "expirationTime"),
     3: .same(proto: "keys"),
     4: .same(proto: "contents"),
@@ -142,7 +142,7 @@ extension Proto_FileCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -159,7 +159,7 @@ extension Proto_FileCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._expirationTime {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
@@ -183,7 +183,7 @@ extension Proto_FileCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_FileCreateTransactionBody, rhs: Proto_FileCreateTransactionBody) -> Bool {
+  static func ==(lhs: Proto_FileCreateTransactionBody, rhs: Proto_FileCreateTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

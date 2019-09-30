@@ -20,67 +20,67 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Get the receipt of a transaction, given its transaction ID. Once a transaction reaches consensus, then information about whether it succeeded or failed will be available until the end of the receipt period.  Before and after the receipt period, and for a transaction that was never submitted, the receipt is unknown.  This query is free (the payment field is left empty). No State proof is available for this response
-public struct Proto_TransactionGetReceiptQuery {
+struct Proto_TransactionGetReceiptQuery {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Standard info sent from client to node, including the signed payment, and what kind of response is requested (cost, state proof, both, or neither).
-  public var header: Proto_QueryHeader {
+  var header: Proto_QueryHeader {
     get {return _storage._header ?? Proto_QueryHeader()}
     set {_uniqueStorage()._header = newValue}
   }
   /// Returns true if `header` has been explicitly set.
-  public var hasHeader: Bool {return _storage._header != nil}
+  var hasHeader: Bool {return _storage._header != nil}
   /// Clears the value of `header`. Subsequent reads from it will return its default value.
-  public mutating func clearHeader() {_uniqueStorage()._header = nil}
+  mutating func clearHeader() {_uniqueStorage()._header = nil}
 
   /// The ID of the transaction for which the receipt is requested.
-  public var transactionID: Proto_TransactionID {
+  var transactionID: Proto_TransactionID {
     get {return _storage._transactionID ?? Proto_TransactionID()}
     set {_uniqueStorage()._transactionID = newValue}
   }
   /// Returns true if `transactionID` has been explicitly set.
-  public var hasTransactionID: Bool {return _storage._transactionID != nil}
+  var hasTransactionID: Bool {return _storage._transactionID != nil}
   /// Clears the value of `transactionID`. Subsequent reads from it will return its default value.
-  public mutating func clearTransactionID() {_uniqueStorage()._transactionID = nil}
+  mutating func clearTransactionID() {_uniqueStorage()._transactionID = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// Response when the client sends the node TransactionGetReceiptQuery. If it created a new entity (account, file, or smart contract instance) then one of the three ID fields will be filled in with the ID of the new entity. Sometimes a single transaction will create more than one new entity, such as when a new contract instance is created, and this also creates the new account that it owned by that instance. No State proof is available for this response 
-public struct Proto_TransactionGetReceiptResponse {
+struct Proto_TransactionGetReceiptResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///Standard response from node to client, including the requested fields: cost, or state proof, or both, or neither
-  public var header: Proto_ResponseHeader {
+  var header: Proto_ResponseHeader {
     get {return _storage._header ?? Proto_ResponseHeader()}
     set {_uniqueStorage()._header = newValue}
   }
   /// Returns true if `header` has been explicitly set.
-  public var hasHeader: Bool {return _storage._header != nil}
+  var hasHeader: Bool {return _storage._header != nil}
   /// Clears the value of `header`. Subsequent reads from it will return its default value.
-  public mutating func clearHeader() {_uniqueStorage()._header = nil}
+  mutating func clearHeader() {_uniqueStorage()._header = nil}
 
   /// The receipt, indicating it reached consensus (and whether it succeeded or failed) or is currently unknown (because it hasn't reached consensus yet, or the transaction has expired already), and including the ID of any new account/file/instance created by that transaction.
-  public var receipt: Proto_TransactionReceipt {
+  var receipt: Proto_TransactionReceipt {
     get {return _storage._receipt ?? Proto_TransactionReceipt()}
     set {_uniqueStorage()._receipt = newValue}
   }
   /// Returns true if `receipt` has been explicitly set.
-  public var hasReceipt: Bool {return _storage._receipt != nil}
+  var hasReceipt: Bool {return _storage._receipt != nil}
   /// Clears the value of `receipt`. Subsequent reads from it will return its default value.
-  public mutating func clearReceipt() {_uniqueStorage()._receipt = nil}
+  mutating func clearReceipt() {_uniqueStorage()._receipt = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -90,8 +90,8 @@ public struct Proto_TransactionGetReceiptResponse {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_TransactionGetReceiptQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".TransactionGetReceiptQuery"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".TransactionGetReceiptQuery"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "header"),
     2: .same(proto: "transactionID"),
   ]
@@ -117,7 +117,7 @@ extension Proto_TransactionGetReceiptQuery: SwiftProtobuf.Message, SwiftProtobuf
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -130,7 +130,7 @@ extension Proto_TransactionGetReceiptQuery: SwiftProtobuf.Message, SwiftProtobuf
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._header {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -142,7 +142,7 @@ extension Proto_TransactionGetReceiptQuery: SwiftProtobuf.Message, SwiftProtobuf
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_TransactionGetReceiptQuery, rhs: Proto_TransactionGetReceiptQuery) -> Bool {
+  static func ==(lhs: Proto_TransactionGetReceiptQuery, rhs: Proto_TransactionGetReceiptQuery) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -159,8 +159,8 @@ extension Proto_TransactionGetReceiptQuery: SwiftProtobuf.Message, SwiftProtobuf
 }
 
 extension Proto_TransactionGetReceiptResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".TransactionGetReceiptResponse"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".TransactionGetReceiptResponse"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "header"),
     2: .same(proto: "receipt"),
   ]
@@ -186,7 +186,7 @@ extension Proto_TransactionGetReceiptResponse: SwiftProtobuf.Message, SwiftProto
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -199,7 +199,7 @@ extension Proto_TransactionGetReceiptResponse: SwiftProtobuf.Message, SwiftProto
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._header {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -211,7 +211,7 @@ extension Proto_TransactionGetReceiptResponse: SwiftProtobuf.Message, SwiftProto
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_TransactionGetReceiptResponse, rhs: Proto_TransactionGetReceiptResponse) -> Bool {
+  static func ==(lhs: Proto_TransactionGetReceiptResponse, rhs: Proto_TransactionGetReceiptResponse) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

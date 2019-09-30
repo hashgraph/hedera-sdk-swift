@@ -20,26 +20,26 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Set the freezing period in which the platform will stop creating events and accepting transactions. This is used before safely shut down the platform for maintenance. 
-public struct Proto_FreezeTransactionBody {
+struct Proto_FreezeTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The start hour (in UTC time), a value between 0 and 23
-  public var startHour: Int32 = 0
+  var startHour: Int32 = 0
 
   /// The start minute (in UTC time), a value between 0 and 59
-  public var startMin: Int32 = 0
+  var startMin: Int32 = 0
 
   /// The end hour (in UTC time), a value between 0 and 23
-  public var endHour: Int32 = 0
+  var endHour: Int32 = 0
 
   /// The end minute (in UTC time), a value between 0 and 59
-  public var endMin: Int32 = 0
+  var endMin: Int32 = 0
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -47,15 +47,15 @@ public struct Proto_FreezeTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_FreezeTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".FreezeTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".FreezeTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "startHour"),
     2: .same(proto: "startMin"),
     3: .same(proto: "endHour"),
     4: .same(proto: "endMin"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularInt32Field(value: &self.startHour)
@@ -67,7 +67,7 @@ extension Proto_FreezeTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._Mes
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.startHour != 0 {
       try visitor.visitSingularInt32Field(value: self.startHour, fieldNumber: 1)
     }
@@ -83,7 +83,7 @@ extension Proto_FreezeTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._Mes
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_FreezeTransactionBody, rhs: Proto_FreezeTransactionBody) -> Bool {
+  static func ==(lhs: Proto_FreezeTransactionBody, rhs: Proto_FreezeTransactionBody) -> Bool {
     if lhs.startHour != rhs.startHour {return false}
     if lhs.startMin != rhs.startMin {return false}
     if lhs.endHour != rhs.endHour {return false}

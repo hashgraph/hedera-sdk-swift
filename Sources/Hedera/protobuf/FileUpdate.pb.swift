@@ -22,50 +22,50 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// Modify some of the metadata for a file. Any null field is ignored (left unchanged). Any field that is null is left unchanged. If contents is non-null, then the file's contents will be replaced with the given bytes. This transaction must be signed by all the keys for that file. If the transaction is modifying the keys field, then it must be signed by all the keys in both the old list and the new list. 
 ///
 /// If a file was created without ANY keys in the keys field, ONLY the expirationTime of the file can be changed using this call. The file contents or its keys cannot be changed.
-public struct Proto_FileUpdateTransactionBody {
+struct Proto_FileUpdateTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The file ID of the file to update
-  public var fileID: Proto_FileID {
+  var fileID: Proto_FileID {
     get {return _storage._fileID ?? Proto_FileID()}
     set {_uniqueStorage()._fileID = newValue}
   }
   /// Returns true if `fileID` has been explicitly set.
-  public var hasFileID: Bool {return _storage._fileID != nil}
+  var hasFileID: Bool {return _storage._fileID != nil}
   /// Clears the value of `fileID`. Subsequent reads from it will return its default value.
-  public mutating func clearFileID() {_uniqueStorage()._fileID = nil}
+  mutating func clearFileID() {_uniqueStorage()._fileID = nil}
 
   /// The new time at which it should expire (ignored if not later than the current value)
-  public var expirationTime: Proto_Timestamp {
+  var expirationTime: Proto_Timestamp {
     get {return _storage._expirationTime ?? Proto_Timestamp()}
     set {_uniqueStorage()._expirationTime = newValue}
   }
   /// Returns true if `expirationTime` has been explicitly set.
-  public var hasExpirationTime: Bool {return _storage._expirationTime != nil}
+  var hasExpirationTime: Bool {return _storage._expirationTime != nil}
   /// Clears the value of `expirationTime`. Subsequent reads from it will return its default value.
-  public mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
+  mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
 
   /// The keys that can modify or delete the file
-  public var keys: Proto_KeyList {
+  var keys: Proto_KeyList {
     get {return _storage._keys ?? Proto_KeyList()}
     set {_uniqueStorage()._keys = newValue}
   }
   /// Returns true if `keys` has been explicitly set.
-  public var hasKeys: Bool {return _storage._keys != nil}
+  var hasKeys: Bool {return _storage._keys != nil}
   /// Clears the value of `keys`. Subsequent reads from it will return its default value.
-  public mutating func clearKeys() {_uniqueStorage()._keys = nil}
+  mutating func clearKeys() {_uniqueStorage()._keys = nil}
 
   /// The new file contents. All the bytes in the old contents are discarded.
-  public var contents: Data {
+  var contents: Data {
     get {return _storage._contents}
     set {_uniqueStorage()._contents = newValue}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -75,8 +75,8 @@ public struct Proto_FileUpdateTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_FileUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".FileUpdateTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".FileUpdateTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "fileID"),
     2: .same(proto: "expirationTime"),
     3: .same(proto: "keys"),
@@ -108,7 +108,7 @@ extension Proto_FileUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -123,7 +123,7 @@ extension Proto_FileUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._fileID {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -141,7 +141,7 @@ extension Proto_FileUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_FileUpdateTransactionBody, rhs: Proto_FileUpdateTransactionBody) -> Bool {
+  static func ==(lhs: Proto_FileUpdateTransactionBody, rhs: Proto_FileUpdateTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

@@ -20,18 +20,18 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// A single query, which is sent from the client to the node. This includes all possible queries. Each Query should not have more than 50 levels. 
-public struct Proto_Query {
+struct Proto_Query {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var query: OneOf_Query? {
+  var query: OneOf_Query? {
     get {return _storage._query}
     set {_uniqueStorage()._query = newValue}
   }
 
   /// Get all entities associated with a given key
-  public var getByKey: Proto_GetByKeyQuery {
+  var getByKey: Proto_GetByKeyQuery {
     get {
       if case .getByKey(let v)? = _storage._query {return v}
       return Proto_GetByKeyQuery()
@@ -40,7 +40,7 @@ public struct Proto_Query {
   }
 
   /// Get the IDs in the format used in transactions, given the format used in Solidity
-  public var getBySolidityID: Proto_GetBySolidityIDQuery {
+  var getBySolidityID: Proto_GetBySolidityIDQuery {
     get {
       if case .getBySolidityID(let v)? = _storage._query {return v}
       return Proto_GetBySolidityIDQuery()
@@ -49,7 +49,7 @@ public struct Proto_Query {
   }
 
   /// Call a function of a smart contract instance
-  public var contractCallLocal: Proto_ContractCallLocalQuery {
+  var contractCallLocal: Proto_ContractCallLocalQuery {
     get {
       if case .contractCallLocal(let v)? = _storage._query {return v}
       return Proto_ContractCallLocalQuery()
@@ -58,7 +58,7 @@ public struct Proto_Query {
   }
 
   /// Get information about a smart contract instance
-  public var contractGetInfo: Proto_ContractGetInfoQuery {
+  var contractGetInfo: Proto_ContractGetInfoQuery {
     get {
       if case .contractGetInfo(let v)? = _storage._query {return v}
       return Proto_ContractGetInfoQuery()
@@ -67,7 +67,7 @@ public struct Proto_Query {
   }
 
   /// Get bytecode used by a smart contract instance
-  public var contractGetBytecode: Proto_ContractGetBytecodeQuery {
+  var contractGetBytecode: Proto_ContractGetBytecodeQuery {
     get {
       if case .contractGetBytecode(let v)? = _storage._query {return v}
       return Proto_ContractGetBytecodeQuery()
@@ -76,7 +76,7 @@ public struct Proto_Query {
   }
 
   /// Get Records of the contract instance
-  public var contractGetRecords: Proto_ContractGetRecordsQuery {
+  var contractGetRecords: Proto_ContractGetRecordsQuery {
     get {
       if case .contractGetRecords(let v)? = _storage._query {return v}
       return Proto_ContractGetRecordsQuery()
@@ -85,7 +85,7 @@ public struct Proto_Query {
   }
 
   /// Get the current balance in a cryptocurrency account
-  public var cryptogetAccountBalance: Proto_CryptoGetAccountBalanceQuery {
+  var cryptogetAccountBalance: Proto_CryptoGetAccountBalanceQuery {
     get {
       if case .cryptogetAccountBalance(let v)? = _storage._query {return v}
       return Proto_CryptoGetAccountBalanceQuery()
@@ -94,7 +94,7 @@ public struct Proto_Query {
   }
 
   /// Get all the records that currently exist for transactions involving an account
-  public var cryptoGetAccountRecords: Proto_CryptoGetAccountRecordsQuery {
+  var cryptoGetAccountRecords: Proto_CryptoGetAccountRecordsQuery {
     get {
       if case .cryptoGetAccountRecords(let v)? = _storage._query {return v}
       return Proto_CryptoGetAccountRecordsQuery()
@@ -103,7 +103,7 @@ public struct Proto_Query {
   }
 
   /// Get all information about an account
-  public var cryptoGetInfo: Proto_CryptoGetInfoQuery {
+  var cryptoGetInfo: Proto_CryptoGetInfoQuery {
     get {
       if case .cryptoGetInfo(let v)? = _storage._query {return v}
       return Proto_CryptoGetInfoQuery()
@@ -112,7 +112,7 @@ public struct Proto_Query {
   }
 
   /// Get a single claim from a single account (or null if it doesn't exist)
-  public var cryptoGetClaim: Proto_CryptoGetClaimQuery {
+  var cryptoGetClaim: Proto_CryptoGetClaimQuery {
     get {
       if case .cryptoGetClaim(let v)? = _storage._query {return v}
       return Proto_CryptoGetClaimQuery()
@@ -121,7 +121,7 @@ public struct Proto_Query {
   }
 
   /// Get all the accounts that proxy stake to a given account, and how much they proxy stake (not yet implemented in the current API)
-  public var cryptoGetProxyStakers: Proto_CryptoGetStakersQuery {
+  var cryptoGetProxyStakers: Proto_CryptoGetStakersQuery {
     get {
       if case .cryptoGetProxyStakers(let v)? = _storage._query {return v}
       return Proto_CryptoGetStakersQuery()
@@ -130,7 +130,7 @@ public struct Proto_Query {
   }
 
   /// Get the contents of a file (the bytes stored in it)
-  public var fileGetContents: Proto_FileGetContentsQuery {
+  var fileGetContents: Proto_FileGetContentsQuery {
     get {
       if case .fileGetContents(let v)? = _storage._query {return v}
       return Proto_FileGetContentsQuery()
@@ -139,7 +139,7 @@ public struct Proto_Query {
   }
 
   /// Get information about a file, such as its expiration date
-  public var fileGetInfo: Proto_FileGetInfoQuery {
+  var fileGetInfo: Proto_FileGetInfoQuery {
     get {
       if case .fileGetInfo(let v)? = _storage._query {return v}
       return Proto_FileGetInfoQuery()
@@ -148,7 +148,7 @@ public struct Proto_Query {
   }
 
   /// Get a receipt for a transaction (lasts 180 seconds)
-  public var transactionGetReceipt: Proto_TransactionGetReceiptQuery {
+  var transactionGetReceipt: Proto_TransactionGetReceiptQuery {
     get {
       if case .transactionGetReceipt(let v)? = _storage._query {return v}
       return Proto_TransactionGetReceiptQuery()
@@ -157,7 +157,7 @@ public struct Proto_Query {
   }
 
   /// Get a record for a transaction (lasts 1 hour)
-  public var transactionGetRecord: Proto_TransactionGetRecordQuery {
+  var transactionGetRecord: Proto_TransactionGetRecordQuery {
     get {
       if case .transactionGetRecord(let v)? = _storage._query {return v}
       return Proto_TransactionGetRecordQuery()
@@ -166,7 +166,7 @@ public struct Proto_Query {
   }
 
   /// Get a record for a transaction (lasts 180 seconds)
-  public var transactionGetFastRecord: Proto_TransactionGetFastRecordQuery {
+  var transactionGetFastRecord: Proto_TransactionGetFastRecordQuery {
     get {
       if case .transactionGetFastRecord(let v)? = _storage._query {return v}
       return Proto_TransactionGetFastRecordQuery()
@@ -174,9 +174,9 @@ public struct Proto_Query {
     set {_uniqueStorage()._query = .transactionGetFastRecord(newValue)}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_Query: Equatable {
+  enum OneOf_Query: Equatable {
     /// Get all entities associated with a given key
     case getByKey(Proto_GetByKeyQuery)
     /// Get the IDs in the format used in transactions, given the format used in Solidity
@@ -211,7 +211,7 @@ public struct Proto_Query {
     case transactionGetFastRecord(Proto_TransactionGetFastRecordQuery)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_Query.OneOf_Query, rhs: Proto_Query.OneOf_Query) -> Bool {
+    static func ==(lhs: Proto_Query.OneOf_Query, rhs: Proto_Query.OneOf_Query) -> Bool {
       switch (lhs, rhs) {
       case (.getByKey(let l), .getByKey(let r)): return l == r
       case (.getBySolidityID(let l), .getBySolidityID(let r)): return l == r
@@ -235,7 +235,7 @@ public struct Proto_Query {
   #endif
   }
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -245,8 +245,8 @@ public struct Proto_Query {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_Query: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Query"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".Query"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "getByKey"),
     2: .same(proto: "getBySolidityID"),
     3: .same(proto: "contractCallLocal"),
@@ -284,7 +284,7 @@ extension Proto_Query: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -423,7 +423,7 @@ extension Proto_Query: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       switch _storage._query {
       case .getByKey(let v)?:
@@ -464,7 +464,7 @@ extension Proto_Query: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_Query, rhs: Proto_Query) -> Bool {
+  static func ==(lhs: Proto_Query, rhs: Proto_Query) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

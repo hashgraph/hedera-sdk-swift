@@ -28,98 +28,98 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///
 ///
 /// The current API ignores shardID, realmID, and newRealmAdminKey, and creates everything in shard 0 and realm 0, with a null key. Future versions of the API will support multiple realms and multiple shards.
-public struct Proto_CryptoCreateTransactionBody {
+struct Proto_CryptoCreateTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The key that must sign each transfer out of the account. If receiverSigRequired is true, then it must also sign any transfer into the account.
-  public var key: Proto_Key {
+  var key: Proto_Key {
     get {return _storage._key ?? Proto_Key()}
     set {_uniqueStorage()._key = newValue}
   }
   /// Returns true if `key` has been explicitly set.
-  public var hasKey: Bool {return _storage._key != nil}
+  var hasKey: Bool {return _storage._key != nil}
   /// Clears the value of `key`. Subsequent reads from it will return its default value.
-  public mutating func clearKey() {_uniqueStorage()._key = nil}
+  mutating func clearKey() {_uniqueStorage()._key = nil}
 
   /// The initial number of tinybars to put into the account
-  public var initialBalance: UInt64 {
+  var initialBalance: UInt64 {
     get {return _storage._initialBalance}
     set {_uniqueStorage()._initialBalance = newValue}
   }
 
   /// ID of the account to which this account is proxy staked. If proxyAccountID is null, or is an invalid account, or is an account that isn't a node, then this account is automatically proxy staked to a node chosen by the network, but without earning payments. If the proxyAccountID account refuses to accept proxy staking , or if it is not currently running a node, then it will behave as if proxyAccountID was null.
-  public var proxyAccountID: Proto_AccountID {
+  var proxyAccountID: Proto_AccountID {
     get {return _storage._proxyAccountID ?? Proto_AccountID()}
     set {_uniqueStorage()._proxyAccountID = newValue}
   }
   /// Returns true if `proxyAccountID` has been explicitly set.
-  public var hasProxyAccountID: Bool {return _storage._proxyAccountID != nil}
+  var hasProxyAccountID: Bool {return _storage._proxyAccountID != nil}
   /// Clears the value of `proxyAccountID`. Subsequent reads from it will return its default value.
-  public mutating func clearProxyAccountID() {_uniqueStorage()._proxyAccountID = nil}
+  mutating func clearProxyAccountID() {_uniqueStorage()._proxyAccountID = nil}
 
   /// The threshold amount (in tinybars) for which an account record is created for any send/withdraw transaction
-  public var sendRecordThreshold: UInt64 {
+  var sendRecordThreshold: UInt64 {
     get {return _storage._sendRecordThreshold}
     set {_uniqueStorage()._sendRecordThreshold = newValue}
   }
 
   /// The threshold amount (in tinybars) for which an account record is created for any receive/deposit transaction
-  public var receiveRecordThreshold: UInt64 {
+  var receiveRecordThreshold: UInt64 {
     get {return _storage._receiveRecordThreshold}
     set {_uniqueStorage()._receiveRecordThreshold = newValue}
   }
 
   /// If true, this account's key must sign any transaction depositing into this account (in addition to all withdrawals)
-  public var receiverSigRequired: Bool {
+  var receiverSigRequired: Bool {
     get {return _storage._receiverSigRequired}
     set {_uniqueStorage()._receiverSigRequired = newValue}
   }
 
   /// The account is charged to extend its expiration date every this many seconds. If it doesn't have enough balance, it extends as long as possible. If it is empty when it expires, then it is deleted.
-  public var autoRenewPeriod: Proto_Duration {
+  var autoRenewPeriod: Proto_Duration {
     get {return _storage._autoRenewPeriod ?? Proto_Duration()}
     set {_uniqueStorage()._autoRenewPeriod = newValue}
   }
   /// Returns true if `autoRenewPeriod` has been explicitly set.
-  public var hasAutoRenewPeriod: Bool {return _storage._autoRenewPeriod != nil}
+  var hasAutoRenewPeriod: Bool {return _storage._autoRenewPeriod != nil}
   /// Clears the value of `autoRenewPeriod`. Subsequent reads from it will return its default value.
-  public mutating func clearAutoRenewPeriod() {_uniqueStorage()._autoRenewPeriod = nil}
+  mutating func clearAutoRenewPeriod() {_uniqueStorage()._autoRenewPeriod = nil}
 
   /// The shard in which this account is created
-  public var shardID: Proto_ShardID {
+  var shardID: Proto_ShardID {
     get {return _storage._shardID ?? Proto_ShardID()}
     set {_uniqueStorage()._shardID = newValue}
   }
   /// Returns true if `shardID` has been explicitly set.
-  public var hasShardID: Bool {return _storage._shardID != nil}
+  var hasShardID: Bool {return _storage._shardID != nil}
   /// Clears the value of `shardID`. Subsequent reads from it will return its default value.
-  public mutating func clearShardID() {_uniqueStorage()._shardID = nil}
+  mutating func clearShardID() {_uniqueStorage()._shardID = nil}
 
   /// The realm in which this account is created (leave this null to create a new realm)
-  public var realmID: Proto_RealmID {
+  var realmID: Proto_RealmID {
     get {return _storage._realmID ?? Proto_RealmID()}
     set {_uniqueStorage()._realmID = newValue}
   }
   /// Returns true if `realmID` has been explicitly set.
-  public var hasRealmID: Bool {return _storage._realmID != nil}
+  var hasRealmID: Bool {return _storage._realmID != nil}
   /// Clears the value of `realmID`. Subsequent reads from it will return its default value.
-  public mutating func clearRealmID() {_uniqueStorage()._realmID = nil}
+  mutating func clearRealmID() {_uniqueStorage()._realmID = nil}
 
   /// If realmID is null, then this the admin key for the new realm that will be created
-  public var newRealmAdminKey: Proto_Key {
+  var newRealmAdminKey: Proto_Key {
     get {return _storage._newRealmAdminKey ?? Proto_Key()}
     set {_uniqueStorage()._newRealmAdminKey = newValue}
   }
   /// Returns true if `newRealmAdminKey` has been explicitly set.
-  public var hasNewRealmAdminKey: Bool {return _storage._newRealmAdminKey != nil}
+  var hasNewRealmAdminKey: Bool {return _storage._newRealmAdminKey != nil}
   /// Clears the value of `newRealmAdminKey`. Subsequent reads from it will return its default value.
-  public mutating func clearNewRealmAdminKey() {_uniqueStorage()._newRealmAdminKey = nil}
+  mutating func clearNewRealmAdminKey() {_uniqueStorage()._newRealmAdminKey = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -129,8 +129,8 @@ public struct Proto_CryptoCreateTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_CryptoCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".CryptoCreateTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".CryptoCreateTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "key"),
     2: .same(proto: "initialBalance"),
     3: .same(proto: "proxyAccountID"),
@@ -180,7 +180,7 @@ extension Proto_CryptoCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -201,7 +201,7 @@ extension Proto_CryptoCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._key {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -237,7 +237,7 @@ extension Proto_CryptoCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobu
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_CryptoCreateTransactionBody, rhs: Proto_CryptoCreateTransactionBody) -> Bool {
+  static func ==(lhs: Proto_CryptoCreateTransactionBody, rhs: Proto_CryptoCreateTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

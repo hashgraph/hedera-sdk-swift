@@ -20,50 +20,50 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// A hash (presumably of some kind of credential or certificate), along with a list of keys (each of which is either a primitive or a threshold key). Each of them must reach its threshold when signing the transaction, to attach this claim to this account. At least one of them must reach its threshold to delete this Claim from this account. This is intended to provide a revocation service: all the authorities agree to attach the hash, to attest to the fact that the credential or certificate is valid. Any one of the authorities can later delete the hash, to indicate that the credential has been revoked. In this way, any client can prove to a third party that any particular account has certain credentials, or to identity facts proved about it, and that none of them have been revoked yet. 
-public struct Proto_Claim {
+struct Proto_Claim {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///the account to which the claim is attached
-  public var accountID: Proto_AccountID {
+  var accountID: Proto_AccountID {
     get {return _storage._accountID ?? Proto_AccountID()}
     set {_uniqueStorage()._accountID = newValue}
   }
   /// Returns true if `accountID` has been explicitly set.
-  public var hasAccountID: Bool {return _storage._accountID != nil}
+  var hasAccountID: Bool {return _storage._accountID != nil}
   /// Clears the value of `accountID`. Subsequent reads from it will return its default value.
-  public mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
+  mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
 
   /// 48 byte SHA-384 hash (presumably of some kind of credential or certificate)
-  public var hash: Data {
+  var hash: Data {
     get {return _storage._hash}
     set {_uniqueStorage()._hash = newValue}
   }
 
   /// list of keys: all must sign the transaction to attach the claim, and any one of them can later delete it. Each "key" can actually be a threshold key containing multiple other keys (including other threshold keys).
-  public var keys: Proto_KeyList {
+  var keys: Proto_KeyList {
     get {return _storage._keys ?? Proto_KeyList()}
     set {_uniqueStorage()._keys = newValue}
   }
   /// Returns true if `keys` has been explicitly set.
-  public var hasKeys: Bool {return _storage._keys != nil}
+  var hasKeys: Bool {return _storage._keys != nil}
   /// Clears the value of `keys`. Subsequent reads from it will return its default value.
-  public mutating func clearKeys() {_uniqueStorage()._keys = nil}
+  mutating func clearKeys() {_uniqueStorage()._keys = nil}
 
   /// the duration for which the claim will remain valid
-  public var claimDuration: Proto_Duration {
+  var claimDuration: Proto_Duration {
     get {return _storage._claimDuration ?? Proto_Duration()}
     set {_uniqueStorage()._claimDuration = newValue}
   }
   /// Returns true if `claimDuration` has been explicitly set.
-  public var hasClaimDuration: Bool {return _storage._claimDuration != nil}
+  var hasClaimDuration: Bool {return _storage._claimDuration != nil}
   /// Clears the value of `claimDuration`. Subsequent reads from it will return its default value.
-  public mutating func clearClaimDuration() {_uniqueStorage()._claimDuration = nil}
+  mutating func clearClaimDuration() {_uniqueStorage()._claimDuration = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -73,24 +73,24 @@ public struct Proto_Claim {
 /// In this way, it acts as a revocation server, and the account owner can prove to any third party that the claim is still true for this account, by sending the third party the signed credential, and then having the third party query to discover whether the hash of that credential is still attached to the account.
 ///
 /// For a given account, each Claim must contain a different hash. To modify the list of keys in a Claim, the existing Claim should first be deleted, then the Claim with the new list of keys can be added. 
-public struct Proto_CryptoAddClaimTransactionBody {
+struct Proto_CryptoAddClaimTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// A hash of some credential/certificate, along with the keys that authorized it and are allowed to delete it
-  public var claim: Proto_Claim {
+  var claim: Proto_Claim {
     get {return _storage._claim ?? Proto_Claim()}
     set {_uniqueStorage()._claim = newValue}
   }
   /// Returns true if `claim` has been explicitly set.
-  public var hasClaim: Bool {return _storage._claim != nil}
+  var hasClaim: Bool {return _storage._claim != nil}
   /// Clears the value of `claim`. Subsequent reads from it will return its default value.
-  public mutating func clearClaim() {_uniqueStorage()._claim = nil}
+  mutating func clearClaim() {_uniqueStorage()._claim = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -100,8 +100,8 @@ public struct Proto_CryptoAddClaimTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_Claim: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Claim"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".Claim"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "accountID"),
     2: .same(proto: "hash"),
     3: .same(proto: "keys"),
@@ -133,7 +133,7 @@ extension Proto_Claim: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -148,7 +148,7 @@ extension Proto_Claim: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._accountID {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -166,7 +166,7 @@ extension Proto_Claim: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_Claim, rhs: Proto_Claim) -> Bool {
+  static func ==(lhs: Proto_Claim, rhs: Proto_Claim) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -185,8 +185,8 @@ extension Proto_Claim: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
 }
 
 extension Proto_CryptoAddClaimTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".CryptoAddClaimTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".CryptoAddClaimTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     3: .same(proto: "claim"),
   ]
 
@@ -209,7 +209,7 @@ extension Proto_CryptoAddClaimTransactionBody: SwiftProtobuf.Message, SwiftProto
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -221,7 +221,7 @@ extension Proto_CryptoAddClaimTransactionBody: SwiftProtobuf.Message, SwiftProto
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._claim {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
@@ -230,7 +230,7 @@ extension Proto_CryptoAddClaimTransactionBody: SwiftProtobuf.Message, SwiftProto
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_CryptoAddClaimTransactionBody, rhs: Proto_CryptoAddClaimTransactionBody) -> Bool {
+  static func ==(lhs: Proto_CryptoAddClaimTransactionBody, rhs: Proto_CryptoAddClaimTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

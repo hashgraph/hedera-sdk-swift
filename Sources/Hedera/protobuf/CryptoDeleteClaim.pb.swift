@@ -20,30 +20,30 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Delete a claim hash that was attached to the given account. This transaction is valid if signed by all the keys used for transfers out of the account. It is also valid if signed by any single ThresholdKeys in the deleteKeys list for this hash. See CryptoAddClaimTransaction for more information about claim hashes. 
-public struct Proto_CryptoDeleteClaimTransactionBody {
+struct Proto_CryptoDeleteClaimTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The account ID that should have a claim deleted
-  public var accountIdtoDeleteFrom: Proto_AccountID {
+  var accountIdtoDeleteFrom: Proto_AccountID {
     get {return _storage._accountIdtoDeleteFrom ?? Proto_AccountID()}
     set {_uniqueStorage()._accountIdtoDeleteFrom = newValue}
   }
   /// Returns true if `accountIdtoDeleteFrom` has been explicitly set.
-  public var hasAccountIdtoDeleteFrom: Bool {return _storage._accountIdtoDeleteFrom != nil}
+  var hasAccountIdtoDeleteFrom: Bool {return _storage._accountIdtoDeleteFrom != nil}
   /// Clears the value of `accountIdtoDeleteFrom`. Subsequent reads from it will return its default value.
-  public mutating func clearAccountIdtoDeleteFrom() {_uniqueStorage()._accountIdtoDeleteFrom = nil}
+  mutating func clearAccountIdtoDeleteFrom() {_uniqueStorage()._accountIdtoDeleteFrom = nil}
 
   /// The hash in the claim to delete (a SHA-384 hash, 48 bytes)
-  public var hashToDelete: Data {
+  var hashToDelete: Data {
     get {return _storage._hashToDelete}
     set {_uniqueStorage()._hashToDelete = newValue}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -53,8 +53,8 @@ public struct Proto_CryptoDeleteClaimTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_CryptoDeleteClaimTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".CryptoDeleteClaimTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".CryptoDeleteClaimTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "accountIDToDeleteFrom"),
     2: .same(proto: "hashToDelete"),
   ]
@@ -80,7 +80,7 @@ extension Proto_CryptoDeleteClaimTransactionBody: SwiftProtobuf.Message, SwiftPr
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -93,7 +93,7 @@ extension Proto_CryptoDeleteClaimTransactionBody: SwiftProtobuf.Message, SwiftPr
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._accountIdtoDeleteFrom {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -105,7 +105,7 @@ extension Proto_CryptoDeleteClaimTransactionBody: SwiftProtobuf.Message, SwiftPr
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_CryptoDeleteClaimTransactionBody, rhs: Proto_CryptoDeleteClaimTransactionBody) -> Bool {
+  static func ==(lhs: Proto_CryptoDeleteClaimTransactionBody, rhs: Proto_CryptoDeleteClaimTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

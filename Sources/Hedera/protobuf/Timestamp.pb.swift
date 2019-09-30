@@ -20,34 +20,34 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// An exact date and time. This is the same data structure as the protobuf Timestamp.proto (see the comments in https://github.com/google/protobuf/blob/master/src/google/protobuf/timestamp.proto) 
-public struct Proto_Timestamp {
+struct Proto_Timestamp {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Number of complete seconds since the start of the epoch
-  public var seconds: Int64 = 0
+  var seconds: Int64 = 0
 
   /// Number of nanoseconds since the start of the last second
-  public var nanos: Int32 = 0
+  var nanos: Int32 = 0
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 /// An exact date and time,  with a resolution of one second (no nanoseconds). 
-public struct Proto_TimestampSeconds {
+struct Proto_TimestampSeconds {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Number of complete seconds since the start of the epoch
-  public var seconds: Int64 = 0
+  var seconds: Int64 = 0
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 }
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -55,13 +55,13 @@ public struct Proto_TimestampSeconds {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_Timestamp: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Timestamp"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".Timestamp"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "seconds"),
     2: .same(proto: "nanos"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularInt64Field(value: &self.seconds)
@@ -71,7 +71,7 @@ extension Proto_Timestamp: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.seconds != 0 {
       try visitor.visitSingularInt64Field(value: self.seconds, fieldNumber: 1)
     }
@@ -81,7 +81,7 @@ extension Proto_Timestamp: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_Timestamp, rhs: Proto_Timestamp) -> Bool {
+  static func ==(lhs: Proto_Timestamp, rhs: Proto_Timestamp) -> Bool {
     if lhs.seconds != rhs.seconds {return false}
     if lhs.nanos != rhs.nanos {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
@@ -90,12 +90,12 @@ extension Proto_Timestamp: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
 }
 
 extension Proto_TimestampSeconds: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".TimestampSeconds"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".TimestampSeconds"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "seconds"),
   ]
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     while let fieldNumber = try decoder.nextFieldNumber() {
       switch fieldNumber {
       case 1: try decoder.decodeSingularInt64Field(value: &self.seconds)
@@ -104,14 +104,14 @@ extension Proto_TimestampSeconds: SwiftProtobuf.Message, SwiftProtobuf._MessageI
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     if self.seconds != 0 {
       try visitor.visitSingularInt64Field(value: self.seconds, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_TimestampSeconds, rhs: Proto_TimestampSeconds) -> Bool {
+  static func ==(lhs: Proto_TimestampSeconds, rhs: Proto_TimestampSeconds) -> Bool {
     if lhs.seconds != rhs.seconds {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

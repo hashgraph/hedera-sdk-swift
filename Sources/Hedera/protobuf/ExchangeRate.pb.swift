@@ -20,69 +20,69 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 ///  Values from these proto denotes habr and cents(USD) conversion 
-public struct Proto_ExchangeRate {
+struct Proto_ExchangeRate {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// value which denote habar equivalent to cent
-  public var hbarEquiv: Int32 {
+  var hbarEquiv: Int32 {
     get {return _storage._hbarEquiv}
     set {_uniqueStorage()._hbarEquiv = newValue}
   }
 
   /// value which denote cents (USD) equivalent to Hbar}
-  public var centEquiv: Int32 {
+  var centEquiv: Int32 {
     get {return _storage._centEquiv}
     set {_uniqueStorage()._centEquiv = newValue}
   }
 
   /// expired time in seconds for this exchange rate
-  public var expirationTime: Proto_TimestampSeconds {
+  var expirationTime: Proto_TimestampSeconds {
     get {return _storage._expirationTime ?? Proto_TimestampSeconds()}
     set {_uniqueStorage()._expirationTime = newValue}
   }
   /// Returns true if `expirationTime` has been explicitly set.
-  public var hasExpirationTime: Bool {return _storage._expirationTime != nil}
+  var hasExpirationTime: Bool {return _storage._expirationTime != nil}
   /// Clears the value of `expirationTime`. Subsequent reads from it will return its default value.
-  public mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
+  mutating func clearExpirationTime() {_uniqueStorage()._expirationTime = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 /// Two sets of exchange rate 
-public struct Proto_ExchangeRateSet {
+struct Proto_ExchangeRateSet {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// Current rate of Exchange of Hbar to cents
-  public var currentRate: Proto_ExchangeRate {
+  var currentRate: Proto_ExchangeRate {
     get {return _storage._currentRate ?? Proto_ExchangeRate()}
     set {_uniqueStorage()._currentRate = newValue}
   }
   /// Returns true if `currentRate` has been explicitly set.
-  public var hasCurrentRate: Bool {return _storage._currentRate != nil}
+  var hasCurrentRate: Bool {return _storage._currentRate != nil}
   /// Clears the value of `currentRate`. Subsequent reads from it will return its default value.
-  public mutating func clearCurrentRate() {_uniqueStorage()._currentRate = nil}
+  mutating func clearCurrentRate() {_uniqueStorage()._currentRate = nil}
 
   /// Next rate exchange of Hbar to cents
-  public var nextRate: Proto_ExchangeRate {
+  var nextRate: Proto_ExchangeRate {
     get {return _storage._nextRate ?? Proto_ExchangeRate()}
     set {_uniqueStorage()._nextRate = newValue}
   }
   /// Returns true if `nextRate` has been explicitly set.
-  public var hasNextRate: Bool {return _storage._nextRate != nil}
+  var hasNextRate: Bool {return _storage._nextRate != nil}
   /// Clears the value of `nextRate`. Subsequent reads from it will return its default value.
-  public mutating func clearNextRate() {_uniqueStorage()._nextRate = nil}
+  mutating func clearNextRate() {_uniqueStorage()._nextRate = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -92,8 +92,8 @@ public struct Proto_ExchangeRateSet {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_ExchangeRate: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ExchangeRate"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".ExchangeRate"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "hbarEquiv"),
     2: .same(proto: "centEquiv"),
     3: .same(proto: "expirationTime"),
@@ -122,7 +122,7 @@ extension Proto_ExchangeRate: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -136,7 +136,7 @@ extension Proto_ExchangeRate: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if _storage._hbarEquiv != 0 {
         try visitor.visitSingularInt32Field(value: _storage._hbarEquiv, fieldNumber: 1)
@@ -151,7 +151,7 @@ extension Proto_ExchangeRate: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_ExchangeRate, rhs: Proto_ExchangeRate) -> Bool {
+  static func ==(lhs: Proto_ExchangeRate, rhs: Proto_ExchangeRate) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
@@ -169,8 +169,8 @@ extension Proto_ExchangeRate: SwiftProtobuf.Message, SwiftProtobuf._MessageImple
 }
 
 extension Proto_ExchangeRateSet: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ExchangeRateSet"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".ExchangeRateSet"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "currentRate"),
     2: .same(proto: "nextRate"),
   ]
@@ -196,7 +196,7 @@ extension Proto_ExchangeRateSet: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -209,7 +209,7 @@ extension Proto_ExchangeRateSet: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._currentRate {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -221,7 +221,7 @@ extension Proto_ExchangeRateSet: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_ExchangeRateSet, rhs: Proto_ExchangeRateSet) -> Bool {
+  static func ==(lhs: Proto_ExchangeRateSet, rhs: Proto_ExchangeRateSet) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

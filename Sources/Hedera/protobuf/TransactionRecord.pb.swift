@@ -20,66 +20,66 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 /// Response when the client sends the node TransactionGetRecordResponse 
-public struct Proto_TransactionRecord {
+struct Proto_TransactionRecord {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// The status (reach consensus, or failed, or is unknown) and the ID of any new account/file/instance created.
-  public var receipt: Proto_TransactionReceipt {
+  var receipt: Proto_TransactionReceipt {
     get {return _storage._receipt ?? Proto_TransactionReceipt()}
     set {_uniqueStorage()._receipt = newValue}
   }
   /// Returns true if `receipt` has been explicitly set.
-  public var hasReceipt: Bool {return _storage._receipt != nil}
+  var hasReceipt: Bool {return _storage._receipt != nil}
   /// Clears the value of `receipt`. Subsequent reads from it will return its default value.
-  public mutating func clearReceipt() {_uniqueStorage()._receipt = nil}
+  mutating func clearReceipt() {_uniqueStorage()._receipt = nil}
 
   /// The hash of the Transaction that executed (not the hash of any Transaction that failed for having a duplicate TransactionID)
-  public var transactionHash: Data {
+  var transactionHash: Data {
     get {return _storage._transactionHash}
     set {_uniqueStorage()._transactionHash = newValue}
   }
 
   /// The consensus timestamp (or null if didn't reach consensus yet)
-  public var consensusTimestamp: Proto_Timestamp {
+  var consensusTimestamp: Proto_Timestamp {
     get {return _storage._consensusTimestamp ?? Proto_Timestamp()}
     set {_uniqueStorage()._consensusTimestamp = newValue}
   }
   /// Returns true if `consensusTimestamp` has been explicitly set.
-  public var hasConsensusTimestamp: Bool {return _storage._consensusTimestamp != nil}
+  var hasConsensusTimestamp: Bool {return _storage._consensusTimestamp != nil}
   /// Clears the value of `consensusTimestamp`. Subsequent reads from it will return its default value.
-  public mutating func clearConsensusTimestamp() {_uniqueStorage()._consensusTimestamp = nil}
+  mutating func clearConsensusTimestamp() {_uniqueStorage()._consensusTimestamp = nil}
 
   /// The ID of the transaction this record represents
-  public var transactionID: Proto_TransactionID {
+  var transactionID: Proto_TransactionID {
     get {return _storage._transactionID ?? Proto_TransactionID()}
     set {_uniqueStorage()._transactionID = newValue}
   }
   /// Returns true if `transactionID` has been explicitly set.
-  public var hasTransactionID: Bool {return _storage._transactionID != nil}
+  var hasTransactionID: Bool {return _storage._transactionID != nil}
   /// Clears the value of `transactionID`. Subsequent reads from it will return its default value.
-  public mutating func clearTransactionID() {_uniqueStorage()._transactionID = nil}
+  mutating func clearTransactionID() {_uniqueStorage()._transactionID = nil}
 
   /// The memo that was submitted as part of the transaction (max 100 bytes)
-  public var memo: String {
+  var memo: String {
     get {return _storage._memo}
     set {_uniqueStorage()._memo = newValue}
   }
 
   /// The actual transaction fee charged, not the original transactionFee value from TransactionBody
-  public var transactionFee: UInt64 {
+  var transactionFee: UInt64 {
     get {return _storage._transactionFee}
     set {_uniqueStorage()._transactionFee = newValue}
   }
 
-  public var body: OneOf_Body? {
+  var body: OneOf_Body? {
     get {return _storage._body}
     set {_uniqueStorage()._body = newValue}
   }
 
   /// Record of the value returned by the smart contract function (if it completed and didn't fail) from ContractCallTransaction
-  public var contractCallResult: Proto_ContractFunctionResult {
+  var contractCallResult: Proto_ContractFunctionResult {
     get {
       if case .contractCallResult(let v)? = _storage._body {return v}
       return Proto_ContractFunctionResult()
@@ -88,7 +88,7 @@ public struct Proto_TransactionRecord {
   }
 
   /// Record of the value returned by the smart contract constructor (if it completed and didn't fail) from ContractCreateTransaction
-  public var contractCreateResult: Proto_ContractFunctionResult {
+  var contractCreateResult: Proto_ContractFunctionResult {
     get {
       if case .contractCreateResult(let v)? = _storage._body {return v}
       return Proto_ContractFunctionResult()
@@ -97,25 +97,25 @@ public struct Proto_TransactionRecord {
   }
 
   /// All hbar transfers as a result of this transaction, such as fees, or transfers performed by the transaction, or by a smart contract it calls, or by the creation of threshold records that it triggers.
-  public var transferList: Proto_TransferList {
+  var transferList: Proto_TransferList {
     get {return _storage._transferList ?? Proto_TransferList()}
     set {_uniqueStorage()._transferList = newValue}
   }
   /// Returns true if `transferList` has been explicitly set.
-  public var hasTransferList: Bool {return _storage._transferList != nil}
+  var hasTransferList: Bool {return _storage._transferList != nil}
   /// Clears the value of `transferList`. Subsequent reads from it will return its default value.
-  public mutating func clearTransferList() {_uniqueStorage()._transferList = nil}
+  mutating func clearTransferList() {_uniqueStorage()._transferList = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_Body: Equatable {
+  enum OneOf_Body: Equatable {
     /// Record of the value returned by the smart contract function (if it completed and didn't fail) from ContractCallTransaction
     case contractCallResult(Proto_ContractFunctionResult)
     /// Record of the value returned by the smart contract constructor (if it completed and didn't fail) from ContractCreateTransaction
     case contractCreateResult(Proto_ContractFunctionResult)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_TransactionRecord.OneOf_Body, rhs: Proto_TransactionRecord.OneOf_Body) -> Bool {
+    static func ==(lhs: Proto_TransactionRecord.OneOf_Body, rhs: Proto_TransactionRecord.OneOf_Body) -> Bool {
       switch (lhs, rhs) {
       case (.contractCallResult(let l), .contractCallResult(let r)): return l == r
       case (.contractCreateResult(let l), .contractCreateResult(let r)): return l == r
@@ -125,7 +125,7 @@ public struct Proto_TransactionRecord {
   #endif
   }
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -135,8 +135,8 @@ public struct Proto_TransactionRecord {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_TransactionRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".TransactionRecord"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".TransactionRecord"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "receipt"),
     2: .same(proto: "transactionHash"),
     3: .same(proto: "consensusTimestamp"),
@@ -181,7 +181,7 @@ extension Proto_TransactionRecord: SwiftProtobuf.Message, SwiftProtobuf._Message
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -215,7 +215,7 @@ extension Proto_TransactionRecord: SwiftProtobuf.Message, SwiftProtobuf._Message
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._receipt {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -249,7 +249,7 @@ extension Proto_TransactionRecord: SwiftProtobuf.Message, SwiftProtobuf._Message
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_TransactionRecord, rhs: Proto_TransactionRecord) -> Bool {
+  static func ==(lhs: Proto_TransactionRecord, rhs: Proto_TransactionRecord) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

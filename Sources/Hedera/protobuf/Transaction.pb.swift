@@ -22,18 +22,18 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// A single signed transaction, including all its signatures. The SignatureList will have a Signature for each Key in the transaction, either explicit or implicit, in the order that they appear in the transaction. For example, a CryptoTransfer will first have a Signature corresponding to the Key for the paying account, followed by a Signature corresponding to the Key for each account that is sending or receiving cryptocurrency in the transfer. Each Transaction should not have more than 50 levels. 
 ///
 /// The SignatureList field is deprecated and succeeded by SignatureMap.
-public struct Proto_Transaction {
+struct Proto_Transaction {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var bodyData: OneOf_BodyData? {
+  var bodyData: OneOf_BodyData? {
     get {return _storage._bodyData}
     set {_uniqueStorage()._bodyData = newValue}
   }
 
   /// the body of the transaction, which needs to be signed
-  public var body: Proto_TransactionBody {
+  var body: Proto_TransactionBody {
     get {
       if case .body(let v)? = _storage._bodyData {return v}
       return Proto_TransactionBody()
@@ -42,7 +42,7 @@ public struct Proto_Transaction {
   }
 
   /// TransactionBody serialized into bytes , which needs to be signed
-  public var bodyBytes: Data {
+  var bodyBytes: Data {
     get {
       if case .bodyBytes(let v)? = _storage._bodyData {return v}
       return SwiftProtobuf.Internal.emptyData
@@ -51,35 +51,35 @@ public struct Proto_Transaction {
   }
 
   /// The signatures on the body, to authorize the transaction; deprecated and to be succeeded by SignatureMap field
-  public var sigs: Proto_SignatureList {
+  var sigs: Proto_SignatureList {
     get {return _storage._sigs ?? Proto_SignatureList()}
     set {_uniqueStorage()._sigs = newValue}
   }
   /// Returns true if `sigs` has been explicitly set.
-  public var hasSigs: Bool {return _storage._sigs != nil}
+  var hasSigs: Bool {return _storage._sigs != nil}
   /// Clears the value of `sigs`. Subsequent reads from it will return its default value.
-  public mutating func clearSigs() {_uniqueStorage()._sigs = nil}
+  mutating func clearSigs() {_uniqueStorage()._sigs = nil}
 
   /// The signatures on the body with the new format, to authorize the transaction
-  public var sigMap: Proto_SignatureMap {
+  var sigMap: Proto_SignatureMap {
     get {return _storage._sigMap ?? Proto_SignatureMap()}
     set {_uniqueStorage()._sigMap = newValue}
   }
   /// Returns true if `sigMap` has been explicitly set.
-  public var hasSigMap: Bool {return _storage._sigMap != nil}
+  var hasSigMap: Bool {return _storage._sigMap != nil}
   /// Clears the value of `sigMap`. Subsequent reads from it will return its default value.
-  public mutating func clearSigMap() {_uniqueStorage()._sigMap = nil}
+  mutating func clearSigMap() {_uniqueStorage()._sigMap = nil}
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_BodyData: Equatable {
+  enum OneOf_BodyData: Equatable {
     /// the body of the transaction, which needs to be signed
     case body(Proto_TransactionBody)
     /// TransactionBody serialized into bytes , which needs to be signed
     case bodyBytes(Data)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: Proto_Transaction.OneOf_BodyData, rhs: Proto_Transaction.OneOf_BodyData) -> Bool {
+    static func ==(lhs: Proto_Transaction.OneOf_BodyData, rhs: Proto_Transaction.OneOf_BodyData) -> Bool {
       switch (lhs, rhs) {
       case (.body(let l), .body(let r)): return l == r
       case (.bodyBytes(let l), .bodyBytes(let r)): return l == r
@@ -89,7 +89,7 @@ public struct Proto_Transaction {
   #endif
   }
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -99,8 +99,8 @@ public struct Proto_Transaction {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_Transaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".Transaction"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".Transaction"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "body"),
     4: .same(proto: "bodyBytes"),
     2: .same(proto: "sigs"),
@@ -130,7 +130,7 @@ extension Proto_Transaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -156,7 +156,7 @@ extension Proto_Transaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if case .body(let v)? = _storage._bodyData {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -174,7 +174,7 @@ extension Proto_Transaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_Transaction, rhs: Proto_Transaction) -> Bool {
+  static func ==(lhs: Proto_Transaction, rhs: Proto_Transaction) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0

@@ -32,108 +32,108 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// The current API ignores shardID, realmID, and newRealmAdminKey, and creates everything in shard 0 and realm 0, with a null key. Future versions of the API will support multiple realms and multiple shards.
 ///
 /// The optional memo field can contain a string whose length is up to 100 bytes. That is the size after Unicode NFD then UTF-8 conversion. This field can be used to describe the smart contract. It could also be used for other purposes. One recommended purpose is to hold a hexadecimal string that is the SHA-384 hash of a PDF file containing a human-readable legal contract. Then, if the admin keys are the public keys of human arbitrators, they can use that legal document to guide their decisions during a binding arbitration tribunal, convened to consider any changes to the smart contract in the future. The memo field can only be changed using the admin keys. If there are no admin keys, then it cannot be changed after the smart contract is created.
-public struct Proto_ContractCreateTransactionBody {
+struct Proto_ContractCreateTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   /// the file containing the smart contract byte code. A copy will be made and held by the contract instance, and have the same expiration time as the instance. The file is referenced one of two ways:
-  public var fileID: Proto_FileID {
+  var fileID: Proto_FileID {
     get {return _storage._fileID ?? Proto_FileID()}
     set {_uniqueStorage()._fileID = newValue}
   }
   /// Returns true if `fileID` has been explicitly set.
-  public var hasFileID: Bool {return _storage._fileID != nil}
+  var hasFileID: Bool {return _storage._fileID != nil}
   /// Clears the value of `fileID`. Subsequent reads from it will return its default value.
-  public mutating func clearFileID() {_uniqueStorage()._fileID = nil}
+  mutating func clearFileID() {_uniqueStorage()._fileID = nil}
 
   /// the state of the instance and its fields can be modified arbitrarily if this key signs a transaction to modify it. If this is null, then such modifications are not possible, and there is no administrator that can override the normal operation of this smart contract instance. Note that if it is created with no admin keys, then there is no administrator to authorize changing the admin keys, so there can never be any admin keys for that instance.
-  public var adminKey: Proto_Key {
+  var adminKey: Proto_Key {
     get {return _storage._adminKey ?? Proto_Key()}
     set {_uniqueStorage()._adminKey = newValue}
   }
   /// Returns true if `adminKey` has been explicitly set.
-  public var hasAdminKey: Bool {return _storage._adminKey != nil}
+  var hasAdminKey: Bool {return _storage._adminKey != nil}
   /// Clears the value of `adminKey`. Subsequent reads from it will return its default value.
-  public mutating func clearAdminKey() {_uniqueStorage()._adminKey = nil}
+  mutating func clearAdminKey() {_uniqueStorage()._adminKey = nil}
 
   /// gas to run the constructor
-  public var gas: Int64 {
+  var gas: Int64 {
     get {return _storage._gas}
     set {_uniqueStorage()._gas = newValue}
   }
 
   /// initial number of tinybars to put into the cryptocurrency account associated with and owned by the smart contract
-  public var initialBalance: Int64 {
+  var initialBalance: Int64 {
     get {return _storage._initialBalance}
     set {_uniqueStorage()._initialBalance = newValue}
   }
 
   /// ID of the account to which this account is proxy staked. If proxyAccountID is null, or is an invalid account, or is an account that isn't a node, then this account is automatically proxy staked to a node chosen by the network, but without earning payments. If the proxyAccountID account refuses to accept proxy staking , or if it is not currently running a node, then it will behave as if  proxyAccountID was null.
-  public var proxyAccountID: Proto_AccountID {
+  var proxyAccountID: Proto_AccountID {
     get {return _storage._proxyAccountID ?? Proto_AccountID()}
     set {_uniqueStorage()._proxyAccountID = newValue}
   }
   /// Returns true if `proxyAccountID` has been explicitly set.
-  public var hasProxyAccountID: Bool {return _storage._proxyAccountID != nil}
+  var hasProxyAccountID: Bool {return _storage._proxyAccountID != nil}
   /// Clears the value of `proxyAccountID`. Subsequent reads from it will return its default value.
-  public mutating func clearProxyAccountID() {_uniqueStorage()._proxyAccountID = nil}
+  mutating func clearProxyAccountID() {_uniqueStorage()._proxyAccountID = nil}
 
   /// the instance will charge its account every this many seconds to renew for this long
-  public var autoRenewPeriod: Proto_Duration {
+  var autoRenewPeriod: Proto_Duration {
     get {return _storage._autoRenewPeriod ?? Proto_Duration()}
     set {_uniqueStorage()._autoRenewPeriod = newValue}
   }
   /// Returns true if `autoRenewPeriod` has been explicitly set.
-  public var hasAutoRenewPeriod: Bool {return _storage._autoRenewPeriod != nil}
+  var hasAutoRenewPeriod: Bool {return _storage._autoRenewPeriod != nil}
   /// Clears the value of `autoRenewPeriod`. Subsequent reads from it will return its default value.
-  public mutating func clearAutoRenewPeriod() {_uniqueStorage()._autoRenewPeriod = nil}
+  mutating func clearAutoRenewPeriod() {_uniqueStorage()._autoRenewPeriod = nil}
 
   /// parameters to pass to the constructor
-  public var constructorParameters: Data {
+  var constructorParameters: Data {
     get {return _storage._constructorParameters}
     set {_uniqueStorage()._constructorParameters = newValue}
   }
 
   /// shard in which to create this
-  public var shardID: Proto_ShardID {
+  var shardID: Proto_ShardID {
     get {return _storage._shardID ?? Proto_ShardID()}
     set {_uniqueStorage()._shardID = newValue}
   }
   /// Returns true if `shardID` has been explicitly set.
-  public var hasShardID: Bool {return _storage._shardID != nil}
+  var hasShardID: Bool {return _storage._shardID != nil}
   /// Clears the value of `shardID`. Subsequent reads from it will return its default value.
-  public mutating func clearShardID() {_uniqueStorage()._shardID = nil}
+  mutating func clearShardID() {_uniqueStorage()._shardID = nil}
 
   /// realm in which to create this (leave this null to create a new realm)
-  public var realmID: Proto_RealmID {
+  var realmID: Proto_RealmID {
     get {return _storage._realmID ?? Proto_RealmID()}
     set {_uniqueStorage()._realmID = newValue}
   }
   /// Returns true if `realmID` has been explicitly set.
-  public var hasRealmID: Bool {return _storage._realmID != nil}
+  var hasRealmID: Bool {return _storage._realmID != nil}
   /// Clears the value of `realmID`. Subsequent reads from it will return its default value.
-  public mutating func clearRealmID() {_uniqueStorage()._realmID = nil}
+  mutating func clearRealmID() {_uniqueStorage()._realmID = nil}
 
   /// if realmID is null, then this the admin key for the new realm that will be created
-  public var newRealmAdminKey: Proto_Key {
+  var newRealmAdminKey: Proto_Key {
     get {return _storage._newRealmAdminKey ?? Proto_Key()}
     set {_uniqueStorage()._newRealmAdminKey = newValue}
   }
   /// Returns true if `newRealmAdminKey` has been explicitly set.
-  public var hasNewRealmAdminKey: Bool {return _storage._newRealmAdminKey != nil}
+  var hasNewRealmAdminKey: Bool {return _storage._newRealmAdminKey != nil}
   /// Clears the value of `newRealmAdminKey`. Subsequent reads from it will return its default value.
-  public mutating func clearNewRealmAdminKey() {_uniqueStorage()._newRealmAdminKey = nil}
+  mutating func clearNewRealmAdminKey() {_uniqueStorage()._newRealmAdminKey = nil}
 
   /// the memo that was submitted as part of the contract (max 100 bytes)
-  public var memo: String {
+  var memo: String {
     get {return _storage._memo}
     set {_uniqueStorage()._memo = newValue}
   }
 
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
+  var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public init() {}
+  init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
@@ -143,8 +143,8 @@ public struct Proto_ContractCreateTransactionBody {
 fileprivate let _protobuf_package = "proto"
 
 extension Proto_ContractCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".ContractCreateTransactionBody"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+  static let protoMessageName: String = _protobuf_package + ".ContractCreateTransactionBody"
+  static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "fileID"),
     3: .same(proto: "adminKey"),
     4: .same(proto: "gas"),
@@ -197,7 +197,7 @@ extension Proto_ContractCreateTransactionBody: SwiftProtobuf.Message, SwiftProto
     return _storage
   }
 
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+  mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
     _ = _uniqueStorage()
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       while let fieldNumber = try decoder.nextFieldNumber() {
@@ -219,7 +219,7 @@ extension Proto_ContractCreateTransactionBody: SwiftProtobuf.Message, SwiftProto
     }
   }
 
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+  func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
     try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if let v = _storage._fileID {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
@@ -258,7 +258,7 @@ extension Proto_ContractCreateTransactionBody: SwiftProtobuf.Message, SwiftProto
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_ContractCreateTransactionBody, rhs: Proto_ContractCreateTransactionBody) -> Bool {
+  static func ==(lhs: Proto_ContractCreateTransactionBody, rhs: Proto_ContractCreateTransactionBody) -> Bool {
     if lhs._storage !== rhs._storage {
       let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
         let _storage = _args.0
