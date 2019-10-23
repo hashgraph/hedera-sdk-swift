@@ -1,0 +1,26 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        // Running executables
+        // {
+        //     "type": "lldb",
+        //     "request": "launch",
+        //     "name": "Run your Executable",
+        //     "program": "${workspaceFolder}/.build/debug/your-executable",
+        //     "args": [],
+        //     "cwd": "${workspaceFolder}",
+        //     "preLaunchTask": "swift-build"
+        // },
+        // Running unit tests
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug tests on Linux",
+            "program": "./.build/x86_64-unknown-linux/debug/hederaPackageTests.xctest",
+            "preLaunchTask": "swift-build-tests"
+        }
+    ]
+}

@@ -28,9 +28,9 @@ let package = Package(
         .testTarget(
             name: "HederaTests",
             dependencies: ["Hedera"]),
-        .target(
-            name: "HederaExamples",
-            dependencies: ["Hedera"],
-            path: "Examples"),
+        // .target(
+        //     name: "HederaExamples",
+        //     dependencies: ["Hedera"],
+        //     path: "Examples"),
     ]
 )
