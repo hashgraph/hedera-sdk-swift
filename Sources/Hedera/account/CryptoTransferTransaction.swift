@@ -27,4 +27,8 @@ public class CryptoTransferTransaction: TransactionBuilder {
 
         return self
     }
+    
+    override func executeClosure(_ client: inout Client, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
+        try client.cryptoService(for: client.pickNode()).createAccount(tx)
+    }
 }

@@ -6,8 +6,10 @@ let maxValidDuration = TimeInterval(2 * 60)
 
 public class TransactionBuilder {
     var body = Proto_TransactionBody()
+    let client: Client?
 
     init(client: Client) {
+        self.client = client
         body.transactionFee = client.maxTransactionFee
         body.transactionValidDuration = maxValidDuration.toProto()
     }
@@ -42,11 +44,16 @@ public class TransactionBuilder {
         body.memo = memo
         return self
     }
+    
+    func executeClosure(_ client: inout Client, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
+        fatalError("member must be overridden")
+    }
 
     public func build() -> Transaction {
         var tx = Proto_Transaction()
         tx.body = body
-
-        return Transaction(tx)
+        
+        // TODO: perhaps handle a null client more gracefully, especially consider for testing
+        return Transaction(client!, tx, executeClosure)
     }
 }

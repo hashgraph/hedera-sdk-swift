@@ -13,6 +13,10 @@ public struct Client {
     var node: AccountId?
 
     var channels: [AccountId: Channel] = [:]
+    var fileServices: [AccountId: Proto_FileServiceService] = [:]
+    var cryptoServices: [AccountId: Proto_CryptoServiceService] = [:]
+    var contractServices: [AccountId: Proto_SmartContractServiceService] = [:]
+
 
     /// The default maximum fee for a transaction.
     /// This can be overridden for an individual transaction with `.setTransactionFee()`. 
@@ -21,7 +25,7 @@ public struct Client {
     // TODO: once queries are implemented    
     // /// The maximum payment that can be automatically attached to a query.
     // /// If this is not set, payments will not be made automatically for queries.
-    // /// This can be overridden for an individual query with `.setPaymentDefault()`.
+    // /// This can be overridden for an individual query with `.setPayment()`.
     // var maxQueryPayment: UInt64?
 
     public init(node id: AccountId, address url: String) {
@@ -56,13 +60,40 @@ public struct Client {
         nodes.randomElement()!.value
     }
 
-    mutating func channelFor(node: Node) -> Channel {
+    private mutating func channelFor(node: Node) -> Channel {
         // TODO: what if the node is not on the client?
         if let channel = channels[node.accountId] {
             return channel
         } else {
             channels[node.accountId] = Channel(address: node.address)
             return channels[node.accountId]!
+        }
+    }
+    
+    mutating func fileService(for node: Node) -> Proto_FileServiceService {
+        if let service = fileServices[node.accountId] {
+            return service
+        } else {
+            fileServices[node.accountId] = Proto_FileServiceServiceClient(channel: channelFor(node: node))
+            return fileServices[node.accountId]!
+        }
+    }
+    
+    mutating func cryptoService(for node: Node) -> Proto_CryptoServiceService {
+        if let service = cryptoServices[node.accountId] {
+            return service
+        } else {
+            cryptoServices[node.accountId] = Proto_CryptoServiceServiceClient(channel: channelFor(node: node))
+            return cryptoServices[node.accountId]!
+        }
+    }
+    
+    mutating func contractService(for node: Node) -> Proto_SmartContractServiceService {
+        if let service = contractServices[node.accountId] {
+            return service
+        } else {
+            contractServices[node.accountId] = Proto_SmartContractServiceServiceClient(channel: channelFor(node: node))
+            return contractServices[node.accountId]!
         }
     }
 }

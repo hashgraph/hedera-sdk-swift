@@ -1,7 +1,7 @@
 import SwiftProtobuf
 import Foundation
 
-class AccountCreateTransaction: TransactionBuilder {
+public class AccountCreateTransaction: TransactionBuilder {
     public override init(client: Client) {
         super.init(client: client)
 
@@ -57,5 +57,9 @@ class AccountCreateTransaction: TransactionBuilder {
         body.cryptoCreateAccount.autoRenewPeriod = period.toProto()
 
         return self
+    }
+    
+    override func executeClosure(_ client: inout Client, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
+        try client.cryptoService(for: client.pickNode()).createAccount(tx)
     }
 }
