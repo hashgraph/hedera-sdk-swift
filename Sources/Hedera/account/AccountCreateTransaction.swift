@@ -1,7 +1,6 @@
-import SwiftProtobuf
 import Foundation
 
-public class AccountCreateTransaction: TransactionBuilder {
+public final class AccountCreateTransaction: TransactionBuilder {
     public override init(client: Client) {
         super.init(client: client)
 
@@ -17,42 +16,49 @@ public class AccountCreateTransaction: TransactionBuilder {
         body.cryptoCreateAccount = inner
     }
 
+    @discardableResult
     public func setKey(_ key: Ed25519PublicKey) -> Self {
         body.cryptoCreateAccount.key = key.toProto()
 
         return self
     }
 
+    @discardableResult
     public func setInitialBalance(_ balance: UInt64) -> Self {
         body.cryptoCreateAccount.initialBalance = balance
 
         return self
     }
 
+    @discardableResult
     public func setProxyAccountId(_ id: AccountId) -> Self {
         body.cryptoCreateAccount.proxyAccountID = id.toProto()
 
         return self        
     }
 
+    @discardableResult
     public func setSendRecordThreshold(_ threshold: UInt64) -> Self {
         body.cryptoCreateAccount.sendRecordThreshold = threshold
         
         return self
     }
 
+    @discardableResult
     public func setReceiveRecordThreshold(_ threshold: UInt64) -> Self {
         body.cryptoCreateAccount.receiveRecordThreshold = threshold
 
         return self
     }
     
+    @discardableResult
     public func setReceiverSignatureRequired(_ required: Bool) -> Self {
         body.cryptoCreateAccount.receiverSigRequired = required
 
         return self
     }
 
+    @discardableResult
     public func setAutoRenewPeriod(_ period: TimeInterval) -> Self {
         body.cryptoCreateAccount.autoRenewPeriod = period.toProto()
 
