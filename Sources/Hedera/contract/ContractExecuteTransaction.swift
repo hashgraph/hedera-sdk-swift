@@ -8,32 +8,44 @@ public class ContractExecuteTransaction: TransactionBuilder {
         body.contractCall = Proto_ContractCallTransactionBody()
     }
 
-    public func setAmount(_ amount: Int64) -> Self {
-        body.contractCall.amount = amount
+    @discardableResult
+    public func setAmount(_ amount: UInt64) -> Self {
+        body.contractCall.amount = Int64(amount)
 
         return self
     }
 
+    @discardableResult
+    public func setContract(_ id: ContractId) -> Self {
+        body.contractCall.contractID = id.toProto()
+
+        return self
+    }
+
+    @discardableResult
     public func setFunctionParameters(_ bytes: [UInt8]) -> Self {
         body.contractCall.functionParameters = Data(bytes)
 
         return self
     }
 
+    @discardableResult
     public func setFunctionParameters(_ data: Data) -> Self {
         body.contractCall.functionParameters = data
 
         return self
     }
 
+    @discardableResult
     public func setFunctionParameters(_ params: String) -> Self {
         body.contractCall.functionParameters = Data(Array(params.utf8))
 
         return self
     }
 
-    public func setGas(_ gas: Int64) -> Self {
-        body.contractCall.gas = gas
+    @discardableResult
+    public func setGas(_ gas: UInt64) -> Self {
+        body.contractCall.gas = Int64(gas)
 
         return self        
     }

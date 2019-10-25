@@ -8,40 +8,42 @@ public class ContractUpdateTransaction: TransactionBuilder {
         body.contractUpdateInstance = Proto_ContractUpdateTransactionBody()
     }
 
+    @discardableResult
     public func setAdminKey(_ key: Ed25519PublicKey) -> Self {
         body.contractUpdateInstance.adminKey = key.toProto()
 
         return self
     }
 
+    @discardableResult
     public func setAutoRenewPeriod(_ period: TimeInterval) -> Self {
         body.contractUpdateInstance.autoRenewPeriod = period.toProto()
 
         return self
     }
 
+    @discardableResult
     public func setBytecodeFile(_ id: FileId) -> Self {
         body.contractUpdateInstance.fileID = id.toProto()
 
         return self
     }
 
-    public func setContractId(_ id: ContractId) -> Self {
+    @discardableResult
+    public func setContract(_ id: ContractId) -> Self {
         body.contractUpdateInstance.contractID = id.toProto()
 
         return self
     }
 
-    public func setExpirationTime(_ seconds: Int64, _ nanos: Int32) -> Self {
-        var expirationTime = Proto_Timestamp()
-        expirationTime.seconds = seconds
-        expirationTime.nanos = nanos
-
-        body.fileCreate.expirationTime = expirationTime
+    @discardableResult
+    public func setExpirationTime(_ date: Date) -> Self {
+        body.fileCreate.expirationTime = date.toProto()
 
         return self
     }
 
+    @discardableResult
     public func setProxyAccount(_ id: AccountId) -> Self {
         body.contractUpdateInstance.proxyAccountID = id.toProto()
 
