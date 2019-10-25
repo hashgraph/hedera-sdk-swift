@@ -19,5 +19,7 @@ RUN apt-get update && \
 #                        protobuf-compiler python-protobuf python3-protobuf
 COPY x.py /opt/x.py
 
+USER 1000:1000
+
 ENTRYPOINT [ "/opt/x.py" ]
 WORKDIR /workspace
