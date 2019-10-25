@@ -8,25 +8,29 @@ public class FileAppendTransaction: TransactionBuilder {
         body.fileAppend = Proto_FileAppendTransactionBody()
     }
 
+    @discardableResult
     public func setContents(_ data: Data) -> Self {
         body.fileAppend.contents = data 
 
         return self
     }
 
+    @discardableResult
     public func setContents(_ bytes: [UInt8]) -> Self {
         body.fileAppend.contents = Data(bytes) 
 
         return self
     }
 
+    @discardableResult
     public func setContents(_ string: String) -> Self {
         body.fileAppend.contents = Data(Array(string.utf8))
 
         return self
     }
 
-    public func setFileId(_ id: FileId) -> Self {
+    @discardableResult
+    public func setFile(_ id: FileId) -> Self {
         body.fileAppend.fileID = id.toProto()
 
         return self

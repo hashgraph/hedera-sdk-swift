@@ -8,7 +8,8 @@ public class FileDeleteTransaction: TransactionBuilder {
         body.fileDelete = Proto_FileDeleteTransactionBody()
     }
 
-    public func setFileId(_ id: FileId) -> Self {
+    @discardableResult
+    public func setFile(_ id: FileId) -> Self {
         body.fileDelete.fileID = id.toProto()
 
         return self

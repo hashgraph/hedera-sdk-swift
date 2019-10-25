@@ -12,34 +12,35 @@ public class FileCreateTransaction: TransactionBuilder {
         _ = setExpirationTime(Int64(NSDate.init().timeIntervalSince1970) + 7898, 0)
     }
 
-    public func setExpirationTime(_ seconds: Int64, _ nanos: Int32) -> Self {
-        var expirationTime = Proto_Timestamp()
-        expirationTime.seconds = seconds
-        expirationTime.nanos = nanos
-
-        body.fileCreate.expirationTime = expirationTime
+    @discardableResult
+    public func setExpirationTime(_ date: Date) -> Self {
+        body.fileCreate.expirationTime = date.toProto()
 
         return self
     }
 
+    @discardableResult
     public func addKey(_ key: Ed25519PublicKey) -> Self {
         body.fileCreate.keys.keys.append(key.toProto())
 
         return self
     }
 
+    @discardableResult
     public func setContents(_ data: Data) -> Self {
         body.fileCreate.contents = data 
 
         return self
     }
 
+    @discardableResult
     public func setContents(_ bytes: [UInt8]) -> Self {
         body.fileCreate.contents = Data(bytes) 
 
         return self
     }
 
+    @discardableResult
     public func setContents(_ string: String) -> Self {
         body.fileCreate.contents = Data(Array(string.utf8))
 

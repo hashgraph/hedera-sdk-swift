@@ -8,40 +8,42 @@ public class FileUpdateTransaction: TransactionBuilder {
         body.fileUpdate = Proto_FileUpdateTransactionBody()
     }
 
-    public func setExpirationTime(_ seconds: Int64, _ nanos: Int32) -> Self {
-        var expirationTime = Proto_Timestamp()
-        expirationTime.seconds = seconds
-        expirationTime.nanos = nanos
-
-        body.fileUpdate.expirationTime = expirationTime
+    @discardableResult
+    public func setExpirationTime(_ date: Date) -> Self {
+        body.fileUpdate.expirationTime = date.toProto()
 
         return self
     }
 
+    @discardableResult
     public func setContents(_ data: Data) -> Self {
         body.fileUpdate.contents = data 
 
         return self
     }
 
+    @discardableResult
     public func setContents(_ bytes: [UInt8]) -> Self {
         body.fileUpdate.contents = Data(bytes) 
 
         return self
     }
 
+    @discardableResult
     public func setContents(_ string: String) -> Self {
         body.fileUpdate.contents = Data(Array(string.utf8))
 
         return self
     }
 
-    public func setFileId(_ id: FileId) -> Self {
+    @discardableResult
+    public func setFile(_ id: FileId) -> Self {
         body.fileUpdate.fileID = id.toProto()
 
         return self
     }
 
+    @discardableResult
     override func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
         try grpc.fileService.updateFile(tx)
     }
