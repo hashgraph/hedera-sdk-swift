@@ -38,9 +38,8 @@ if sys.argv[0] != '/opt/x.py':
 
     # Re-run the script from within the docker environment
     pwd = os.getcwd()
-    out = subprocess.run(f'docker run --rm -v {pwd}:/workspace {image} {operation}', 
+    out = subprocess.run(f'docker run --rm -v {pwd}:/workspace {image} {operation} &2>1', 
         shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    
     print(out.stdout.decode().strip())
 
     sys.exit(0)
