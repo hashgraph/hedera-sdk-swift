@@ -1,6 +1,4 @@
-import SwiftProtobuf
-
-public class CryptoTransferTransaction: TransactionBuilder {
+public final class CryptoTransferTransaction: TransactionBuilder {
     public override init(client: Client) {
         super.init(client: client)
 
@@ -10,10 +8,12 @@ public class CryptoTransferTransaction: TransactionBuilder {
         body.cryptoTransfer = inner
     }
 
+    @discardableResult
     public func add(sender: AccountId, amount: UInt64) -> Self {
         add(account: sender, amount: -Int64(amount))
     }
 
+    @discardableResult
     public func add(recipient: AccountId, amount: UInt64) -> Self {
         add(account: recipient, amount: Int64(amount))
     }
