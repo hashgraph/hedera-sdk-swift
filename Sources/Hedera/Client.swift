@@ -24,7 +24,7 @@ public class Client {
     // /// The maximum payment that can be automatically attached to a query.
     // /// If this is not set, payments will not be made automatically for queries.
     // /// This can be overridden for an individual query with `.setPayment()`.
-    // var maxQueryPayment: UInt64?
+    var maxQueryPayment: UInt64?
 
     public init(node id: AccountId, address url: String) {
         nodes = [ id: Node(accountId: id, address: url) ]
@@ -56,12 +56,19 @@ public class Client {
         maxTransactionFee = max
         return self
     }
-    
-    // TODO: once queries are implemented
-//    public mutating func setMaxQueryPayment(_ max: UInt64) -> Self {
-//        maxQueryPayment = max
-//        return self
-//    }
+
+    /// Sets the default maximum fee for a query.
+    /// This can be overridden for an individual transaction with `.setTransactionFee()`.
+    ///
+    /// - Parameters:
+    ///   - max: The maximum query fee, in tinybars.
+    ///
+    /// - Returns: Self for fluent usage.
+    @discardableResult
+    public func setMaxQueryPayment(_ max: UInt64) -> Self {
+       maxQueryPayment = max
+       return self
+    }
 
     @discardableResult
     public func setNode(_ id: AccountId) -> Self {
