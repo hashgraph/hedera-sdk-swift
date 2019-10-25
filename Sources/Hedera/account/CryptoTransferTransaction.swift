@@ -28,7 +28,7 @@ public class CryptoTransferTransaction: TransactionBuilder {
         return self
     }
     
-    override func executeClosure(_ client: inout Client, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-        try client.cryptoService(for: client.pickNode()).createAccount(tx)
+    override func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
+        try grpc.cryptoService.createAccount(tx)
     }
 }

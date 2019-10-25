@@ -45,8 +45,8 @@ public class TransactionBuilder {
         return self
     }
     
-    func executeClosure(_ client: inout Client, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-        fatalError("member must be overridden")
+    func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
+        fatalError("executeClosure member must be overridden")
     }
 
     public func build() -> Transaction {

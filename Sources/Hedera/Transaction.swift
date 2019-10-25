@@ -4,23 +4,25 @@ import Foundation
 import SwiftGRPC
 
 // TODO: this should probably be its own file, and possibly an enum instead
-struct HederaError: Error {}
+struct HederaError: Error {
+    let message: String
+}
 
 //let RECEIPT_INITIAL_DELAY: UInt32 = 1
 
-public class Transaction {
+public struct Transaction {
     var inner: Proto_Transaction
     let txId: TransactionId
     var client: Client?
-    let executeClosure: (inout Client, Proto_Transaction) throws -> Proto_TransactionResponse
-
-    init(_ client: Client, _ tx: Proto_Transaction, _ closure: @escaping (inout Client, Proto_Transaction) throws -> Proto_TransactionResponse) {
+    let executeClosure: (HederaGRPCClient, Proto_Transaction) throws -> Proto_TransactionResponse
+    
+    init(_ client: Client, _ tx: Proto_Transaction, _ closure: @escaping (HederaGRPCClient, Proto_Transaction) throws -> Proto_TransactionResponse) {
         self.client = client
         inner = tx
         txId = TransactionId(tx.body.transactionID)!
         executeClosure = closure
     }
-    
+
     func toProto() -> Proto_Transaction {
         inner
     }
@@ -30,7 +32,7 @@ public class Transaction {
     }
 
     // TODO: definitely test this function to make sure this works as it should
-    public func sign(with key: Ed25519PrivateKey) throws -> Self {
+    public mutating func sign(with key: Ed25519PrivateKey) throws -> Self {
         if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
         
         let pubKey = key.publicKey.bytes
@@ -40,7 +42,7 @@ public class Transaction {
             return pubKey.starts(with: pubKeyPrefix)
         }) {
             // Transaction was already signed with this key!
-            throw HederaError()
+            throw HederaError(message: "Transaction was already signed with this key")
         }
 
         let sig = key.sign(message: Bytes(inner.bodyBytes))
@@ -54,13 +56,13 @@ public class Transaction {
     }
     
     public func execute() throws -> TransactionId {
-        guard var client = client else { throw HederaError() }
+        guard let client = client else { throw HederaError(message: "client must not be null") }
             
         // TODO: actually handle error
-        if let response = try? executeClosure(&client, inner), response.nodeTransactionPrecheckCode == .ok {
+        if let response = try? executeClosure(client.grpcClient(for: client.pickNode()), inner), response.nodeTransactionPrecheckCode == .ok {
             return txId
         } else {
-            throw HederaError()
+            throw HederaError(message: "something went wrong")
         }
     }
     
