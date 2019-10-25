@@ -8,7 +8,8 @@ public class ContractDeleteTransaction: TransactionBuilder {
         body.contractDeleteInstance = Proto_ContractDeleteTransactionBody()
     }
 
-    public func setContractId(_ id: ContractId) -> Self {
+    @discardableResult
+    public func setContract(_ id: ContractId) -> Self {
         body.contractDeleteInstance.contractID = id.toProto()
 
         return self
