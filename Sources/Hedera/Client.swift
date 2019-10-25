@@ -3,9 +3,15 @@ import SwiftGRPC
 
 public typealias Node = (accountId: AccountId, address: String)
 
+struct HederaGRPCClient {
+    let fileService: Proto_FileServiceServiceClient
+    let cryptoService: Proto_CryptoServiceServiceClient
+    let contractService: Proto_SmartContractServiceServiceClient
+}
+
 let defaultMaxTransactionFee: UInt64 = 100_000_000
 
-public struct Client {
+public class Client {
     var operatorId: AccountId?
     var operatorSigner: ((Bytes) -> Bytes)?
 
@@ -13,10 +19,7 @@ public struct Client {
     var node: AccountId?
 
     var channels: [AccountId: Channel] = [:]
-    var fileServices: [AccountId: Proto_FileServiceService] = [:]
-    var cryptoServices: [AccountId: Proto_CryptoServiceService] = [:]
-    var contractServices: [AccountId: Proto_SmartContractServiceService] = [:]
-
+    var grpcClients: [AccountId: HederaGRPCClient] = [:]
 
     /// The default maximum fee for a transaction.
     /// This can be overridden for an individual transaction with `.setTransactionFee()`. 
@@ -31,27 +34,66 @@ public struct Client {
     public init(node id: AccountId, address url: String) {
         nodes = [ id: Node(accountId: id, address: url) ]
     }
+    
+    public init(nodes: [(AccountId, String)]) {
+        let keys = nodes.map { $0.0 }
+        let values = nodes.map { Node(accountId: $0.0, address: $0.1) }
+        self.nodes = Dictionary(uniqueKeysWithValues: zip(keys, values))
+    }
 
-    public mutating func setOperator(id: AccountId, secret: Ed25519PrivateKey) -> Self {
+    /// Sets the account that will be paying for transactions and queries on the network.
+    /// - Parameters:
+    ///   - id: Account ID
+    ///   - secret: Private key that will be used to sign transactions.
+    /// - Returns: Self for fluent usage.
+    @discardableResult
+    public func setOperator(id: AccountId, secret: Ed25519PrivateKey) -> Self {
         operatorId = id
         operatorSigner = secret.sign
 
         return self
     }
 
-    public mutating func setOperator(id: AccountId, signer: @escaping (Bytes) -> Bytes) -> Self {
+    /// Sets the account that will be paying for transactions and queries on the network.
+    /// - Parameters:
+    ///   - id: Account ID
+    ///   - signer: closure that will be called to sign transactions. Useful for requesting signing from a hardware wallet that won't give you the private key.
+    /// - Returns: Self for fluent usage.
+    @discardableResult
+    public func setOperator(id: AccountId, signer: @escaping (Bytes) -> Bytes) -> Self {
         operatorId = id
         operatorSigner = signer
         
         return self
     }
+    
+    /// Sets the default maximum fee for a transaction.
+    /// This can be overridden for an individual transaction with `.setTransactionFee()`.
+    ///
+    /// - Parameters:
+    ///   - max: The maximum transaction fee, in tinybars.
+    ///
+    /// - Returns: Self for fluent usage.
+    @discardableResult
+    public func setMaxTransactionFee(_ max: UInt64) -> Self {
+        maxTransactionFee = max
+        return self
+    }
+    
+    // TODO: once queries are implemented
+//    public mutating func setMaxQueryPayment(_ max: UInt64) -> Self {
+//        maxQueryPayment = max
+//        return self
+//    }
 
-    public mutating func setNode(_ id: AccountId) -> Self {
+    @discardableResult
+    public func setNode(_ id: AccountId) -> Self {
         node = id
         return self
     }
 
-    public mutating func addNode(id: AccountId, address url: String) -> Self {
+    @discardableResult
+    public func addNode(id: AccountId, address url: String) -> Self {
         nodes[id] = Node(accountId: id, address: url)
         return self
     }
@@ -60,7 +102,7 @@ public struct Client {
         nodes.randomElement()!.value
     }
 
-    private mutating func channelFor(node: Node) -> Channel {
+    private func channelFor(node: Node) -> Channel {
         // TODO: what if the node is not on the client?
         if let channel = channels[node.accountId] {
             return channel
@@ -70,30 +112,14 @@ public struct Client {
         }
     }
     
-    mutating func fileService(for node: Node) -> Proto_FileServiceService {
-        if let service = fileServices[node.accountId] {
+    func grpcClient(for node: Node) -> HederaGRPCClient {
+        if let service = grpcClients[node.accountId] {
             return service
         } else {
-            fileServices[node.accountId] = Proto_FileServiceServiceClient(channel: channelFor(node: node))
-            return fileServices[node.accountId]!
-        }
-    }
-    
-    mutating func cryptoService(for node: Node) -> Proto_CryptoServiceService {
-        if let service = cryptoServices[node.accountId] {
-            return service
-        } else {
-            cryptoServices[node.accountId] = Proto_CryptoServiceServiceClient(channel: channelFor(node: node))
-            return cryptoServices[node.accountId]!
-        }
-    }
-    
-    mutating func contractService(for node: Node) -> Proto_SmartContractServiceService {
-        if let service = contractServices[node.accountId] {
-            return service
-        } else {
-            contractServices[node.accountId] = Proto_SmartContractServiceServiceClient(channel: channelFor(node: node))
-            return contractServices[node.accountId]!
+            let channel = channelFor(node: node)
+            let service = HederaGRPCClient(fileService: Proto_FileServiceServiceClient(channel: channel), cryptoService: Proto_CryptoServiceServiceClient(channel: channel), contractService: Proto_SmartContractServiceServiceClient(channel: channel))
+            grpcClients[node.accountId] = service
+            return grpcClients[node.accountId]!
         }
     }
 }

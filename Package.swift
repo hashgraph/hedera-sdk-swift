@@ -13,11 +13,12 @@ let package = Package(
         .library(
             name: "Hedera",
             targets: ["Hedera"]),
+        .executable(name: "CreateAccountExample", targets: ["CreateAccountExample"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/jedisct1/swift-sodium", from: "0.8.0"),
-        .package(url: "https://github.com/apple/swift-protobuf", from: "1.6.0"),
-        .package(url: "https://github.com/grpc/grpc-swift", from: "0.9.1"),
+        .package(url: "https://github.com/jedisct1/swift-sodium", .exact("0.8.0")),
+        .package(url: "https://github.com/apple/swift-protobuf", .exact("1.6.0")),
+        .package(url: "https://github.com/grpc/grpc-swift", .exact("0.9.1")),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -28,9 +29,9 @@ let package = Package(
         .testTarget(
             name: "HederaTests",
             dependencies: ["Hedera"]),
-        // .target(
-        //     name: "HederaExamples",
-        //     dependencies: ["Hedera"],
-        //     path: "Examples"),
+         .target(
+             name: "CreateAccountExample",
+             dependencies: ["Hedera"],
+             path: "Examples/CreateAccount"),
     ]
 )
