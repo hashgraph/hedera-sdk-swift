@@ -19,6 +19,7 @@ public struct Ed25519PublicKey {
         inner
     }
 
+    /// Verify the detached signature of a message with this public key
     func verify(signature: Bytes, of message: Bytes) -> Bool {
         sodium.sign.verify(message: message, publicKey: inner, signature: signature)
     }
@@ -39,14 +40,14 @@ extension Ed25519PublicKey: LosslessStringConvertible {
         switch description.count {
         case ed25519PublicKeyLength * 2:
             guard let decoded = try? hexDecode(description) else { return nil }
-            inner = decoded
+            self.init(bytes: decoded)
 
         case ed25519PublicKeyLength * 2 + ed25519PublicKeyPrefix.count:
             guard description.hasPrefix(ed25519PublicKeyPrefix) else { return nil }
 
             let start = description.index(description.startIndex, offsetBy: ed25519PublicKeyPrefix.count)
             guard let decoded = try? hexDecode(description[start...]) else { return nil }
-            inner = decoded
+            self.init(bytes: decoded)
 
         default:
             return nil

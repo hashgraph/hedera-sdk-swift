@@ -1,2 +1,1 @@
-public protocol PublicKey {
-}
+public class PublicKey {}
