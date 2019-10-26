@@ -1,5 +1,6 @@
 import SwiftProtobuf
 import Foundation
+import Sodium
 
 public class FileCreateTransaction: TransactionBuilder {
     public override init(client: Client) {
@@ -7,9 +8,7 @@ public class FileCreateTransaction: TransactionBuilder {
 
         body.fileCreate = Proto_FileCreateTransactionBody()
 
-        // Warning: result of call is unused
-        // method return `self` though
-        _ = setExpirationTime(Int64(NSDate.init().timeIntervalSince1970) + 7898, 0)
+        setExpirationTime(Date(timeIntervalSinceNow: 7898))
     }
 
     @discardableResult
@@ -27,21 +26,21 @@ public class FileCreateTransaction: TransactionBuilder {
     }
 
     @discardableResult
-    public func setContents(_ data: Data) -> Self {
+    public func setContents(data: Data) -> Self {
         body.fileCreate.contents = data 
 
         return self
     }
 
     @discardableResult
-    public func setContents(_ bytes: [UInt8]) -> Self {
+    public func setContents(bytes: Bytes) -> Self {
         body.fileCreate.contents = Data(bytes) 
 
         return self
     }
 
     @discardableResult
-    public func setContents(_ string: String) -> Self {
+    public func setContents(string: String) -> Self {
         body.fileCreate.contents = Data(Array(string.utf8))
 
         return self

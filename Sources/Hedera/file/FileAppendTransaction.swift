@@ -1,5 +1,6 @@
 import SwiftProtobuf
 import Foundation
+import Sodium
 
 public class FileAppendTransaction: TransactionBuilder {
     public override init(client: Client) {
@@ -9,28 +10,28 @@ public class FileAppendTransaction: TransactionBuilder {
     }
 
     @discardableResult
-    public func setContents(_ data: Data) -> Self {
+    public func setContents(data: Data) -> Self {
         body.fileAppend.contents = data 
 
         return self
     }
 
     @discardableResult
-    public func setContents(_ bytes: [UInt8]) -> Self {
+    public func setContents(bytes: Bytes) -> Self {
         body.fileAppend.contents = Data(bytes) 
 
         return self
     }
 
     @discardableResult
-    public func setContents(_ string: String) -> Self {
+    public func setContents(string: String) -> Self {
         body.fileAppend.contents = Data(Array(string.utf8))
 
         return self
     }
 
     @discardableResult
-    public func setFile(_ id: FileId) -> Self {
+    public func setFile(id: FileId) -> Self {
         body.fileAppend.fileID = id.toProto()
 
         return self
