@@ -23,28 +23,28 @@ public class ContractUpdateTransaction: TransactionBuilder {
     }
 
     @discardableResult
-    public func setBytecodeFile(_ id: FileId) -> Self {
+    public func setBytecodeFile(id: FileId) -> Self {
         body.contractUpdateInstance.fileID = id.toProto()
 
         return self
     }
 
     @discardableResult
-    public func setContract(_ id: ContractId) -> Self {
+    public func setContract(id: ContractId) -> Self {
         body.contractUpdateInstance.contractID = id.toProto()
 
         return self
     }
 
     @discardableResult
-    public func setExpirationTime(_ date: Date) -> Self {
+    public func setExpirationTime(date: Date) -> Self {
         body.fileCreate.expirationTime = date.toProto()
 
         return self
     }
 
     @discardableResult
-    public func setProxyAccount(_ id: AccountId) -> Self {
+    public func setProxyAccount(id: AccountId) -> Self {
         body.contractUpdateInstance.proxyAccountID = id.toProto()
 
         return self
