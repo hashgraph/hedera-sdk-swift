@@ -14,6 +14,9 @@ public struct Ed25519PrivateKey {
         inner = sodium.sign.keyPair()!
     }
 
+    /// Initialize a private key from bytes
+    ///
+    /// Bytes must be either a private key or a combined private/public key pair
     public init?(bytes: Bytes) {
         if bytes.count == ed25519PrivateKeyLength {
             inner = sodium.sign.keyPair(seed: bytes)!
@@ -25,6 +28,7 @@ public struct Ed25519PrivateKey {
         }
     }
 
+    /// The byte representation of the private key
     public var bytes: Bytes {
         inner.secretKey
     }
@@ -33,6 +37,7 @@ public struct Ed25519PrivateKey {
         Ed25519PublicKey(bytes: inner.publicKey)!
     }
 
+    /// Compute a detached signature for the given message
     func sign(message bytes: Bytes) -> Bytes {
         sodium.sign.signature(message: bytes, secretKey: inner.secretKey)!        
     }
@@ -49,7 +54,7 @@ extension Ed25519PrivateKey: CustomStringConvertible, CustomDebugStringConvertib
 }
 
 extension Ed25519PrivateKey: LosslessStringConvertible {
-    // Recover from a hex encoded string. Does not support key derivation.
+    /// Recover from a hex encoded string. Does not support key derivation.
     public init?(_ description: String) {
         switch description.count {
         case ed25519PrivateKeyLength * 2, combinedEd25519KeyLength * 2: // lone key, or combined key

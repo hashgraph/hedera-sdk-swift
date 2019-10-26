@@ -51,7 +51,7 @@ public class TransactionBuilder {
 
     public func build() -> Transaction {
         var tx = Proto_Transaction()
-        tx.body = body
+        tx.bodyBytes = try! body.serializedData()
         
         // TODO: perhaps handle a null client more gracefully, especially consider for testing
         return Transaction(client!, tx, executeClosure)

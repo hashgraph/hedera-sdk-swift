@@ -3,17 +3,12 @@ import SwiftGRPC
 
 public typealias Node = (accountId: AccountId, address: String)
 
-struct HederaGRPCClient {
-    let fileService: Proto_FileServiceServiceClient
-    let cryptoService: Proto_CryptoServiceServiceClient
-    let contractService: Proto_SmartContractServiceServiceClient
-}
+typealias HederaGRPCClient = (fileService: Proto_FileServiceServiceClient, cryptoService: Proto_CryptoServiceServiceClient, contractService: Proto_SmartContractServiceServiceClient)
 
 let defaultMaxTransactionFee: UInt64 = 100_000_000
 
 public class Client {
-    var operatorId: AccountId?
-    var operatorSigner: ((Bytes) -> Bytes)?
+    var `operator`: Operator?
 
     var nodes: [AccountId: Node]
     var node: AccountId?
@@ -42,31 +37,13 @@ public class Client {
     }
 
     /// Sets the account that will be paying for transactions and queries on the network.
-    /// - Parameters:
-    ///   - id: Account ID
-    ///   - secret: Private key that will be used to sign transactions.
     /// - Returns: Self for fluent usage.
     @discardableResult
-    public func setOperator(id: AccountId, secret: Ed25519PrivateKey) -> Self {
-        operatorId = id
-        operatorSigner = secret.sign
-
+    public func setOperator(_ operator: Operator) -> Self {
+        self.`operator` = `operator`
         return self
     }
 
-    /// Sets the account that will be paying for transactions and queries on the network.
-    /// - Parameters:
-    ///   - id: Account ID
-    ///   - signer: closure that will be called to sign transactions. Useful for requesting signing from a hardware wallet that won't give you the private key.
-    /// - Returns: Self for fluent usage.
-    @discardableResult
-    public func setOperator(id: AccountId, signer: @escaping (Bytes) -> Bytes) -> Self {
-        operatorId = id
-        operatorSigner = signer
-        
-        return self
-    }
-    
     /// Sets the default maximum fee for a transaction.
     /// This can be overridden for an individual transaction with `.setTransactionFee()`.
     ///

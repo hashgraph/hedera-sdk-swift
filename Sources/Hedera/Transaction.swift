@@ -10,7 +10,7 @@ struct HederaError: Error {
 
 //let RECEIPT_INITIAL_DELAY: UInt32 = 1
 
-public struct Transaction {
+public class Transaction {
     var inner: Proto_Transaction
     let txId: TransactionId
     var client: Client?
@@ -19,6 +19,7 @@ public struct Transaction {
     init(_ client: Client, _ tx: Proto_Transaction, _ closure: @escaping (HederaGRPCClient, Proto_Transaction) throws -> Proto_TransactionResponse) {
         self.client = client
         inner = tx
+        if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
         txId = TransactionId(tx.body.transactionID)!
         executeClosure = closure
     }
@@ -31,32 +32,45 @@ public struct Transaction {
         Bytes(inner.bodyBytes)
     }
 
-    // TODO: definitely test this function to make sure this works as it should
-    public mutating func sign(with key: Ed25519PrivateKey) throws -> Self {
-        if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
-        
-        let pubKey = key.publicKey.bytes
-
-        if inner.sigMap.sigPair.contains(where: { (sig) in 
-            let pubKeyPrefix = sig.pubKeyPrefix
-            return pubKey.starts(with: pubKeyPrefix)
-        }) {
-            // Transaction was already signed with this key!
-            throw HederaError(message: "Transaction was already signed with this key")
-        }
-
+    @discardableResult
+    public func sign(with key: Ed25519PrivateKey) throws -> Self {
         let sig = key.sign(message: Bytes(inner.bodyBytes))
+        
+        return addSigPair(publicKey: key.publicKey, signature: sig)
+    }
+    
+    /// Add an Ed25519 signature pair to the signature map
+    @discardableResult
+    public func addSigPair(publicKey: Ed25519PublicKey, signature: Bytes) -> Self {
         var sigPair = Proto_SignaturePair()
-        sigPair.pubKeyPrefix = Data(pubKey)
-        sigPair.ed25519 = Data(sig)
+        sigPair.pubKeyPrefix = Data(publicKey.bytes)
+        sigPair.ed25519 = Data(signature)
 
         inner.sigMap.sigPair.append(sigPair)
+        
+        return self
+    }
+    
+    /// Add an Ed25519 signature pair to the signature map
+    @discardableResult
+    public func addSigPair(publicKey: Ed25519PublicKey, signer: (Bytes) -> Bytes) -> Self {
+        var sigPair = Proto_SignaturePair()
+        sigPair.pubKeyPrefix = Data(publicKey.bytes)
+        sigPair.ed25519 = Data(signer(Bytes(inner.bodyBytes)))
 
+        inner.sigMap.sigPair.append(sigPair)
+        
         return self
     }
     
     public func execute() throws -> TransactionId {
         guard let client = client else { throw HederaError(message: "client must not be null") }
+        
+        
+        if (inner.sigMap.sigPair.isEmpty) {
+            guard let clientOperator = client.`operator` else { throw HederaError(message: "Client must have an operator set to execute") }
+            addSigPair(publicKey: clientOperator.publicKey, signer: clientOperator.signer)
+        }
             
         // TODO: actually handle error
         if let response = try? executeClosure(client.grpcClient(for: client.pickNode()), inner), response.nodeTransactionPrecheckCode == .ok {
