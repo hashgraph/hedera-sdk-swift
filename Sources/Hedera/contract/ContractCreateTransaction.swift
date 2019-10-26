@@ -1,5 +1,6 @@
 import SwiftProtobuf
 import Foundation
+import Sodium
 
 public class ContractCreateTransaction: TransactionBuilder {
     public override init(client: Client) {
@@ -24,15 +25,29 @@ public class ContractCreateTransaction: TransactionBuilder {
 
 
     @discardableResult
-    public func setBytecodeFile(_ id: FileId) -> Self {
+    public func setBytecodeFile(id: FileId) -> Self {
         body.contractCreateInstance.fileID = id.toProto()
 
         return self
     }
 
     @discardableResult
-    public func setConstuctorParams(_ bytes: [UInt8]) -> Self {
+    public func setConstuctorParams(bytes: Bytes) -> Self {
         body.contractCreateInstance.constructorParameters = Data(bytes)
+
+        return self
+    }
+
+    @discardableResult
+    public func setConstuctorParams(data: Data) -> Self {
+        body.contractCreateInstance.constructorParameters = data
+
+        return self
+    }
+
+    @discardableResult
+    public func setConstuctorParams(string: String) -> Self {
+        body.contractCreateInstance.constructorParameters = Data(Array(string.utf8))
 
         return self
     }
@@ -52,7 +67,7 @@ public class ContractCreateTransaction: TransactionBuilder {
     }
 
     @discardableResult
-    public func setProxyAccount(_ id: AccountId) -> Self {
+    public func setProxyAccount(id: AccountId) -> Self {
         body.contractCreateInstance.proxyAccountID = id.toProto()
 
         return self

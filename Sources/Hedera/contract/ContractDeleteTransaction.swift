@@ -9,7 +9,7 @@ public class ContractDeleteTransaction: TransactionBuilder {
     }
 
     @discardableResult
-    public func setContract(_ id: ContractId) -> Self {
+    public func setContract(id: ContractId) -> Self {
         body.contractDeleteInstance.contractID = id.toProto()
 
         return self
