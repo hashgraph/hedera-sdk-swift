@@ -8,9 +8,12 @@ public class FileCreateTransaction: TransactionBuilder {
 
         body.fileCreate = Proto_FileCreateTransactionBody()
 
+        // For files and contracts expiration time needs be set to now + 7898 seconds
+        // otherwise file/contract creation fails
         setExpirationTime(Date(timeIntervalSinceNow: 7898))
     }
 
+    /// Set the expiration time of the file
     @discardableResult
     public func setExpirationTime(_ date: Date) -> Self {
         body.fileCreate.expirationTime = date.toProto()
@@ -18,6 +21,9 @@ public class FileCreateTransaction: TransactionBuilder {
         return self
     }
 
+    /// Add a Ed25519PublicKey that will be required to create and update this file
+    /// 
+    /// At least one key must be provided
     @discardableResult
     public func addKey(_ key: Ed25519PublicKey) -> Self {
         body.fileCreate.keys.keys.append(key.toProto())
@@ -25,6 +31,7 @@ public class FileCreateTransaction: TransactionBuilder {
         return self
     }
 
+    /// Set the initial contents of the to be created file
     @discardableResult
     public func setContents(_ data: Data) -> Self {
         body.fileCreate.contents = data 
@@ -32,6 +39,7 @@ public class FileCreateTransaction: TransactionBuilder {
         return self
     }
 
+    /// Set the initial contents of the to be created file
     @discardableResult
     public func setContents(_ bytes: Bytes) -> Self {
         body.fileCreate.contents = Data(bytes) 
@@ -39,6 +47,7 @@ public class FileCreateTransaction: TransactionBuilder {
         return self
     }
 
+    /// Set the initial contents of the to be created file
     @discardableResult
     public func setContents(_ string: String) -> Self {
         body.fileCreate.contents = Data(Array(string.utf8))
