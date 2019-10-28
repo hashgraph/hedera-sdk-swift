@@ -26,21 +26,21 @@ public class FileCreateTransaction: TransactionBuilder {
     }
 
     @discardableResult
-    public func setContents(data: Data) -> Self {
+    public func setContents(_ data: Data) -> Self {
         body.fileCreate.contents = data 
 
         return self
     }
 
     @discardableResult
-    public func setContents(bytes: Bytes) -> Self {
+    public func setContents(_ bytes: Bytes) -> Self {
         body.fileCreate.contents = Data(bytes) 
 
         return self
     }
 
     @discardableResult
-    public func setContents(string: String) -> Self {
+    public func setContents(_ string: String) -> Self {
         body.fileCreate.contents = Data(Array(string.utf8))
 
         return self
