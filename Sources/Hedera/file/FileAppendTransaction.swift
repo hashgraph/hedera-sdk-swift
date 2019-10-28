@@ -3,12 +3,16 @@ import Foundation
 import Sodium
 
 public class FileAppendTransaction: TransactionBuilder {
+    /// Create a FileAppendTransaction
+    ///
+    /// This transaction must be signed with all the required keys to successfully update the file.
     public override init(client: Client) {
         super.init(client: client)
 
         body.fileAppend = Proto_FileAppendTransactionBody()
     }
 
+    /// Set the content to be appened to the file
     @discardableResult
     public func setContents(_ data: Data) -> Self {
         body.fileAppend.contents = data 
@@ -16,6 +20,7 @@ public class FileAppendTransaction: TransactionBuilder {
         return self
     }
 
+    /// Set the content to be appened to the file
     @discardableResult
     public func setContents(_ bytes: Bytes) -> Self {
         body.fileAppend.contents = Data(bytes) 
@@ -23,6 +28,7 @@ public class FileAppendTransaction: TransactionBuilder {
         return self
     }
 
+    /// Set the content to be appened to the file
     @discardableResult
     public func setContents(_ string: String) -> Self {
         body.fileAppend.contents = Data(Array(string.utf8))
@@ -30,6 +36,7 @@ public class FileAppendTransaction: TransactionBuilder {
         return self
     }
 
+    /// Set the file to be append the contents to
     @discardableResult
     public func setFile(_ id: FileId) -> Self {
         body.fileAppend.fileID = id.toProto()
