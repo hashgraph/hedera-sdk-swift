@@ -25,33 +25,26 @@ public class ContractCreateTransaction: TransactionBuilder {
 
 
     @discardableResult
-    public func setBytecodeFile(id: FileId) -> Self {
+    public func setBytecodeFile(_ id: FileId) -> Self {
         body.contractCreateInstance.fileID = id.toProto()
 
         return self
     }
 
     @discardableResult
-    public func setConstuctorParams(bytes: Bytes) -> Self {
+    public func setConstructorParameters(_ bytes: Bytes) -> Self {
         body.contractCreateInstance.constructorParameters = Data(bytes)
 
         return self
     }
 
     @discardableResult
-    public func setConstuctorParams(data: Data) -> Self {
+    public func setConstructorParameters(_ data: Data) -> Self {
         body.contractCreateInstance.constructorParameters = data
 
         return self
     }
 
-    @discardableResult
-    public func setConstuctorParams(string: String) -> Self {
-        body.contractCreateInstance.constructorParameters = Data(Array(string.utf8))
-
-        return self
-    }
-    
     @discardableResult
     public func setGas(_ gas: UInt64) -> Self {
         body.contractCreateInstance.gas = Int64(gas)
@@ -67,7 +60,7 @@ public class ContractCreateTransaction: TransactionBuilder {
     }
 
     @discardableResult
-    public func setProxyAccount(id: AccountId) -> Self {
+    public func setProxyAccount(_ id: AccountId) -> Self {
         body.contractCreateInstance.proxyAccountID = id.toProto()
 
         return self

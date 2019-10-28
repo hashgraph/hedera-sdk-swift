@@ -17,55 +17,21 @@ public class ContractExecuteTransaction: TransactionBuilder {
     }
 
     @discardableResult
-    public func setContract(id: ContractId) -> Self {
+    public func setContract(_ id: ContractId) -> Self {
         body.contractCall.contractID = id.toProto()
 
         return self
     }
 
     @discardableResult
-    public func setFunctionParameters(bytes: Bytes) -> Self {
+    public func setFunctionParameters(_ bytes: Bytes) -> Self {
         body.contractCall.functionParameters = Data(bytes)
 
         return self
     }
 
     @discardableResult
-    public func setFunctionParameters(arrayOfBytes: [Bytes]) -> Self {
-        var data = Data()
-
-        for bytes in arrayOfBytes {
-            data.append(contentsOf: bytes)
-        }
-
-        body.contractCall.functionParameters = Data(data)
-
-        return self
-    }
-
-
-    @discardableResult
-    public func setFunctionParameters(data: Data) -> Self {
-        body.contractCall.functionParameters = Data(data)
-
-        return self
-    }
-
-    @discardableResult
-    public func setFunctionParameters(string: String) -> Self {
-        body.contractCall.functionParameters = Data(Array(string.utf8))
-
-        return self
-    }
-
-    @discardableResult
-    public func setFunctionParameters(strings: [String]) -> Self {
-        var data = Data()
-
-        for string in strings {
-            data.append(contentsOf: Array(string.utf8))
-        }
-
+    public func setFunctionParameters(_ data: Data) -> Self {
         body.contractCall.functionParameters = Data(data)
 
         return self
