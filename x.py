@@ -14,17 +14,22 @@ from os import path
 # Useless if there aren't at least 2 arguments
 if len(sys.argv) < 2:
     print("USAGE: x.py <operation>")
-    print("OPERATIONS: test | build")
+    print("OPERATIONS: test | build | run")
     sys.exit(1)
 
 # The #1 argument is always the <operation>
 operation = sys.argv[1]
 
 # Validate that this is an allowed operation
-OPERATIONS = ['test', 'build']
+OPERATIONS = ['test', 'build', 'run']
 if operation not in OPERATIONS:
     print(f"target '{target}' not one of 'test' | 'build'")
     sys.exit(0)
+
+remainderArguments = ''
+
+if len(sys.argv) > 2: 
+    remainderArguments = ' '.join(sys.argv[2:])
 
 # Check if we are inside the Docker environment
 if sys.argv[0] != '/opt/x.py':
@@ -38,16 +43,16 @@ if sys.argv[0] != '/opt/x.py':
 
     # Re-run the script from within the docker environment
     pwd = os.getcwd()
-    out = subprocess.run(f'docker run --rm -v {pwd}:/workspace {image} {operation} &2>1', 
-        shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    out = subprocess.run(f'docker run --rm -v {pwd}:/workspace {image} {operation} {remainderArguments}', 
+        shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     print(out.stdout.decode().strip())
 
     sys.exit(0)
 else:
-    if operation == 'test':
-        subprocess.run(['swift', 'test'], check=True)
+    if remainderArguments is '':
+        subprocess.run(args=["swift", operation])
     else:
-        subprocess.run(['swift', 'build'], check=True)
+        subprocess.run(f"swift {operation} {remainderArguments}", shell=True, check=True)
 
     # plugin = path.realpath('vendor/ledger-nanopb/generator/protoc-gen-nanopb')
     # plugin = f'--plugin=protoc-gen-nanopb={plugin}'
