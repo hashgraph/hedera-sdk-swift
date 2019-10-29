@@ -16,11 +16,11 @@ public class Transaction {
     var client: Client?
     let executeClosure: (HederaGRPCClient, Proto_Transaction) throws -> Proto_TransactionResponse
     
-    init(_ client: Client, _ tx: Proto_Transaction, _ closure: @escaping (HederaGRPCClient, Proto_Transaction) throws -> Proto_TransactionResponse) {
+    init(_ client: Client, _ tx: Proto_Transaction, _ txId: Proto_TransactionID, _ closure: @escaping (HederaGRPCClient, Proto_Transaction) throws -> Proto_TransactionResponse) {
         self.client = client
         inner = tx
         if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
-        txId = TransactionId(tx.body.transactionID)!
+        self.txId = TransactionId(txId)!
         executeClosure = closure
     }
 
@@ -28,7 +28,7 @@ public class Transaction {
         inner
     }
 
-    var bytes: Bytes {
+    public var bytes: Bytes {
         Bytes(inner.bodyBytes)
     }
 
@@ -73,10 +73,18 @@ public class Transaction {
         }
             
         // TODO: actually handle error
-        if let response = try? executeClosure(client.grpcClient(for: client.pickNode()), inner), response.nodeTransactionPrecheckCode == .ok {
-            return txId
-        } else {
-            throw HederaError(message: "something went wrong")
+        do {
+            print("\(inner)")
+            let response = try executeClosure(client.grpcClient(for: client.pickNode()), inner)
+            if response.nodeTransactionPrecheckCode == .ok {
+                return txId
+            } else {
+                throw HederaError(message: "preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)")
+            }
+        } catch let err as CallError {
+            throw HederaError(message: "CallError: \(err)")
+        } catch let err as RPCError {
+            throw HederaError(message: "RPCError: \(err)")
         }
     }
     

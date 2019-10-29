@@ -11,7 +11,7 @@ public class Client {
     var `operator`: Operator?
 
     var nodes: [AccountId: Node]
-    var node: AccountId?
+    var node: Node?
 
     var channels: [AccountId: Channel] = [:]
     var grpcClients: [AccountId: HederaGRPCClient] = [:]
@@ -65,7 +65,7 @@ public class Client {
 
     @discardableResult
     public func setNode(_ id: AccountId) -> Self {
-        node = id
+        node = nodes[id]
         return self
     }
 

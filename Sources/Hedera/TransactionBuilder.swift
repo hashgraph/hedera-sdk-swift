@@ -14,32 +14,38 @@ public class TransactionBuilder {
         body.transactionValidDuration = maxValidDuration.toProto()
     }
     
+    @discardableResult
     public func setTransactionId(_ id: TransactionId) -> Self {
         body.transactionID = id.toProto()
         return self
     }
 
+    @discardableResult
     public func setNodeAccount(_ id: AccountId) -> Self {
         body.nodeAccountID = id.toProto()
         return self
     }
 
+    @discardableResult
     public func setTransactionFee(_ fee: UInt64) -> Self {
         body.transactionFee = fee
         return self
     }
 
     // TODO: should this allow setting a longer duration than max?
+    @discardableResult
     public func setTransactionValidDuration(_ duration: TimeInterval) -> Self {
         body.transactionValidDuration = duration.toProto()
         return self
     }
 
+    @discardableResult
     public func setGenerateRecord(_ generateRecord: Bool) -> Self {
         body.generateRecord = generateRecord
         return self
     }
 
+    @discardableResult
     public func setMemo(_ memo: String) -> Self {
         body.memo = memo
         return self
@@ -50,10 +56,25 @@ public class TransactionBuilder {
     }
 
     public func build() -> Transaction {
+        if !body.hasTransactionID {
+            setTransactionId(TransactionId(account: client!.operator!.id))
+        }
+        
+        if !body.hasTransactionValidDuration {
+            setTransactionValidDuration(maxValidDuration)
+        }
+        
+        if !body.hasNodeAccountID {
+            let node = client!.node ?? client!.pickNode()
+            setNodeAccount(node.accountId)
+        }
+        
+        print("\(body.transactionID) \(body.transactionValidDuration) \(body.nodeAccountID)")
+        
         var tx = Proto_Transaction()
         tx.bodyBytes = try! body.serializedData()
         
         // TODO: perhaps handle a null client more gracefully, especially consider for testing
-        return Transaction(client!, tx, executeClosure)
+        return Transaction(client!, tx, body.transactionID, executeClosure)
     }
 }
