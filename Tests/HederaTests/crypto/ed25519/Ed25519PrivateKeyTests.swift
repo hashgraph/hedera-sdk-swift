@@ -68,7 +68,7 @@ final class Ed25519PrivateKeyTests: XCTestCase {
         let key = Ed25519PrivateKey(privateKeyString)!
         let sig = key.sign(message: message.bytes)
 
-        XCTAssertEqual(hexEncode(bytes: sig), signature)
+        XCTAssertEqual(sodium.utils.bin2hex(sig), signature)
     }
 
     static var allTests = [

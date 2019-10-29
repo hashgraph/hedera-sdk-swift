@@ -18,6 +18,7 @@ public final class CryptoTransferTransaction: TransactionBuilder {
         add(account: recipient, amount: Int64(amount))
     }
 
+    @discardableResult
     public func add(account: AccountId, amount: Int64) -> Self {
         var accountAmount = Proto_AccountAmount()
         accountAmount.accountID = account.toProto()

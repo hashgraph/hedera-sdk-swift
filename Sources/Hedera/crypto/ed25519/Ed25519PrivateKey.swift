@@ -45,7 +45,7 @@ public struct Ed25519PrivateKey {
 
 extension Ed25519PrivateKey: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
-        hexEncode(bytes: inner.secretKey, prefixed: ed25519PrivateKeyPrefix)
+        "\(ed25519PrivateKeyPrefix)\(sodium.utils.bin2hex(bytes)!)"
     }
 
     public var debugDescription: String {
@@ -58,14 +58,14 @@ extension Ed25519PrivateKey: LosslessStringConvertible {
     public init?(_ description: String) {
         switch description.count {
         case ed25519PrivateKeyLength * 2, combinedEd25519KeyLength * 2: // lone key, or combined key
-            guard let decoded = try? hexDecode(description) else { return nil }
+            guard let decoded = sodium.utils.hex2bin(description) else { return nil }
             self = Ed25519PrivateKey(bytes: decoded)!
 
         case ed25519PrivateKeyLength * 2 + ed25519PrivateKeyPrefix.count: // DER encoded key
             guard description.hasPrefix(ed25519PrivateKeyPrefix) else { return nil }
     
             let range = description.index(description.startIndex, offsetBy: ed25519PrivateKeyPrefix.count)...
-            guard let decoded = try? hexDecode(description[range]) else { return nil }
+            guard let decoded = sodium.utils.hex2bin(String(description[range])) else { return nil }
             self = Ed25519PrivateKey(bytes: decoded)!
 
         default:
