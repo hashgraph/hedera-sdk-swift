@@ -1,8 +1,10 @@
 import Sodium
 
+public typealias Signer = (_ message: Bytes) -> Bytes
+
 public struct Operator {
     let id: AccountId
-    let signer: (Bytes) -> Bytes
+    let signer: Signer
     let publicKey: Ed25519PublicKey
     
     /// - Parameters:
@@ -10,7 +12,7 @@ public struct Operator {
     ///   - signer: closure that will be called to sign transactions. Useful for requesting signing from a hardware wallet that won't give you the private key.
     ///   - publicKey: public key associated with the signer
     ///   - message: the serialized transaction that will be signed
-    public init(id: AccountId, signer: @escaping (_ message: Bytes) -> Bytes, publicKey: Ed25519PublicKey) {
+    public init(id: AccountId, signer: @escaping Signer, publicKey: Ed25519PublicKey) {
         self.id = id
         self.signer = signer
         self.publicKey = publicKey

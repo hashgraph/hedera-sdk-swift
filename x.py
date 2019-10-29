@@ -23,7 +23,7 @@ operation = sys.argv[1]
 # Validate that this is an allowed operation
 OPERATIONS = ['test', 'build', 'run']
 if operation not in OPERATIONS:
-    print(f"target '{target}' not one of 'test' | 'build'")
+    print(f"operation '{operation}' not one of {' | '.join(OPERATIONS)}")
     sys.exit(0)
 
 remainderArguments = ''
