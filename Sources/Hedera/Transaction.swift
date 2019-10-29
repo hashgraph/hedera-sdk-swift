@@ -8,15 +8,17 @@ struct HederaError: Error {
     let message: String
 }
 
+typealias ExecuteClosure = (_ clinet: HederaGRPCClient, _ transaction: Proto_Transaction) throws -> Proto_TransactionResponse 
+
 //let RECEIPT_INITIAL_DELAY: UInt32 = 1
 
 public class Transaction {
     var inner: Proto_Transaction
     let txId: TransactionId
     var client: Client?
-    let executeClosure: (HederaGRPCClient, Proto_Transaction) throws -> Proto_TransactionResponse
+    let executeClosure: ExecuteClosure
     
-    init(_ client: Client, _ tx: Proto_Transaction, _ txId: Proto_TransactionID, _ closure: @escaping (HederaGRPCClient, Proto_Transaction) throws -> Proto_TransactionResponse) {
+    init(_ client: Client, _ tx: Proto_Transaction, _ txId: Proto_TransactionID, _ closure: @escaping ExecuteClosure) {
         self.client = client
         inner = tx
         if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
