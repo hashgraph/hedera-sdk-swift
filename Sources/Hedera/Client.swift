@@ -84,7 +84,7 @@ public class Client {
         if let channel = channels[node.accountId] {
             return channel
         } else {
-            channels[node.accountId] = Channel(address: node.address)
+            channels[node.accountId] = Channel(address: node.address, secure: false)
             return channels[node.accountId]!
         }
     }
