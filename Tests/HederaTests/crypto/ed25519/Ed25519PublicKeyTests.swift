@@ -38,7 +38,7 @@ final class Ed25519PublicKeyTests: XCTestCase {
 
     func testVerify() {
         let key = Ed25519PublicKey(publicKeyString)!
-        let verified =  key.verify(signature: try! hexDecode(signature), of: message.bytes)
+        let verified =  key.verify(signature: sodium.utils.hex2bin(signature)!, of: message.bytes)
         XCTAssertTrue(verified)
     }
 
