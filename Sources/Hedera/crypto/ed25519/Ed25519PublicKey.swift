@@ -4,15 +4,28 @@ import Foundation
 let ed25519PublicKeyPrefix = "302a300506032b6570032100"
 let ed25519PublicKeyLength = 32
 
-public struct Ed25519PublicKey {
+public final class Ed25519PublicKey: PublicKey {
     private let inner: Bytes
 
+    // Overriding CustomStringConvertible and CustomDebugStringConvertible
+    override public var description: String {
+        "\(ed25519PublicKeyPrefix)\(sodium.utils.bin2hex(bytes)!)"
+    }
+    override public var debugDescription: String {
+        description
+    }
+    
     public init?(bytes: Bytes) {
         if bytes.count == ed25519PublicKeyLength {
             inner = bytes
+            super.init()
         } else {
             return nil
         }
+    }
+    
+    required convenience init?(_ proto: Proto_Key) {
+        self.init(bytes: Bytes(proto.ed25519))
     }
 
     var bytes: Bytes {
@@ -23,20 +36,16 @@ public struct Ed25519PublicKey {
     func verify(signature: Bytes, of message: Bytes) -> Bool {
         sodium.sign.verify(message: message, publicKey: inner, signature: signature)
     }
-}
-
-extension Ed25519PublicKey: CustomStringConvertible, CustomDebugStringConvertible {
-    public var description: String {
-        "\(ed25519PublicKeyPrefix)\(sodium.utils.bin2hex(bytes)!)"
-    }
     
-    public var debugDescription: String {
-        description
+    override func toProto() -> Proto_Key {
+        var proto = Proto()
+        proto.ed25519 = Data(bytes)
+        return proto
     }
 }
 
 extension Ed25519PublicKey: LosslessStringConvertible {
-    public init?(_ description: String) {
+    public convenience init?(_ description: String) {
         switch description.count {
         case ed25519PublicKeyLength * 2:
             guard let decoded = sodium.utils.hex2bin(description) else { return nil }
@@ -55,16 +64,5 @@ extension Ed25519PublicKey: LosslessStringConvertible {
     }
 }
 
-extension Ed25519PublicKey: ProtoConvertible {
-    typealias Proto = Proto_Key
-    
-    func toProto() -> Proto_Key {
-        var proto = Proto()
-        proto.ed25519 = Data(bytes)
-        return proto
-    }
-
-    init?(_ proto: Proto) {
-        self = Ed25519PublicKey(bytes: Bytes(proto.ed25519))!
-    }
-}
+// We get this for free cause the same functions are defined in PublicKey and we override them elsewhere
+extension Ed25519PublicKey: ProtoConvertible {}

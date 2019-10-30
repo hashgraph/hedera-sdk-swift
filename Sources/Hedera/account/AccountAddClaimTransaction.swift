@@ -13,11 +13,11 @@ public final class AccountAddClaimTransaction: TransactionBuilder {
         return self
     }
     
-//    @discardableResult
-//    public func addKey<T: PublicKey>(_ key: T) -> Self {
-//        body.cryptoAddClaim.claim.keys.keys.append(key.toProto())
-//        return self
-//    }
+    @discardableResult
+    public func addKey<T: PublicKey>(_ key: T) -> Self {
+        body.cryptoAddClaim.claim.keys.keys.append(key.toProto())
+        return self
+    }
     
     
     override func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {

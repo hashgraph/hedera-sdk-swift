@@ -29,10 +29,10 @@ extension TransactionId: LosslessStringConvertible {
         let atParts = description.split(separator: "@")
         guard atParts.count == 2 else { return nil }
 
-        guard let id = AccountId(String(atParts[atParts.startIndex])) else { return nil }
+        guard let id = EntityId(String(atParts[atParts.startIndex])) else { return nil }
         guard let start = Date(String(atParts[atParts.startIndex.advanced(by: 1)])) else { return nil }
 
-        accountId = id
+        accountId = AccountId(id)
         transactionValidStart = start
     }
 }
