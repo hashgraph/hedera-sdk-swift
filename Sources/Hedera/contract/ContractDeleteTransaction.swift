@@ -21,7 +21,7 @@ public class ContractDeleteTransaction: TransactionBuilder {
         return self
     }
 
-    override func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-        try grpc.contractService.deleteContract(tx)
-    }
+//    override static func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
+//        try grpc.contractService.deleteContract(tx)
+//    }
 }

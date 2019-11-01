@@ -55,7 +55,7 @@ public class FileCreateTransaction: TransactionBuilder {
         return self
     }
 
-    override func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-        try grpc.fileService.createFile(tx)
-    }
+//    override static func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
+//        try grpc.fileService.createFile(tx)
+//    }
 }

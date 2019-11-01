@@ -50,10 +50,6 @@ public class TransactionBuilder {
         body.memo = memo
         return self
     }
-    
-    func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-        fatalError("executeClosure member must be overridden")
-    }
 
     public func build() -> Transaction {
         if !body.hasTransactionID {
@@ -69,12 +65,14 @@ public class TransactionBuilder {
             setNodeAccount(node.accountId)
         }
         
-        print("\(body.transactionID) \(body.transactionValidDuration) \(body.nodeAccountID)")
-        
+        print("transaction body is: \n\(body)")
+
         var tx = Proto_Transaction()
         tx.bodyBytes = try! body.serializedData()
         
         // TODO: perhaps handle a null client more gracefully, especially consider for testing
-        return Transaction(client!, tx, body.transactionID, executeClosure)
+//        return Transaction(client!, tx, body.transactionID, executeClosure)
+        return Transaction(client!, tx, body.transactionID)
+
     }
 }
