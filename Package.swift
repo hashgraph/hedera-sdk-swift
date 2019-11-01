@@ -43,5 +43,9 @@ let package = Package(
              name: "CreateFileExample",
              dependencies: ["Hedera"],
              path: "Examples/CreateFile"),
+         .target(
+             name: "TransferCryptoExample",
+             dependencies: ["Hedera"],
+             path: "Examples/TransferCrypto"),
     ]
 )
