@@ -21,7 +21,7 @@ public final class AccountDeleteTransaction: TransactionBuilder {
         return self
     }
     
-    override func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-        try grpc.cryptoService.cryptoDelete(tx)
-    }
+//    override static func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
+//        try grpc.cryptoService.cryptoDelete(tx)
+//    }
 }

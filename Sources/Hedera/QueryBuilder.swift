@@ -20,7 +20,7 @@ public class QueryBuilder<Response> {
             .setNodeAccount(node.accountId)
             .add(recipient: node.accountId, amount: amount)
             .add(sender: client.operator!.id, amount: amount)
-            .setTransactionFee(1)
+            .setTransactionFee(100_000_000)
             .build()
             .addSigPair(publicKey: client.operator!.publicKey, 
                         signer: client.operator!.signer)
@@ -92,13 +92,14 @@ public class QueryBuilder<Response> {
     public func execute() throws -> Response {
         // if let maxQueryPayment = client.maxQueryPayment, header.hasPayment {
             let cost = try requestCost()
+        print("supposedly this query will cost \(cost) tinybar")
             // if cost > maxQueryPayment {
             //     throw HederaError(message: "Query payment exceeds maxQueryPayment")
             // }
 
             setPayment(1_000_000_000)
         // }
-
+        
         let response = try executeClosure(client.grpcClient(for: node))
 
         var resHeader: Proto_ResponseHeader
@@ -122,7 +123,7 @@ public class QueryBuilder<Response> {
         default: fatalError("execute received unrecognized response header")
         }
 
-        if resHeader.nodeTransactionPrecheckCode != .ok && resHeader.nodeTransactionPrecheckCode != .success{
+        if resHeader.nodeTransactionPrecheckCode != .ok && resHeader.nodeTransactionPrecheckCode != .success {
             throw HederaError(message: "Received error code: \(resHeader.nodeTransactionPrecheckCode) while executing")
         }
 

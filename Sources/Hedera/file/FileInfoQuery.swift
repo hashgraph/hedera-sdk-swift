@@ -28,11 +28,13 @@ public class FileInfoQuery: QueryBuilder<FileInfo> {
         _ grpc: HederaGRPCClient
     ) throws -> Proto_Response {
         body.fileGetInfo.header = header
-        throw HederaError(message: "\(body.fileGetInfo.header.payment)")
+        
+//        print("the whole query \n\(Transaction(client, bytes: try! body.fileGetInfo.serializedData()))")
+        
         return try grpc.fileService.getFileInfo(body)
     }
 
-    func mapResponse(response: Proto_Response) -> FileInfo {
+    override func mapResponse(_ response: Proto_Response) -> FileInfo {
         let fileInfo = response.fileGetInfo.fileInfo
         let fileId = fileInfo.fileID
 
