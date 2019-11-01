@@ -1,6 +1,5 @@
 import Hedera
 
-print("HELLLOOOOOOO")
 let op = Operator(id: AccountId(2), privateKey: Ed25519PrivateKey("yourprivatekeyhere")!)
 
 let client = Client(node: AccountId("0.0.3")!, address: "0.testnet.hedera.com:50211")

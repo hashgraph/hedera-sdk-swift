@@ -1,6 +1,5 @@
 public final class AccountAddClaimTransaction: TransactionBuilder {
-    
-    public override init(client: Client) {
+    public override init(client: Client? = nil) {
         super.init(client: client)
         body.cryptoAddClaim = Proto_CryptoAddClaimTransactionBody()
         body.cryptoAddClaim.claim = Proto_Claim()

@@ -21,7 +21,7 @@ public class QueryBuilder<Response> {
             .setNodeAccount(node.accountId)
             .add(recipient: node.accountId, amount: amount)
             .add(sender: client.operator!.id, amount: amount)
-            .setTransactionFee(100_000_000)
+            .setMaxTransactionFee(100_000_000)
             .build()
             .addSigPair(publicKey: client.operator!.publicKey, 
                         signer: client.operator!.signer)
@@ -54,26 +54,7 @@ public class QueryBuilder<Response> {
 
         let response = try executeClosure(client.grpcClient(for: node))
 
-        var resHeader: Proto_ResponseHeader
-        switch response.response {
-        case .getByKey(let res): resHeader = res.header
-        case .getBySolidityID(let res): resHeader = res.header
-        case .contractCallLocal(let res): resHeader = res.header
-        case .contractGetBytecodeResponse(let res): resHeader = res.header
-        case .contractGetInfo(let res): resHeader = res.header
-        case .contractGetRecordsResponse(let res): resHeader = res.header
-        case .cryptogetAccountBalance(let res): resHeader = res.header
-        case .cryptoGetAccountRecords(let res): resHeader = res.header
-        case .cryptoGetInfo(let res): resHeader = res.header
-        case .cryptoGetClaim(let res): resHeader = res.header
-        case .cryptoGetProxyStakers(let res): resHeader = res.header
-        case .fileGetContents(let res): resHeader = res.header
-        case .fileGetInfo(let res): resHeader = res.header
-        case .transactionGetReceipt(let res): resHeader = res.header
-        case .transactionGetRecord(let res): resHeader = res.header
-        case .transactionGetFastRecord(let res): resHeader = res.header
-        default: fatalError("requestCost received unrecognized response header")
-        }
+        let resHeader = getResponseHeader(response)
 
         if resHeader.nodeTransactionPrecheckCode != .ok 
             && resHeader.nodeTransactionPrecheckCode != .success {
@@ -83,6 +64,28 @@ public class QueryBuilder<Response> {
         }
 
         return resHeader.cost
+    }
+    
+    func getResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
+        switch response.response {
+        case .getByKey(let res): return res.header
+        case .getBySolidityID(let res): return res.header
+        case .contractCallLocal(let res): return res.header
+        case .contractGetBytecodeResponse(let res): return res.header
+        case .contractGetInfo(let res): return res.header
+        case .contractGetRecordsResponse(let res): return res.header
+        case .cryptogetAccountBalance(let res): return res.header
+        case .cryptoGetAccountRecords(let res): return res.header
+        case .cryptoGetInfo(let res): return res.header
+        case .cryptoGetClaim(let res): return res.header
+        case .cryptoGetProxyStakers(let res): return res.header
+        case .fileGetContents(let res): return res.header
+        case .fileGetInfo(let res): return res.header
+        case .transactionGetReceipt(let res): return res.header
+        case .transactionGetRecord(let res): return res.header
+        case .transactionGetFastRecord(let res): return res.header
+        default: fatalError("unrecognized query response header")
+        }
     }
 
     func executeClosure(
@@ -106,26 +109,7 @@ public class QueryBuilder<Response> {
 
         let response = try executeClosure(client.grpcClient(for: node))
 
-        var resHeader: Proto_ResponseHeader
-        switch response.response {
-        case .getByKey(let res): resHeader = res.header
-        case .getBySolidityID(let res): resHeader = res.header
-        case .contractCallLocal(let res): resHeader = res.header
-        case .contractGetBytecodeResponse(let res): resHeader = res.header
-        case .contractGetInfo(let res): resHeader = res.header
-        case .contractGetRecordsResponse(let res): resHeader = res.header
-        case .cryptogetAccountBalance(let res): resHeader = res.header
-        case .cryptoGetAccountRecords(let res): resHeader = res.header
-        case .cryptoGetInfo(let res): resHeader = res.header
-        case .cryptoGetClaim(let res): resHeader = res.header
-        case .cryptoGetProxyStakers(let res): resHeader = res.header
-        case .fileGetContents(let res): resHeader = res.header
-        case .fileGetInfo(let res): resHeader = res.header
-        case .transactionGetReceipt(let res): resHeader = res.header
-        case .transactionGetRecord(let res): resHeader = res.header
-        case .transactionGetFastRecord(let res): resHeader = res.header
-        default: fatalError("execute received unrecognized response header")
-        }
+        let resHeader = getResponseHeader(response)
 
         if resHeader.nodeTransactionPrecheckCode != .ok && resHeader.nodeTransactionPrecheckCode != .success {
             throw HederaError(message: "Received error code: \(resHeader.nodeTransactionPrecheckCode) while executing")
