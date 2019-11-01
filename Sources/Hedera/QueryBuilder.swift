@@ -8,6 +8,7 @@ public class QueryBuilder<Response> {
     let client: Client
     var header = Proto_QueryHeader()
     var node: Node
+    var needsPayment = true
 
     init(client: Client) {
         self.client = client
@@ -32,6 +33,7 @@ public class QueryBuilder<Response> {
     @discardableResult
     public func setPayment(_ transaction: Transaction) -> Self {
         header.payment = transaction.toProto()
+        needsPayment = false
 
         return self
     }
@@ -90,16 +92,18 @@ public class QueryBuilder<Response> {
     }
 
     public func execute() throws -> Response {
-        // if let maxQueryPayment = client.maxQueryPayment, header.hasPayment {
+        if needsPayment {
             let cost = try requestCost()
-        print("supposedly this query will cost \(cost) tinybar")
-            // if cost > maxQueryPayment {
-            //     throw HederaError(message: "Query payment exceeds maxQueryPayment")
-            // }
 
-            setPayment(1_000_000_000)
-        // }
-        
+            if let maxQueryPayment = client.maxQueryPayment {
+                if cost > maxQueryPayment {
+                    throw HederaError(message: "Query payment exceeds maxQueryPayment")
+                }
+            }
+
+            setPayment(cost)
+        }
+
         let response = try executeClosure(client.grpcClient(for: node))
 
         var resHeader: Proto_ResponseHeader
