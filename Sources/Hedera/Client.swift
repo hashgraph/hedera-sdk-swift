@@ -17,7 +17,7 @@ public class Client {
     var grpcClients: [AccountId: HederaGRPCClient] = [:]
 
     /// The default maximum fee for a transaction.
-    /// This can be overridden for an individual transaction with `.setTransactionFee()`. 
+    /// This can be overridden on an individual transaction with `setMaxTransactionFee()`.
     var maxTransactionFee = defaultMaxTransactionFee
 
     // TODO: once queries are implemented    

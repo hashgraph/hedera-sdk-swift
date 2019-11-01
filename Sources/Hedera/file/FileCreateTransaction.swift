@@ -3,7 +3,7 @@ import Foundation
 import Sodium
 
 public class FileCreateTransaction: TransactionBuilder {
-    public override init(client: Client) {
+    public override init(client: Client? = nil) {
         super.init(client: client)
 
         body.fileCreate = Proto_FileCreateTransactionBody()

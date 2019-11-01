@@ -12,6 +12,11 @@ public struct TransactionId {
         // server is not more than 10 seconds behind us
         transactionValidStart = Date(timeIntervalSinceNow: -10)
     }
+    
+    public init(account id: AccountId, validStart: Date) {
+        accountId = id
+        transactionValidStart = validStart
+    }
 }
 
 extension TransactionId: CustomStringConvertible, CustomDebugStringConvertible {

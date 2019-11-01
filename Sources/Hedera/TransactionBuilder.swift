@@ -8,9 +8,8 @@ public class TransactionBuilder {
     var body = Proto_TransactionBody()
     let client: Client?
 
-    init(client: Client) {
+    init(client: Client? = nil) {
         self.client = client
-        body.transactionFee = client.maxTransactionFee
         body.transactionValidDuration = maxValidDuration.toProto()
     }
     
@@ -27,7 +26,7 @@ public class TransactionBuilder {
     }
 
     @discardableResult
-    public func setTransactionFee(_ fee: UInt64) -> Self {
+    public func setMaxTransactionFee(_ fee: UInt64) -> Self {
         body.transactionFee = fee
         return self
     }
@@ -52,26 +51,31 @@ public class TransactionBuilder {
     }
 
     public func build() -> Transaction {
-        if !body.hasTransactionID {
-            setTransactionId(TransactionId(account: client!.operator!.id))
-        }
-        
-        if !body.hasTransactionValidDuration {
-            setTransactionValidDuration(maxValidDuration)
-        }
-        
-        if !body.hasNodeAccountID {
-            let node = client!.node ?? client!.pickNode()
-            setNodeAccount(node.accountId)
-        }
-        
-        print("transaction body is: \n\(body)")
+        // If we have a client, set some defaults if they have not already been set
+        if let client = client {
+            if body.transactionFee == 0 {
+                body.transactionFee = client.maxTransactionFee
+            }
 
+            if !body.hasTransactionID {
+                setTransactionId(TransactionId(account: client.operator!.id))
+            }
+            
+            if !body.hasTransactionValidDuration {
+                setTransactionValidDuration(maxValidDuration)
+            }
+            
+            if !body.hasNodeAccountID {
+                let node = client.node ?? client.pickNode()
+                setNodeAccount(node.accountId)
+            }
+        }
+                
         var tx = Proto_Transaction()
+        tx.body = body
         tx.bodyBytes = try! body.serializedData()
         
         // TODO: perhaps handle a null client more gracefully, especially consider for testing
-//        return Transaction(client!, tx, body.transactionID, executeClosure)
         return Transaction(client!, tx, body.transactionID)
 
     }

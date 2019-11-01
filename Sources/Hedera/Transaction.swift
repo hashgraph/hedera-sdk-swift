@@ -17,7 +17,7 @@ public class Transaction {
     let txId: TransactionId
     var client: Client?
     
-    init(_ client: Client, _ tx: Proto_Transaction, _ txId: Proto_TransactionID) {
+    init(_ client: Client?, _ tx: Proto_Transaction, _ txId: Proto_TransactionID) {
         self.client = client
         inner = tx
         if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
@@ -32,7 +32,9 @@ public class Transaction {
     }
     
     func methodForTransaction(_ grpc: HederaGRPCClient) -> (Proto_Transaction) throws -> Proto_TransactionResponse {
-        switch inner.body.data {
+        let body = try! Proto_TransactionBody.init(serializedData: inner.bodyBytes)
+        
+        switch body.data {
         case .none:
             fatalError()
         case .systemDelete(_):
@@ -113,7 +115,6 @@ public class Transaction {
     
     public func execute() throws -> TransactionId {
         guard let client = client else { throw HederaError(message: "client must not be null") }
-        
         
         if (inner.sigMap.sigPair.isEmpty) {
             guard let clientOperator = client.`operator` else { throw HederaError(message: "Client must have an operator set to execute") }

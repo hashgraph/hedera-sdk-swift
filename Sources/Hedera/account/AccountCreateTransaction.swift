@@ -1,7 +1,7 @@
 import Foundation
 
 public final class AccountCreateTransaction: TransactionBuilder {
-    public override init(client: Client) {
+    public override init(client: Client? = nil) {
         super.init(client: client)
 
         var inner = Proto_CryptoCreateTransactionBody()
