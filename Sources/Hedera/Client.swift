@@ -58,7 +58,7 @@ public class Client {
     }
 
     /// Sets the default maximum fee for a query.
-    /// This can be overridden for an individual transaction with `.setTransactionFee()`.
+    /// This can be overridden for an individual query with `.setPayment()`.
     ///
     /// - Parameters:
     ///   - max: The maximum query fee, in tinybars.
