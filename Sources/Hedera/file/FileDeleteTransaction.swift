@@ -19,7 +19,7 @@ public class FileDeleteTransaction: TransactionBuilder {
         return self
     }
 
-    override func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-        try grpc.fileService.deleteFile(tx)
-    }
+//    override static func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
+//        try grpc.fileService.deleteFile(tx)
+//    }
 }
