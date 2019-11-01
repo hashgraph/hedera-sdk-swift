@@ -8,9 +8,9 @@ public class FileCreateTransaction: TransactionBuilder {
 
         body.fileCreate = Proto_FileCreateTransactionBody()
 
-        // For files and contracts expiration time needs be set to now + 7898 seconds
+        // For files and contracts expiration time needs be set to now + 7,890,000 seconds
         // otherwise file/contract creation fails
-        setExpirationTime(Date(timeIntervalSinceNow: 7898))
+        setExpirationTime(Date(timeIntervalSinceNow: 7890000))
     }
 
     /// Set the expiration time of the file
