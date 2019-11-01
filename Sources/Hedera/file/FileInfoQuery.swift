@@ -33,14 +33,9 @@ public class FileInfoQuery: QueryBuilder<FileInfo> {
 
     override func mapResponse(_ response: Proto_Response) -> FileInfo {
         let fileInfo = response.fileGetInfo.fileInfo
-        let fileId = fileInfo.fileID
 
         return FileInfo(
-            fileId: FileId(EntityId(
-                shard: UInt64(fileId.shardNum), 
-                realm: UInt64(fileId.realmNum),
-                num: UInt64(fileId.fileNum)
-            )),
+            fileId: FileId(fileInfo.fileID),
             size: UInt64(fileInfo.size),
             expirationTime: Date(fileInfo.expirationTime),
             deleted: fileInfo.deleted
