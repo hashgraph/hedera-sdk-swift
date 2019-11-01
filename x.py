@@ -11,17 +11,18 @@ import subprocess
 import os
 from os import path
 
+OPERATIONS = ['test', 'build', 'run']
+
 # Useless if there aren't at least 2 arguments
 if len(sys.argv) < 2:
     print("USAGE: x.py <operation>")
-    print("OPERATIONS: test | build | run")
+    print(f"OPERATIONS: {' | '.join(OPERATIONS)}")
     sys.exit(1)
 
 # The #1 argument is always the <operation>
 operation = sys.argv[1]
 
 # Validate that this is an allowed operation
-OPERATIONS = ['test', 'build', 'run']
 if operation not in OPERATIONS:
     print(f"operation '{operation}' not one of {' | '.join(OPERATIONS)}")
     sys.exit(0)
