@@ -15,6 +15,7 @@ let package = Package(
             targets: ["Hedera"]),
         .executable(name: "CreateAccountExample", targets: ["CreateAccountExample"]),
         .executable(name: "GetFileInfoExample", targets: ["GetFileInfoExample"]),
+        .executable(name: "CreateFileExample", targets: ["CreateFileExample"]),
     ],
     dependencies: [
         .package(url: "https://github.com/jedisct1/swift-sodium", .exact("0.8.0")),
@@ -38,5 +39,9 @@ let package = Package(
              name: "GetFileInfoExample",
              dependencies: ["Hedera"],
              path: "Examples/GetFileInfo"),
+         .target(
+             name: "CreateFileExample",
+             dependencies: ["Hedera"],
+             path: "Examples/CreateFile"),
     ]
 )
