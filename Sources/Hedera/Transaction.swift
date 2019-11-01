@@ -16,14 +16,60 @@ public class Transaction {
     var inner: Proto_Transaction
     let txId: TransactionId
     var client: Client?
-    let executeClosure: ExecuteClosure
     
-    init(_ client: Client, _ tx: Proto_Transaction, _ txId: Proto_TransactionID, _ closure: @escaping ExecuteClosure) {
+    init(_ client: Client, _ tx: Proto_Transaction, _ txId: Proto_TransactionID) {
         self.client = client
         inner = tx
         if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
         self.txId = TransactionId(txId)!
-        executeClosure = closure
+//        executeClosure = closure
+    }
+    
+    convenience init?(_ client: Client?, bytes: Data) {
+        guard let tx = try? Proto_Transaction.init(serializedData: bytes) else { return nil }
+        guard let body = try? Proto_TransactionBody.init(serializedData: tx.bodyBytes) else { return nil }
+        self.init(client!, tx, body.transactionID)
+    }
+    
+    func methodForTransaction(_ grpc: HederaGRPCClient) -> (Proto_Transaction) throws -> Proto_TransactionResponse {
+        switch inner.body.data {
+        case .none:
+            fatalError()
+        case .systemDelete(_):
+            return grpc.fileService.systemDelete
+        case .contractCall(_):
+            return grpc.contractService.contractCallMethod
+        case .contractCreateInstance(_):
+            return grpc.contractService.createContract
+        case .contractUpdateInstance(_):
+            return grpc.contractService.updateContract
+        case .contractDeleteInstance(_):
+            return grpc.contractService.deleteContract
+        case .cryptoAddClaim(_):
+            return grpc.cryptoService.addClaim
+        case .cryptoCreateAccount(_):
+            return grpc.cryptoService.createAccount
+        case .cryptoDelete(_):
+            return grpc.cryptoService.cryptoDelete
+        case .cryptoDeleteClaim(_):
+            return grpc.cryptoService.deleteClaim
+        case .cryptoTransfer(_):
+            return grpc.cryptoService.cryptoTransfer
+        case .cryptoUpdateAccount(_):
+            return grpc.cryptoService.updateAccount
+        case .fileAppend(_):
+            return grpc.fileService.appendContent
+        case .fileCreate(_):
+            return grpc.fileService.createFile
+        case .fileDelete(_):
+            return grpc.fileService.deleteFile
+        case .fileUpdate(_):
+            return grpc.fileService.updateFile
+        case .systemUndelete(_):
+            return grpc.fileService.systemUndelete
+        case .freeze(_):
+            fatalError("TODO: freeze service")
+        }
     }
 
     func toProto() -> Proto_Transaction {
@@ -77,7 +123,7 @@ public class Transaction {
         // TODO: actually handle error
         do {
             print("\(inner)")
-            let response = try executeClosure(client.grpcClient(for: client.pickNode()), inner)
+            let response = try methodForTransaction(client.grpcClient(for: client.pickNode()))(inner)
             if response.nodeTransactionPrecheckCode == .ok {
                 return txId
             } else {

@@ -55,7 +55,7 @@ public final class AccountUpdateTransaction: TransactionBuilder {
         return self
     }
     
-    override func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-        try grpc.cryptoService.updateAccount(tx)
-    }
+//    override static func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
+//        try grpc.cryptoService.updateAccount(tx)
+//    }
 }

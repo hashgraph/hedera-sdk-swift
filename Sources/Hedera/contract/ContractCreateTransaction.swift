@@ -86,7 +86,7 @@ public class ContractCreateTransaction: TransactionBuilder {
         return self
     }
 
-    override func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-        try grpc.contractService.createContract(tx)
-    }
+//    override static  func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
+//        try grpc.contractService.createContract(tx)
+//    }
 }

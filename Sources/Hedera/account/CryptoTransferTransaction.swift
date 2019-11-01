@@ -28,8 +28,4 @@ public final class CryptoTransferTransaction: TransactionBuilder {
 
         return self
     }
-    
-    override func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-        try grpc.cryptoService.cryptoTransfer(tx)
-    }
 }

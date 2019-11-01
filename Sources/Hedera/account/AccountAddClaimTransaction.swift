@@ -19,8 +19,7 @@ public final class AccountAddClaimTransaction: TransactionBuilder {
         return self
     }
     
-    
-    override func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-        try grpc.cryptoService.addClaim(tx)
-    }
+//    override static func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
+//        try grpc.cryptoService.addClaim(tx)
+//    }
 }
