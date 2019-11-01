@@ -28,9 +28,6 @@ public class FileInfoQuery: QueryBuilder<FileInfo> {
         _ grpc: HederaGRPCClient
     ) throws -> Proto_Response {
         body.fileGetInfo.header = header
-        
-//        print("the whole query \n\(Transaction(client, bytes: try! body.fileGetInfo.serializedData()))")
-        
         return try grpc.fileService.getFileInfo(body)
     }
 
@@ -39,11 +36,11 @@ public class FileInfoQuery: QueryBuilder<FileInfo> {
         let fileId = fileInfo.fileID
 
         return FileInfo(
-            fileId: EntityId(
+            fileId: FileId(EntityId(
                 shard: UInt64(fileId.shardNum), 
                 realm: UInt64(fileId.realmNum),
                 num: UInt64(fileId.fileNum)
-            ),
+            )),
             size: UInt64(fileInfo.size),
             expirationTime: Date(fileInfo.expirationTime),
             deleted: fileInfo.deleted
