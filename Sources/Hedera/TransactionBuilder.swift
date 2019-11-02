@@ -75,8 +75,6 @@ public class TransactionBuilder {
         tx.body = body
         tx.bodyBytes = try! body.serializedData()
         
-        // TODO: perhaps handle a null client more gracefully, especially consider for testing
-        return Transaction(client!, tx, body.transactionID)
-
+        return Transaction(client, tx, body.transactionID)
     }
 }

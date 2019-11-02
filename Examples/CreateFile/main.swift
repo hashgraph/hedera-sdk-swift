@@ -11,7 +11,7 @@ let fileCreateTransactionId = try! FileCreateTransaction(client: client)
     .addKey(privateKey.publicKey)
     .setContents("This is a test")
     .setMemo("File Create Example - Swift SDK")
-    .setTransactionFee(1_000_000_000)
+    .setMaxTransactionFee(1_000_000_000)
     .build()
     .execute()
 

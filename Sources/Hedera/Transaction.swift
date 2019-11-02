@@ -8,7 +8,7 @@ struct HederaError: Error {
     let message: String
 }
 
-typealias ExecuteClosure = (_ clinet: HederaGRPCClient, _ transaction: Proto_Transaction) throws -> Proto_TransactionResponse 
+typealias ExecuteClosure = (Proto_Transaction) throws -> Proto_TransactionResponse
 
 //let RECEIPT_INITIAL_DELAY: UInt32 = 1
 
@@ -22,7 +22,6 @@ public class Transaction {
         inner = tx
         if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
         self.txId = TransactionId(txId)!
-//        executeClosure = closure
     }
     
     convenience init?(_ client: Client?, bytes: Data) {
@@ -31,7 +30,7 @@ public class Transaction {
         self.init(client!, tx, body.transactionID)
     }
     
-    func methodForTransaction(_ grpc: HederaGRPCClient) -> (Proto_Transaction) throws -> Proto_TransactionResponse {
+    func methodForTransaction(_ grpc: HederaGRPCClient) -> ExecuteClosure {
         let body = try! Proto_TransactionBody.init(serializedData: inner.bodyBytes)
         
         switch body.data {
@@ -103,7 +102,7 @@ public class Transaction {
     
     /// Add an Ed25519 signature pair to the signature map
     @discardableResult
-    public func addSigPair(publicKey: Ed25519PublicKey, signer: (Bytes) -> Bytes) -> Self {
+    public func addSigPair(publicKey: Ed25519PublicKey, signer: Signer) -> Self {
         var sigPair = Proto_SignaturePair()
         sigPair.pubKeyPrefix = Data(publicKey.bytes)
         sigPair.ed25519 = Data(signer(Bytes(inner.bodyBytes)))
@@ -130,10 +129,8 @@ public class Transaction {
             } else {
                 throw HederaError(message: "preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)")
             }
-        } catch let err as CallError {
-            throw HederaError(message: "CallError: \(err)")
-        } catch let err as RPCError {
-            throw HederaError(message: "RPCError: \(err)")
+        } catch let err {
+            throw HederaError(message: "Error when executing transaction: \(err)")
         }
     }
     
