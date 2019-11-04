@@ -18,7 +18,10 @@ public final class AccountAddClaimTransaction: TransactionBuilder {
         return self
     }
     
-//    override static func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-//        try grpc.cryptoService.addClaim(tx)
-//    }
+    @discardableResult
+    public func setHash(_ hash: Bytes) -> Self {
+        body.cryptoAddClaim.claim.hash = Data(hash)
+        
+        return self
+    }
 }
