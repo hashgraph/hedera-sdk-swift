@@ -20,8 +20,4 @@ public final class AccountDeleteTransaction: TransactionBuilder {
         body.cryptoDelete.deleteAccountID = id.toProto()
         return self
     }
-    
-//    override static func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-//        try grpc.cryptoService.cryptoDelete(tx)
-//    }
 }
