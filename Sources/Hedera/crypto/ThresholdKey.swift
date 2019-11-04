@@ -2,6 +2,12 @@ public final class ThresholdKey: PublicKey {
     let threshold: UInt32
     var keys: [PublicKey]
     
+    init(threshold: UInt32, keys: [PublicKey] = []) {
+        self.threshold = threshold
+        self.keys = keys
+        super.init()
+    }
+    
     required init?(_ proto: Proto_Key) {
         guard proto.thresholdKey.hasKeys else { return nil }
         threshold = proto.thresholdKey.threshold
@@ -26,5 +32,17 @@ public final class ThresholdKey: PublicKey {
         proto.keys.keys = keys.map { $0.toProto() }
 
         return proto
+    }
+    
+    @discardableResult
+    public func addKey(_ key: PublicKey) -> Self {
+        keys.append(key)
+        return self
+    }
+    
+    @discardableResult
+    public func addKeys(_ keys: [PublicKey]) -> Self {
+        self.keys.append(contentsOf: keys)
+        return self
     }
 }
