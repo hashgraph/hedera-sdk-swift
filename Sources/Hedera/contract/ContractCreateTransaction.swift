@@ -85,8 +85,33 @@ public class ContractCreateTransaction: TransactionBuilder {
 
         return self
     }
-
-//    override static  func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-//        try grpc.contractService.createContract(tx)
-//    }
+    
+    /// Set the shard where the contract will be created
+    @discardableResult
+    public func setShard(id: UInt64) -> Self {
+        var shard = Proto_ShardID()
+        shard.shardNum = Int64(id)
+        body.contractCreateInstance.shardID = shard
+        
+        return self
+    }
+    
+    /// Set the realm where the contract will be created
+    @discardableResult
+    public func setRealm(id: UInt64) -> Self {
+        var realm = Proto_RealmID()
+        realm.realmNum = Int64(id)
+        body.contractCreateInstance.realmID = realm
+        
+        return self
+    }
+    
+    /// Set the admin key for the new realm to be created for this contract
+    ///
+    /// This requires the realm to be set to nil.
+    @discardableResult
+    public func setNewRealmAdminKey(_ key: PublicKey) -> Self {
+        body.contractCreateInstance.newRealmAdminKey = key.toProto()
+        return self
+    }
 }

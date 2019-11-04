@@ -54,8 +54,4 @@ public final class AccountUpdateTransaction: TransactionBuilder {
         body.cryptoUpdateAccount.receiverSigRequiredWrapper = Google_Protobuf_BoolValue(required)
         return self
     }
-    
-//    override static func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-//        try grpc.cryptoService.updateAccount(tx)
-//    }
 }

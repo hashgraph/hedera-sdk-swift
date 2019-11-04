@@ -43,8 +43,4 @@ public class FileAppendTransaction: TransactionBuilder {
 
         return self
     }
-
-//    override static func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-//        try grpc.fileService.appendContent(tx)
-//    }
 }

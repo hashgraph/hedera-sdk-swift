@@ -51,8 +51,4 @@ public class FileUpdateTransaction: TransactionBuilder {
 
         return self
     }
-
-//    override func executeClosure(_ grpc: HederaGRPCClient, _ tx: Proto_Transaction) throws -> Proto_TransactionResponse {
-//        try grpc.fileService.updateFile(tx)
-//    }
 }

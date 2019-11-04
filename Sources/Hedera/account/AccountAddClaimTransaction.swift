@@ -1,3 +1,6 @@
+import Sodium
+import Foundation
+
 public final class AccountAddClaimTransaction: TransactionBuilder {
     public override init(client: Client? = nil) {
         super.init(client: client)
@@ -21,6 +24,13 @@ public final class AccountAddClaimTransaction: TransactionBuilder {
     @discardableResult
     public func setHash(_ hash: Bytes) -> Self {
         body.cryptoAddClaim.claim.hash = Data(hash)
+        
+        return self
+    }
+    
+    @discardableResult
+    public func setHash(_ hash: Data) -> Self {
+        body.cryptoAddClaim.claim.hash = hash
         
         return self
     }
