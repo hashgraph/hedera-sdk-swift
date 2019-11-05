@@ -25,7 +25,7 @@ struct EntityId {
         realm = UInt64(proto.realmNum)
         num = UInt64(proto.contractNum)
     }
-    
+
     init(_ proto: Proto_FileID) {
         shard = UInt64(proto.shardNum)
         realm = UInt64(proto.realmNum)

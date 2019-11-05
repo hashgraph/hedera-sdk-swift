@@ -3,14 +3,25 @@ import Foundation
 import Sodium
 
 public struct ContractInfo {
-    let contractId: ContractId;
-    let accountId: AccountId;
-    let contractAccountId: String;
-    let adminKey: Ed25519PublicKey?;
-    let expirationTime: Date;
-    let autoRenewPeriod: TimeInterval;
-    let storage: UInt64;
-    let memo: String;
+    let contractId: ContractId
+    let accountId: AccountId
+    let contractAccountId: String
+    let adminKey: Ed25519PublicKey?
+    let expirationTime: Date
+    let autoRenewPeriod: TimeInterval
+    let storage: UInt64
+    let memo: String
+    
+    init(_ contractInfo: Proto_ContractGetInfoResponse.ContractInfo) {
+        contractId = ContractId(contractInfo.contractID)
+        accountId = AccountId(contractInfo.accountID)
+        contractAccountId = contractInfo.contractAccountID
+        adminKey = Ed25519PublicKey(contractInfo.adminKey)
+        expirationTime = Date(contractInfo.expirationTime)
+        autoRenewPeriod = TimeInterval(contractInfo.autoRenewPeriod)!
+        storage = UInt64(contractInfo.storage)
+        memo = contractInfo.memo
+    }
 }
 
 public class ContractInfoQuery: QueryBuilder<ContractInfo> {
@@ -26,25 +37,9 @@ public class ContractInfoQuery: QueryBuilder<ContractInfo> {
         return self
     }
 
-    override func executeClosure(
-        _ grpc: HederaGRPCClient
-    ) throws -> Proto_Response {
-        body.contractGetInfo.header = header
-        return try grpc.contractService.getContractInfo(body)
-    }
+    override func mapResponse(_ response: Proto_Response) throws -> ContractInfo {
+        guard case .contractGetInfo(let response) = response.response else { throw HederaError(message: "query response was not of type contract info") }
 
-    override func mapResponse(_ response: Proto_Response) -> ContractInfo {
-        let contractInfo = response.contractGetInfo.contractInfo
-
-        return ContractInfo(
-            contractId: ContractId(contractInfo.contractID),
-            accountId: AccountId(contractInfo.accountID),
-            contractAccountId: contractInfo.contractAccountID,
-            adminKey: Ed25519PublicKey(contractInfo.adminKey),
-            expirationTime: Date(contractInfo.expirationTime),
-            autoRenewPeriod: TimeInterval(contractInfo.autoRenewPeriod)!,
-            storage: UInt64(contractInfo.storage),
-            memo: contractInfo.memo
-        )
+        return ContractInfo(response.contractInfo)
     }
 }

@@ -8,7 +8,13 @@ public class FunctionResult {
     let gasUsed: Int64
     // todo let logInfoList: [ContractLogInfo]
 
-    init(id contractId: ContractId, result contractCallResult: [UInt8], errorMessage: String, bloom: [UInt8], gasUsed: Int64) {
+    init(
+        id contractId: ContractId,
+        result contractCallResult: [UInt8],
+        errorMessage: String,
+        bloom: [UInt8],
+        gasUsed: Int64
+    ) {
         self.contractId = contractId
         self.contractCallResult = contractCallResult
         self.errorMessage = errorMessage

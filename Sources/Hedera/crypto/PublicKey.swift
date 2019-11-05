@@ -9,18 +9,18 @@ public class PublicKey: CustomStringConvertible, CustomDebugStringConvertible {
     func toProto() -> Proto_Key {
         fatalError("Don't use PublicKey directly")
     }
-    
+
     static func fromProto(_ key: Proto_Key) -> PublicKey? {
         switch key.key {
-        case .ed25519(_):
+        case .ed25519:
             return Ed25519PublicKey(key)
-        case .keyList(_):
+        case .keyList:
             return KeyList(key)
-        case .contractID(_):
+        case .contractID:
             return ContractId(key)
-        case .thresholdKey(_):
+        case .thresholdKey:
             return ThresholdKey(key)
-        case .rsa3072(_), .ecdsa384(_), .none:
+        case .rsa3072, .ecdsa384, .none:
             // TODO: implement rsa and ecdsa eventually
             return nil
         }

@@ -3,6 +3,8 @@ import Foundation
 
 let maxQueryCost: Int64 = 10_000_000_000
 
+typealias QueryExecuteClosure = (Proto_Query) throws -> Proto_Response
+
 public class QueryBuilder<Response> {
     var body = Proto_Query()
     let client: Client
@@ -52,7 +54,7 @@ public class QueryBuilder<Response> {
         header.responseType = Proto_ResponseType.costAnswer
         setPayment(0)
 
-        let response = try executeClosure(client.grpcClient(for: node))
+        let response = try methodForQuery(client.grpcClient(for: node))(body)
 
         let resHeader = getResponseHeader(response)
 
@@ -87,11 +89,45 @@ public class QueryBuilder<Response> {
         default: fatalError("unrecognized query response header")
         }
     }
-
-    func executeClosure(
-        _ grpc: HederaGRPCClient
-    ) throws -> Proto_Response {
-        fatalError("executeClosure member must be overridden")
+    
+    func methodForQuery(_ grpc: HederaGRPCClient) -> QueryExecuteClosure {
+        switch body.query {
+        case .none:
+            fatalError("tried to execute empty query")
+        case .contractCallLocal:
+            return grpc.contractService.contractCallLocalMethod
+        case .getByKey:
+            fatalError("missing getByKey?")
+        case .getBySolidityID:
+            return grpc.contractService.getBySolidityID
+        case .contractGetInfo:
+            return grpc.contractService.getContractInfo
+        case .contractGetBytecode:
+            return grpc.contractService.contractGetBytecode
+        case .contractGetRecords:
+            fatalError("missing contractGetRecords?")
+        case .cryptogetAccountBalance:
+            return grpc.cryptoService.cryptoGetBalance
+        case .cryptoGetAccountRecords:
+            return grpc.cryptoService.getAccountRecords
+        case .cryptoGetInfo:
+            return grpc.cryptoService.getAccountInfo
+        case .cryptoGetClaim:
+            return grpc.cryptoService.getClaim
+        case .cryptoGetProxyStakers:
+            // NOTE: this not yet implemented
+            return grpc.cryptoService.getStakersByAccountID
+        case .fileGetContents:
+            return grpc.fileService.getFileContent
+        case .fileGetInfo:
+            return grpc.fileService.getFileInfo
+        case .transactionGetReceipt:
+            return grpc.cryptoService.getTransactionReceipts(_:)
+        case .transactionGetRecord:
+            return grpc.cryptoService.getTxRecordByTxID
+        case .transactionGetFastRecord:
+            return grpc.cryptoService.getFastTransactionRecord
+        }
     }
 
     public func execute() throws -> Response {
@@ -107,7 +143,7 @@ public class QueryBuilder<Response> {
             setPayment(cost)
         }
 
-        let response = try executeClosure(client.grpcClient(for: node))
+        let response = try methodForQuery(client.grpcClient(for: node))(body)
 
         let resHeader = getResponseHeader(response)
 
@@ -115,10 +151,10 @@ public class QueryBuilder<Response> {
             throw HederaError(message: "Received error code: \(resHeader.nodeTransactionPrecheckCode) while executing")
         }
 
-        return mapResponse(response)
+        return try mapResponse(response)
     }
 
-    func mapResponse(_ response: Proto_Response) -> Response {
+    func mapResponse(_ response: Proto_Response) throws -> Response {
         fatalError("mapResponse member must be overridden")
     }
 
