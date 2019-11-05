@@ -88,6 +88,32 @@ public class Client {
         nodes.randomElement()!.value
     }
 
+    // FIXME: Return AccountId when `executeForReceipt` is implemented
+    public func createAccount(key: Ed25519PublicKey, balance: UInt64) throws -> TransactionId {
+        return try AccountCreateTransaction(client: self)
+            .setInitialBalance(balance)
+            .setKey(key)
+            .build()
+            .execute()
+    }
+
+    // FIXME: Get TransactionId from `TransactionReceipt` when `executeForReceipt` is implemented
+    public func transferCryptoTo(recipient: AccountId, amount: UInt64) throws -> TransactionId {
+        return try CryptoTransferTransaction(client: self)
+            .add(sender: client.operator!.accountId, amount)
+            .add(recipient: recipient, amount)
+            .build()
+            .execute()
+    }
+
+    // FIXME: Return HBar when `executeForReceipt` is implemented
+    public func getAccountBalance() throws -> TransactionId {
+        return try AccountBalanceQuery(client: self)
+            .setAccount(client.operator!.accountId)
+            .build()
+            .execute()
+    }
+
     private func channelFor(node: Node) -> Channel {
         // TODO: what if the node is not on the client?
         if let channel = channels[node.accountId] {
