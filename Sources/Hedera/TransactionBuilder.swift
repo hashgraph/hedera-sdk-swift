@@ -12,7 +12,7 @@ public class TransactionBuilder {
         self.client = client
         body.transactionValidDuration = maxValidDuration.toProto()
     }
-    
+
     @discardableResult
     public func setTransactionId(_ id: TransactionId) -> Self {
         body.transactionID = id.toProto()
