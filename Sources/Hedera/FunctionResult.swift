@@ -1,12 +1,12 @@
 import Foundation
 
-public class FunctionResult {
+public struct FunctionResult {
     let contractId: ContractId
     let contractCallResult: Data
     let errorMessage: String
     let bloom: Data
     let gasUsed: UInt64
-    // todo let logInfoList: [ContractLogInfo]
+    let logInfoList: [ContractLogInfo]
 
     init(_ proto: Proto_ContractFunctionResult) {
         self.contractId = ContractId(proto.contractID)
@@ -14,6 +14,7 @@ public class FunctionResult {
         self.errorMessage = proto.errorMessage
         self.bloom = proto.bloom
         self.gasUsed = UInt64(proto.gasUsed)
+        self.logInfoList = proto.logInfo.map { ContractLogInfo($0) }
     }
 
     public func getString(_ index: Int) -> String? {
@@ -61,5 +62,19 @@ public class FunctionResult {
 
     public func getAddress(_ index: Int) -> [UInt8] {
         return Array(contractCallResult[(index * 32 + 12)..<((index + 1) * 32)])
+    }
+}
+
+public struct ContractLogInfo {
+    let contractId: ContractId
+    let bloom: Data
+    let topicList: [Data]
+    let data: Data
+
+    init(_ proto: Proto_ContractLoginfo) {
+        self.contractId = ContractId(proto.contractID)
+        self.bloom = proto.bloom
+        self.topicList = proto.topic
+        self.data = proto.data
     }
 }
