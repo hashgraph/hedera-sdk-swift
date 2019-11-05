@@ -15,14 +15,11 @@ public class ContractBytecodeQuery: QueryBuilder<Data> {
         return self
     }
 
-    override func executeClosure(
-        _ grpc: HederaGRPCClient
-    ) throws -> Proto_Response {
-        body.contractGetBytecode.header = header
-        return try grpc.contractService.contractGetBytecode(body)
-    }
-
-    override func mapResponse(_ response: Proto_Response) -> Data {
-        response.contractGetBytecodeResponse.bytecode
+    override func mapResponse(_ response: Proto_Response) throws -> Data {
+        guard case .contractGetBytecodeResponse(let response) = response.response else {
+            throw HederaError(message: "query response was not of type contract bytecode")
+        }
+        
+        return response.bytecode
     }
 }

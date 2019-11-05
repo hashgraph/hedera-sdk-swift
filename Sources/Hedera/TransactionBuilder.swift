@@ -64,17 +64,18 @@ public class TransactionBuilder {
             if !body.hasTransactionValidDuration {
                 setTransactionValidDuration(maxValidDuration)
             }
-            
+
             if !body.hasNodeAccountID {
                 let node = client.node ?? client.pickNode()
                 setNodeAccount(node.accountId)
             }
         }
-                
+
         var tx = Proto_Transaction()
         tx.body = body
+        // swiftlint:disable:next force_try
         tx.bodyBytes = try! body.serializedData()
-        
+
         return Transaction(client, tx, body.transactionID)
     }
 }

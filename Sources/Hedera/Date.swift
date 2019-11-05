@@ -54,7 +54,6 @@ extension Date: LosslessStringConvertible {
     }
 }
 
-
 // TODO: move to its own file?
 extension TimeInterval: ProtoConvertible {
     typealias Proto = Proto_Duration

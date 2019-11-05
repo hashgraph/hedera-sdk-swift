@@ -9,6 +9,13 @@ public struct FileInfo {
     let deleted: Bool;
     // TODO:
     // let keys: Ed25519PublicKey[];
+    
+    init(_ info: Proto_FileGetInfoResponse.FileInfo) {
+        fileId = FileId(info.fileID)
+        size = UInt64(info.size)
+        expirationTime = Date(info.expirationTime)
+        deleted = info.deleted
+    }
 }
 
 public class FileInfoQuery: QueryBuilder<FileInfo> {
@@ -24,21 +31,9 @@ public class FileInfoQuery: QueryBuilder<FileInfo> {
         return self
     }
 
-    override func executeClosure(
-        _ grpc: HederaGRPCClient
-    ) throws -> Proto_Response {
-        body.fileGetInfo.header = header
-        return try grpc.fileService.getFileInfo(body)
-    }
+    override func mapResponse(_ response: Proto_Response) throws -> FileInfo {
+        guard case .fileGetInfo(let response) = response.response else { throw HederaError(message: "query response was not of type file info") }
 
-    override func mapResponse(_ response: Proto_Response) -> FileInfo {
-        let fileInfo = response.fileGetInfo.fileInfo
-
-        return FileInfo(
-            fileId: FileId(fileInfo.fileID),
-            size: UInt64(fileInfo.size),
-            expirationTime: Date(fileInfo.expirationTime),
-            deleted: fileInfo.deleted
-        )
+        return FileInfo(response.fileInfo)
     }
 }

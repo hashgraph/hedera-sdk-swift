@@ -5,6 +5,11 @@ import Sodium
 public struct FileContents {
     let fileId: FileId;
     let contents: Data;
+    
+    init(_ contents: Proto_FileGetContentsResponse.FileContents) {
+        fileId = FileId(contents.fileID)
+        self.contents = contents.contents
+    }
 }
 
 public class FileContentsQuery: QueryBuilder<FileContents> {
@@ -20,19 +25,9 @@ public class FileContentsQuery: QueryBuilder<FileContents> {
         return self
     }
 
-    override func executeClosure(
-        _ grpc: HederaGRPCClient
-    ) throws -> Proto_Response {
-        body.fileGetContents.header = header
-        return try grpc.fileService.getFileContent(body)
-    }
-
-    override func mapResponse(_ response: Proto_Response) -> FileContents {
-        let fileContents = response.fileGetContents.fileContents
-
-        return FileContents(
-            fileId: FileId(fileContents.fileID),
-            contents: fileContents.contents
-        )
+    override func mapResponse(_ response: Proto_Response) throws -> FileContents {
+        guard case .fileGetContents(let response) = response.response else { throw HederaError(message: "query response was not of type file contents") }
+        
+        return FileContents(response.fileContents)
     }
 }

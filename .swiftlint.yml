@@ -2,4 +2,9 @@ included:
     - Sources
 
 excluded:
-    - Sources/hedera/protobuf
+    - Sources/Hedera/protobuf
+
+identifier_name:
+  excluded:
+    - id
+    - tx

@@ -101,7 +101,10 @@ public class Client {
             return service
         } else {
             let channel = channelFor(node: node)
-            let service = HederaGRPCClient(fileService: Proto_FileServiceServiceClient(channel: channel), cryptoService: Proto_CryptoServiceServiceClient(channel: channel), contractService: Proto_SmartContractServiceServiceClient(channel: channel))
+            let service = HederaGRPCClient(
+                fileService: Proto_FileServiceServiceClient(channel: channel),
+                cryptoService: Proto_CryptoServiceServiceClient(channel: channel),
+                contractService: Proto_SmartContractServiceServiceClient(channel: channel))
             grpcClients[node.accountId] = service
             return grpcClients[node.accountId]!
         }

@@ -16,14 +16,14 @@ public class Transaction {
     var inner: Proto_Transaction
     let txId: TransactionId
     var client: Client?
-    
+
     init(_ client: Client?, _ tx: Proto_Transaction, _ txId: Proto_TransactionID) {
         self.client = client
         inner = tx
         if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
         self.txId = TransactionId(txId)!
     }
-    
+
     convenience init?(_ client: Client?, bytes: Data) {
         guard let tx = try? Proto_Transaction.init(serializedData: bytes) else { return nil }
         guard let body = try? Proto_TransactionBody.init(serializedData: tx.bodyBytes) else { return nil }
@@ -31,44 +31,45 @@ public class Transaction {
     }
     
     func methodForTransaction(_ grpc: HederaGRPCClient) -> ExecuteClosure {
+        // swiftlint:disable:next force_try
         let body = try! Proto_TransactionBody.init(serializedData: inner.bodyBytes)
-        
+
         switch body.data {
         case .none:
             fatalError()
-        case .systemDelete(_):
+        case .systemDelete:
             return grpc.fileService.systemDelete
-        case .contractCall(_):
+        case .contractCall:
             return grpc.contractService.contractCallMethod
-        case .contractCreateInstance(_):
+        case .contractCreateInstance:
             return grpc.contractService.createContract
-        case .contractUpdateInstance(_):
+        case .contractUpdateInstance:
             return grpc.contractService.updateContract
-        case .contractDeleteInstance(_):
+        case .contractDeleteInstance:
             return grpc.contractService.deleteContract
-        case .cryptoAddClaim(_):
+        case .cryptoAddClaim:
             return grpc.cryptoService.addClaim
-        case .cryptoCreateAccount(_):
+        case .cryptoCreateAccount:
             return grpc.cryptoService.createAccount
-        case .cryptoDelete(_):
+        case .cryptoDelete:
             return grpc.cryptoService.cryptoDelete
-        case .cryptoDeleteClaim(_):
+        case .cryptoDeleteClaim:
             return grpc.cryptoService.deleteClaim
-        case .cryptoTransfer(_):
+        case .cryptoTransfer:
             return grpc.cryptoService.cryptoTransfer
-        case .cryptoUpdateAccount(_):
+        case .cryptoUpdateAccount:
             return grpc.cryptoService.updateAccount
-        case .fileAppend(_):
+        case .fileAppend:
             return grpc.fileService.appendContent
-        case .fileCreate(_):
+        case .fileCreate:
             return grpc.fileService.createFile
-        case .fileDelete(_):
+        case .fileDelete:
             return grpc.fileService.deleteFile
-        case .fileUpdate(_):
+        case .fileUpdate:
             return grpc.fileService.updateFile
-        case .systemUndelete(_):
+        case .systemUndelete:
             return grpc.fileService.systemUndelete
-        case .freeze(_):
+        case .freeze:
             fatalError("TODO: freeze service")
         }
     }
@@ -84,10 +85,10 @@ public class Transaction {
     @discardableResult
     public func sign(with key: Ed25519PrivateKey) throws -> Self {
         let sig = key.sign(message: Bytes(inner.bodyBytes))
-        
+
         return addSigPair(publicKey: key.publicKey, signature: sig)
     }
-    
+
     /// Add an Ed25519 signature pair to the signature map
     @discardableResult
     public func addSigPair(publicKey: Ed25519PublicKey, signature: Bytes) -> Self {
@@ -96,10 +97,10 @@ public class Transaction {
         sigPair.ed25519 = Data(signature)
 
         inner.sigMap.sigPair.append(sigPair)
-        
+
         return self
     }
-    
+
     /// Add an Ed25519 signature pair to the signature map
     @discardableResult
     public func addSigPair(publicKey: Ed25519PublicKey, signer: Signer) -> Self {
@@ -108,18 +109,18 @@ public class Transaction {
         sigPair.ed25519 = Data(signer(Bytes(inner.bodyBytes)))
 
         inner.sigMap.sigPair.append(sigPair)
-        
+
         return self
     }
-    
+
     public func execute() throws -> TransactionId {
         guard let client = client else { throw HederaError(message: "client must not be null") }
-        
-        if (inner.sigMap.sigPair.isEmpty) {
+
+        if inner.sigMap.sigPair.isEmpty {
             guard let clientOperator = client.`operator` else { throw HederaError(message: "Client must have an operator set to execute") }
             addSigPair(publicKey: clientOperator.publicKey, signer: clientOperator.signer)
         }
-            
+
         // TODO: actually handle error
         do {
             print("\(inner)")
@@ -133,7 +134,7 @@ public class Transaction {
             throw HederaError(message: "Error when executing transaction: \(err)")
         }
     }
-    
+
 //    private func executeAndWaitFor<T>(mapResponse: (Proto_TransactionReceipt) throws -> T) throws -> T {
 //        let startTime = Date()
 //        var attempt = 0

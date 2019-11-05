@@ -22,15 +22,17 @@ public final class AccountCreateTransaction: TransactionBuilder {
         // If you truly want to create a _new_ realm, then you need
         // to null the realm after setting this
 
-        if (!body.cryptoCreateAccount.hasShardID) {
-            setShardId(id.accountId.id.shard);
+        if !body.cryptoCreateAccount.hasShardID {
+            setShardId(id.accountId.id.shard)
         }
 
-        if (!body.cryptoCreateAccount.hasRealmID) {
-            setRealmId(id.accountId.id.realm);
+        if !body.cryptoCreateAccount.hasRealmID {
+            setRealmId(id.accountId.id.realm)
         }
 
-        return super.setTransactionId(id) as! Self
+        super.setTransactionId(id)
+
+        return self
     }
 
     @discardableResult
@@ -51,13 +53,13 @@ public final class AccountCreateTransaction: TransactionBuilder {
     public func setProxyAccountId(_ id: AccountId) -> Self {
         body.cryptoCreateAccount.proxyAccountID = id.toProto()
 
-        return self        
+        return self
     }
 
     @discardableResult
     public func setSendRecordThreshold(_ threshold: UInt64) -> Self {
         body.cryptoCreateAccount.sendRecordThreshold = threshold
-        
+
         return self
     }
 
@@ -67,7 +69,7 @@ public final class AccountCreateTransaction: TransactionBuilder {
 
         return self
     }
-    
+
     @discardableResult
     public func setReceiverSignatureRequired(_ required: Bool) -> Self {
         body.cryptoCreateAccount.receiverSigRequired = required
@@ -81,7 +83,7 @@ public final class AccountCreateTransaction: TransactionBuilder {
 
         return self
     }
-    
+
     @discardableResult
     public func setShardId(_ id: UInt64) -> Self {
         var shard = Proto_ShardID()
@@ -96,7 +98,7 @@ public final class AccountCreateTransaction: TransactionBuilder {
         var realm = Proto_RealmID()
         realm.realmNum = Int64(id)
         body.cryptoCreateAccount.realmID = realm
-        
+
         return self
     }
 }
