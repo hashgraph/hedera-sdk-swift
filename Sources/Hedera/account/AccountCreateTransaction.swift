@@ -15,7 +15,7 @@ public final class AccountCreateTransaction: TransactionBuilder {
 
         body.cryptoCreateAccount = inner
     }
-    
+
     @discardableResult
     override public func setTransactionId(_ id: TransactionId) -> Self {
         // Setting the transaction ID defaults the shard and realm IDs
@@ -89,10 +89,10 @@ public final class AccountCreateTransaction: TransactionBuilder {
         var shard = Proto_ShardID()
         shard.shardNum = Int64(id)
         body.cryptoCreateAccount.shardID = shard
-        
+
         return self
     }
-    
+
     @discardableResult
     public func setRealmId(_ id: UInt64) -> Self {
         var realm = Proto_RealmID()

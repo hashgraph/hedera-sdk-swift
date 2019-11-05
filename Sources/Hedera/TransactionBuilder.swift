@@ -60,7 +60,7 @@ public class TransactionBuilder {
             if !body.hasTransactionID {
                 setTransactionId(TransactionId(account: client.operator!.id))
             }
-            
+
             if !body.hasTransactionValidDuration {
                 setTransactionValidDuration(maxValidDuration)
             }

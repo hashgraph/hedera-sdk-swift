@@ -60,7 +60,7 @@ public class ContractCreateTransaction: TransactionBuilder {
     public func setGas(_ gas: UInt64) -> Self {
         body.contractCreateInstance.gas = Int64(gas)
 
-        return self        
+        return self
     }
 
     /// Set the initial balance of a contract
@@ -85,27 +85,27 @@ public class ContractCreateTransaction: TransactionBuilder {
 
         return self
     }
-    
+
     /// Set the shard where the contract will be created
     @discardableResult
     public func setShard(id: UInt64) -> Self {
         var shard = Proto_ShardID()
         shard.shardNum = Int64(id)
         body.contractCreateInstance.shardID = shard
-        
+
         return self
     }
-    
+
     /// Set the realm where the contract will be created
     @discardableResult
     public func setRealm(id: UInt64) -> Self {
         var realm = Proto_RealmID()
         realm.realmNum = Int64(id)
         body.contractCreateInstance.realmID = realm
-        
+
         return self
     }
-    
+
     /// Set the admin key for the new realm to be created for this contract
     ///
     /// This requires the realm to be set to nil.

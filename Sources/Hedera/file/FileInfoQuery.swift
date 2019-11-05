@@ -3,13 +3,13 @@ import Foundation
 import Sodium
 
 public struct FileInfo {
-    let fileId: FileId;
-    let size: UInt64;
-    let expirationTime: Date;
-    let deleted: Bool;
+    let fileId: FileId
+    let size: UInt64
+    let expirationTime: Date
+    let deleted: Bool
     // TODO:
-    // let keys: Ed25519PublicKey[];
-    
+    // let keys: Ed25519PublicKey[]
+
     init(_ info: Proto_FileGetInfoResponse.FileInfo) {
         fileId = FileId(info.fileID)
         size = UInt64(info.size)
@@ -32,7 +32,9 @@ public class FileInfoQuery: QueryBuilder<FileInfo> {
     }
 
     override func mapResponse(_ response: Proto_Response) throws -> FileInfo {
-        guard case .fileGetInfo(let response) = response.response else { throw HederaError(message: "query response was not of type file info") }
+        guard case .fileGetInfo(let response) = response.response else {
+            throw HederaError(message: "query response was not of type file info")
+        }
 
         return FileInfo(response.fileInfo)
     }

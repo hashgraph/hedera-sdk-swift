@@ -47,7 +47,7 @@ public class FunctionResult {
     public func getUInt32(_ index: Int) -> UInt32 {
         let slice = contractCallResult[(index * 32 + 28)..<((index + 1) * 32)]
         // For some reason this generates better code than the version getUInt64 uses. But only on UInt32s.
-        return (UInt32(slice[0]) << 24) | 
+        return (UInt32(slice[0]) << 24) |
                (UInt32(slice[1]) << 16) |
                (UInt32(slice[2]) <<  8) |
                (UInt32(slice[3]) <<  0)

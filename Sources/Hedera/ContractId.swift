@@ -1,6 +1,6 @@
 public final class ContractId: PublicKey {
     let id: EntityId
-    
+
     // Overriding CustomStringConvertible and CustomDebugStringConvertible
     override public var description: String {
         id.description
@@ -8,36 +8,36 @@ public final class ContractId: PublicKey {
     override public var debugDescription: String {
         id.debugDescription
     }
-    
+
     required convenience init?(_ proto: Proto_Key) {
         guard case let .contractID(contractId) =  proto.key else { return nil }
-        
+
         self.init(contractId)
     }
-    
+
     init(_ proto: Proto_ContractID) {
         id = EntityId(proto)
         super.init()
     }
-    
+
     init(_  id: EntityId) {
         self.id = id
         super.init()
     }
-    
+
     override func toProto() -> Proto_Key {
         var proto = Proto_Key()
         proto.contractID = toProto()
-        
+
         return proto
     }
-    
+
     func toProto() -> Proto_ContractID {
         var proto = Proto_ContractID()
         proto.shardNum = Int64(id.shard)
         proto.realmNum = Int64(id.realm)
         proto.contractNum = Int64(id.num)
-        
+
         return proto
     }
 }

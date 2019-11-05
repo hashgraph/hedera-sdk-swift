@@ -39,7 +39,7 @@ public struct Ed25519PrivateKey {
 
     /// Compute a detached signature for the given message
     func sign(message bytes: Bytes) -> Bytes {
-        sodium.sign.signature(message: bytes, secretKey: inner.secretKey)!        
+        sodium.sign.signature(message: bytes, secretKey: inner.secretKey)!
     }
 }
 
@@ -63,7 +63,7 @@ extension Ed25519PrivateKey: LosslessStringConvertible {
 
         case ed25519PrivateKeyLength * 2 + ed25519PrivateKeyPrefix.count: // DER encoded key
             guard description.hasPrefix(ed25519PrivateKeyPrefix) else { return nil }
-    
+
             let range = description.index(description.startIndex, offsetBy: ed25519PrivateKeyPrefix.count)...
             guard let decoded = sodium.utils.hex2bin(String(description[range])) else { return nil }
             self = Ed25519PrivateKey(bytes: decoded)!

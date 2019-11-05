@@ -3,7 +3,9 @@ import SwiftGRPC
 
 public typealias Node = (accountId: AccountId, address: String)
 
-typealias HederaGRPCClient = (fileService: Proto_FileServiceServiceClient, cryptoService: Proto_CryptoServiceServiceClient, contractService: Proto_SmartContractServiceServiceClient)
+typealias HederaGRPCClient = (fileService: Proto_FileServiceServiceClient,
+    cryptoService: Proto_CryptoServiceServiceClient,
+    contractService: Proto_SmartContractServiceServiceClient)
 
 let defaultMaxTransactionFee: UInt64 = 100_000_000
 
@@ -29,7 +31,7 @@ public class Client {
     public init(node id: AccountId, address url: String) {
         nodes = [ id: Node(accountId: id, address: url) ]
     }
-    
+
     public init(nodes: [(AccountId, String)]) {
         let keys = nodes.map { $0.0 }
         let values = nodes.map { Node(accountId: $0.0, address: $0.1) }
@@ -95,7 +97,7 @@ public class Client {
             return channels[node.accountId]!
         }
     }
-    
+
     func grpcClient(for node: Node) -> HederaGRPCClient {
         if let service = grpcClients[node.accountId] {
             return service

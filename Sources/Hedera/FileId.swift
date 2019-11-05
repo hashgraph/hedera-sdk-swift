@@ -1,6 +1,6 @@
 public final class FileId: ProtoConvertible {
     let id: EntityId
-    
+
     func toProto() -> Proto_FileID {
         var proto = Proto_FileID()
         proto.shardNum = Int64(id.shard)
@@ -12,7 +12,7 @@ public final class FileId: ProtoConvertible {
     init(_ proto: Proto_FileID) {
         id = EntityId(proto)
     }
-    
+
     init(_ entity: EntityId) {
         id = entity
     }
@@ -34,7 +34,7 @@ extension FileId: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
         id.description
     }
-    
+
     public var debugDescription: String {
         id.debugDescription
     }

@@ -23,7 +23,7 @@ public class FileUpdateTransaction: TransactionBuilder {
     /// Set the new contents of the file
     @discardableResult
     public func setContents(_ data: Data) -> Self {
-        body.fileUpdate.contents = data 
+        body.fileUpdate.contents = data
 
         return self
     }
@@ -31,7 +31,7 @@ public class FileUpdateTransaction: TransactionBuilder {
     /// Set the new contents of the file
     @discardableResult
     public func setContents(_ bytes: Bytes) -> Self {
-        body.fileUpdate.contents = Data(bytes) 
+        body.fileUpdate.contents = Data(bytes)
 
         return self
     }

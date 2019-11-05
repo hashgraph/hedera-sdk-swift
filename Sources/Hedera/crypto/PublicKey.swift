@@ -1,9 +1,9 @@
 public class PublicKey: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String { "Don't use PublicKey directly" }
     public var debugDescription: String { "Don't use PublicKey directly" }
-    
+
     init() {}
-    
+
     // These are the same functions as ProtoConvertible
     required init?(_ proto: Proto_Key) {}
     func toProto() -> Proto_Key {
