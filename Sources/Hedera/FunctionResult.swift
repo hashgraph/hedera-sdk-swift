@@ -2,24 +2,18 @@ import Foundation
 
 public class FunctionResult {
     let contractId: ContractId
-    let contractCallResult: [UInt8]
+    let contractCallResult: Data
     let errorMessage: String
-    let bloom: [UInt8]
-    let gasUsed: Int64
+    let bloom: Data
+    let gasUsed: UInt64
     // todo let logInfoList: [ContractLogInfo]
 
-    init(
-        id contractId: ContractId,
-        result contractCallResult: [UInt8],
-        errorMessage: String,
-        bloom: [UInt8],
-        gasUsed: Int64
-    ) {
-        self.contractId = contractId
-        self.contractCallResult = contractCallResult
-        self.errorMessage = errorMessage
-        self.bloom = bloom
-        self.gasUsed = gasUsed
+    init(_ proto: Proto_ContractFunctionResult) {
+        self.contractId = ContractId(proto.contractID)
+        self.contractCallResult = proto.contractCallResult
+        self.errorMessage = proto.errorMessage
+        self.bloom = proto.bloom
+        self.gasUsed = UInt64(proto.gasUsed)
     }
 
     public func getString(_ index: Int) -> String? {
