@@ -29,7 +29,7 @@ public class Transaction {
         guard let body = try? Proto_TransactionBody.init(serializedData: tx.bodyBytes) else { return nil }
         self.init(client!, tx, body.transactionID)
     }
-    
+
     func methodForTransaction(_ grpc: HederaGRPCClient) -> ExecuteClosure {
         // swiftlint:disable:next force_try
         let body = try! Proto_TransactionBody.init(serializedData: inner.bodyBytes)
@@ -117,7 +117,9 @@ public class Transaction {
         guard let client = client else { throw HederaError(message: "client must not be null") }
 
         if inner.sigMap.sigPair.isEmpty {
-            guard let clientOperator = client.`operator` else { throw HederaError(message: "Client must have an operator set to execute") }
+            guard let clientOperator = client.`operator` else {
+                throw HederaError(message: "Client must have an operator set to execute")
+            }
             addSigPair(publicKey: clientOperator.publicKey, signer: clientOperator.signer)
         }
 

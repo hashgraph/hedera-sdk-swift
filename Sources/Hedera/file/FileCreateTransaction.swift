@@ -34,7 +34,7 @@ public class FileCreateTransaction: TransactionBuilder {
     /// Set the initial contents of the to be created file
     @discardableResult
     public func setContents(_ data: Data) -> Self {
-        body.fileCreate.contents = data 
+        body.fileCreate.contents = data
 
         return self
     }
@@ -42,7 +42,7 @@ public class FileCreateTransaction: TransactionBuilder {
     /// Set the initial contents of the to be created file
     @discardableResult
     public func setContents(_ bytes: Bytes) -> Self {
-        body.fileCreate.contents = Data(bytes) 
+        body.fileCreate.contents = Data(bytes)
 
         return self
     }

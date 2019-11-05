@@ -1,20 +1,20 @@
 import Foundation
 
 public struct AccountInfo {
-    let accountId: AccountId;
-    let contractAccountId: String?;
-    let deleted: Bool;
-    let proxyAccountId: AccountId?;
-    let proxyReceived: UInt64;
-    let key: PublicKey;
-    let balance: UInt64;
-    let generateSendRecordThreshold: UInt64;
-    let generateReceiveRecordThreshold: UInt64;
-    let receiverSigRequired: Bool;
-    let expirationTime: Date;
-    let autoRenewPeriod: TimeInterval;
+    let accountId: AccountId
+    let contractAccountId: String?
+    let deleted: Bool
+    let proxyAccountId: AccountId?
+    let proxyReceived: UInt64
+    let key: PublicKey
+    let balance: UInt64
+    let generateSendRecordThreshold: UInt64
+    let generateReceiveRecordThreshold: UInt64
+    let receiverSigRequired: Bool
+    let expirationTime: Date
+    let autoRenewPeriod: TimeInterval
     // TODO: Claims
-    
+
     init(_ accountInfo: Proto_CryptoGetInfoResponse.AccountInfo) {
         let proxyAccountId: AccountId?
         if accountInfo.hasProxyAccountID {

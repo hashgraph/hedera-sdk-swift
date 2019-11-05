@@ -54,6 +54,6 @@ public class ContractExecuteTransaction: TransactionBuilder {
     public func setGas(_ gas: UInt64) -> Self {
         body.contractCall.gas = Int64(gas)
 
-        return self        
+        return self
     }
 }

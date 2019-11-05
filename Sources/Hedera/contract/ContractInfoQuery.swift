@@ -11,7 +11,7 @@ public struct ContractInfo {
     let autoRenewPeriod: TimeInterval
     let storage: UInt64
     let memo: String
-    
+
     init(_ contractInfo: Proto_ContractGetInfoResponse.ContractInfo) {
         contractId = ContractId(contractInfo.contractID)
         accountId = AccountId(contractInfo.accountID)
@@ -38,7 +38,9 @@ public class ContractInfoQuery: QueryBuilder<ContractInfo> {
     }
 
     override func mapResponse(_ response: Proto_Response) throws -> ContractInfo {
-        guard case .contractGetInfo(let response) = response.response else { throw HederaError(message: "query response was not of type contract info") }
+        guard case .contractGetInfo(let response) = response.response else {
+            throw HederaError(message: "query response was not of type contract info")
+        }
 
         return ContractInfo(response.contractInfo)
     }

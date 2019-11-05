@@ -25,7 +25,7 @@ public class QueryBuilder<Response> {
             .add(sender: client.operator!.id, amount: amount)
             .setMaxTransactionFee(100_000_000)
             .build()
-            .addSigPair(publicKey: client.operator!.publicKey, 
+            .addSigPair(publicKey: client.operator!.publicKey,
                         signer: client.operator!.signer)
             .toProto()
 
@@ -58,7 +58,7 @@ public class QueryBuilder<Response> {
 
         let resHeader = getResponseHeader(response)
 
-        if resHeader.nodeTransactionPrecheckCode != .ok 
+        if resHeader.nodeTransactionPrecheckCode != .ok
             && resHeader.nodeTransactionPrecheckCode != .success {
             throw HederaError(
                 message: "Received error code: \(resHeader.nodeTransactionPrecheckCode) while requesting query cost"
@@ -67,7 +67,7 @@ public class QueryBuilder<Response> {
 
         return resHeader.cost
     }
-    
+
     func getResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
         switch response.response {
         case .getByKey(let res): return res.header
@@ -89,7 +89,7 @@ public class QueryBuilder<Response> {
         default: fatalError("unrecognized query response header")
         }
     }
-    
+
     func methodForQuery(_ grpc: HederaGRPCClient) -> QueryExecuteClosure {
         switch body.query {
         case .none:

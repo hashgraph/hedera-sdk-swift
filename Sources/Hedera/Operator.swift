@@ -6,7 +6,7 @@ public struct Operator {
     let id: AccountId
     let signer: Signer
     let publicKey: Ed25519PublicKey
-    
+
     /// - Parameters:
     ///   - id: Account ID
     ///   - signer: closure that will be called to sign transactions. Useful for requesting signing from a hardware wallet that won't give you the private key.

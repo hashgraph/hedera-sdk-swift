@@ -1,6 +1,6 @@
 public final class AccountId: ProtoConvertible {
     let id: EntityId
-    
+
     func toProto() -> Proto_AccountID {
         var proto = Proto_AccountID()
         proto.shardNum = Int64(id.shard)
@@ -12,7 +12,7 @@ public final class AccountId: ProtoConvertible {
     init(_ proto: Proto_AccountID) {
         id = EntityId(proto)
     }
-    
+
     init(_ entity: EntityId) {
         id = entity
     }
@@ -34,7 +34,7 @@ extension AccountId: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
         id.description
     }
-    
+
     public var debugDescription: String {
         id.debugDescription
     }

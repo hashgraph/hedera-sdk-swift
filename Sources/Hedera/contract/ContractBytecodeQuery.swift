@@ -19,7 +19,7 @@ public class ContractBytecodeQuery: QueryBuilder<Data> {
         guard case .contractGetBytecodeResponse(let response) = response.response else {
             throw HederaError(message: "query response was not of type contract bytecode")
         }
-        
+
         return response.bytecode
     }
 }

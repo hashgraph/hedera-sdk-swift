@@ -15,7 +15,7 @@ public class FileAppendTransaction: TransactionBuilder {
     /// Set the content to be appened to the file
     @discardableResult
     public func setContents(_ data: Data) -> Self {
-        body.fileAppend.contents = data 
+        body.fileAppend.contents = data
 
         return self
     }
@@ -23,7 +23,7 @@ public class FileAppendTransaction: TransactionBuilder {
     /// Set the content to be appened to the file
     @discardableResult
     public func setContents(_ bytes: Bytes) -> Self {
-        body.fileAppend.contents = Data(bytes) 
+        body.fileAppend.contents = Data(bytes)
 
         return self
     }

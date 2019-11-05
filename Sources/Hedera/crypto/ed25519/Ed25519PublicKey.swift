@@ -14,7 +14,7 @@ public final class Ed25519PublicKey: PublicKey {
     override public var debugDescription: String {
         description
     }
-    
+
     public init?(bytes: Bytes) {
         if bytes.count == ed25519PublicKeyLength {
             inner = bytes
@@ -23,7 +23,7 @@ public final class Ed25519PublicKey: PublicKey {
             return nil
         }
     }
-    
+
     required convenience init?(_ proto: Proto_Key) {
         self.init(bytes: Bytes(proto.ed25519))
     }
@@ -36,7 +36,7 @@ public final class Ed25519PublicKey: PublicKey {
     func verify(signature: Bytes, of message: Bytes) -> Bool {
         sodium.sign.verify(message: message, publicKey: inner, signature: signature)
     }
-    
+
     override func toProto() -> Proto_Key {
         var proto = Proto()
         proto.ed25519 = Data(bytes)
