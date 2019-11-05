@@ -8,11 +8,11 @@ let client = Client(node: AccountId("0.0.3")!, address: "0.testnet.hedera.com:50
 
 let newAccountKey = Ed25519PrivateKey()
 
-let cryptoTransferTransactionId = try! CryptoTransferTransaction(client: client)
+let receipt = try! CryptoTransferTransaction(client: client)
     .add(sender: AccountId("0.0.3")!, amount: 10000)
     .add(recipient: AccountId("0.0.2")!, amount: 10000)
     .setMemo("Transfer Crypto Example - Swift SDK")
     .build()
-    .execute()
+    .executeForReceipt()
 
-print("Example succeeded with transaction id \(cryptoTransferTransactionId)")
+print("Crypto transferred successfully")

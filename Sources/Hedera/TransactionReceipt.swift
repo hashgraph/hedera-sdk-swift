@@ -2,11 +2,11 @@ import SwiftProtobuf
 import Foundation
 
 public final class TransactionReceipt {
-    let status: UInt32
-    let accountId: AccountId?
-    let fileId: FileId?
-    let contractId: ContractId?
-    let exchangeRateSet: ExchangeRateSet?
+    public let status: UInt32
+    public let accountId: AccountId?
+    public let fileId: FileId?
+    public let contractId: ContractId?
+    public let exchangeRateSet: ExchangeRateSet?
 
     init(_ proto: Proto_TransactionReceipt) {
         self.status = UInt32(proto.status.rawValue)

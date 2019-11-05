@@ -12,9 +12,3 @@ let fileInfo = try! FileInfoQuery(client: client)
     .execute()
 
 print("FileInfo Example succeeded with result \(fileInfo)")
-
-// var receipt = GetTransactionReceiptQuery(client)
-//     .setTransactionId(txId)
-//     .execute()
-
-// print("receipt: \(receipt.accountId)")

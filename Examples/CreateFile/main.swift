@@ -7,12 +7,12 @@ let client = Client(node: AccountId("0.0.3")!, address: "0.testnet.hedera.com:50
     .setMaxTransactionFee(100_000_000)
     .setOperator(op)
 
-let fileCreateTransactionId = try! FileCreateTransaction(client: client)
+let receipt = try! FileCreateTransaction(client: client)
     .addKey(privateKey.publicKey)
     .setContents("This is a test")
     .setMemo("File Create Example - Swift SDK")
     .setMaxTransactionFee(1_000_000_000)
     .build()
-    .execute()
+    .executeForReceipt()
 
-print("File Create Example succeeded with transaction id \(fileCreateTransactionId)")
+print("File created: \(receipt.fileId!)")

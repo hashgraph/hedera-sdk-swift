@@ -10,7 +10,7 @@ public class QueryBuilder<Response> {
     let client: Client
     var header = Proto_QueryHeader()
     var node: Node
-    var needsPayment = true
+    var needsPayment: Bool { true }
 
     init(client: Client) {
         self.client = client
@@ -35,7 +35,6 @@ public class QueryBuilder<Response> {
     @discardableResult
     public func setPayment(_ transaction: Transaction) -> Self {
         header.payment = transaction.toProto()
-        needsPayment = false
 
         return self
     }
@@ -131,7 +130,7 @@ public class QueryBuilder<Response> {
     }
 
     public func execute() throws -> Response {
-        if needsPayment {
+        if needsPayment && !header.hasPayment {
             let cost = try requestCost()
 
             if let maxQueryPayment = client.maxQueryPayment {
