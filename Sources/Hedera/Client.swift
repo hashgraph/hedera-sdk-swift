@@ -88,7 +88,7 @@ public class Client {
         nodes.randomElement()!.value
     }
 
-    // FIXME: Return AccountId when `executeForReceipt` is implemented
+    // FIXME: Doc comments
     public func createAccount(key: Ed25519PublicKey, balance: UInt64) throws -> AccountId {
         return try AccountCreateTransaction(client: self)
             .setInitialBalance(balance)
@@ -98,7 +98,7 @@ public class Client {
             .accountId!
     }
 
-    // FIXME: Get TransactionId from `TransactionReceipt` when `executeForReceipt` is implemented
+    // FIXME: Get `TransactionId` from `TransactionReceipt` when it has one.
     public func transferCryptoTo(recipient: AccountId, amount: UInt64) throws -> TransactionId {
         return try CryptoTransferTransaction(client: self)
             .add(sender: self.operator!.id, amount: amount)
@@ -115,9 +115,23 @@ public class Client {
     }
 
     // FIXME: Doc comments
+    public func getAccountBalance(account: AccountId) throws -> UInt64 {
+        return try AccountBalanceQuery(client: self)
+            .setAccount(account)
+            .execute()
+    }
+
+    // FIXME: Doc comments
     public func getAccountInfo() throws -> AccountInfo {
         return try AccountInfoQuery(client: self)
             .setAccount(self.operator!.id)
+            .execute()
+    }
+
+    // FIXME: Doc comments
+    public func getAccountInfo(account: AccountId) throws -> AccountInfo {
+        return try AccountInfoQuery(client: self)
+            .setAccount(account)
             .execute()
     }
 
