@@ -23,12 +23,12 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/jedisct1/swift-sodium", .exact("0.8.0")),
         .package(url: "https://github.com/apple/swift-protobuf", .exact("1.6.0")),
-        .package(url: "https://github.com/grpc/grpc-swift", .exact("0.9.1")),
+        .package(url: "https://github.com/grpc/grpc-swift", .exact("1.0.0-alpha.6")),
     ],
     targets: [
         .target(
             name: "Hedera",
-            dependencies: ["Sodium", "SwiftProtobuf", "SwiftGRPC"]),
+            dependencies: ["Sodium", "SwiftProtobuf", "GRPC"]),
         .testTarget(
             name: "HederaTests",
             dependencies: ["Hedera"]),

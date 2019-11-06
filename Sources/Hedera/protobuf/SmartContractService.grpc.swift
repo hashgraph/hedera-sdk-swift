@@ -20,522 +20,278 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import Dispatch
 import Foundation
-import SwiftGRPC
+import GRPC
+import NIO
+import NIOHTTP1
 import SwiftProtobuf
 
-internal protocol Proto_SmartContractServicecreateContractCall: ClientCallUnary {}
 
-fileprivate final class Proto_SmartContractServicecreateContractCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_SmartContractServicecreateContractCall {
-  override class var method: String { return "/proto.SmartContractService/createContract" }
+/// Usage: instantiate Proto_SmartContractServiceServiceClient, then call methods of this protocol to make API calls.
+internal protocol Proto_SmartContractServiceService {
+  func createContract(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func updateContract(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func contractCallMethod(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func getContractInfo(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func contractCallLocalMethod(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func contractGetBytecode(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func getBySolidityID(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func getTxRecordByContractID(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func deleteContract(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func systemDelete(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func systemUndelete(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
 }
 
-internal protocol Proto_SmartContractServiceupdateContractCall: ClientCallUnary {}
+internal final class Proto_SmartContractServiceServiceClient: GRPCServiceClient, Proto_SmartContractServiceService {
+  internal let connection: ClientConnection
+  internal var serviceName: String { return "proto.SmartContractService" }
+  internal var defaultCallOptions: CallOptions
 
-fileprivate final class Proto_SmartContractServiceupdateContractCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_SmartContractServiceupdateContractCall {
-  override class var method: String { return "/proto.SmartContractService/updateContract" }
-}
-
-internal protocol Proto_SmartContractServicecontractCallMethodCall: ClientCallUnary {}
-
-fileprivate final class Proto_SmartContractServicecontractCallMethodCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_SmartContractServicecontractCallMethodCall {
-  override class var method: String { return "/proto.SmartContractService/contractCallMethod" }
-}
-
-internal protocol Proto_SmartContractServicegetContractInfoCall: ClientCallUnary {}
-
-fileprivate final class Proto_SmartContractServicegetContractInfoCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_SmartContractServicegetContractInfoCall {
-  override class var method: String { return "/proto.SmartContractService/getContractInfo" }
-}
-
-internal protocol Proto_SmartContractServicecontractCallLocalMethodCall: ClientCallUnary {}
-
-fileprivate final class Proto_SmartContractServicecontractCallLocalMethodCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_SmartContractServicecontractCallLocalMethodCall {
-  override class var method: String { return "/proto.SmartContractService/contractCallLocalMethod" }
-}
-
-internal protocol Proto_SmartContractServiceContractGetBytecodeCall: ClientCallUnary {}
-
-fileprivate final class Proto_SmartContractServiceContractGetBytecodeCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_SmartContractServiceContractGetBytecodeCall {
-  override class var method: String { return "/proto.SmartContractService/ContractGetBytecode" }
-}
-
-internal protocol Proto_SmartContractServicegetBySolidityIDCall: ClientCallUnary {}
-
-fileprivate final class Proto_SmartContractServicegetBySolidityIDCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_SmartContractServicegetBySolidityIDCall {
-  override class var method: String { return "/proto.SmartContractService/getBySolidityID" }
-}
-
-internal protocol Proto_SmartContractServicegetTxRecordByContractIDCall: ClientCallUnary {}
-
-fileprivate final class Proto_SmartContractServicegetTxRecordByContractIDCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_SmartContractServicegetTxRecordByContractIDCall {
-  override class var method: String { return "/proto.SmartContractService/getTxRecordByContractID" }
-}
-
-internal protocol Proto_SmartContractServicedeleteContractCall: ClientCallUnary {}
-
-fileprivate final class Proto_SmartContractServicedeleteContractCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_SmartContractServicedeleteContractCall {
-  override class var method: String { return "/proto.SmartContractService/deleteContract" }
-}
-
-internal protocol Proto_SmartContractServicesystemDeleteCall: ClientCallUnary {}
-
-fileprivate final class Proto_SmartContractServicesystemDeleteCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_SmartContractServicesystemDeleteCall {
-  override class var method: String { return "/proto.SmartContractService/systemDelete" }
-}
-
-internal protocol Proto_SmartContractServicesystemUndeleteCall: ClientCallUnary {}
-
-fileprivate final class Proto_SmartContractServicesystemUndeleteCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_SmartContractServicesystemUndeleteCall {
-  override class var method: String { return "/proto.SmartContractService/systemUndelete" }
-}
-
-
-/// Instantiate Proto_SmartContractServiceServiceClient, then call methods of this protocol to make API calls.
-internal protocol Proto_SmartContractServiceService: ServiceClient {
-  /// Synchronous. Unary.
-  func createContract(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func createContract(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicecreateContractCall
-
-  /// Synchronous. Unary.
-  func updateContract(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func updateContract(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServiceupdateContractCall
-
-  /// Synchronous. Unary.
-  func contractCallMethod(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func contractCallMethod(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicecontractCallMethodCall
-
-  /// Synchronous. Unary.
-  func getContractInfo(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getContractInfo(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServicegetContractInfoCall
-
-  /// Synchronous. Unary.
-  func contractCallLocalMethod(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func contractCallLocalMethod(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServicecontractCallLocalMethodCall
-
-  /// Synchronous. Unary.
-  func contractGetBytecode(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func contractGetBytecode(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServiceContractGetBytecodeCall
-
-  /// Synchronous. Unary.
-  func getBySolidityID(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getBySolidityID(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServicegetBySolidityIDCall
-
-  /// Synchronous. Unary.
-  func getTxRecordByContractID(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getTxRecordByContractID(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServicegetTxRecordByContractIDCall
-
-  /// Synchronous. Unary.
-  func deleteContract(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func deleteContract(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicedeleteContractCall
-
-  /// Synchronous. Unary.
-  func systemDelete(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func systemDelete(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicesystemDeleteCall
-
-  /// Synchronous. Unary.
-  func systemUndelete(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func systemUndelete(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicesystemUndeleteCall
-
-}
-
-internal extension Proto_SmartContractServiceService {
-  /// Synchronous. Unary.
-  func createContract(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.createContract(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func createContract(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicecreateContractCall {
-    return try self.createContract(request, metadata: self.metadata, completion: completion)
+  /// Creates a client for the proto.SmartContractService service.
+  ///
+  /// - Parameters:
+  ///   - connection: `ClientConnection` to the service host.
+  ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
+  internal init(connection: ClientConnection, defaultCallOptions: CallOptions = CallOptions()) {
+    self.connection = connection
+    self.defaultCallOptions = defaultCallOptions
   }
 
-  /// Synchronous. Unary.
-  func updateContract(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.updateContract(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func updateContract(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServiceupdateContractCall {
-    return try self.updateContract(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func contractCallMethod(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.contractCallMethod(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func contractCallMethod(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicecontractCallMethodCall {
-    return try self.contractCallMethod(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to createContract.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to createContract.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func createContract(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "createContract"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func getContractInfo(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.getContractInfo(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getContractInfo(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServicegetContractInfoCall {
-    return try self.getContractInfo(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func contractCallLocalMethod(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.contractCallLocalMethod(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func contractCallLocalMethod(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServicecontractCallLocalMethodCall {
-    return try self.contractCallLocalMethod(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to updateContract.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to updateContract.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func updateContract(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "updateContract"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func contractGetBytecode(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.contractGetBytecode(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func contractGetBytecode(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServiceContractGetBytecodeCall {
-    return try self.contractGetBytecode(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func getBySolidityID(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.getBySolidityID(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getBySolidityID(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServicegetBySolidityIDCall {
-    return try self.getBySolidityID(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to contractCallMethod.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to contractCallMethod.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func contractCallMethod(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "contractCallMethod"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func getTxRecordByContractID(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.getTxRecordByContractID(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getTxRecordByContractID(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServicegetTxRecordByContractIDCall {
-    return try self.getTxRecordByContractID(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func deleteContract(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.deleteContract(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func deleteContract(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicedeleteContractCall {
-    return try self.deleteContract(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to getContractInfo.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to getContractInfo.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func getContractInfo(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "getContractInfo"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func systemDelete(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.systemDelete(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func systemDelete(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicesystemDeleteCall {
-    return try self.systemDelete(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func systemUndelete(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.systemUndelete(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func systemUndelete(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicesystemUndeleteCall {
-    return try self.systemUndelete(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to contractCallLocalMethod.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to contractCallLocalMethod.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func contractCallLocalMethod(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "contractCallLocalMethod"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-}
-
-internal final class Proto_SmartContractServiceServiceClient: ServiceClientBase, Proto_SmartContractServiceService {
-  /// Synchronous. Unary.
-  internal func createContract(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_SmartContractServicecreateContractCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func createContract(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicecreateContractCall {
-    return try Proto_SmartContractServicecreateContractCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to ContractGetBytecode.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to ContractGetBytecode.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func contractGetBytecode(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "ContractGetBytecode"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func updateContract(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_SmartContractServiceupdateContractCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func updateContract(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServiceupdateContractCall {
-    return try Proto_SmartContractServiceupdateContractCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func contractCallMethod(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_SmartContractServicecontractCallMethodCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func contractCallMethod(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicecontractCallMethodCall {
-    return try Proto_SmartContractServicecontractCallMethodCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to getBySolidityID.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to getBySolidityID.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func getBySolidityID(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "getBySolidityID"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func getContractInfo(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_SmartContractServicegetContractInfoCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func getContractInfo(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServicegetContractInfoCall {
-    return try Proto_SmartContractServicegetContractInfoCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func contractCallLocalMethod(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_SmartContractServicecontractCallLocalMethodCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func contractCallLocalMethod(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServicecontractCallLocalMethodCall {
-    return try Proto_SmartContractServicecontractCallLocalMethodCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to getTxRecordByContractID.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to getTxRecordByContractID.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func getTxRecordByContractID(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "getTxRecordByContractID"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func contractGetBytecode(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_SmartContractServiceContractGetBytecodeCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func contractGetBytecode(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServiceContractGetBytecodeCall {
-    return try Proto_SmartContractServiceContractGetBytecodeCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func getBySolidityID(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_SmartContractServicegetBySolidityIDCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func getBySolidityID(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServicegetBySolidityIDCall {
-    return try Proto_SmartContractServicegetBySolidityIDCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to deleteContract.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to deleteContract.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func deleteContract(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "deleteContract"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func getTxRecordByContractID(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_SmartContractServicegetTxRecordByContractIDCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func getTxRecordByContractID(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_SmartContractServicegetTxRecordByContractIDCall {
-    return try Proto_SmartContractServicegetTxRecordByContractIDCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func deleteContract(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_SmartContractServicedeleteContractCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func deleteContract(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicedeleteContractCall {
-    return try Proto_SmartContractServicedeleteContractCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to systemDelete.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to systemDelete.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func systemDelete(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "systemDelete"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func systemDelete(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_SmartContractServicesystemDeleteCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func systemDelete(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicesystemDeleteCall {
-    return try Proto_SmartContractServicesystemDeleteCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func systemUndelete(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_SmartContractServicesystemUndeleteCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func systemUndelete(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_SmartContractServicesystemUndeleteCall {
-    return try Proto_SmartContractServicesystemUndeleteCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to systemUndelete.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to systemUndelete.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func systemUndelete(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "systemUndelete"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
 }
 
 /// To build a server, implement a class that conforms to this protocol.
-/// If one of the methods returning `ServerStatus?` returns nil,
-/// it is expected that you have already returned a status to the client by means of `session.close`.
-internal protocol Proto_SmartContractServiceProvider: ServiceProvider {
-  func createContract(request: Proto_Transaction, session: Proto_SmartContractServicecreateContractSession) throws -> Proto_TransactionResponse
-  func updateContract(request: Proto_Transaction, session: Proto_SmartContractServiceupdateContractSession) throws -> Proto_TransactionResponse
-  func contractCallMethod(request: Proto_Transaction, session: Proto_SmartContractServicecontractCallMethodSession) throws -> Proto_TransactionResponse
-  func getContractInfo(request: Proto_Query, session: Proto_SmartContractServicegetContractInfoSession) throws -> Proto_Response
-  func contractCallLocalMethod(request: Proto_Query, session: Proto_SmartContractServicecontractCallLocalMethodSession) throws -> Proto_Response
-  func contractGetBytecode(request: Proto_Query, session: Proto_SmartContractServiceContractGetBytecodeSession) throws -> Proto_Response
-  func getBySolidityID(request: Proto_Query, session: Proto_SmartContractServicegetBySolidityIDSession) throws -> Proto_Response
-  func getTxRecordByContractID(request: Proto_Query, session: Proto_SmartContractServicegetTxRecordByContractIDSession) throws -> Proto_Response
-  func deleteContract(request: Proto_Transaction, session: Proto_SmartContractServicedeleteContractSession) throws -> Proto_TransactionResponse
-  func systemDelete(request: Proto_Transaction, session: Proto_SmartContractServicesystemDeleteSession) throws -> Proto_TransactionResponse
-  func systemUndelete(request: Proto_Transaction, session: Proto_SmartContractServicesystemUndeleteSession) throws -> Proto_TransactionResponse
+internal protocol Proto_SmartContractServiceProvider: CallHandlerProvider {
+  func createContract(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func updateContract(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func contractCallMethod(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func getContractInfo(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func contractCallLocalMethod(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func contractGetBytecode(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func getBySolidityID(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func getTxRecordByContractID(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func deleteContract(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func systemDelete(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func systemUndelete(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
 }
 
 extension Proto_SmartContractServiceProvider {
   internal var serviceName: String { return "proto.SmartContractService" }
 
-  /// Determines and calls the appropriate request handler, depending on the request's method.
-  /// Throws `HandleMethodError.unknownMethod` for methods not handled by this service.
-  internal func handleMethod(_ method: String, handler: Handler) throws -> ServerStatus? {
-    switch method {
-    case "/proto.SmartContractService/createContract":
-      return try Proto_SmartContractServicecreateContractSessionBase(
-        handler: handler,
-        providerBlock: { try self.createContract(request: $0, session: $1 as! Proto_SmartContractServicecreateContractSessionBase) })
-          .run()
-    case "/proto.SmartContractService/updateContract":
-      return try Proto_SmartContractServiceupdateContractSessionBase(
-        handler: handler,
-        providerBlock: { try self.updateContract(request: $0, session: $1 as! Proto_SmartContractServiceupdateContractSessionBase) })
-          .run()
-    case "/proto.SmartContractService/contractCallMethod":
-      return try Proto_SmartContractServicecontractCallMethodSessionBase(
-        handler: handler,
-        providerBlock: { try self.contractCallMethod(request: $0, session: $1 as! Proto_SmartContractServicecontractCallMethodSessionBase) })
-          .run()
-    case "/proto.SmartContractService/getContractInfo":
-      return try Proto_SmartContractServicegetContractInfoSessionBase(
-        handler: handler,
-        providerBlock: { try self.getContractInfo(request: $0, session: $1 as! Proto_SmartContractServicegetContractInfoSessionBase) })
-          .run()
-    case "/proto.SmartContractService/contractCallLocalMethod":
-      return try Proto_SmartContractServicecontractCallLocalMethodSessionBase(
-        handler: handler,
-        providerBlock: { try self.contractCallLocalMethod(request: $0, session: $1 as! Proto_SmartContractServicecontractCallLocalMethodSessionBase) })
-          .run()
-    case "/proto.SmartContractService/ContractGetBytecode":
-      return try Proto_SmartContractServiceContractGetBytecodeSessionBase(
-        handler: handler,
-        providerBlock: { try self.contractGetBytecode(request: $0, session: $1 as! Proto_SmartContractServiceContractGetBytecodeSessionBase) })
-          .run()
-    case "/proto.SmartContractService/getBySolidityID":
-      return try Proto_SmartContractServicegetBySolidityIDSessionBase(
-        handler: handler,
-        providerBlock: { try self.getBySolidityID(request: $0, session: $1 as! Proto_SmartContractServicegetBySolidityIDSessionBase) })
-          .run()
-    case "/proto.SmartContractService/getTxRecordByContractID":
-      return try Proto_SmartContractServicegetTxRecordByContractIDSessionBase(
-        handler: handler,
-        providerBlock: { try self.getTxRecordByContractID(request: $0, session: $1 as! Proto_SmartContractServicegetTxRecordByContractIDSessionBase) })
-          .run()
-    case "/proto.SmartContractService/deleteContract":
-      return try Proto_SmartContractServicedeleteContractSessionBase(
-        handler: handler,
-        providerBlock: { try self.deleteContract(request: $0, session: $1 as! Proto_SmartContractServicedeleteContractSessionBase) })
-          .run()
-    case "/proto.SmartContractService/systemDelete":
-      return try Proto_SmartContractServicesystemDeleteSessionBase(
-        handler: handler,
-        providerBlock: { try self.systemDelete(request: $0, session: $1 as! Proto_SmartContractServicesystemDeleteSessionBase) })
-          .run()
-    case "/proto.SmartContractService/systemUndelete":
-      return try Proto_SmartContractServicesystemUndeleteSessionBase(
-        handler: handler,
-        providerBlock: { try self.systemUndelete(request: $0, session: $1 as! Proto_SmartContractServicesystemUndeleteSessionBase) })
-          .run()
-    default:
-      throw HandleMethodError.unknownMethod
+  /// Determines, calls and returns the appropriate request handler, depending on the request's method.
+  /// Returns nil for methods not handled by this service.
+  internal func handleMethod(_ methodName: String, callHandlerContext: CallHandlerContext) -> GRPCCallHandler? {
+    switch methodName {
+    case "createContract":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.createContract(request: request, context: context)
+        }
+      }
+
+    case "updateContract":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.updateContract(request: request, context: context)
+        }
+      }
+
+    case "contractCallMethod":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.contractCallMethod(request: request, context: context)
+        }
+      }
+
+    case "getContractInfo":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.getContractInfo(request: request, context: context)
+        }
+      }
+
+    case "contractCallLocalMethod":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.contractCallLocalMethod(request: request, context: context)
+        }
+      }
+
+    case "ContractGetBytecode":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.contractGetBytecode(request: request, context: context)
+        }
+      }
+
+    case "getBySolidityID":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.getBySolidityID(request: request, context: context)
+        }
+      }
+
+    case "getTxRecordByContractID":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.getTxRecordByContractID(request: request, context: context)
+        }
+      }
+
+    case "deleteContract":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.deleteContract(request: request, context: context)
+        }
+      }
+
+    case "systemDelete":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.systemDelete(request: request, context: context)
+        }
+      }
+
+    case "systemUndelete":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.systemUndelete(request: request, context: context)
+        }
+      }
+
+    default: return nil
     }
   }
 }
-
-internal protocol Proto_SmartContractServicecreateContractSession: ServerSessionUnary {}
-
-fileprivate final class Proto_SmartContractServicecreateContractSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_SmartContractServicecreateContractSession {}
-
-internal protocol Proto_SmartContractServiceupdateContractSession: ServerSessionUnary {}
-
-fileprivate final class Proto_SmartContractServiceupdateContractSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_SmartContractServiceupdateContractSession {}
-
-internal protocol Proto_SmartContractServicecontractCallMethodSession: ServerSessionUnary {}
-
-fileprivate final class Proto_SmartContractServicecontractCallMethodSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_SmartContractServicecontractCallMethodSession {}
-
-internal protocol Proto_SmartContractServicegetContractInfoSession: ServerSessionUnary {}
-
-fileprivate final class Proto_SmartContractServicegetContractInfoSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_SmartContractServicegetContractInfoSession {}
-
-internal protocol Proto_SmartContractServicecontractCallLocalMethodSession: ServerSessionUnary {}
-
-fileprivate final class Proto_SmartContractServicecontractCallLocalMethodSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_SmartContractServicecontractCallLocalMethodSession {}
-
-internal protocol Proto_SmartContractServiceContractGetBytecodeSession: ServerSessionUnary {}
-
-fileprivate final class Proto_SmartContractServiceContractGetBytecodeSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_SmartContractServiceContractGetBytecodeSession {}
-
-internal protocol Proto_SmartContractServicegetBySolidityIDSession: ServerSessionUnary {}
-
-fileprivate final class Proto_SmartContractServicegetBySolidityIDSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_SmartContractServicegetBySolidityIDSession {}
-
-internal protocol Proto_SmartContractServicegetTxRecordByContractIDSession: ServerSessionUnary {}
-
-fileprivate final class Proto_SmartContractServicegetTxRecordByContractIDSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_SmartContractServicegetTxRecordByContractIDSession {}
-
-internal protocol Proto_SmartContractServicedeleteContractSession: ServerSessionUnary {}
-
-fileprivate final class Proto_SmartContractServicedeleteContractSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_SmartContractServicedeleteContractSession {}
-
-internal protocol Proto_SmartContractServicesystemDeleteSession: ServerSessionUnary {}
-
-fileprivate final class Proto_SmartContractServicesystemDeleteSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_SmartContractServicesystemDeleteSession {}
-
-internal protocol Proto_SmartContractServicesystemUndeleteSession: ServerSessionUnary {}
-
-fileprivate final class Proto_SmartContractServicesystemUndeleteSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_SmartContractServicesystemUndeleteSession {}
 

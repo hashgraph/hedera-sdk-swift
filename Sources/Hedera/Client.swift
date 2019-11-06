@@ -1,8 +1,22 @@
 import Sodium
-import SwiftGRPC
+import GRPC
+import NIO
 
-public typealias Node = (accountId: AccountId, address: String)
-
+public struct Node {
+    let accountId: AccountId
+    let address: String
+    
+    var host: String {
+        let colonIndex = address.firstIndex(of: ":")!
+        return String(address.prefix(upTo: colonIndex))
+    }
+    
+    var port: Int {
+        let colonIndex = address.firstIndex(of: ":")!
+        return Int(String(address.suffix(from: address.index(after: colonIndex))))!
+    }
+}
+    
 typealias HederaGRPCClient = (fileService: Proto_FileServiceServiceClient,
     cryptoService: Proto_CryptoServiceServiceClient,
     contractService: Proto_SmartContractServiceServiceClient)
@@ -15,7 +29,6 @@ public class Client {
     var nodes: [AccountId: Node]
     var node: Node?
 
-    var channels: [AccountId: Channel] = [:]
     var grpcClients: [AccountId: HederaGRPCClient] = [:]
 
     /// The default maximum fee for a transaction.
@@ -27,14 +40,19 @@ public class Client {
     /// This can be overridden for an individual query with `.setPayment()`.
     var maxQueryPayment: UInt64?
 
-    public init(node id: AccountId, address url: String) {
+    /// Eventloop that will be shared by all grpc clients
+    let eventLoopGroup: EventLoopGroup
+
+    public init(node id: AccountId, address url: String, eventLoopGroup: EventLoopGroup) {
         nodes = [ id: Node(accountId: id, address: url) ]
+        self.eventLoopGroup = eventLoopGroup
     }
 
-    public init(nodes: [(AccountId, String)]) {
+    public init(nodes: [(AccountId, String)], eventLoopGroup: EventLoopGroup) {
         let keys = nodes.map { $0.0 }
         let values = nodes.map { Node(accountId: $0.0, address: $0.1) }
         self.nodes = Dictionary(uniqueKeysWithValues: zip(keys, values))
+        self.eventLoopGroup = eventLoopGroup
     }
 
     /// Sets the account that will be paying for transactions and queries on the network.
@@ -168,24 +186,22 @@ public class Client {
             .execute()
     }
 
-    private func channelFor(node: Node) -> Channel {
-        if let channel = channels[node.accountId] {
-            return channel
-        } else {
-            channels[node.accountId] = Channel(address: node.address, secure: false)
-            return channels[node.accountId]!
-        }
-    }
-
     func grpcClient(for node: Node) -> HederaGRPCClient {
         if let service = grpcClients[node.accountId] {
             return service
         } else {
-            let channel = channelFor(node: node)
+            let configuration = ClientConnection.Configuration(
+                target: .hostAndPort(node.host, node.port),
+                eventLoopGroup: eventLoopGroup)
+            let connection = ClientConnection(configuration: configuration)
+            let fileService = Proto_FileServiceServiceClient(connection: connection)
+            let cryptoService = Proto_CryptoServiceServiceClient(connection: connection)
+            let contractService = Proto_SmartContractServiceServiceClient(connection: connection)
             let service = HederaGRPCClient(
-                fileService: Proto_FileServiceServiceClient(channel: channel),
-                cryptoService: Proto_CryptoServiceServiceClient(channel: channel),
-                contractService: Proto_SmartContractServiceServiceClient(channel: channel))
+                fileService: fileService,
+                cryptoService: cryptoService,
+                contractService: contractService)
+            
             grpcClients[node.accountId] = service
             return grpcClients[node.accountId]!
         }

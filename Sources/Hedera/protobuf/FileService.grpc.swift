@@ -20,390 +20,215 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import Dispatch
 import Foundation
-import SwiftGRPC
+import GRPC
+import NIO
+import NIOHTTP1
 import SwiftProtobuf
 
-internal protocol Proto_FileServicecreateFileCall: ClientCallUnary {}
 
-fileprivate final class Proto_FileServicecreateFileCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FileServicecreateFileCall {
-  override class var method: String { return "/proto.FileService/createFile" }
+/// Usage: instantiate Proto_FileServiceServiceClient, then call methods of this protocol to make API calls.
+internal protocol Proto_FileServiceService {
+  func createFile(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func updateFile(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func deleteFile(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func appendContent(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func getFileContent(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func getFileInfo(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func systemDelete(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func systemUndelete(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
 }
 
-internal protocol Proto_FileServiceupdateFileCall: ClientCallUnary {}
+internal final class Proto_FileServiceServiceClient: GRPCServiceClient, Proto_FileServiceService {
+  internal let connection: ClientConnection
+  internal var serviceName: String { return "proto.FileService" }
+  internal var defaultCallOptions: CallOptions
 
-fileprivate final class Proto_FileServiceupdateFileCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FileServiceupdateFileCall {
-  override class var method: String { return "/proto.FileService/updateFile" }
-}
-
-internal protocol Proto_FileServicedeleteFileCall: ClientCallUnary {}
-
-fileprivate final class Proto_FileServicedeleteFileCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FileServicedeleteFileCall {
-  override class var method: String { return "/proto.FileService/deleteFile" }
-}
-
-internal protocol Proto_FileServiceappendContentCall: ClientCallUnary {}
-
-fileprivate final class Proto_FileServiceappendContentCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FileServiceappendContentCall {
-  override class var method: String { return "/proto.FileService/appendContent" }
-}
-
-internal protocol Proto_FileServicegetFileContentCall: ClientCallUnary {}
-
-fileprivate final class Proto_FileServicegetFileContentCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_FileServicegetFileContentCall {
-  override class var method: String { return "/proto.FileService/getFileContent" }
-}
-
-internal protocol Proto_FileServicegetFileInfoCall: ClientCallUnary {}
-
-fileprivate final class Proto_FileServicegetFileInfoCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_FileServicegetFileInfoCall {
-  override class var method: String { return "/proto.FileService/getFileInfo" }
-}
-
-internal protocol Proto_FileServicesystemDeleteCall: ClientCallUnary {}
-
-fileprivate final class Proto_FileServicesystemDeleteCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FileServicesystemDeleteCall {
-  override class var method: String { return "/proto.FileService/systemDelete" }
-}
-
-internal protocol Proto_FileServicesystemUndeleteCall: ClientCallUnary {}
-
-fileprivate final class Proto_FileServicesystemUndeleteCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FileServicesystemUndeleteCall {
-  override class var method: String { return "/proto.FileService/systemUndelete" }
-}
-
-
-/// Instantiate Proto_FileServiceServiceClient, then call methods of this protocol to make API calls.
-internal protocol Proto_FileServiceService: ServiceClient {
-  /// Synchronous. Unary.
-  func createFile(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func createFile(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServicecreateFileCall
-
-  /// Synchronous. Unary.
-  func updateFile(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func updateFile(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServiceupdateFileCall
-
-  /// Synchronous. Unary.
-  func deleteFile(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func deleteFile(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServicedeleteFileCall
-
-  /// Synchronous. Unary.
-  func appendContent(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func appendContent(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServiceappendContentCall
-
-  /// Synchronous. Unary.
-  func getFileContent(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getFileContent(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_FileServicegetFileContentCall
-
-  /// Synchronous. Unary.
-  func getFileInfo(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getFileInfo(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_FileServicegetFileInfoCall
-
-  /// Synchronous. Unary.
-  func systemDelete(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func systemDelete(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServicesystemDeleteCall
-
-  /// Synchronous. Unary.
-  func systemUndelete(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func systemUndelete(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServicesystemUndeleteCall
-
-}
-
-internal extension Proto_FileServiceService {
-  /// Synchronous. Unary.
-  func createFile(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.createFile(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func createFile(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServicecreateFileCall {
-    return try self.createFile(request, metadata: self.metadata, completion: completion)
+  /// Creates a client for the proto.FileService service.
+  ///
+  /// - Parameters:
+  ///   - connection: `ClientConnection` to the service host.
+  ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
+  internal init(connection: ClientConnection, defaultCallOptions: CallOptions = CallOptions()) {
+    self.connection = connection
+    self.defaultCallOptions = defaultCallOptions
   }
 
-  /// Synchronous. Unary.
-  func updateFile(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.updateFile(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func updateFile(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServiceupdateFileCall {
-    return try self.updateFile(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func deleteFile(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.deleteFile(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func deleteFile(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServicedeleteFileCall {
-    return try self.deleteFile(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to createFile.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to createFile.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func createFile(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "createFile"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func appendContent(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.appendContent(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func appendContent(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServiceappendContentCall {
-    return try self.appendContent(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func getFileContent(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.getFileContent(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getFileContent(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_FileServicegetFileContentCall {
-    return try self.getFileContent(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to updateFile.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to updateFile.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func updateFile(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "updateFile"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func getFileInfo(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.getFileInfo(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getFileInfo(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_FileServicegetFileInfoCall {
-    return try self.getFileInfo(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func systemDelete(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.systemDelete(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func systemDelete(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServicesystemDeleteCall {
-    return try self.systemDelete(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to deleteFile.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to deleteFile.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func deleteFile(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "deleteFile"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func systemUndelete(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.systemUndelete(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func systemUndelete(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServicesystemUndeleteCall {
-    return try self.systemUndelete(request, metadata: self.metadata, completion: completion)
-  }
-
-}
-
-internal final class Proto_FileServiceServiceClient: ServiceClientBase, Proto_FileServiceService {
-  /// Synchronous. Unary.
-  internal func createFile(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_FileServicecreateFileCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func createFile(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServicecreateFileCall {
-    return try Proto_FileServicecreateFileCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to appendContent.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to appendContent.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func appendContent(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "appendContent"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func updateFile(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_FileServiceupdateFileCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func updateFile(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServiceupdateFileCall {
-    return try Proto_FileServiceupdateFileCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func deleteFile(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_FileServicedeleteFileCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func deleteFile(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServicedeleteFileCall {
-    return try Proto_FileServicedeleteFileCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to getFileContent.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to getFileContent.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func getFileContent(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "getFileContent"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func appendContent(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_FileServiceappendContentCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func appendContent(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServiceappendContentCall {
-    return try Proto_FileServiceappendContentCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func getFileContent(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_FileServicegetFileContentCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func getFileContent(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_FileServicegetFileContentCall {
-    return try Proto_FileServicegetFileContentCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to getFileInfo.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to getFileInfo.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func getFileInfo(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "getFileInfo"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func getFileInfo(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_FileServicegetFileInfoCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func getFileInfo(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_FileServicegetFileInfoCall {
-    return try Proto_FileServicegetFileInfoCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func systemDelete(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_FileServicesystemDeleteCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func systemDelete(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServicesystemDeleteCall {
-    return try Proto_FileServicesystemDeleteCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to systemDelete.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to systemDelete.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func systemDelete(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "systemDelete"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func systemUndelete(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_FileServicesystemUndeleteCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func systemUndelete(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FileServicesystemUndeleteCall {
-    return try Proto_FileServicesystemUndeleteCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to systemUndelete.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to systemUndelete.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func systemUndelete(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "systemUndelete"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
 }
 
 /// To build a server, implement a class that conforms to this protocol.
-/// If one of the methods returning `ServerStatus?` returns nil,
-/// it is expected that you have already returned a status to the client by means of `session.close`.
-internal protocol Proto_FileServiceProvider: ServiceProvider {
-  func createFile(request: Proto_Transaction, session: Proto_FileServicecreateFileSession) throws -> Proto_TransactionResponse
-  func updateFile(request: Proto_Transaction, session: Proto_FileServiceupdateFileSession) throws -> Proto_TransactionResponse
-  func deleteFile(request: Proto_Transaction, session: Proto_FileServicedeleteFileSession) throws -> Proto_TransactionResponse
-  func appendContent(request: Proto_Transaction, session: Proto_FileServiceappendContentSession) throws -> Proto_TransactionResponse
-  func getFileContent(request: Proto_Query, session: Proto_FileServicegetFileContentSession) throws -> Proto_Response
-  func getFileInfo(request: Proto_Query, session: Proto_FileServicegetFileInfoSession) throws -> Proto_Response
-  func systemDelete(request: Proto_Transaction, session: Proto_FileServicesystemDeleteSession) throws -> Proto_TransactionResponse
-  func systemUndelete(request: Proto_Transaction, session: Proto_FileServicesystemUndeleteSession) throws -> Proto_TransactionResponse
+internal protocol Proto_FileServiceProvider: CallHandlerProvider {
+  func createFile(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func updateFile(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func deleteFile(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func appendContent(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func getFileContent(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func getFileInfo(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func systemDelete(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func systemUndelete(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
 }
 
 extension Proto_FileServiceProvider {
   internal var serviceName: String { return "proto.FileService" }
 
-  /// Determines and calls the appropriate request handler, depending on the request's method.
-  /// Throws `HandleMethodError.unknownMethod` for methods not handled by this service.
-  internal func handleMethod(_ method: String, handler: Handler) throws -> ServerStatus? {
-    switch method {
-    case "/proto.FileService/createFile":
-      return try Proto_FileServicecreateFileSessionBase(
-        handler: handler,
-        providerBlock: { try self.createFile(request: $0, session: $1 as! Proto_FileServicecreateFileSessionBase) })
-          .run()
-    case "/proto.FileService/updateFile":
-      return try Proto_FileServiceupdateFileSessionBase(
-        handler: handler,
-        providerBlock: { try self.updateFile(request: $0, session: $1 as! Proto_FileServiceupdateFileSessionBase) })
-          .run()
-    case "/proto.FileService/deleteFile":
-      return try Proto_FileServicedeleteFileSessionBase(
-        handler: handler,
-        providerBlock: { try self.deleteFile(request: $0, session: $1 as! Proto_FileServicedeleteFileSessionBase) })
-          .run()
-    case "/proto.FileService/appendContent":
-      return try Proto_FileServiceappendContentSessionBase(
-        handler: handler,
-        providerBlock: { try self.appendContent(request: $0, session: $1 as! Proto_FileServiceappendContentSessionBase) })
-          .run()
-    case "/proto.FileService/getFileContent":
-      return try Proto_FileServicegetFileContentSessionBase(
-        handler: handler,
-        providerBlock: { try self.getFileContent(request: $0, session: $1 as! Proto_FileServicegetFileContentSessionBase) })
-          .run()
-    case "/proto.FileService/getFileInfo":
-      return try Proto_FileServicegetFileInfoSessionBase(
-        handler: handler,
-        providerBlock: { try self.getFileInfo(request: $0, session: $1 as! Proto_FileServicegetFileInfoSessionBase) })
-          .run()
-    case "/proto.FileService/systemDelete":
-      return try Proto_FileServicesystemDeleteSessionBase(
-        handler: handler,
-        providerBlock: { try self.systemDelete(request: $0, session: $1 as! Proto_FileServicesystemDeleteSessionBase) })
-          .run()
-    case "/proto.FileService/systemUndelete":
-      return try Proto_FileServicesystemUndeleteSessionBase(
-        handler: handler,
-        providerBlock: { try self.systemUndelete(request: $0, session: $1 as! Proto_FileServicesystemUndeleteSessionBase) })
-          .run()
-    default:
-      throw HandleMethodError.unknownMethod
+  /// Determines, calls and returns the appropriate request handler, depending on the request's method.
+  /// Returns nil for methods not handled by this service.
+  internal func handleMethod(_ methodName: String, callHandlerContext: CallHandlerContext) -> GRPCCallHandler? {
+    switch methodName {
+    case "createFile":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.createFile(request: request, context: context)
+        }
+      }
+
+    case "updateFile":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.updateFile(request: request, context: context)
+        }
+      }
+
+    case "deleteFile":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.deleteFile(request: request, context: context)
+        }
+      }
+
+    case "appendContent":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.appendContent(request: request, context: context)
+        }
+      }
+
+    case "getFileContent":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.getFileContent(request: request, context: context)
+        }
+      }
+
+    case "getFileInfo":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.getFileInfo(request: request, context: context)
+        }
+      }
+
+    case "systemDelete":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.systemDelete(request: request, context: context)
+        }
+      }
+
+    case "systemUndelete":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.systemUndelete(request: request, context: context)
+        }
+      }
+
+    default: return nil
     }
   }
 }
-
-internal protocol Proto_FileServicecreateFileSession: ServerSessionUnary {}
-
-fileprivate final class Proto_FileServicecreateFileSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FileServicecreateFileSession {}
-
-internal protocol Proto_FileServiceupdateFileSession: ServerSessionUnary {}
-
-fileprivate final class Proto_FileServiceupdateFileSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FileServiceupdateFileSession {}
-
-internal protocol Proto_FileServicedeleteFileSession: ServerSessionUnary {}
-
-fileprivate final class Proto_FileServicedeleteFileSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FileServicedeleteFileSession {}
-
-internal protocol Proto_FileServiceappendContentSession: ServerSessionUnary {}
-
-fileprivate final class Proto_FileServiceappendContentSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FileServiceappendContentSession {}
-
-internal protocol Proto_FileServicegetFileContentSession: ServerSessionUnary {}
-
-fileprivate final class Proto_FileServicegetFileContentSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_FileServicegetFileContentSession {}
-
-internal protocol Proto_FileServicegetFileInfoSession: ServerSessionUnary {}
-
-fileprivate final class Proto_FileServicegetFileInfoSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_FileServicegetFileInfoSession {}
-
-internal protocol Proto_FileServicesystemDeleteSession: ServerSessionUnary {}
-
-fileprivate final class Proto_FileServicesystemDeleteSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FileServicesystemDeleteSession {}
-
-internal protocol Proto_FileServicesystemUndeleteSession: ServerSessionUnary {}
-
-fileprivate final class Proto_FileServicesystemUndeleteSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FileServicesystemUndeleteSession {}
 
