@@ -100,17 +100,23 @@ public class Client {
     // FIXME: Get TransactionId from `TransactionReceipt` when `executeForReceipt` is implemented
     public func transferCryptoTo(recipient: AccountId, amount: UInt64) throws -> TransactionId {
         return try CryptoTransferTransaction(client: self)
-            .add(sender: client.operator!.accountId, amount)
-            .add(recipient: recipient, amount)
+            .add(sender: self.operator!.id, amount: amount)
+            .add(recipient: recipient, amount: amount)
             .build()
             .execute()
     }
 
-    // FIXME: Return HBar when `executeForReceipt` is implemented
-    public func getAccountBalance() throws -> TransactionId {
+    // FIXME: Doc comments
+    public func getAccountBalance() throws -> UInt64 {
         return try AccountBalanceQuery(client: self)
-            .setAccount(client.operator!.accountId)
-            .build()
+            .setAccount(self.operator!.id)
+            .execute()
+    }
+
+    // FIXME: Doc comments
+    public func getAccountInfo() throws -> AccountInfo {
+        return try AccountInfoQuery(client: self)
+            .setAccount(self.operator!.id)
             .execute()
     }
 
