@@ -89,12 +89,13 @@ public class Client {
     }
 
     // FIXME: Return AccountId when `executeForReceipt` is implemented
-    public func createAccount(key: Ed25519PublicKey, balance: UInt64) throws -> TransactionId {
+    public func createAccount(key: Ed25519PublicKey, balance: UInt64) throws -> AccountId {
         return try AccountCreateTransaction(client: self)
             .setInitialBalance(balance)
             .setKey(key)
             .build()
-            .execute()
+            .executeForReceipt()
+            .accountId!
     }
 
     // FIXME: Get TransactionId from `TransactionReceipt` when `executeForReceipt` is implemented

@@ -12,10 +12,13 @@ let package = Package(
         .library(name: "Hedera", targets: ["Hedera"]),
         
         // Examples
-        .executable(name: "CreateAccountExample", targets: ["CreateAccountExample"]),
+        .executable(name: "SimpleCreateAccountExample", targets: ["SimpleCreateAccountExample"]),
+        .executable(name: "AdvancedCreateAccountExample", targets: ["AdvancedCreateAccountExample"]),
         .executable(name: "GetFileInfoExample", targets: ["GetFileInfoExample"]),
         .executable(name: "CreateFileExample", targets: ["CreateFileExample"]),
-    ],
+        .executable(name: "SimpleTransferCryptoExample", targets: ["SimpleTransferCryptoExample"]),
+        .executable(name: "AdvancedTransferCryptoExample", targets: ["AdvancedTransferCryptoExample"]),
+ ],
     dependencies: [
         .package(url: "https://github.com/jedisct1/swift-sodium", .exact("0.8.0")),
         .package(url: "https://github.com/apple/swift-protobuf", .exact("1.6.0")),
@@ -31,9 +34,13 @@ let package = Package(
         
         // Examples
         .target(
-            name: "CreateAccountExample",
+            name: "SimpleCreateAccountExample",
             dependencies: ["Hedera"],
-            path: "Examples/CreateAccount"),
+            path: "Examples/SimpleCreateAccount"),
+        .target(
+            name: "AdvancedCreateAccountExample",
+            dependencies: ["Hedera"],
+            path: "Examples/AdvancedCreateAccount"),
         .target(
             name: "GetFileInfoExample",
             dependencies: ["Hedera"],
@@ -43,8 +50,12 @@ let package = Package(
             dependencies: ["Hedera"],
             path: "Examples/CreateFile"),
         .target(
-            name: "TransferCryptoExample",
+            name: "SimpleTransferCryptoExample",
             dependencies: ["Hedera"],
-            path: "Examples/TransferCrypto"),
+            path: "Examples/SimpleTransferCrypto"),
+        .target(
+            name: "AdvancedTransferCryptoExample",
+            dependencies: ["Hedera"],
+            path: "Examples/AdvancedTransferCrypto"),
     ]
 )
