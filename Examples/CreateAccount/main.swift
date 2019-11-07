@@ -21,7 +21,6 @@ let receipt = try! AccountCreateTransaction(client: client)
     .setInitialBalance(0)
     .setKey(newAccountKey.publicKey)
     .setMemo("Create Account Example - Swift SDK")
-    .build()
     .executeForReceipt()
 
 print("Account created: \(receipt.accountId!)")

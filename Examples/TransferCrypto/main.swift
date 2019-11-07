@@ -18,7 +18,6 @@ let receipt = try! CryptoTransferTransaction(client: client)
     .add(sender: AccountId("0.0.3")!, amount: 10000)
     .add(recipient: AccountId("0.0.2")!, amount: 10000)
     .setMemo("Transfer Crypto Example - Swift SDK")
-    .build()
     .executeForReceipt()
 
 print("Crypto transferred successfully")

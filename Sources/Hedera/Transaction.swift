@@ -167,13 +167,6 @@ public class Transaction {
     public func execute() throws -> TransactionId {
         guard let client = client else { throw HederaError(message: "client must not be nil") }
 
-        if inner.sigMap.sigPair.isEmpty {
-            guard let clientOperator = client.`operator` else {
-                throw HederaError(message: "Client must have an operator set to execute")
-            }
-            addSigPair(publicKey: clientOperator.publicKey, signer: clientOperator.signer)
-        }
-
         // TODO: actually handle error
         do {
             let response = try methodForTransaction(client.grpcClient(for: client.pickNode()))(inner)
