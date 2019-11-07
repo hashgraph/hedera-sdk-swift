@@ -18,6 +18,7 @@ let package = Package(
         .executable(name: "CreateFileExample", targets: ["CreateFileExample"]),
         .executable(name: "SimpleTransferCryptoExample", targets: ["SimpleTransferCryptoExample"]),
         .executable(name: "AdvancedTransferCryptoExample", targets: ["AdvancedTransferCryptoExample"]),
+        .executable(name: "SimpleAccountRecordsExample", targets: ["SimpleAccountRecordsExample"]),
  ],
     dependencies: [
         .package(url: "https://github.com/jedisct1/swift-sodium", .exact("0.8.0")),
@@ -57,5 +58,9 @@ let package = Package(
             name: "AdvancedTransferCryptoExample",
             dependencies: ["Hedera"],
             path: "Examples/AdvancedTransferCrypto"),
+        .target(
+            name: "SimpleAccountRecordsExample",
+            dependencies: ["Hedera"],
+            path: "Examples/SimpleAccountRecords"),
     ]
 )
