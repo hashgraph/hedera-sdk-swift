@@ -76,7 +76,7 @@ public class TransactionBuilder {
         // swiftlint:disable:next force_try
         tx.bodyBytes = try! body.serializedData()
         
-        let transaction = Transaction(client, tx, body.transactionID)
+        let transaction = Transaction(client, tx)
         
         // Sign with the operator, if present
         if let client = client, let clientOperator = client.operator  {

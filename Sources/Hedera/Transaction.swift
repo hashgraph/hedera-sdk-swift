@@ -12,48 +12,39 @@ public class Transaction {
     var inner: Proto_Transaction
     let txId: TransactionId
     var client: Client?
+    let kind: TransactionKind
 
-    init(_ client: Client?, _ tx: Proto_Transaction, _ txId: Proto_TransactionID) {
+    init(_ client: Client?, _ tx: Proto_Transaction) {
+        let body = try! Proto_TransactionBody.init(serializedData: tx.bodyBytes)
+        
         self.client = client
         inner = tx
         if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
-        self.txId = TransactionId(txId)!
-    }
-
-    convenience init?(_ client: Client?, bytes: Data) {
-        guard let tx = try? Proto_Transaction.init(serializedData: bytes) else { return nil }
-        guard let body = try? Proto_TransactionBody.init(serializedData: tx.bodyBytes) else { return nil }
-        self.init(client!, tx, body.transactionID)
+        txId = TransactionId(body.transactionID)!
+        kind = TransactionKind(body.data!)
     }
 
     func methodForTransaction(_ grpc: HederaGRPCClient) -> ExecuteClosure {
-        // swiftlint:disable:next force_try
-        let body = try! Proto_TransactionBody.init(serializedData: inner.bodyBytes)
-
-        switch body.data {
-        case .none:
-            fatalError()
-        case .systemDelete:
-            return grpc.fileService.systemDelete
+        switch kind {
         case .contractCall:
             return grpc.contractService.contractCallMethod
-        case .contractCreateInstance:
+        case .contractCreate:
             return grpc.contractService.createContract
-        case .contractUpdateInstance:
+        case .contractUpdate:
             return grpc.contractService.updateContract
-        case .contractDeleteInstance:
+        case .contractDelete:
             return grpc.contractService.deleteContract
-        case .cryptoAddClaim:
+        case .accountAddClaim:
             return grpc.cryptoService.addClaim
-        case .cryptoCreateAccount:
+        case .accountCreate:
             return grpc.cryptoService.createAccount
-        case .cryptoDelete:
+        case .accountDelete:
             return grpc.cryptoService.cryptoDelete
-        case .cryptoDeleteClaim:
+        case .accountDeleteClaim:
             return grpc.cryptoService.deleteClaim
         case .cryptoTransfer:
             return grpc.cryptoService.cryptoTransfer
-        case .cryptoUpdateAccount:
+        case .accountUpdate:
             return grpc.cryptoService.updateAccount
         case .fileAppend:
             return grpc.fileService.appendContent
@@ -63,10 +54,10 @@ public class Transaction {
             return grpc.fileService.deleteFile
         case .fileUpdate:
             return grpc.fileService.updateFile
+        case .systemDelete:
+            return grpc.fileService.systemDelete
         case .systemUndelete:
             return grpc.fileService.systemUndelete
-        case .freeze:
-            fatalError("TODO: freeze service")
         }
     }
 
@@ -128,6 +119,12 @@ public class Transaction {
     }
     
     // MARK: - Public API
+
+    public convenience init?(_ client: Client?, bytes: Data) {
+        guard let tx = try? Proto_Transaction.init(serializedData: bytes) else { return nil }
+        guard (try? Proto_TransactionBody.init(serializedData: tx.bodyBytes)) != nil else { return nil }
+        self.init(client, tx)
+    }
     
     public var bytes: Bytes {
         Bytes(inner.bodyBytes)
