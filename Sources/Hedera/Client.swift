@@ -88,7 +88,11 @@ public class Client {
         nodes.randomElement()!.value
     }
 
-    // FIXME: Doc comments
+    /// Creates an account with the given `key` and an initial balance of `balance`.
+    /// - Parameters:
+    ///   - key: The public key to use for account Creation.
+    ///   - balance: The initial balance of the account.
+    /// - Returns: The transaction's ID.
     public func createAccount(key: Ed25519PublicKey, balance: UInt64) throws -> AccountId {
         return try AccountCreateTransaction(client: self)
             .setInitialBalance(balance)
@@ -98,7 +102,12 @@ public class Client {
             .accountId!
     }
 
-    // FIXME: Get `TransactionId` from `TransactionReceipt` when it has one.
+    // FIXME: Get `TransactionId` from `TransactionReceipt` once it has one.
+    /// Sends `amount` of tiny bar to `recipient`.
+    /// - Parameters:
+    ///   - recipient: The recipient of the crypto.
+    ///   - amount: The amount of tiny bar to send.
+    /// - Returns: The transaction's ID.
     public func transferCryptoTo(recipient: AccountId, amount: UInt64) throws -> TransactionId {
         return try CryptoTransferTransaction(client: self)
             .add(sender: self.operator!.id, amount: amount)
@@ -107,28 +116,36 @@ public class Client {
             .execute()
     }
 
-    // FIXME: Doc comments
+    /// Gets the balance of the operator's account in tiny bars.
+    /// - Returns: The operator's account balance.
     public func getAccountBalance() throws -> UInt64 {
         return try AccountBalanceQuery(client: self)
             .setAccount(self.operator!.id)
             .execute()
     }
 
-    // FIXME: Doc comments
+    /// Gets the balance of the given account in tiny bars.
+    /// - Parameters:
+    ///   - account: The account to check the balance of.
+    /// - Returns: `account`'s balance.
     public func getAccountBalance(account: AccountId) throws -> UInt64 {
         return try AccountBalanceQuery(client: self)
             .setAccount(account)
             .execute()
     }
 
-    // FIXME: Doc comments
+    /// Gets the operator's account info.
+    /// - Returns: The operator's account info.
     public func getAccountInfo() throws -> AccountInfo {
         return try AccountInfoQuery(client: self)
             .setAccount(self.operator!.id)
             .execute()
     }
 
-    // FIXME: Doc comments
+    /// Gets the given account's account info.
+    /// - Parameters:
+    ///   - account: The account to get the info of.
+    /// - Returns: `account`'s account info.
     public func getAccountInfo(account: AccountId) throws -> AccountInfo {
         return try AccountInfoQuery(client: self)
             .setAccount(account)
