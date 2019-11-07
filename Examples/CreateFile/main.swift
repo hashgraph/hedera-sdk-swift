@@ -1,4 +1,5 @@
 import Hedera
+import Foundation
 
 public func clientFromEnvironment() -> Client {
     guard let nodeId = ProcessInfo.processInfo.environment["NODE_ID"] else { fatalError("environment variable NODE_ID must be set")}
@@ -13,8 +14,10 @@ public func clientFromEnvironment() -> Client {
 let client = clientFromEnvironment()
     .setMaxTransactionFee(100_000_000)
 
+let publicKey = Ed25519PrivateKey(ProcessInfo.processInfo.environment["OPERATOR_KEY"]!)!.publicKey
+
 let receipt = try! FileCreateTransaction(client: client)
-    .addKey(privateKey.publicKey)
+    .addKey(publicKey)
     .setContents("This is a test")
     .setMemo("File Create Example - Swift SDK")
     .setMaxTransactionFee(1_000_000_000)

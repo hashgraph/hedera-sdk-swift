@@ -1,4 +1,5 @@
 import Hedera
+import Foundation
 
 public func clientFromEnvironment() -> Client {
     guard let nodeId = ProcessInfo.processInfo.environment["NODE_ID"] else { fatalError("environment variable NODE_ID must be set")}
