@@ -1,0 +1,25 @@
+image: swift:5.1.1
+
+before_script:
+  - RUN apt-get update && \
+      apt-get -y install python3 libsodium-dev openssl libssl-dev libzip-dev
+
+stages:
+  - test
+
+# Master
+test:
+  stage: test
+  script:
+    - swift build
+  only:
+    - master
+
+# Merge requests
+test:
+  stage: test
+  script:
+    - swift build
+    - swift test
+  only:
+    - merge_requests
