@@ -3,11 +3,6 @@ import Sodium
 import Foundation
 import SwiftGRPC
 
-// TODO: this should probably be its own file, and possibly an enum instead
-struct HederaError: Error {
-    let message: String
-}
-
 typealias ExecuteClosure = (Proto_Transaction) throws -> Proto_TransactionResponse
 
 let RECEIPT_INITIAL_DELAY: UInt32 = 1
