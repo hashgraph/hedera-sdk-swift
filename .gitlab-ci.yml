@@ -6,19 +6,8 @@ before_script:
 stages:
   - test
 
-# Master
-test:
-  stage: test
-  script:
-    - swift build
-  only:
-    - master
-
-# Merge requests
 test:
   stage: test
   script:
     - swift build
     - swift test
-  only:
-    - merge_requests
