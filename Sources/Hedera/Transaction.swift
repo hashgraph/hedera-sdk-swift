@@ -10,8 +10,9 @@ let RECEIPT_RETRY_DELAY: TimeInterval = 0.5
 
 public class Transaction {
     var inner: Proto_Transaction
-    let txId: TransactionId
     var client: Client?
+    let txId: TransactionId
+    let nodeId: AccountId
     let kind: TransactionKind
 
     init(_ client: Client?, _ tx: Proto_Transaction) {
@@ -21,6 +22,7 @@ public class Transaction {
         inner = tx
         if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
         txId = TransactionId(body.transactionID)!
+        nodeId = AccountId(body.nodeAccountID)
         kind = TransactionKind(body.data!)
     }
 
@@ -163,10 +165,11 @@ public class Transaction {
     
     public func execute() throws -> TransactionId {
         guard let client = client else { throw HederaError(message: "client must not be nil") }
+        guard let node = client.nodes[nodeId] else { throw HederaError(message: "node ID for transaction not found in Client") }
 
         // TODO: actually handle error
         do {
-            let response = try methodForTransaction(client.grpcClient(for: client.pickNode()))(inner)
+            let response = try methodForTransaction(client.grpcClient(for: node))(inner)
             if response.nodeTransactionPrecheckCode == .ok {
                 return txId
             } else {
