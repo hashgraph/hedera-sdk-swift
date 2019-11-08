@@ -1,13 +1,18 @@
-image: swift:5.1.1
-
-before_script:
+default:
+  image: swift:5.1.1
+  before_script:
   - apt-get update && apt-get -y install python3 libsodium-dev openssl libssl-dev libzip-dev
 
 stages:
+  - build
   - test
 
-test:
-  stage: test
+build it:
+  stage: build
   script:
     - swift build
+
+test it:
+  stage: test
+  script:
     - swift test
