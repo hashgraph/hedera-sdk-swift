@@ -5,8 +5,8 @@ import SwiftGRPC
 
 typealias ExecuteClosure = (Proto_Transaction) throws -> Proto_TransactionResponse
 
-let RECEIPT_INITIAL_DELAY: UInt32 = 1
-let RECEIPT_RETRY_DELAY: TimeInterval = 0.5
+let receiptInitialDelay: UInt32 = 1
+let receiptRetryDelay: TimeInterval = 0.5
 
 public class Transaction {
     var inner: Proto_Transaction
@@ -17,7 +17,7 @@ public class Transaction {
 
     init(_ client: Client?, _ tx: Proto_Transaction) {
         let body = try! Proto_TransactionBody.init(serializedData: tx.bodyBytes)
-        
+
         self.client = client
         inner = tx
         if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
@@ -70,9 +70,9 @@ public class Transaction {
     func executeAndWaitFor<T>(mapResponse: (TransactionReceipt) throws -> T) throws -> T {
         let startTime = Date()
         var attempt: UInt8 = 0
-        let _ = try execute()
+        _ = try execute()
 
-        sleep(RECEIPT_INITIAL_DELAY)
+        sleep(receiptInitialDelay)
 
         while true {
             attempt += 1
@@ -80,7 +80,8 @@ public class Transaction {
             let receiptStatus = receipt.status
 
             // TODO: check status and use exponential backoff
-            if Int(receiptStatus) == Proto_ResponseCodeEnum.unknown.rawValue || receiptStatus == Proto_ResponseCodeEnum.ok.rawValue {
+            if Int(receiptStatus) == Proto_ResponseCodeEnum.unknown.rawValue ||
+                receiptStatus == Proto_ResponseCodeEnum.ok.rawValue {
                 // throw if the delay will put us over `validDuration`
                 guard let delayUs = getReceiptDelayUs(startTime: startTime, attempt: attempt) else {
                     throw HederaError(message: "timed out") // TODO: better error message
@@ -94,17 +95,18 @@ public class Transaction {
         }
 
     }
-    
+
     func getReceiptDelayUs(startTime: Date, attempt: UInt8) -> UInt32? {
         // exponential backoff algorithm:
         // next delay is some constant * rand(0, 2 ** attempt - 1)
-        let delay = RECEIPT_RETRY_DELAY
+        let delay = receiptRetryDelay
             * Double.random(in: 0..<Double((1 << attempt)))
 
         // if the next delay will put us past the valid duration we should stop trying
         // TODO: use the validDuration specified in the transaction
         let validDuration: TimeInterval = 2 * 60
-        if Date(timeIntervalSinceNow: delay).compare(startTime.addingTimeInterval(validDuration)) == .orderedDescending {
+        let expireInstant = startTime.addingTimeInterval(validDuration)
+        if Date(timeIntervalSinceNow: delay).compare(expireInstant) == .orderedDescending {
             return nil
         }
 
@@ -117,9 +119,9 @@ public class Transaction {
 
         return try TransactionReceiptQuery(client: client)
             .setTransactionId(txId)
-            .execute();
+            .execute()
     }
-    
+
     // MARK: - Public API
 
     public convenience init?(_ client: Client?, bytes: Data) {
@@ -127,7 +129,7 @@ public class Transaction {
         guard (try? Proto_TransactionBody.init(serializedData: tx.bodyBytes)) != nil else { return nil }
         self.init(client, tx)
     }
-    
+
     public var bytes: Bytes {
         Bytes(inner.bodyBytes)
     }
@@ -162,10 +164,13 @@ public class Transaction {
 
         return self
     }
-    
+
     public func execute() throws -> TransactionId {
         guard let client = client else { throw HederaError(message: "client must not be nil") }
-        guard let node = client.nodes[nodeId] else { throw HederaError(message: "node ID for transaction not found in Client") }
+
+        guard let node = client.nodes[nodeId] else {
+            throw HederaError(message: "node ID for transaction not found in Client")
+        }
 
         // TODO: actually handle error
         do {
@@ -179,12 +184,12 @@ public class Transaction {
             throw HederaError(message: "Error when executing transaction: \(err)")
         }
     }
-    
+
     // TODO: public func executeAsync that takes a callback function
-    
+
     public func executeForReceipt() throws -> TransactionReceipt {
         try executeAndWaitFor { $0 }
     }
-    
+
     // TODO: public func executeForReceiptAsync that takes a callback function
 }

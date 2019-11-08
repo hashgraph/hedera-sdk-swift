@@ -17,7 +17,7 @@ enum TransactionKind {
     case systemDelete
     // TODO: Freeze service
     // case freeze
-    
+
     init(_ body: Proto_TransactionBody.OneOf_Data) {
         switch body {
         case .contractCall:

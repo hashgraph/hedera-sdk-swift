@@ -10,7 +10,7 @@ let package = Package(
     ],
     products: [
         .library(name: "Hedera", targets: ["Hedera"]),
-        
+
         // Examples
         .executable(name: "SimpleCreateAccountExample", targets: ["SimpleCreateAccountExample"]),
         .executable(name: "AdvancedCreateAccountExample", targets: ["AdvancedCreateAccountExample"]),
@@ -19,7 +19,7 @@ let package = Package(
         .executable(name: "SimpleTransferCryptoExample", targets: ["SimpleTransferCryptoExample"]),
         .executable(name: "AdvancedTransferCryptoExample", targets: ["AdvancedTransferCryptoExample"]),
         .executable(name: "SimpleAccountRecordsExample", targets: ["SimpleAccountRecordsExample"]),
- ],
+    ],
     dependencies: [
         .package(url: "https://github.com/jedisct1/swift-sodium", .exact("0.8.0")),
         .package(url: "https://github.com/apple/swift-protobuf", .exact("1.6.0")),
@@ -32,7 +32,7 @@ let package = Package(
         .testTarget(
             name: "HederaTests",
             dependencies: ["Hedera"]),
-        
+
         // Examples
         .target(
             name: "SimpleCreateAccountExample",

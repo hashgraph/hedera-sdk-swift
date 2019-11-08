@@ -9,7 +9,8 @@ public struct Operator {
 
     /// - Parameters:
     ///   - id: Account ID
-    ///   - signer: closure that will be called to sign transactions. Useful for requesting signing from a hardware wallet that won't give you the private key.
+    ///   - signer: closure that will be called to sign transactions. 
+    ///     Useful for requesting signing from a hardware wallet that won't give you the private key.
     ///   - publicKey: public key associated with the signer
     public init(id: AccountId, signer: @escaping Signer, publicKey: Ed25519PublicKey) {
         self.id = id

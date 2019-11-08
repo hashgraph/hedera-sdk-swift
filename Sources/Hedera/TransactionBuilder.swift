@@ -75,21 +75,21 @@ public class TransactionBuilder {
         tx.body = body
         // swiftlint:disable:next force_try
         tx.bodyBytes = try! body.serializedData()
-        
+
         let transaction = Transaction(client, tx)
-        
+
         // Sign with the operator, if present
-        if let client = client, let clientOperator = client.operator  {
+        if let client = client, let clientOperator = client.operator {
             transaction.addSigPair(publicKey: clientOperator.publicKey, signer: clientOperator.signer)
         }
 
         return transaction
     }
-    
+
     public func execute() throws -> TransactionId {
         try build().execute()
     }
-    
+
     public func executeForReceipt() throws -> TransactionReceipt {
         try build().executeForReceipt()
     }

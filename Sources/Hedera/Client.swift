@@ -68,8 +68,8 @@ public class Client {
     /// - Returns: Self for fluent usage.
     @discardableResult
     public func setMaxQueryPayment(_ max: UInt64) -> Self {
-       maxQueryPayment = max
-       return self
+        maxQueryPayment = max
+        return self
     }
 
     @discardableResult
@@ -159,7 +159,7 @@ public class Client {
         .setAccount(self.operator!.id)
         .execute()
     }
-    
+
     /// Gets the given account's transaction records.
     /// - Parameters:
     ///   - account: The account to get the transaction records for.
