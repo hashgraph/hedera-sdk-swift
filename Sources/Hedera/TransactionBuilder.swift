@@ -31,7 +31,6 @@ public class TransactionBuilder {
         return self
     }
 
-    // TODO: should this allow setting a longer duration than max?
     @discardableResult
     public func setTransactionValidDuration(_ duration: TimeInterval) -> Self {
         body.transactionValidDuration = duration.toProto()

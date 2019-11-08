@@ -84,7 +84,7 @@ public class Transaction {
                 receiptStatus == Proto_ResponseCodeEnum.ok.rawValue {
                 // throw if the delay will put us over `validDuration`
                 guard let delayUs = getReceiptDelayUs(startTime: startTime, attempt: attempt) else {
-                    throw HederaError(message: "timed out") // TODO: better error message
+                    throw HederaError(message: "timed out")
                 }
 
                 usleep(delayUs)
@@ -103,7 +103,6 @@ public class Transaction {
             * Double.random(in: 0..<Double((1 << attempt)))
 
         // if the next delay will put us past the valid duration we should stop trying
-        // TODO: use the validDuration specified in the transaction
         let validDuration: TimeInterval = 2 * 60
         let expireInstant = startTime.addingTimeInterval(validDuration)
         if Date(timeIntervalSinceNow: delay).compare(expireInstant) == .orderedDescending {
@@ -172,7 +171,6 @@ public class Transaction {
             throw HederaError(message: "node ID for transaction not found in Client")
         }
 
-        // TODO: actually handle error
         do {
             let response = try methodForTransaction(client.grpcClient(for: node))(inner)
             if response.nodeTransactionPrecheckCode == .ok {
@@ -185,11 +183,7 @@ public class Transaction {
         }
     }
 
-    // TODO: public func executeAsync that takes a callback function
-
     public func executeForReceipt() throws -> TransactionReceipt {
         try executeAndWaitFor { $0 }
     }
-
-    // TODO: public func executeForReceiptAsync that takes a callback function
 }

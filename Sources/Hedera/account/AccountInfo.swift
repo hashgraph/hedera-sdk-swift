@@ -13,7 +13,6 @@ public struct AccountInfo {
     let receiverSigRequired: Bool
     let expirationTime: Date
     let autoRenewPeriod: TimeInterval
-    // TODO: Claims
 
     init(_ accountInfo: Proto_CryptoGetInfoResponse.AccountInfo) {
         let proxyAccountId: AccountId?

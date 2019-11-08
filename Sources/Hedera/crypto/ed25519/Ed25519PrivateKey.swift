@@ -4,8 +4,6 @@ let ed25519PrivateKeyPrefix = "302e020100300506032b657004220420"
 let ed25519PrivateKeyLength = 32
 let combinedEd25519KeyLength = 64
 
-// TODO: init using a pem file
-
 public struct Ed25519PrivateKey {
     private let inner: Sign.KeyPair
 

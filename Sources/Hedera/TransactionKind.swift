@@ -15,7 +15,6 @@ enum TransactionKind {
     case fileUpdate
     case systemUndelete
     case systemDelete
-    // TODO: Freeze service
     // case freeze
 
     init(_ body: Proto_TransactionBody.OneOf_Data) {
