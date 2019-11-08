@@ -152,6 +152,24 @@ public class Client {
             .execute()
     }
 
+    /// Gets the operator's Transaction Records.
+    /// - Returns: The operator's Transaction Records.
+    public func getAccountRecords() throws -> [TransactionRecord] {
+        return try AccountRecordsQuery(client: self)
+        .setAccount(self.operator!.id)
+        .execute()
+    }
+    
+    /// Gets the given account's transaction records.
+    /// - Parameters:
+    ///   - account: The account to get the transaction records for.
+    /// - Returns: `account`'s transaction records.
+    public func getAccountRecords(account: AccountId) throws -> [TransactionRecord] {
+        return try AccountRecordsQuery(client: self)
+        .setAccount(account)
+        .execute()
+    }
+
     private func channelFor(node: Node) -> Channel {
         // TODO: what if the node is not on the client?
         if let channel = channels[node.accountId] {
