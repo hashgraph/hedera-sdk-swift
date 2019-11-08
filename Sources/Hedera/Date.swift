@@ -48,13 +48,12 @@ extension Date: LosslessStringConvertible {
         guard parts.count == 2 else { return nil }
 
         guard let seconds = Int64(parts[parts.startIndex]) else { return nil }
-    guard let nanos = Int32(parts[parts.startIndex.advanced(by: 1)]) else { return nil }
+        guard let nanos = Int32(parts[parts.startIndex.advanced(by: 1)]) else { return nil }
 
         self = Date(timeIntervalSince1970: Double(seconds) + (Double(nanos) / Date.nanosPerSecond))
     }
 }
 
-// TODO: move to its own file?
 extension TimeInterval: ProtoConvertible {
     typealias Proto = Proto_Duration
 

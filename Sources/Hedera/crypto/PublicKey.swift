@@ -21,7 +21,6 @@ public class PublicKey: CustomStringConvertible, CustomDebugStringConvertible {
         case .thresholdKey:
             return ThresholdKey(key)
         case .rsa3072, .ecdsa384, .none:
-            // TODO: implement rsa and ecdsa eventually
             return nil
         }
     }

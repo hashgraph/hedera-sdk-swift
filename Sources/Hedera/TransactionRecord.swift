@@ -34,16 +34,16 @@ public struct AccountAmount {
 }
 
 public enum ContractResultType {
-    case Call(FunctionResult)
-    case Create(FunctionResult)
+    case call(FunctionResult)
+    case create(FunctionResult)
 
     init?(_ body: Proto_TransactionRecord.OneOf_Body?) {
         if let body = body {
             switch body {
-            case .contractCallResult(let result): 
-                self = ContractResultType.Call(FunctionResult(result))
-            case .contractCreateResult(let result): 
-                self = ContractResultType.Create(FunctionResult(result))
+            case .contractCallResult(let result):
+                self = ContractResultType.call(FunctionResult(result))
+            case .contractCreateResult(let result):
+                self = ContractResultType.create(FunctionResult(result))
             }
         } else {
             return nil

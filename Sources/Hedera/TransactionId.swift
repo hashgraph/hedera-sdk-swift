@@ -2,8 +2,8 @@ import SwiftProtobuf
 import Foundation
 
 public struct TransactionId {
-   let accountId: AccountId
-   let transactionValidStart: Date
+    let accountId: AccountId
+    let transactionValidStart: Date
 
     public init(account id: AccountId) {
         accountId = id

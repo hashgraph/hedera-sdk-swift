@@ -7,14 +7,14 @@ public struct FileInfo {
     let size: UInt64
     let expirationTime: Date
     let deleted: Bool
-    // TODO:
-    // let keys: Ed25519PublicKey[]
+    let keys: KeyList
 
     init(_ info: Proto_FileGetInfoResponse.FileInfo) {
         fileId = FileId(info.fileID)
         size = UInt64(info.size)
         expirationTime = Date(info.expirationTime)
         deleted = info.deleted
+        keys = KeyList(info.keys)!
     }
 }
 

@@ -22,10 +22,9 @@ public class Client {
     /// This can be overridden on an individual transaction with `setMaxTransactionFee()`.
     var maxTransactionFee = defaultMaxTransactionFee
 
-    // TODO: once queries are implemented    
-    // /// The maximum payment that can be automatically attached to a query.
-    // /// If this is not set, payments will not be made automatically for queries.
-    // /// This can be overridden for an individual query with `.setPayment()`.
+    /// The maximum payment that can be automatically attached to a query.
+    /// If this is not set, payments will not be made automatically for queries.
+    /// This can be overridden for an individual query with `.setPayment()`.
     var maxQueryPayment: UInt64?
 
     public init(node id: AccountId, address url: String) {
@@ -68,8 +67,8 @@ public class Client {
     /// - Returns: Self for fluent usage.
     @discardableResult
     public func setMaxQueryPayment(_ max: UInt64) -> Self {
-       maxQueryPayment = max
-       return self
+        maxQueryPayment = max
+        return self
     }
 
     @discardableResult
@@ -102,7 +101,6 @@ public class Client {
             .accountId!
     }
 
-    // FIXME: Get `TransactionId` from `TransactionReceipt` once it has one.
     /// Sends `amount` of tiny bar to `recipient`.
     /// - Parameters:
     ///   - recipient: The recipient of the crypto.
@@ -159,7 +157,7 @@ public class Client {
         .setAccount(self.operator!.id)
         .execute()
     }
-    
+
     /// Gets the given account's transaction records.
     /// - Parameters:
     ///   - account: The account to get the transaction records for.
@@ -171,7 +169,6 @@ public class Client {
     }
 
     private func channelFor(node: Node) -> Channel {
-        // TODO: what if the node is not on the client?
         if let channel = channels[node.accountId] {
             return channel
         } else {

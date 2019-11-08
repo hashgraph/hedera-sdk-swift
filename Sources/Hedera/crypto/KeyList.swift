@@ -11,6 +11,15 @@ public final class KeyList: PublicKey {
         super.init()
     }
 
+    init?(_ proto: Proto_KeyList) {
+        guard proto.keys.count > 0 else { return nil }
+        keys = proto.keys.compactMap(PublicKey.fromProto)
+
+        // Don't want to silently throw away keys we don't recognize
+        guard proto.keys.count == keys.count else { return nil }
+        super.init()
+    }
+
     override func toProto() -> Proto_Key {
         var proto = Proto_Key()
         proto.keyList = toProto()
