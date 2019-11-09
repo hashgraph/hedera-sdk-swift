@@ -13,6 +13,7 @@ public struct AccountInfo {
     let receiverSigRequired: Bool
     let expirationTime: Date
     let autoRenewPeriod: TimeInterval
+    let claims: [Claim]
 
     init(_ accountInfo: Proto_CryptoGetInfoResponse.AccountInfo) {
         let proxyAccountId: AccountId?
@@ -34,5 +35,6 @@ public struct AccountInfo {
         receiverSigRequired = accountInfo.receiverSigRequired
         expirationTime = Date(accountInfo.expirationTime)
         autoRenewPeriod = TimeInterval(accountInfo.autoRenewPeriod)!
+        claims = accountInfo.claims.map(Claim.init)
     }
 }
