@@ -37,11 +37,11 @@ public class ContractInfoQuery: QueryBuilder<ContractInfo> {
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) throws -> ContractInfo {
+    override func mapResponse(_ response: Proto_Response) -> Result<ContractInfo, HederaError> {
         guard case .contractGetInfo(let response) = response.response else {
-            throw HederaError(message: "query response was not of type contract info")
+            return .failure(HederaError(message: "query response was not of type contract info"))
         }
 
-        return ContractInfo(response.contractInfo)
+        return .success(ContractInfo(response.contractInfo))
     }
 }

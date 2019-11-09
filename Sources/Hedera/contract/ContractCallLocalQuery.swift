@@ -27,13 +27,11 @@ public class ContractCallLocalQuery: QueryBuilder<FunctionResult> {
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) throws -> FunctionResult {
+    override func mapResponse(_ response: Proto_Response) -> Result<FunctionResult, HederaError> {
         guard case .contractCallLocal(let response) =  response.response else {
-            throw HederaError(message: "query response was not of type 'contractCallLocal'")
+            return .failure(HederaError(message: "query response was not of type 'contractCallLocal'"))
         }
 
-        let result = response.functionResult
-
-        return FunctionResult(result)
+        return .success(FunctionResult(response.functionResult))
     }
 }

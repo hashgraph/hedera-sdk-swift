@@ -11,11 +11,11 @@ public final class TransactionRecordQuery: QueryBuilder<TransactionRecord> {
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) throws -> TransactionRecord {
+    override func mapResponse(_ response: Proto_Response) -> Result<TransactionRecord, HederaError> {
         guard case .transactionGetRecord(let response) = response.response else {
-            throw HederaError(message: "query response was not of type 'transactionGetRecord'")
+            return .failure(HederaError(message: "query response was not of type 'transactionGetRecord'"))
         }
 
-        return TransactionRecord(response.transactionRecord)
+        return .success(TransactionRecord(response.transactionRecord))
     }
 }

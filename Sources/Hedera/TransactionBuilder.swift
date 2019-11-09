@@ -85,11 +85,11 @@ public class TransactionBuilder {
         return transaction
     }
 
-    public func execute() throws -> TransactionId {
-        try build().execute()
+    public func execute() -> Result<TransactionId, HederaError> {
+        build().execute()
     }
 
-    public func executeForReceipt() throws -> TransactionReceipt {
-        try build().executeForReceipt()
+    public func executeForReceipt() -> Result<TransactionReceipt, HederaError> {
+        build().executeForReceipt()
     }
 }

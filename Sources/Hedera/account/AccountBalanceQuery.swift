@@ -11,11 +11,11 @@ public class AccountBalanceQuery: QueryBuilder<UInt64> {
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) throws -> UInt64 {
+    override func mapResponse(_ response: Proto_Response) -> Result<UInt64, HederaError> {
         guard case .cryptogetAccountBalance(let response) = response.response else {
-            throw HederaError(message: "Query response was not of type account balance")
+            return .failure(HederaError(message: "Query response was not of type account balance"))
         }
 
-        return response.balance
+        return .success(response.balance)
     }
 }

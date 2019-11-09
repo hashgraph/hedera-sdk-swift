@@ -11,11 +11,11 @@ public class AccountInfoQuery: QueryBuilder<AccountInfo> {
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) throws -> AccountInfo {
+    override func mapResponse(_ response: Proto_Response) -> Result<AccountInfo, HederaError> {
         guard case .cryptoGetInfo(let response) =  response.response else {
-            throw HederaError(message: "query response was not of type account info")
+            return .failure(HederaError(message: "query response was not of type account info"))
         }
 
-        return AccountInfo(response.accountInfo)
+        return .success(AccountInfo(response.accountInfo))
     }
 }

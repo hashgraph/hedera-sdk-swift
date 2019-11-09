@@ -15,11 +15,11 @@ public class ContractGetRecordsQuery: QueryBuilder<[TransactionRecord]> {
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) throws -> [TransactionRecord] {
+    override func mapResponse(_ response: Proto_Response) -> Result<[TransactionRecord], HederaError> {
         guard case .contractGetRecordsResponse(let response) =  response.response else {
-            throw HederaError(message: "query response was not of type 'contractGetRecords'")
+            return .failure(HederaError(message: "query response was not of type 'contractGetRecords'"))
         }
 
-        return response.records.map(TransactionRecord.init)
+        return .success(response.records.map(TransactionRecord.init))
     }
 }

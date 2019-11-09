@@ -11,11 +11,11 @@ public class AccountRecordsQuery: QueryBuilder<[TransactionRecord]> {
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) throws -> [TransactionRecord] {
+    override func mapResponse(_ response: Proto_Response) -> Result<[TransactionRecord], HederaError> {
         guard case .cryptoGetAccountRecords(let response) = response.response else {
-            throw HederaError(message: "Query response was not of type crypto account records")
+            return .failure(HederaError(message: "Query response was not of type crypto account records"))
         }
 
-        return response.records.map(TransactionRecord.init)
+        return .success(response.records.map(TransactionRecord.init))
     }
 }

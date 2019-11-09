@@ -92,13 +92,13 @@ public class Client {
     ///   - key: The public key to use for account Creation.
     ///   - balance: The initial balance of the account.
     /// - Returns: The transaction's ID.
-    public func createAccount(key: Ed25519PublicKey, balance: UInt64) throws -> AccountId {
-        return try AccountCreateTransaction(client: self)
+    public func createAccount(key: Ed25519PublicKey, balance: UInt64) -> Result<AccountId, HederaError> {
+        AccountCreateTransaction(client: self)
             .setInitialBalance(balance)
             .setKey(key)
             .build()
             .executeForReceipt()
-            .accountId!
+            .map { $0.accountId! }
     }
 
     /// Sends `amount` of tiny bar to `recipient`.
@@ -106,8 +106,8 @@ public class Client {
     ///   - recipient: The recipient of the crypto.
     ///   - amount: The amount of tiny bar to send.
     /// - Returns: The transaction's ID.
-    public func transferCryptoTo(recipient: AccountId, amount: UInt64) throws -> TransactionId {
-        return try CryptoTransferTransaction(client: self)
+    public func transferCryptoTo(recipient: AccountId, amount: UInt64) -> Result<TransactionId, HederaError> {
+        CryptoTransferTransaction(client: self)
             .add(sender: self.operator!.id, amount: amount)
             .add(recipient: recipient, amount: amount)
             .build()
@@ -116,8 +116,8 @@ public class Client {
 
     /// Gets the balance of the operator's account in tiny bars.
     /// - Returns: The operator's account balance.
-    public func getAccountBalance() throws -> UInt64 {
-        return try AccountBalanceQuery(client: self)
+    public func getAccountBalance() -> Result<UInt64, HederaError> {
+        AccountBalanceQuery(client: self)
             .setAccount(self.operator!.id)
             .execute()
     }
@@ -126,16 +126,16 @@ public class Client {
     /// - Parameters:
     ///   - account: The account to check the balance of.
     /// - Returns: `account`'s balance.
-    public func getAccountBalance(account: AccountId) throws -> UInt64 {
-        return try AccountBalanceQuery(client: self)
+    public func getAccountBalance(account: AccountId) -> Result<UInt64, HederaError> {
+        AccountBalanceQuery(client: self)
             .setAccount(account)
             .execute()
     }
 
     /// Gets the operator's account info.
     /// - Returns: The operator's account info.
-    public func getAccountInfo() throws -> AccountInfo {
-        return try AccountInfoQuery(client: self)
+    public func getAccountInfo() -> Result<AccountInfo, HederaError> {
+        AccountInfoQuery(client: self)
             .setAccount(self.operator!.id)
             .execute()
     }
@@ -144,28 +144,28 @@ public class Client {
     /// - Parameters:
     ///   - account: The account to get the info of.
     /// - Returns: `account`'s account info.
-    public func getAccountInfo(account: AccountId) throws -> AccountInfo {
-        return try AccountInfoQuery(client: self)
+    public func getAccountInfo(account: AccountId) -> Result<AccountInfo, HederaError> {
+        AccountInfoQuery(client: self)
             .setAccount(account)
             .execute()
     }
 
     /// Gets the operator's Transaction Records.
     /// - Returns: The operator's Transaction Records.
-    public func getAccountRecords() throws -> [TransactionRecord] {
-        return try AccountRecordsQuery(client: self)
-        .setAccount(self.operator!.id)
-        .execute()
+    public func getAccountRecords() -> Result<[TransactionRecord], HederaError> {
+        AccountRecordsQuery(client: self)
+            .setAccount(self.operator!.id)
+            .execute()
     }
 
     /// Gets the given account's transaction records.
     /// - Parameters:
     ///   - account: The account to get the transaction records for.
     /// - Returns: `account`'s transaction records.
-    public func getAccountRecords(account: AccountId) throws -> [TransactionRecord] {
-        return try AccountRecordsQuery(client: self)
-        .setAccount(account)
-        .execute()
+    public func getAccountRecords(account: AccountId) -> Result<[TransactionRecord], HederaError> {
+        AccountRecordsQuery(client: self)
+            .setAccount(account)
+            .execute()
     }
 
     private func channelFor(node: Node) -> Channel {

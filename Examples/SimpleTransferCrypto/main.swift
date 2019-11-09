@@ -14,6 +14,6 @@ public func clientFromEnvironment() -> Client {
 let client = clientFromEnvironment()
     .setMaxTransactionFee(100_000_000)
 
-try! client.transferCryptoTo(recipient: AccountId("0.0.2")!, amount: 10000)
+let transactionId = try! client.transferCryptoTo(recipient: AccountId("0.0.2")!, amount: 10000).get()
 
 print("Crypto transferred successfully")

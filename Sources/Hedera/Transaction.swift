@@ -67,33 +67,36 @@ public class Transaction {
         inner
     }
 
-    func executeAndWaitFor<T>(mapResponse: (TransactionReceipt) throws -> T) throws -> T {
+    func executeAndWaitFor<T>(mapResponse: (TransactionReceipt) -> T) -> Result<T, HederaError> {
         let startTime = Date()
         var attempt: UInt8 = 0
-        _ = try execute()
+        _ = execute()
 
         sleep(receiptInitialDelay)
 
         while true {
             attempt += 1
-            let receipt = try queryReceipt()
-            let receiptStatus = receipt.status
+            
+            let receipt = queryReceipt()
+            switch receipt {
+            case .success(let receipt):
+                let receiptStatus = receipt.status
 
-            // TODO: check status and use exponential backoff
-            if Int(receiptStatus) == Proto_ResponseCodeEnum.unknown.rawValue ||
-                receiptStatus == Proto_ResponseCodeEnum.ok.rawValue {
-                // throw if the delay will put us over `validDuration`
-                guard let delayUs = getReceiptDelayUs(startTime: startTime, attempt: attempt) else {
-                    throw HederaError(message: "timed out")
+                if Int(receiptStatus) == Proto_ResponseCodeEnum.unknown.rawValue ||
+                    receiptStatus == Proto_ResponseCodeEnum.ok.rawValue {
+                    // stop trying if the delay will put us over `validDuration`
+                    guard let delayUs = getReceiptDelayUs(startTime: startTime, attempt: attempt) else {
+                        return .failure(HederaError(message: "executeForReceipt timed out"))
+                    }
+
+                    usleep(delayUs)
+                } else {
+                    return .success(mapResponse(receipt))
                 }
-
-                usleep(delayUs)
-            } else {
-                // TODO: throw error if the response code is bad
-                return try mapResponse(receipt)
+            case .failure(let error):
+                return .failure(error)
             }
         }
-
     }
 
     func getReceiptDelayUs(startTime: Date, attempt: UInt8) -> UInt32? {
@@ -113,10 +116,10 @@ public class Transaction {
         return UInt32(delay * 1000000)
     }
 
-    func queryReceipt() throws -> TransactionReceipt {
-        guard let client = client else { throw HederaError(message: "client must not be nil") }
+    func queryReceipt() -> Result<TransactionReceipt, HederaError> {
+        guard let client = client else { return .failure(HederaError(message: "client must not be nil")) }
 
-        return try TransactionReceiptQuery(client: client)
+        return TransactionReceiptQuery(client: client)
             .setTransactionId(txId)
             .execute()
     }
@@ -134,7 +137,7 @@ public class Transaction {
     }
 
     @discardableResult
-    public func sign(with key: Ed25519PrivateKey) throws -> Self {
+    public func sign(with key: Ed25519PrivateKey) -> Self {
         let sig = key.sign(message: Bytes(inner.bodyBytes))
 
         return addSigPair(publicKey: key.publicKey, signature: sig)
@@ -164,26 +167,26 @@ public class Transaction {
         return self
     }
 
-    public func execute() throws -> TransactionId {
-        guard let client = client else { throw HederaError(message: "client must not be nil") }
+    public func execute() -> Result<TransactionId, HederaError> {
+        guard let client = client else { return .failure(HederaError(message: "client must not be nil")) }
 
         guard let node = client.nodes[nodeId] else {
-            throw HederaError(message: "node ID for transaction not found in Client")
+            return .failure(HederaError(message: "node ID for transaction not found in Client"))
         }
 
         do {
             let response = try methodForTransaction(client.grpcClient(for: node))(inner)
             if response.nodeTransactionPrecheckCode == .ok {
-                return txId
+                return .success(txId)
             } else {
-                throw HederaError(message: "preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)")
+                return .failure(HederaError(message: "preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)"))
             }
         } catch let err {
-            throw HederaError(message: "Error when executing transaction: \(err)")
+            return .failure(HederaError(message: "Error when executing transaction: \(err)"))
         }
     }
 
-    public func executeForReceipt() throws -> TransactionReceipt {
-        try executeAndWaitFor { $0 }
+    public func executeForReceipt() -> Result<TransactionReceipt, HederaError> {
+        executeAndWaitFor { $0 }
     }
 }
