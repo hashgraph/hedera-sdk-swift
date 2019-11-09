@@ -18,5 +18,6 @@ let client = clientFromEnvironment()
 let fileInfo = try! FileInfoQuery(client: client)
     .setFile(FileId(119300))
     .execute()
+    .get()
 
 print("FileInfo Example succeeded with result \(fileInfo)")

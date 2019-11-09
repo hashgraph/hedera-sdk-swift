@@ -31,11 +31,11 @@ public class FileInfoQuery: QueryBuilder<FileInfo> {
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) throws -> FileInfo {
+    override func mapResponse(_ response: Proto_Response) -> Result<FileInfo, HederaError> {
         guard case .fileGetInfo(let response) = response.response else {
-            throw HederaError(message: "query response was not of type file info")
+            return .failure(HederaError(message: "query response was not of type file info"))
         }
 
-        return FileInfo(response.fileInfo)
+        return .success(FileInfo(response.fileInfo))
     }
 }

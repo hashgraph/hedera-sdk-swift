@@ -7,11 +7,11 @@ public class TransactionReceiptQuery: QueryBuilder<TransactionReceipt> {
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) throws -> TransactionReceipt {
+    override func mapResponse(_ response: Proto_Response) -> Result<TransactionReceipt, HederaError> {
         guard case .transactionGetReceipt(let response) = response.response else {
-            throw HederaError(message: "query response is not of type transaction receipt")
+            return .failure(HederaError(message: "query response is not of type transaction receipt"))
         }
 
-        return TransactionReceipt(response.receipt)
+        return .success(TransactionReceipt(response.receipt))
     }
 }

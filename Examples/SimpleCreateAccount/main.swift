@@ -17,6 +17,6 @@ let client = clientFromEnvironment()
 let newAccountKey = Ed25519PrivateKey()
 print("private key for new account: \(newAccountKey)")
 
-let accountId = try! client.createAccount(key: newAccountKey.publicKey, balance: 0)
+let accountId = try! client.createAccount(key: newAccountKey.publicKey, balance: 0).get()
 
 print("Account created: \(accountId)")

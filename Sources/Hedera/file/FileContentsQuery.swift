@@ -25,11 +25,12 @@ public class FileContentsQuery: QueryBuilder<FileContents> {
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) throws -> FileContents {
+    override func mapResponse(_ response: Proto_Response) -> Result<FileContents, HederaError> {
         guard case .fileGetContents(let response) = response.response else {
-            throw HederaError(message: "query response was not of type file contents")
+            return .failure(HederaError(message: "query response was not of type file contents"))
         }
 
-        return FileContents(response.fileContents)
+        return .success(FileContents(response.fileContents))
     }
+    
 }

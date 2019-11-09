@@ -15,11 +15,11 @@ public class ContractBytecodeQuery: QueryBuilder<Data> {
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) throws -> Data {
+    override func mapResponse(_ response: Proto_Response) -> Result<Data, HederaError> {
         guard case .contractGetBytecodeResponse(let response) = response.response else {
-            throw HederaError(message: "query response was not of type contract bytecode")
+            return .failure(HederaError(message: "query response was not of type contract bytecode"))
         }
 
-        return response.bytecode
+        return .success(response.bytecode)
     }
 }

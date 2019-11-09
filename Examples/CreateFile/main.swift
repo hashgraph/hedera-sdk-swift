@@ -22,5 +22,6 @@ let receipt = try! FileCreateTransaction(client: client)
     .setMemo("File Create Example - Swift SDK")
     .setMaxTransactionFee(1_000_000_000)
     .executeForReceipt()
+    .get()
 
 print("File created: \(receipt.fileId!)")

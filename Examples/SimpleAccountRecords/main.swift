@@ -14,6 +14,6 @@ public func clientFromEnvironment() -> Client {
 let client = clientFromEnvironment()
     .setMaxQueryPayment(100_000_000)
 
-let records = try! client.getAccountRecords()
+let records = try! client.getAccountRecords().get()
 
 print("records fetched successfully")

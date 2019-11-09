@@ -40,7 +40,7 @@ public class QueryBuilder<Response> {
     }
 
     @discardableResult
-    public func requestCost() throws -> UInt64 {
+    public func requestCost() -> Result<UInt64, HederaError> {
         let responseType = header.responseType
         let payment = header.payment
 
@@ -53,18 +53,24 @@ public class QueryBuilder<Response> {
         header.responseType = Proto_ResponseType.costAnswer
         setPayment(0)
 
-        let response = try methodForQuery(client.grpcClient(for: node))(body)
+        let responseHeader = Result { try methodForQuery(client.grpcClient(for: node))(body) }
+            .map { getResponseHeader($0) }
 
-        let resHeader = getResponseHeader(response)
+        switch responseHeader {
+        case .success(let header):
+            let preCheckCode = header.nodeTransactionPrecheckCode
+            if preCheckCode != .ok && preCheckCode != .success {
+                return .failure(HederaError(
+                    message: "received error code: \(preCheckCode) while requesting query cost"
+                ))
+            }
 
-        if resHeader.nodeTransactionPrecheckCode != .ok
-            && resHeader.nodeTransactionPrecheckCode != .success {
-            throw HederaError(
-                message: "Received error code: \(resHeader.nodeTransactionPrecheckCode) while requesting query cost"
-            )
+            return .success(header.cost)
+        case .failure(let error as HederaError):
+            return .failure(error)
+        case .failure(let error):
+            return .failure(HederaError(message: "failed to get cost for query: \(error)"))
         }
-
-        return resHeader.cost
     }
 
     func getResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
@@ -121,7 +127,7 @@ public class QueryBuilder<Response> {
         case .fileGetInfo:
             return grpc.fileService.getFileInfo
         case .transactionGetReceipt:
-            return grpc.cryptoService.getTransactionReceipts(_:)
+            return grpc.cryptoService.getTransactionReceipts
         case .transactionGetRecord:
             return grpc.cryptoService.getTxRecordByTxID
         case .transactionGetFastRecord:
@@ -129,31 +135,39 @@ public class QueryBuilder<Response> {
         }
     }
 
-    public func execute() throws -> Response {
+    public func execute() -> Result<Response, HederaError> {
         if needsPayment && !header.hasPayment {
-            let cost = try requestCost()
-
-            if let maxQueryPayment = client.maxQueryPayment {
-                if cost > maxQueryPayment {
-                    throw HederaError(message: "Query payment exceeds maxQueryPayment")
+            switch requestCost() {
+            case .success(let cost):
+                if let maxQueryPayment = client.maxQueryPayment {
+                    if cost > maxQueryPayment {
+                        return .failure(HederaError(message: "Query payment exceeds maxQueryPayment"))
+                    }
                 }
+
+                setPayment(cost)
+            case .failure(let error):
+                return .failure(error)
+            }
+        }
+
+        do {
+            let response = try methodForQuery(client.grpcClient(for: node))(body)
+            
+            let resHeader = getResponseHeader(response)
+
+            if resHeader.nodeTransactionPrecheckCode != .ok && resHeader.nodeTransactionPrecheckCode != .success {
+                return .failure(HederaError(message: "Received error code: \(resHeader.nodeTransactionPrecheckCode) while executing"))
             }
 
-            setPayment(cost)
+            return mapResponse(response)
+        } catch let error {
+            // FIXME
+            return .failure(HederaError(message: "error: \(error)"))
         }
-
-        let response = try methodForQuery(client.grpcClient(for: node))(body)
-
-        let resHeader = getResponseHeader(response)
-
-        if resHeader.nodeTransactionPrecheckCode != .ok && resHeader.nodeTransactionPrecheckCode != .success {
-            throw HederaError(message: "Received error code: \(resHeader.nodeTransactionPrecheckCode) while executing")
-        }
-
-        return try mapResponse(response)
     }
 
-    func mapResponse(_ response: Proto_Response) throws -> Response {
+    func mapResponse(_ response: Proto_Response) -> Result<Response, HederaError> {
         fatalError("mapResponse member must be overridden")
     }
 
