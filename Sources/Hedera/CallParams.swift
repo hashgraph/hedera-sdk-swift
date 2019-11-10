@@ -13,9 +13,51 @@ public final class CallParams {
         _ = try! functionSelector?.addParamType(typeName: paramType)
     }
 
-    public func addString(param: String) -> CallParams {
+    public func add(param: String) -> CallParams {
         addParamType(paramType: "string")
         args.append(Argument(value: encodeString(param)))
+
+        return self
+    }
+
+    public func add(strings: [String]) -> CallParams {
+        let byteStrings = Array(strings.map(encodeString))
+
+        let argBytes = encodeDynArray(elements: byteStrings, prependLen: true)
+
+        addParamType(paramType: "string[]")
+        args.append(Argument(value: argBytes))
+
+        return self
+    }
+
+    public func add(bytes: [UInt8]) -> CallParams {
+        addParamType(paramType: "bytes")
+        args.append(Argument(value: encodeBytes(bytes: bytes)))
+
+        return self
+    }
+
+    public func addFixedLength(strings: [String]) -> CallParams {
+        let byteStrings = Array(strings.map(encodeString))
+
+        let argBytes = encodeDynArray(elements: byteStrings, prependLen: true)
+
+        addParamType(paramType: "string[\(byteStrings.count)]")
+        args.append(Argument(value: argBytes))
+
+        return self
+    }
+
+    public func addFixedLength(bytes: [UInt8]) throws -> CallParams {
+        guard bytes.count <= 32 else {
+            throw HederaError(message: 
+                "bytesN cannot have a length greater than 32; given length: \(bytes.count)"
+            )
+        }
+
+        addParamType(paramType: "bytes\(bytes.count)")
+        args.append(try Argument(value: padRight(bytes), isDynamic: false))
 
         return self
     }
@@ -106,6 +148,25 @@ private func encodeArray(elements: [[UInt8]], prependLen: Bool) -> [UInt8] {
     } else {
         return Array(elements.joined())
     }
+}
+
+private func encodeDynArray(elements: [[UInt8]], prependLen: Bool) -> [UInt8] {
+    let offsetsLen = elements.count + (prependLen ? 1 : 0)
+
+    var offsets = Array<UInt8>()
+
+    if (prependLen) {
+        offsets.append(contentsOf: int256(val: Int64(elements.count), bitwidth: 32))
+    }
+
+    var currentOffset = Int64(offsetsLen) * 32
+
+    for elem in elements {
+        offsets.append(contentsOf: int256(val: currentOffset, bitwidth: 64))
+        currentOffset += Int64(elem.count)
+    }
+
+    return offsets + elements.joined()
 }
 
 private func int256(val: Int64, bitwidth: UInt8) -> [UInt8] {
