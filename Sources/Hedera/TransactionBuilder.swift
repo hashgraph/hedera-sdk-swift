@@ -84,12 +84,4 @@ public class TransactionBuilder {
 
         return transaction
     }
-
-    public func execute() -> Result<TransactionId, HederaError> {
-        build().execute()
-    }
-
-    public func executeForReceipt() -> Result<TransactionReceipt, HederaError> {
-        build().executeForReceipt()
-    }
 }

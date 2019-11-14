@@ -68,44 +68,44 @@ public class Transaction {
         inner
     }
 
-    func executeAndWaitFor<T>(mapResponse: (TransactionReceipt) -> T) -> Result<T, HederaError> {
-        let startTime = Date()
-        var attempt: UInt8 = 0
+    // func executeAndWaitFor<T>(_ client: Client, mapResponse: (TransactionReceipt) -> T) -> Result<T, HederaError> {
+    //     let startTime = Date()
+    //     var attempt: UInt8 = 0
 
-        // There's no point asking for the receipt of a transaction that failed to go through
-        switch execute() {
-        case .failure(let error):
-            return .failure(error)
-        default:
-            break
-        }
+    //     // There's no point asking for the receipt of a transaction that failed to go through
+    //     switch execute() {
+    //     case .failure(let error):
+    //         return .failure(error)
+    //     default:
+    //         break
+    //     }
 
-        sleep(receiptInitialDelay)
+    //     sleep(receiptInitialDelay)
 
-        while true {
-            attempt += 1
+    //     while true {
+    //         attempt += 1
             
-            let receipt = queryReceipt()
-            switch receipt {
-            case .success(let receipt):
-                let receiptStatus = receipt.status
+    //         let receipt = queryReceipt(client)
+    //         switch receipt {
+    //         case .success(let receipt):
+    //             let receiptStatus = receipt.status
 
-                if Int(receiptStatus) == Proto_ResponseCodeEnum.unknown.rawValue ||
-                    receiptStatus == Proto_ResponseCodeEnum.ok.rawValue {
-                    // stop trying if the delay will put us over `validDuration`
-                    guard let delayUs = getReceiptDelayUs(startTime: startTime, attempt: attempt) else {
-                        return .failure(HederaError(message: "executeForReceipt timed out"))
-                    }
+    //             if Int(receiptStatus) == Proto_ResponseCodeEnum.unknown.rawValue ||
+    //                 receiptStatus == Proto_ResponseCodeEnum.ok.rawValue {
+    //                 // stop trying if the delay will put us over `validDuration`
+    //                 guard let delayUs = getReceiptDelayUs(startTime: startTime, attempt: attempt) else {
+    //                     return .failure(HederaError(message: "executeForReceipt timed out"))
+    //                 }
 
-                    usleep(delayUs)
-                } else {
-                    return .success(mapResponse(receipt))
-                }
-            case .failure(let error):
-                return .failure(error)
-            }
-        }
-    }
+    //                 usleep(delayUs)
+    //             } else {
+    //                 return .success(mapResponse(receipt))
+    //             }
+    //         case .failure(let error):
+    //             return .failure(error)
+    //         }
+    //     }
+    // }
 
     func getReceiptDelayUs(startTime: Date, attempt: UInt8) -> UInt32? {
         // exponential backoff algorithm:
@@ -191,15 +191,35 @@ public class Transaction {
         }
     }
 
-    public func executeForReceipt() -> Result<TransactionReceipt, HederaError> {
-        executeAndWaitFor { $0 }
-    }
-
     public func queryReceipt() -> Result<TransactionReceipt, HederaError> {
         guard let client = client else { return .failure(HederaError(message: "client must not be nil")) }
 
         return TransactionReceiptQuery(client: client)
-            .setTransactionId(txId)
+            .setTransaction(txId)
             .execute()
+    }
+
+    public func queryReceiptAsync() -> EventLoopFuture<Result<TransactionReceipt, HederaError>> {
+        guard let client = client else { fatalError("client must not be nil") }
+
+        return TransactionReceiptQuery(client: client)
+            .setTransaction(txId)
+            .executeAsync()
+    }
+
+    public func queryRecord() -> Result<TransactionRecord, HederaError> {
+        guard let client = client else { return .failure(HederaError(message: "client must not be nil")) }
+
+        return TransactionRecordQuery(client: client)
+            .setTransaction(txId)
+            .execute()
+    }
+
+    public func queryRecordAsync() -> EventLoopFuture<Result<TransactionRecord, HederaError>> {
+        guard let client = client else { fatalError("client must not be nil") }
+
+        return TransactionRecordQuery(client: client)
+            .setTransaction(txId)
+            .executeAsync()
     }
 }
