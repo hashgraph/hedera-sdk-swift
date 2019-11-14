@@ -20,82 +20,68 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import Dispatch
 import Foundation
-import SwiftGRPC
+import GRPC
+import NIO
+import NIOHTTP1
 import SwiftProtobuf
 
-internal protocol Proto_FreezeServicefreezeCall: ClientCallUnary {}
 
-fileprivate final class Proto_FreezeServicefreezeCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FreezeServicefreezeCall {
-  override class var method: String { return "/proto.FreezeService/freeze" }
+/// Usage: instantiate Proto_FreezeServiceServiceClient, then call methods of this protocol to make API calls.
+internal protocol Proto_FreezeServiceService {
+  func freeze(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
 }
 
+internal final class Proto_FreezeServiceServiceClient: GRPCServiceClient, Proto_FreezeServiceService {
+  internal let connection: ClientConnection
+  internal var serviceName: String { return "proto.FreezeService" }
+  internal var defaultCallOptions: CallOptions
 
-/// Instantiate Proto_FreezeServiceServiceClient, then call methods of this protocol to make API calls.
-internal protocol Proto_FreezeServiceService: ServiceClient {
-  /// Synchronous. Unary.
-  func freeze(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func freeze(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FreezeServicefreezeCall
-
-}
-
-internal extension Proto_FreezeServiceService {
-  /// Synchronous. Unary.
-  func freeze(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.freeze(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func freeze(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FreezeServicefreezeCall {
-    return try self.freeze(request, metadata: self.metadata, completion: completion)
+  /// Creates a client for the proto.FreezeService service.
+  ///
+  /// - Parameters:
+  ///   - connection: `ClientConnection` to the service host.
+  ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
+  internal init(connection: ClientConnection, defaultCallOptions: CallOptions = CallOptions()) {
+    self.connection = connection
+    self.defaultCallOptions = defaultCallOptions
   }
 
-}
-
-internal final class Proto_FreezeServiceServiceClient: ServiceClientBase, Proto_FreezeServiceService {
-  /// Synchronous. Unary.
-  internal func freeze(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_FreezeServicefreezeCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func freeze(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_FreezeServicefreezeCall {
-    return try Proto_FreezeServicefreezeCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to freeze.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to freeze.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func freeze(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "freeze"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
 }
 
 /// To build a server, implement a class that conforms to this protocol.
-/// If one of the methods returning `ServerStatus?` returns nil,
-/// it is expected that you have already returned a status to the client by means of `session.close`.
-internal protocol Proto_FreezeServiceProvider: ServiceProvider {
-  func freeze(request: Proto_Transaction, session: Proto_FreezeServicefreezeSession) throws -> Proto_TransactionResponse
+internal protocol Proto_FreezeServiceProvider: CallHandlerProvider {
+  func freeze(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
 }
 
 extension Proto_FreezeServiceProvider {
   internal var serviceName: String { return "proto.FreezeService" }
 
-  /// Determines and calls the appropriate request handler, depending on the request's method.
-  /// Throws `HandleMethodError.unknownMethod` for methods not handled by this service.
-  internal func handleMethod(_ method: String, handler: Handler) throws -> ServerStatus? {
-    switch method {
-    case "/proto.FreezeService/freeze":
-      return try Proto_FreezeServicefreezeSessionBase(
-        handler: handler,
-        providerBlock: { try self.freeze(request: $0, session: $1 as! Proto_FreezeServicefreezeSessionBase) })
-          .run()
-    default:
-      throw HandleMethodError.unknownMethod
+  /// Determines, calls and returns the appropriate request handler, depending on the request's method.
+  /// Returns nil for methods not handled by this service.
+  internal func handleMethod(_ methodName: String, callHandlerContext: CallHandlerContext) -> GRPCCallHandler? {
+    switch methodName {
+    case "freeze":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.freeze(request: request, context: context)
+        }
+      }
+
+    default: return nil
     }
   }
 }
-
-internal protocol Proto_FreezeServicefreezeSession: ServerSessionUnary {}
-
-fileprivate final class Proto_FreezeServicefreezeSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_FreezeServicefreezeSession {}
 

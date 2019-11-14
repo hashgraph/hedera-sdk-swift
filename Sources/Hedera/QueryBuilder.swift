@@ -1,5 +1,7 @@
 import SwiftProtobuf
 import Foundation
+import GRPC
+import NIO 
 
 let maxQueryCost: Int64 = 10_000_000_000
 
@@ -14,7 +16,7 @@ public class QueryBuilder<Response> {
 
     init(client: Client) {
         self.client = client
-        self.node = client.pickNode()
+        self.node = client.node ?? client.pickNode()
     }
 
     @discardableResult
@@ -53,24 +55,20 @@ public class QueryBuilder<Response> {
         header.responseType = Proto_ResponseType.costAnswer
         setPayment(0)
 
-        let responseHeader = Result { try methodForQuery(client.grpcClient(for: node))(body) }
-            .map { getResponseHeader($0) }
-
-        switch responseHeader {
-        case .success(let header):
-            let preCheckCode = header.nodeTransactionPrecheckCode
-            if preCheckCode != .ok && preCheckCode != .success {
-                return .failure(HederaError(
-                    message: "received error code: \(preCheckCode) while requesting query cost"
-                ))
-            }
-
-            return .success(header.cost)
-        case .failure(let error as HederaError):
-            return .failure(error)
-        case .failure(let error):
+        do {
+            return try methodForQuery(client.grpcClient(for: node))(body, nil).response.map { (response) -> Result<UInt64, HederaError> in
+                let header = self.getResponseHeader(response)
+                let preCheckCode = header.nodeTransactionPrecheckCode
+                if preCheckCode != .ok && preCheckCode != .success {
+                    return .failure(HederaError(message: "Received error code: \(header.nodeTransactionPrecheckCode) while requesting query cost"))
+                } else {
+                    return .success(header.cost)
+                }
+            }.wait()
+        } catch let error {
             return .failure(HederaError(message: "failed to get cost for query: \(error)"))
         }
+        
     }
 
     func getResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
@@ -95,7 +93,7 @@ public class QueryBuilder<Response> {
         }
     }
 
-    func methodForQuery(_ grpc: HederaGRPCClient) -> QueryExecuteClosure {
+    func methodForQuery(_ grpc: HederaGRPCClient) -> (Proto_Query, CallOptions?) -> UnaryCall<Proto_Query, Proto_Response> {
         switch body.query {
         case .none:
             fatalError("tried to execute empty query")
@@ -136,34 +134,39 @@ public class QueryBuilder<Response> {
     }
 
     public func execute() -> Result<Response, HederaError> {
+        do {
+            return try executeAsync().wait()
+        } catch {
+            // FIXME
+            return .failure(HederaError(message: "RPC error: \(error)"))
+        }
+    }
+
+    public func executeAsync() -> EventLoopFuture<Result<Response, HederaError>> {
+        let grpcClient = client.grpcClient(for: node)
+
         if needsPayment && !header.hasPayment {
             switch requestCost() {
             case .success(let cost):
                 if let maxQueryPayment = client.maxQueryPayment {
                     if cost > maxQueryPayment {
-                        return .failure(HederaError(message: "Query payment exceeds maxQueryPayment"))
+                        return client.eventLoopGroup.next().makeFailedFuture(HederaError(message: "Query payment exceeds maxQueryPayment set on the client"))
                     }
                 }
 
                 setPayment(cost)
             case .failure(let error):
-                return .failure(error)
+                return client.eventLoopGroup.next().makeFailedFuture(error)
             }
         }
 
-        do {
-            let response = try methodForQuery(client.grpcClient(for: node))(body)
-            
-            let resHeader = getResponseHeader(response)
-
-            if resHeader.nodeTransactionPrecheckCode != .ok && resHeader.nodeTransactionPrecheckCode != .success {
-                return .failure(HederaError(message: "Received error code: \(resHeader.nodeTransactionPrecheckCode) while executing"))
+        return methodForQuery(grpcClient)(body, nil).response.map { (response) -> Result<Response, HederaError> in
+            let header = self.getResponseHeader(response)
+            if header.nodeTransactionPrecheckCode != .ok && header.nodeTransactionPrecheckCode != .success {
+                return .failure(HederaError(message: "Received error code: \(header.nodeTransactionPrecheckCode) while executing"))
+            } else {
+                return self.mapResponse(response)
             }
-
-            return mapResponse(response)
-        } catch let error {
-            // FIXME
-            return .failure(HederaError(message: "error: \(error)"))
         }
     }
 

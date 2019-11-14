@@ -1,7 +1,8 @@
 import SwiftProtobuf
 import Sodium
 import Foundation
-import SwiftGRPC
+import GRPC
+import NIO
 
 typealias ExecuteClosure = (Proto_Transaction) throws -> Proto_TransactionResponse
 
@@ -26,7 +27,7 @@ public class Transaction {
         kind = TransactionKind(body.data!)
     }
 
-    func methodForTransaction(_ grpc: HederaGRPCClient) -> ExecuteClosure {
+    func methodForTransaction(_ grpc: HederaGRPCClient) -> (Proto_Transaction, CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
         switch kind {
         case .contractCall:
             return grpc.contractService.contractCallMethod
@@ -70,7 +71,14 @@ public class Transaction {
     func executeAndWaitFor<T>(mapResponse: (TransactionReceipt) -> T) -> Result<T, HederaError> {
         let startTime = Date()
         var attempt: UInt8 = 0
-        _ = execute()
+
+        // There's no point asking for the receipt of a transaction that failed to go through
+        switch execute() {
+        case .failure(let error):
+            return .failure(error)
+        default:
+            break
+        }
 
         sleep(receiptInitialDelay)
 
@@ -166,23 +174,28 @@ public class Transaction {
 
         return self
     }
-
+    
     public func execute() -> Result<TransactionId, HederaError> {
-        guard let client = client else { return .failure(HederaError(message: "client must not be nil")) }
+        do {
+            return try executeAsync().wait()
+        } catch {
+            return .failure(HederaError(message: "RPC error: \(error)"))
+        }
+    }
+
+    public func executeAsync() -> EventLoopFuture<Result<TransactionId, HederaError>> {
+        guard let client = client else { fatalError("client must not be nil") }
 
         guard let node = client.nodes[nodeId] else {
-            return .failure(HederaError(message: "node ID for transaction not found in Client"))
+            return client.eventLoopGroup.next().makeFailedFuture(HederaError(message: "node ID for transaction not found in Client"))
         }
 
-        do {
-            let response = try methodForTransaction(client.grpcClient(for: node))(inner)
+        return methodForTransaction(client.grpcClient(for: node))(inner, nil).response.map { response -> Result<TransactionId, HederaError> in
             if response.nodeTransactionPrecheckCode == .ok {
-                return .success(txId)
+                return .success(self.txId)
             } else {
                 return .failure(HederaError(message: "preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)"))
             }
-        } catch let err {
-            return .failure(HederaError(message: "Error when executing transaction: \(err)"))
         }
     }
 

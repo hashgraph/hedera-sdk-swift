@@ -20,654 +20,341 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import Dispatch
 import Foundation
-import SwiftGRPC
+import GRPC
+import NIO
+import NIOHTTP1
 import SwiftProtobuf
 
-internal protocol Proto_CryptoServicecreateAccountCall: ClientCallUnary {}
 
-fileprivate final class Proto_CryptoServicecreateAccountCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_CryptoServicecreateAccountCall {
-  override class var method: String { return "/proto.CryptoService/createAccount" }
+/// Usage: instantiate Proto_CryptoServiceServiceClient, then call methods of this protocol to make API calls.
+internal protocol Proto_CryptoServiceService {
+  func createAccount(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func updateAccount(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func cryptoTransfer(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func cryptoDelete(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func addClaim(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func deleteClaim(_ request: Proto_Transaction, callOptions: CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+  func getClaim(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func getAccountRecords(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func cryptoGetBalance(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func getAccountInfo(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func getTransactionReceipts(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func getFastTransactionRecord(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func getTxRecordByTxID(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
+  func getStakersByAccountID(_ request: Proto_Query, callOptions: CallOptions?) -> UnaryCall<Proto_Query, Proto_Response>
 }
 
-internal protocol Proto_CryptoServiceupdateAccountCall: ClientCallUnary {}
+internal final class Proto_CryptoServiceServiceClient: GRPCServiceClient, Proto_CryptoServiceService {
+  internal let connection: ClientConnection
+  internal var serviceName: String { return "proto.CryptoService" }
+  internal var defaultCallOptions: CallOptions
 
-fileprivate final class Proto_CryptoServiceupdateAccountCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_CryptoServiceupdateAccountCall {
-  override class var method: String { return "/proto.CryptoService/updateAccount" }
-}
-
-internal protocol Proto_CryptoServicecryptoTransferCall: ClientCallUnary {}
-
-fileprivate final class Proto_CryptoServicecryptoTransferCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_CryptoServicecryptoTransferCall {
-  override class var method: String { return "/proto.CryptoService/cryptoTransfer" }
-}
-
-internal protocol Proto_CryptoServicecryptoDeleteCall: ClientCallUnary {}
-
-fileprivate final class Proto_CryptoServicecryptoDeleteCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_CryptoServicecryptoDeleteCall {
-  override class var method: String { return "/proto.CryptoService/cryptoDelete" }
-}
-
-internal protocol Proto_CryptoServiceaddClaimCall: ClientCallUnary {}
-
-fileprivate final class Proto_CryptoServiceaddClaimCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_CryptoServiceaddClaimCall {
-  override class var method: String { return "/proto.CryptoService/addClaim" }
-}
-
-internal protocol Proto_CryptoServicedeleteClaimCall: ClientCallUnary {}
-
-fileprivate final class Proto_CryptoServicedeleteClaimCallBase: ClientCallUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_CryptoServicedeleteClaimCall {
-  override class var method: String { return "/proto.CryptoService/deleteClaim" }
-}
-
-internal protocol Proto_CryptoServicegetClaimCall: ClientCallUnary {}
-
-fileprivate final class Proto_CryptoServicegetClaimCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetClaimCall {
-  override class var method: String { return "/proto.CryptoService/getClaim" }
-}
-
-internal protocol Proto_CryptoServicegetAccountRecordsCall: ClientCallUnary {}
-
-fileprivate final class Proto_CryptoServicegetAccountRecordsCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetAccountRecordsCall {
-  override class var method: String { return "/proto.CryptoService/getAccountRecords" }
-}
-
-internal protocol Proto_CryptoServicecryptoGetBalanceCall: ClientCallUnary {}
-
-fileprivate final class Proto_CryptoServicecryptoGetBalanceCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicecryptoGetBalanceCall {
-  override class var method: String { return "/proto.CryptoService/cryptoGetBalance" }
-}
-
-internal protocol Proto_CryptoServicegetAccountInfoCall: ClientCallUnary {}
-
-fileprivate final class Proto_CryptoServicegetAccountInfoCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetAccountInfoCall {
-  override class var method: String { return "/proto.CryptoService/getAccountInfo" }
-}
-
-internal protocol Proto_CryptoServicegetTransactionReceiptsCall: ClientCallUnary {}
-
-fileprivate final class Proto_CryptoServicegetTransactionReceiptsCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetTransactionReceiptsCall {
-  override class var method: String { return "/proto.CryptoService/getTransactionReceipts" }
-}
-
-internal protocol Proto_CryptoServicegetFastTransactionRecordCall: ClientCallUnary {}
-
-fileprivate final class Proto_CryptoServicegetFastTransactionRecordCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetFastTransactionRecordCall {
-  override class var method: String { return "/proto.CryptoService/getFastTransactionRecord" }
-}
-
-internal protocol Proto_CryptoServicegetTxRecordByTxIDCall: ClientCallUnary {}
-
-fileprivate final class Proto_CryptoServicegetTxRecordByTxIDCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetTxRecordByTxIDCall {
-  override class var method: String { return "/proto.CryptoService/getTxRecordByTxID" }
-}
-
-internal protocol Proto_CryptoServicegetStakersByAccountIDCall: ClientCallUnary {}
-
-fileprivate final class Proto_CryptoServicegetStakersByAccountIDCallBase: ClientCallUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetStakersByAccountIDCall {
-  override class var method: String { return "/proto.CryptoService/getStakersByAccountID" }
-}
-
-
-/// Instantiate Proto_CryptoServiceServiceClient, then call methods of this protocol to make API calls.
-internal protocol Proto_CryptoServiceService: ServiceClient {
-  /// Synchronous. Unary.
-  func createAccount(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func createAccount(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServicecreateAccountCall
-
-  /// Synchronous. Unary.
-  func updateAccount(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func updateAccount(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServiceupdateAccountCall
-
-  /// Synchronous. Unary.
-  func cryptoTransfer(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func cryptoTransfer(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServicecryptoTransferCall
-
-  /// Synchronous. Unary.
-  func cryptoDelete(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func cryptoDelete(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServicecryptoDeleteCall
-
-  /// Synchronous. Unary.
-  func addClaim(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func addClaim(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServiceaddClaimCall
-
-  /// Synchronous. Unary.
-  func deleteClaim(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse
-  /// Asynchronous. Unary.
-  @discardableResult
-  func deleteClaim(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServicedeleteClaimCall
-
-  /// Synchronous. Unary.
-  func getClaim(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getClaim(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetClaimCall
-
-  /// Synchronous. Unary.
-  func getAccountRecords(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getAccountRecords(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetAccountRecordsCall
-
-  /// Synchronous. Unary.
-  func cryptoGetBalance(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func cryptoGetBalance(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicecryptoGetBalanceCall
-
-  /// Synchronous. Unary.
-  func getAccountInfo(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getAccountInfo(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetAccountInfoCall
-
-  /// Synchronous. Unary.
-  func getTransactionReceipts(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getTransactionReceipts(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetTransactionReceiptsCall
-
-  /// Synchronous. Unary.
-  func getFastTransactionRecord(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getFastTransactionRecord(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetFastTransactionRecordCall
-
-  /// Synchronous. Unary.
-  func getTxRecordByTxID(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getTxRecordByTxID(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetTxRecordByTxIDCall
-
-  /// Synchronous. Unary.
-  func getStakersByAccountID(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getStakersByAccountID(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetStakersByAccountIDCall
-
-}
-
-internal extension Proto_CryptoServiceService {
-  /// Synchronous. Unary.
-  func createAccount(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.createAccount(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func createAccount(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServicecreateAccountCall {
-    return try self.createAccount(request, metadata: self.metadata, completion: completion)
+  /// Creates a client for the proto.CryptoService service.
+  ///
+  /// - Parameters:
+  ///   - connection: `ClientConnection` to the service host.
+  ///   - defaultCallOptions: Options to use for each service call if the user doesn't provide them.
+  internal init(connection: ClientConnection, defaultCallOptions: CallOptions = CallOptions()) {
+    self.connection = connection
+    self.defaultCallOptions = defaultCallOptions
   }
 
-  /// Synchronous. Unary.
-  func updateAccount(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.updateAccount(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func updateAccount(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServiceupdateAccountCall {
-    return try self.updateAccount(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func cryptoTransfer(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.cryptoTransfer(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func cryptoTransfer(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServicecryptoTransferCall {
-    return try self.cryptoTransfer(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to createAccount.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to createAccount.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func createAccount(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "createAccount"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func cryptoDelete(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.cryptoDelete(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func cryptoDelete(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServicecryptoDeleteCall {
-    return try self.cryptoDelete(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func addClaim(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.addClaim(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func addClaim(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServiceaddClaimCall {
-    return try self.addClaim(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to updateAccount.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to updateAccount.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func updateAccount(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "updateAccount"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func deleteClaim(_ request: Proto_Transaction) throws -> Proto_TransactionResponse {
-    return try self.deleteClaim(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func deleteClaim(_ request: Proto_Transaction, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServicedeleteClaimCall {
-    return try self.deleteClaim(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func getClaim(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.getClaim(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getClaim(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetClaimCall {
-    return try self.getClaim(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to cryptoTransfer.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to cryptoTransfer.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func cryptoTransfer(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "cryptoTransfer"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func getAccountRecords(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.getAccountRecords(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getAccountRecords(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetAccountRecordsCall {
-    return try self.getAccountRecords(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func cryptoGetBalance(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.cryptoGetBalance(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func cryptoGetBalance(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicecryptoGetBalanceCall {
-    return try self.cryptoGetBalance(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to cryptoDelete.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to cryptoDelete.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func cryptoDelete(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "cryptoDelete"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func getAccountInfo(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.getAccountInfo(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getAccountInfo(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetAccountInfoCall {
-    return try self.getAccountInfo(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func getTransactionReceipts(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.getTransactionReceipts(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getTransactionReceipts(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetTransactionReceiptsCall {
-    return try self.getTransactionReceipts(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to addClaim.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to addClaim.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func addClaim(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "addClaim"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func getFastTransactionRecord(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.getFastTransactionRecord(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getFastTransactionRecord(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetFastTransactionRecordCall {
-    return try self.getFastTransactionRecord(request, metadata: self.metadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  func getTxRecordByTxID(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.getTxRecordByTxID(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getTxRecordByTxID(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetTxRecordByTxIDCall {
-    return try self.getTxRecordByTxID(request, metadata: self.metadata, completion: completion)
+  /// Asynchronous unary call to deleteClaim.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to deleteClaim.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func deleteClaim(_ request: Proto_Transaction, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(path: self.path(forMethod: "deleteClaim"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  func getStakersByAccountID(_ request: Proto_Query) throws -> Proto_Response {
-    return try self.getStakersByAccountID(request, metadata: self.metadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  func getStakersByAccountID(_ request: Proto_Query, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetStakersByAccountIDCall {
-    return try self.getStakersByAccountID(request, metadata: self.metadata, completion: completion)
-  }
-
-}
-
-internal final class Proto_CryptoServiceServiceClient: ServiceClientBase, Proto_CryptoServiceService {
-  /// Synchronous. Unary.
-  internal func createAccount(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_CryptoServicecreateAccountCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func createAccount(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServicecreateAccountCall {
-    return try Proto_CryptoServicecreateAccountCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to getClaim.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to getClaim.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func getClaim(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "getClaim"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func updateAccount(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_CryptoServiceupdateAccountCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func updateAccount(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServiceupdateAccountCall {
-    return try Proto_CryptoServiceupdateAccountCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func cryptoTransfer(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_CryptoServicecryptoTransferCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func cryptoTransfer(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServicecryptoTransferCall {
-    return try Proto_CryptoServicecryptoTransferCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to getAccountRecords.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to getAccountRecords.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func getAccountRecords(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "getAccountRecords"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func cryptoDelete(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_CryptoServicecryptoDeleteCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func cryptoDelete(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServicecryptoDeleteCall {
-    return try Proto_CryptoServicecryptoDeleteCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func addClaim(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_CryptoServiceaddClaimCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func addClaim(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServiceaddClaimCall {
-    return try Proto_CryptoServiceaddClaimCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to cryptoGetBalance.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to cryptoGetBalance.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func cryptoGetBalance(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "cryptoGetBalance"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func deleteClaim(_ request: Proto_Transaction, metadata customMetadata: Metadata) throws -> Proto_TransactionResponse {
-    return try Proto_CryptoServicedeleteClaimCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func deleteClaim(_ request: Proto_Transaction, metadata customMetadata: Metadata, completion: @escaping (Proto_TransactionResponse?, CallResult) -> Void) throws -> Proto_CryptoServicedeleteClaimCall {
-    return try Proto_CryptoServicedeleteClaimCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func getClaim(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_CryptoServicegetClaimCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func getClaim(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetClaimCall {
-    return try Proto_CryptoServicegetClaimCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to getAccountInfo.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to getAccountInfo.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func getAccountInfo(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "getAccountInfo"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func getAccountRecords(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_CryptoServicegetAccountRecordsCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func getAccountRecords(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetAccountRecordsCall {
-    return try Proto_CryptoServicegetAccountRecordsCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func cryptoGetBalance(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_CryptoServicecryptoGetBalanceCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func cryptoGetBalance(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicecryptoGetBalanceCall {
-    return try Proto_CryptoServicecryptoGetBalanceCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to getTransactionReceipts.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to getTransactionReceipts.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func getTransactionReceipts(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "getTransactionReceipts"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func getAccountInfo(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_CryptoServicegetAccountInfoCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func getAccountInfo(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetAccountInfoCall {
-    return try Proto_CryptoServicegetAccountInfoCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func getTransactionReceipts(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_CryptoServicegetTransactionReceiptsCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func getTransactionReceipts(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetTransactionReceiptsCall {
-    return try Proto_CryptoServicegetTransactionReceiptsCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to getFastTransactionRecord.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to getFastTransactionRecord.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func getFastTransactionRecord(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "getFastTransactionRecord"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func getFastTransactionRecord(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_CryptoServicegetFastTransactionRecordCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func getFastTransactionRecord(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetFastTransactionRecordCall {
-    return try Proto_CryptoServicegetFastTransactionRecordCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
-  }
-
-  /// Synchronous. Unary.
-  internal func getTxRecordByTxID(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_CryptoServicegetTxRecordByTxIDCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func getTxRecordByTxID(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetTxRecordByTxIDCall {
-    return try Proto_CryptoServicegetTxRecordByTxIDCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to getTxRecordByTxID.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to getTxRecordByTxID.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func getTxRecordByTxID(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "getTxRecordByTxID"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
-  /// Synchronous. Unary.
-  internal func getStakersByAccountID(_ request: Proto_Query, metadata customMetadata: Metadata) throws -> Proto_Response {
-    return try Proto_CryptoServicegetStakersByAccountIDCallBase(channel)
-      .run(request: request, metadata: customMetadata)
-  }
-  /// Asynchronous. Unary.
-  @discardableResult
-  internal func getStakersByAccountID(_ request: Proto_Query, metadata customMetadata: Metadata, completion: @escaping (Proto_Response?, CallResult) -> Void) throws -> Proto_CryptoServicegetStakersByAccountIDCall {
-    return try Proto_CryptoServicegetStakersByAccountIDCallBase(channel)
-      .start(request: request, metadata: customMetadata, completion: completion)
+  /// Asynchronous unary call to getStakersByAccountID.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to getStakersByAccountID.
+  ///   - callOptions: Call options; `self.defaultCallOptions` is used if `nil`.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  internal func getStakersByAccountID(_ request: Proto_Query, callOptions: CallOptions? = nil) -> UnaryCall<Proto_Query, Proto_Response> {
+    return self.makeUnaryCall(path: self.path(forMethod: "getStakersByAccountID"),
+                              request: request,
+                              callOptions: callOptions ?? self.defaultCallOptions)
   }
 
 }
 
 /// To build a server, implement a class that conforms to this protocol.
-/// If one of the methods returning `ServerStatus?` returns nil,
-/// it is expected that you have already returned a status to the client by means of `session.close`.
-internal protocol Proto_CryptoServiceProvider: ServiceProvider {
-  func createAccount(request: Proto_Transaction, session: Proto_CryptoServicecreateAccountSession) throws -> Proto_TransactionResponse
-  func updateAccount(request: Proto_Transaction, session: Proto_CryptoServiceupdateAccountSession) throws -> Proto_TransactionResponse
-  func cryptoTransfer(request: Proto_Transaction, session: Proto_CryptoServicecryptoTransferSession) throws -> Proto_TransactionResponse
-  func cryptoDelete(request: Proto_Transaction, session: Proto_CryptoServicecryptoDeleteSession) throws -> Proto_TransactionResponse
-  func addClaim(request: Proto_Transaction, session: Proto_CryptoServiceaddClaimSession) throws -> Proto_TransactionResponse
-  func deleteClaim(request: Proto_Transaction, session: Proto_CryptoServicedeleteClaimSession) throws -> Proto_TransactionResponse
-  func getClaim(request: Proto_Query, session: Proto_CryptoServicegetClaimSession) throws -> Proto_Response
-  func getAccountRecords(request: Proto_Query, session: Proto_CryptoServicegetAccountRecordsSession) throws -> Proto_Response
-  func cryptoGetBalance(request: Proto_Query, session: Proto_CryptoServicecryptoGetBalanceSession) throws -> Proto_Response
-  func getAccountInfo(request: Proto_Query, session: Proto_CryptoServicegetAccountInfoSession) throws -> Proto_Response
-  func getTransactionReceipts(request: Proto_Query, session: Proto_CryptoServicegetTransactionReceiptsSession) throws -> Proto_Response
-  func getFastTransactionRecord(request: Proto_Query, session: Proto_CryptoServicegetFastTransactionRecordSession) throws -> Proto_Response
-  func getTxRecordByTxID(request: Proto_Query, session: Proto_CryptoServicegetTxRecordByTxIDSession) throws -> Proto_Response
-  func getStakersByAccountID(request: Proto_Query, session: Proto_CryptoServicegetStakersByAccountIDSession) throws -> Proto_Response
+internal protocol Proto_CryptoServiceProvider: CallHandlerProvider {
+  func createAccount(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func updateAccount(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func cryptoTransfer(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func cryptoDelete(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func addClaim(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func deleteClaim(request: Proto_Transaction, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_TransactionResponse>
+  func getClaim(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func getAccountRecords(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func cryptoGetBalance(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func getAccountInfo(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func getTransactionReceipts(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func getFastTransactionRecord(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func getTxRecordByTxID(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
+  func getStakersByAccountID(request: Proto_Query, context: StatusOnlyCallContext) -> EventLoopFuture<Proto_Response>
 }
 
 extension Proto_CryptoServiceProvider {
   internal var serviceName: String { return "proto.CryptoService" }
 
-  /// Determines and calls the appropriate request handler, depending on the request's method.
-  /// Throws `HandleMethodError.unknownMethod` for methods not handled by this service.
-  internal func handleMethod(_ method: String, handler: Handler) throws -> ServerStatus? {
-    switch method {
-    case "/proto.CryptoService/createAccount":
-      return try Proto_CryptoServicecreateAccountSessionBase(
-        handler: handler,
-        providerBlock: { try self.createAccount(request: $0, session: $1 as! Proto_CryptoServicecreateAccountSessionBase) })
-          .run()
-    case "/proto.CryptoService/updateAccount":
-      return try Proto_CryptoServiceupdateAccountSessionBase(
-        handler: handler,
-        providerBlock: { try self.updateAccount(request: $0, session: $1 as! Proto_CryptoServiceupdateAccountSessionBase) })
-          .run()
-    case "/proto.CryptoService/cryptoTransfer":
-      return try Proto_CryptoServicecryptoTransferSessionBase(
-        handler: handler,
-        providerBlock: { try self.cryptoTransfer(request: $0, session: $1 as! Proto_CryptoServicecryptoTransferSessionBase) })
-          .run()
-    case "/proto.CryptoService/cryptoDelete":
-      return try Proto_CryptoServicecryptoDeleteSessionBase(
-        handler: handler,
-        providerBlock: { try self.cryptoDelete(request: $0, session: $1 as! Proto_CryptoServicecryptoDeleteSessionBase) })
-          .run()
-    case "/proto.CryptoService/addClaim":
-      return try Proto_CryptoServiceaddClaimSessionBase(
-        handler: handler,
-        providerBlock: { try self.addClaim(request: $0, session: $1 as! Proto_CryptoServiceaddClaimSessionBase) })
-          .run()
-    case "/proto.CryptoService/deleteClaim":
-      return try Proto_CryptoServicedeleteClaimSessionBase(
-        handler: handler,
-        providerBlock: { try self.deleteClaim(request: $0, session: $1 as! Proto_CryptoServicedeleteClaimSessionBase) })
-          .run()
-    case "/proto.CryptoService/getClaim":
-      return try Proto_CryptoServicegetClaimSessionBase(
-        handler: handler,
-        providerBlock: { try self.getClaim(request: $0, session: $1 as! Proto_CryptoServicegetClaimSessionBase) })
-          .run()
-    case "/proto.CryptoService/getAccountRecords":
-      return try Proto_CryptoServicegetAccountRecordsSessionBase(
-        handler: handler,
-        providerBlock: { try self.getAccountRecords(request: $0, session: $1 as! Proto_CryptoServicegetAccountRecordsSessionBase) })
-          .run()
-    case "/proto.CryptoService/cryptoGetBalance":
-      return try Proto_CryptoServicecryptoGetBalanceSessionBase(
-        handler: handler,
-        providerBlock: { try self.cryptoGetBalance(request: $0, session: $1 as! Proto_CryptoServicecryptoGetBalanceSessionBase) })
-          .run()
-    case "/proto.CryptoService/getAccountInfo":
-      return try Proto_CryptoServicegetAccountInfoSessionBase(
-        handler: handler,
-        providerBlock: { try self.getAccountInfo(request: $0, session: $1 as! Proto_CryptoServicegetAccountInfoSessionBase) })
-          .run()
-    case "/proto.CryptoService/getTransactionReceipts":
-      return try Proto_CryptoServicegetTransactionReceiptsSessionBase(
-        handler: handler,
-        providerBlock: { try self.getTransactionReceipts(request: $0, session: $1 as! Proto_CryptoServicegetTransactionReceiptsSessionBase) })
-          .run()
-    case "/proto.CryptoService/getFastTransactionRecord":
-      return try Proto_CryptoServicegetFastTransactionRecordSessionBase(
-        handler: handler,
-        providerBlock: { try self.getFastTransactionRecord(request: $0, session: $1 as! Proto_CryptoServicegetFastTransactionRecordSessionBase) })
-          .run()
-    case "/proto.CryptoService/getTxRecordByTxID":
-      return try Proto_CryptoServicegetTxRecordByTxIDSessionBase(
-        handler: handler,
-        providerBlock: { try self.getTxRecordByTxID(request: $0, session: $1 as! Proto_CryptoServicegetTxRecordByTxIDSessionBase) })
-          .run()
-    case "/proto.CryptoService/getStakersByAccountID":
-      return try Proto_CryptoServicegetStakersByAccountIDSessionBase(
-        handler: handler,
-        providerBlock: { try self.getStakersByAccountID(request: $0, session: $1 as! Proto_CryptoServicegetStakersByAccountIDSessionBase) })
-          .run()
-    default:
-      throw HandleMethodError.unknownMethod
+  /// Determines, calls and returns the appropriate request handler, depending on the request's method.
+  /// Returns nil for methods not handled by this service.
+  internal func handleMethod(_ methodName: String, callHandlerContext: CallHandlerContext) -> GRPCCallHandler? {
+    switch methodName {
+    case "createAccount":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.createAccount(request: request, context: context)
+        }
+      }
+
+    case "updateAccount":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.updateAccount(request: request, context: context)
+        }
+      }
+
+    case "cryptoTransfer":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.cryptoTransfer(request: request, context: context)
+        }
+      }
+
+    case "cryptoDelete":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.cryptoDelete(request: request, context: context)
+        }
+      }
+
+    case "addClaim":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.addClaim(request: request, context: context)
+        }
+      }
+
+    case "deleteClaim":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.deleteClaim(request: request, context: context)
+        }
+      }
+
+    case "getClaim":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.getClaim(request: request, context: context)
+        }
+      }
+
+    case "getAccountRecords":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.getAccountRecords(request: request, context: context)
+        }
+      }
+
+    case "cryptoGetBalance":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.cryptoGetBalance(request: request, context: context)
+        }
+      }
+
+    case "getAccountInfo":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.getAccountInfo(request: request, context: context)
+        }
+      }
+
+    case "getTransactionReceipts":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.getTransactionReceipts(request: request, context: context)
+        }
+      }
+
+    case "getFastTransactionRecord":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.getFastTransactionRecord(request: request, context: context)
+        }
+      }
+
+    case "getTxRecordByTxID":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.getTxRecordByTxID(request: request, context: context)
+        }
+      }
+
+    case "getStakersByAccountID":
+      return UnaryCallHandler(callHandlerContext: callHandlerContext) { context in
+        return { request in
+          self.getStakersByAccountID(request: request, context: context)
+        }
+      }
+
+    default: return nil
     }
   }
 }
-
-internal protocol Proto_CryptoServicecreateAccountSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServicecreateAccountSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_CryptoServicecreateAccountSession {}
-
-internal protocol Proto_CryptoServiceupdateAccountSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServiceupdateAccountSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_CryptoServiceupdateAccountSession {}
-
-internal protocol Proto_CryptoServicecryptoTransferSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServicecryptoTransferSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_CryptoServicecryptoTransferSession {}
-
-internal protocol Proto_CryptoServicecryptoDeleteSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServicecryptoDeleteSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_CryptoServicecryptoDeleteSession {}
-
-internal protocol Proto_CryptoServiceaddClaimSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServiceaddClaimSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_CryptoServiceaddClaimSession {}
-
-internal protocol Proto_CryptoServicedeleteClaimSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServicedeleteClaimSessionBase: ServerSessionUnaryBase<Proto_Transaction, Proto_TransactionResponse>, Proto_CryptoServicedeleteClaimSession {}
-
-internal protocol Proto_CryptoServicegetClaimSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServicegetClaimSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetClaimSession {}
-
-internal protocol Proto_CryptoServicegetAccountRecordsSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServicegetAccountRecordsSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetAccountRecordsSession {}
-
-internal protocol Proto_CryptoServicecryptoGetBalanceSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServicecryptoGetBalanceSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicecryptoGetBalanceSession {}
-
-internal protocol Proto_CryptoServicegetAccountInfoSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServicegetAccountInfoSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetAccountInfoSession {}
-
-internal protocol Proto_CryptoServicegetTransactionReceiptsSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServicegetTransactionReceiptsSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetTransactionReceiptsSession {}
-
-internal protocol Proto_CryptoServicegetFastTransactionRecordSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServicegetFastTransactionRecordSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetFastTransactionRecordSession {}
-
-internal protocol Proto_CryptoServicegetTxRecordByTxIDSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServicegetTxRecordByTxIDSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetTxRecordByTxIDSession {}
-
-internal protocol Proto_CryptoServicegetStakersByAccountIDSession: ServerSessionUnary {}
-
-fileprivate final class Proto_CryptoServicegetStakersByAccountIDSessionBase: ServerSessionUnaryBase<Proto_Query, Proto_Response>, Proto_CryptoServicegetStakersByAccountIDSession {}
 
