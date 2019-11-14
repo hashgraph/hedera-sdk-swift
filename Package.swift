@@ -12,12 +12,10 @@ let package = Package(
         .library(name: "Hedera", targets: ["Hedera"]),
 
         // Examples
-        .executable(name: "SimpleCreateAccountExample", targets: ["SimpleCreateAccountExample"]),
-        .executable(name: "AdvancedCreateAccountExample", targets: ["AdvancedCreateAccountExample"]),
+        .executable(name: "CreateAccountExample", targets: ["CreateAccountExample"]),
         .executable(name: "GetFileInfoExample", targets: ["GetFileInfoExample"]),
         .executable(name: "CreateFileExample", targets: ["CreateFileExample"]),
-        .executable(name: "SimpleTransferCryptoExample", targets: ["SimpleTransferCryptoExample"]),
-        .executable(name: "AdvancedTransferCryptoExample", targets: ["AdvancedTransferCryptoExample"]),
+        .executable(name: "TransferCryptoExample", targets: ["TransferCryptoExample"]),
         .executable(name: "SimpleAccountRecordsExample", targets: ["SimpleAccountRecordsExample"]),
     ],
     dependencies: [
@@ -35,13 +33,9 @@ let package = Package(
 
         // Examples
         .target(
-            name: "SimpleCreateAccountExample",
+            name: "CreateAccountExample",
             dependencies: ["Hedera"],
-            path: "Examples/SimpleCreateAccount"),
-        .target(
-            name: "AdvancedCreateAccountExample",
-            dependencies: ["Hedera"],
-            path: "Examples/AdvancedCreateAccount"),
+            path: "Examples/CreateAccount"),
         .target(
             name: "GetFileInfoExample",
             dependencies: ["Hedera"],
@@ -51,13 +45,9 @@ let package = Package(
             dependencies: ["Hedera"],
             path: "Examples/CreateFile"),
         .target(
-            name: "SimpleTransferCryptoExample",
+            name: "TransferCryptoExample",
             dependencies: ["Hedera"],
-            path: "Examples/SimpleTransferCrypto"),
-        .target(
-            name: "AdvancedTransferCryptoExample",
-            dependencies: ["Hedera"],
-            path: "Examples/AdvancedTransferCrypto"),
+            path: "Examples/TransferCrypto"),
         .target(
             name: "SimpleAccountRecordsExample",
             dependencies: ["Hedera"],

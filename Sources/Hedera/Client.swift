@@ -105,33 +105,6 @@ public class Client {
         nodes.randomElement()!.value
     }
 
-    /// Creates an account with the given `key` and an initial balance of `balance`.
-    /// - Parameters:
-    ///   - key: The public key to use for account Creation.
-    ///   - balance: The initial balance of the account.
-    /// - Returns: The transaction's ID.
-    public func createAccount(key: Ed25519PublicKey, balance: UInt64) -> Result<AccountId, HederaError> {
-        AccountCreateTransaction(client: self)
-            .setInitialBalance(balance)
-            .setKey(key)
-            .build()
-            .executeForReceipt()
-            .map { $0.accountId! }
-    }
-
-    /// Sends `amount` of tiny bar to `recipient`.
-    /// - Parameters:
-    ///   - recipient: The recipient of the crypto.
-    ///   - amount: The amount of tiny bar to send.
-    /// - Returns: The transaction's ID.
-    public func transferCryptoTo(recipient: AccountId, amount: UInt64) -> Result<TransactionId, HederaError> {
-        CryptoTransferTransaction(client: self)
-            .add(sender: self.operator!.id, amount: amount)
-            .add(recipient: recipient, amount: amount)
-            .build()
-            .execute()
-    }
-
     /// Gets the balance of the operator's account in tiny bars.
     /// - Returns: The operator's account balance.
     public func getAccountBalance() -> Result<UInt64, HederaError> {

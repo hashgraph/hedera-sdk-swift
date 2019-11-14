@@ -124,14 +124,6 @@ public class Transaction {
         return UInt32(delay * 1000000)
     }
 
-    func queryReceipt() -> Result<TransactionReceipt, HederaError> {
-        guard let client = client else { return .failure(HederaError(message: "client must not be nil")) }
-
-        return TransactionReceiptQuery(client: client)
-            .setTransactionId(txId)
-            .execute()
-    }
-
     // MARK: - Public API
 
     public convenience init?(_ client: Client?, bytes: Data) {
@@ -201,5 +193,13 @@ public class Transaction {
 
     public func executeForReceipt() -> Result<TransactionReceipt, HederaError> {
         executeAndWaitFor { $0 }
+    }
+
+    public func queryReceipt() -> Result<TransactionReceipt, HederaError> {
+        guard let client = client else { return .failure(HederaError(message: "client must not be nil")) }
+
+        return TransactionReceiptQuery(client: client)
+            .setTransactionId(txId)
+            .execute()
     }
 }

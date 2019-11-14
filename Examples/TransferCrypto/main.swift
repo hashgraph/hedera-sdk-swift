@@ -22,9 +22,14 @@ defer {
 let client = clientFromEnvironment(eventLoopGroup: eventLoopGroup)
     .setMaxTransactionFee(100_000_000)
 
-let newAccountKey = Ed25519PrivateKey()
-print("private key for new account: \(newAccountKey)")
+let tx = CryptoTransferTransaction(client: client)
+    .add(sender: AccountId("0.0.3")!, amount: 10000)
+    .add(recipient: AccountId("0.0.2")!, amount: 10000)
+    .setMemo("Transfer Crypto Example - Swift SDK")
+    .build()
+    
+let transactionId = try! tx.execute().get()
 
-let accountId = try! client.createAccount(key: newAccountKey.publicKey, balance: 0).get()
+let receipt = try! tx.queryReceipt().get()
 
-print("Account created: \(accountId)")
+print("Crypto transferred successfully")
