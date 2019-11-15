@@ -6,9 +6,6 @@ import NIO
 
 typealias ExecuteClosure = (Proto_Transaction) throws -> Proto_TransactionResponse
 
-let receiptInitialDelay: UInt32 = 1
-let receiptRetryDelay: TimeInterval = 0.5
-
 public class Transaction {
     var inner: Proto_Transaction
     var client: Client?
@@ -83,46 +80,11 @@ public class Transaction {
     //     sleep(receiptInitialDelay)
 
     //     while true {
-    //         attempt += 1
-            
-    //         let receipt = queryReceipt(client)
-    //         switch receipt {
-    //         case .success(let receipt):
-    //             let receiptStatus = receipt.status
-
-    //             if Int(receiptStatus) == Proto_ResponseCodeEnum.unknown.rawValue ||
-    //                 receiptStatus == Proto_ResponseCodeEnum.ok.rawValue {
-    //                 // stop trying if the delay will put us over `validDuration`
-    //                 guard let delayUs = getReceiptDelayUs(startTime: startTime, attempt: attempt) else {
-    //                     return .failure(HederaError(message: "executeForReceipt timed out"))
-    //                 }
-
-    //                 usleep(delayUs)
-    //             } else {
-    //                 return .success(mapResponse(receipt))
-    //             }
-    //         case .failure(let error):
-    //             return .failure(error)
-    //         }
+    //         
     //     }
     // }
 
-    func getReceiptDelayUs(startTime: Date, attempt: UInt8) -> UInt32? {
-        // exponential backoff algorithm:
-        // next delay is some constant * rand(0, 2 ** attempt - 1)
-        let delay = receiptRetryDelay
-            * Double.random(in: 0..<Double((1 << attempt)))
-
-        // if the next delay will put us past the valid duration we should stop trying
-        let validDuration: TimeInterval = 2 * 60
-        let expireInstant = startTime.addingTimeInterval(validDuration)
-        if Date(timeIntervalSinceNow: delay).compare(expireInstant) == .orderedDescending {
-            return nil
-        }
-
-        // converting from seconds to microseconds
-        return UInt32(delay * 1000000)
-    }
+    
 
     // MARK: - Public API
 
@@ -182,11 +144,42 @@ public class Transaction {
             return client.eventLoopGroup.next().makeFailedFuture(HederaError(message: "node ID for transaction not found in Client"))
         }
 
-        return methodForTransaction(client.grpcClient(for: node))(inner, nil).response.map { response -> Result<TransactionId, HederaError> in
-            if response.nodeTransactionPrecheckCode == .ok {
-                return .success(self.txId)
-            } else {
-                return .failure(HederaError(message: "preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)"))
+        // return methodForTransaction(client.grpcClient(for: node))(inner, nil).response.map { response -> Result<TransactionId, HederaError> in
+        //     if response.nodeTransactionPrecheckCode == .ok {
+        //         return .success(self.txId)
+        //     } else {
+        //         return .failure(HederaError(message: "preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)"))
+        //     }
+        // }
+
+        return client.eventLoopGroup.next().submit {
+            let startTime = Date()
+            var attempt: UInt8 = 0
+
+            sleep(Backoff.receiptInitialDelay)
+
+            while(true) {
+                attempt += 1
+            
+                let response = Result { try self.methodForTransaction(client.grpcClient(for: node))(self.inner, nil).response.wait() }
+                switch response {
+                case .success(let response):
+                    switch response.nodeTransactionPrecheckCode {
+                    case .busy:
+                        // stop trying if the delay will put us over `validDuration`
+                        guard let delayUs = Backoff.getDelayUs(startTime: startTime, attempt: attempt) else {
+                            return .failure(HederaError(message: "execute timed out"))
+                        }
+
+                        usleep(delayUs)
+                    case .ok:
+                        return .success(self.txId)
+                    default:
+                        return .failure(HederaError(message: "preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)"))
+                    }
+                case .failure(let error):
+                    return .failure(HederaError(message: "\(error)"))
+                }
             }
         }
     }
