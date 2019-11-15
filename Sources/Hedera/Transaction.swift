@@ -65,27 +65,6 @@ public class Transaction {
         inner
     }
 
-    // func executeAndWaitFor<T>(_ client: Client, mapResponse: (TransactionReceipt) -> T) -> Result<T, HederaError> {
-    //     let startTime = Date()
-    //     var attempt: UInt8 = 0
-
-    //     // There's no point asking for the receipt of a transaction that failed to go through
-    //     switch execute() {
-    //     case .failure(let error):
-    //         return .failure(error)
-    //     default:
-    //         break
-    //     }
-
-    //     sleep(receiptInitialDelay)
-
-    //     while true {
-    //         
-    //     }
-    // }
-
-    
-
     // MARK: - Public API
 
     public convenience init?(_ client: Client?, bytes: Data) {
@@ -144,19 +123,11 @@ public class Transaction {
             return client.eventLoopGroup.next().makeFailedFuture(HederaError(message: "node ID for transaction not found in Client"))
         }
 
-        // return methodForTransaction(client.grpcClient(for: node))(inner, nil).response.map { response -> Result<TransactionId, HederaError> in
-        //     if response.nodeTransactionPrecheckCode == .ok {
-        //         return .success(self.txId)
-        //     } else {
-        //         return .failure(HederaError(message: "preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)"))
-        //     }
-        // }
-
         return client.eventLoopGroup.next().submit {
             let startTime = Date()
             var attempt: UInt8 = 0
 
-            sleep(Backoff.receiptInitialDelay)
+            sleep(Backoff.initialDelay)
 
             while(true) {
                 attempt += 1

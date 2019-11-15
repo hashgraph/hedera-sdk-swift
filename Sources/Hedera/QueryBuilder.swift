@@ -137,14 +137,11 @@ public class QueryBuilder<Response> {
         do {
             return try executeAsync().wait()
         } catch {
-            // FIXME
             return .failure(HederaError(message: "RPC error: \(error)"))
         }
     }
 
     public func executeAsync() -> EventLoopFuture<Result<Response, HederaError>> {
-        let grpcClient = client.grpcClient(for: node)
-
         if needsPayment && !header.hasPayment {
             switch requestCost() {
             case .success(let cost):
@@ -160,14 +157,43 @@ public class QueryBuilder<Response> {
             }
         }
 
-        return methodForQuery(grpcClient)(body, nil).response.map { (response) -> Result<Response, HederaError> in
-            let header = self.getResponseHeader(response)
-            if header.nodeTransactionPrecheckCode != .ok && header.nodeTransactionPrecheckCode != .success {
-                return .failure(HederaError(message: "Received error code: \(header.nodeTransactionPrecheckCode) while executing"))
-            } else {
-                return self.mapResponse(response)
+        return client.eventLoopGroup.next().submit {
+            let startTime = Date()
+            var attempt: UInt8 = 0
+
+            sleep(Backoff.initialDelay)
+
+            while(true) {
+                attempt += 1
+            
+                let response = Result { try self.methodForQuery(self.client.grpcClient(for: self.node))(self.body, nil).response.wait() }
+                switch response {
+                case .success(let response):
+                    let header = self.getResponseHeader(response)
+                    let precheck = header.nodeTransactionPrecheckCode
+
+                    if precheck == .ok || precheck == .success {
+                        return self.mapResponse(response)
+
+                    } else if self.shouldRetry(precheck) {
+                         // stop trying if the delay will put us over `validDuration`
+                        guard let delayUs = Backoff.getDelayUs(startTime: startTime, attempt: attempt) else {
+                            return .failure(HederaError(message: "execute timed out"))
+                        }
+
+                        usleep(delayUs)
+                    } else {
+                        return .failure(HederaError(message: "preCheckCode was not OK: \(precheck)"))
+                    }
+                case .failure(let error):
+                    return .failure(HederaError(message: "\(error)"))
+                }
             }
         }
+    }
+
+    func shouldRetry(_ precheckCode: Proto_ResponseCodeEnum) -> Bool {
+        precheckCode == .busy
     }
 
     func mapResponse(_ response: Proto_Response) -> Result<Response, HederaError> {

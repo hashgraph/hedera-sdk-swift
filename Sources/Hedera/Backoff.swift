@@ -1,7 +1,7 @@
 import Foundation
 
 enum Backoff {
-    static let receiptInitialDelay: UInt32 = 1
+    static let initialDelay: UInt32 = 1
     static let receiptRetryDelay: TimeInterval = 0.5
 
     static func getDelayUs(startTime: Date, attempt: UInt8) -> UInt32? {
