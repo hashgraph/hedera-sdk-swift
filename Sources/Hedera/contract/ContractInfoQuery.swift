@@ -25,8 +25,8 @@ public struct ContractInfo {
 }
 
 public class ContractInfoQuery: QueryBuilder<ContractInfo> {
-    public override init(client: Client) {
-        super.init(client: client)
+    public override init(node: Node) {
+        super.init(node: node)
 
         body.contractGetInfo = Proto_ContractGetInfoQuery()
     }

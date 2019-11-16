@@ -3,8 +3,8 @@ import Foundation
 import Sodium
 
 public class ContractCreateTransaction: TransactionBuilder {
-    public override init(client: Client? = nil) {
-        super.init(client: client)
+    public override init() {
+        super.init()
 
         body.contractCreateInstance = Proto_ContractCreateTransactionBody()
     }

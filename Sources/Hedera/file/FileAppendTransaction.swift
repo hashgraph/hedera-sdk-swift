@@ -6,8 +6,8 @@ public class FileAppendTransaction: TransactionBuilder {
     /// Create a FileAppendTransaction
     ///
     /// This transaction must be signed with all the required keys to successfully update the file.
-    public override init(client: Client? = nil) {
-        super.init(client: client)
+    public override init() {
+        super.init()
 
         body.fileAppend = Proto_FileAppendTransactionBody()
     }

@@ -1,6 +1,6 @@
 public final class CryptoTransferTransaction: TransactionBuilder {
-    public override init(client: Client? = nil) {
-        super.init(client: client)
+    public override init() {
+        super.init()
 
         var inner = Proto_CryptoTransferTransactionBody()
         inner.transfers = Proto_TransferList()

@@ -7,8 +7,8 @@ public class ContractUpdateTransaction: TransactionBuilder {
     /// This transaction must be signed with the admin key to successfully modify the contract
     /// If the contract you wish to update does not have an admin key set, then the contract is
     /// essentially immutable and cannot be changed in any way.
-    public override init(client: Client? = nil) {
-        super.init(client: client)
+    public override init() {
+        super.init()
 
         body.contractUpdateInstance = Proto_ContractUpdateTransactionBody()
     }

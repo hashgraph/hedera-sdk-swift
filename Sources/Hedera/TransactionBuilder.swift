@@ -6,10 +6,8 @@ let maxValidDuration = TimeInterval(2 * 60)
 
 public class TransactionBuilder {
     var body = Proto_TransactionBody()
-    let client: Client?
 
-    init(client: Client? = nil) {
-        self.client = client
+    init() {
         body.transactionValidDuration = maxValidDuration.toProto()
     }
 
@@ -49,7 +47,7 @@ public class TransactionBuilder {
         return self
     }
 
-    public func build() -> Transaction {
+    public func build(client: Client?) -> Transaction {
         // If we have a client, set some defaults if they have not already been set
         if let client = client {
             if body.transactionFee == 0 {
@@ -75,7 +73,7 @@ public class TransactionBuilder {
         // swiftlint:disable:next force_try
         tx.bodyBytes = try! body.serializedData()
 
-        let transaction = Transaction(client, tx)
+        let transaction = Transaction(tx)
 
         // Sign with the operator, if present
         if let client = client, let clientOperator = client.operator {

@@ -9,24 +9,22 @@ typealias QueryExecuteClosure = (Proto_Query) throws -> Proto_Response
 
 public class QueryBuilder<Response> {
     var body = Proto_Query()
-    let client: Client
     var header = Proto_QueryHeader()
-    var node: Node
+    let node: Node
     var needsPayment: Bool { true }
 
-    init(client: Client) {
-        self.client = client
-        self.node = client.node ?? client.pickNode()
+    init(node: Node) {
+        self.node = node
     }
 
     @discardableResult
-    public func setPayment(_ amount: UInt64) -> Self {
-        header.payment = CryptoTransferTransaction(client: client)
+    public func setPayment(client: Client, amount: UInt64) -> Self {
+        header.payment = CryptoTransferTransaction()
             .setNodeAccount(node.accountId)
             .add(recipient: node.accountId, amount: amount)
             .add(sender: client.operator!.id, amount: amount)
             .setMaxTransactionFee(100_000_000)
-            .build()
+            .build(client: client)
             .addSigPair(publicKey: client.operator!.publicKey,
                         signer: client.operator!.signer)
             .toProto()
@@ -42,7 +40,7 @@ public class QueryBuilder<Response> {
     }
 
     @discardableResult
-    public func requestCost() -> Result<UInt64, HederaError> {
+    public func requestCost(_ client: Client) -> Result<UInt64, HederaError> {
         let responseType = header.responseType
         let payment = header.payment
 
@@ -53,7 +51,7 @@ public class QueryBuilder<Response> {
         }
 
         header.responseType = Proto_ResponseType.costAnswer
-        setPayment(0)
+        setPayment(client: client, amount: 0)
 
         do {
             return try methodForQuery(client.grpcClient(for: node))(body, nil).response.map { (response) -> Result<UInt64, HederaError> in
@@ -133,17 +131,17 @@ public class QueryBuilder<Response> {
         }
     }
 
-    public func execute() -> Result<Response, HederaError> {
+    public func execute(client: Client) -> Result<Response, HederaError> {
         do {
-            return try executeAsync().wait()
+            return try executeAsync(client: client).wait()
         } catch {
             return .failure(HederaError(message: "RPC error: \(error)"))
         }
     }
 
-    public func executeAsync() -> EventLoopFuture<Result<Response, HederaError>> {
+    public func executeAsync(client: Client) -> EventLoopFuture<Result<Response, HederaError>> {
         if needsPayment && !header.hasPayment {
-            switch requestCost() {
+            switch requestCost(client) {
             case .success(let cost):
                 if let maxQueryPayment = client.maxQueryPayment {
                     if cost > maxQueryPayment {
@@ -151,7 +149,7 @@ public class QueryBuilder<Response> {
                     }
                 }
 
-                setPayment(cost)
+                setPayment(client: client, amount: cost)
             case .failure(let error):
                 return client.eventLoopGroup.next().makeFailedFuture(error)
             }
@@ -166,7 +164,7 @@ public class QueryBuilder<Response> {
             while(true) {
                 attempt += 1
             
-                let response = Result { try self.methodForQuery(self.client.grpcClient(for: self.node))(self.body, nil).response.wait() }
+                let response = Result { try self.methodForQuery(client.grpcClient(for: self.node))(self.body, nil).response.wait() }
                 switch response {
                 case .success(let response):
                     let header = self.getResponseHeader(response)

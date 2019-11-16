@@ -2,8 +2,8 @@ import SwiftProtobuf
 import Foundation
 
 public final class AccountUpdateTransaction: TransactionBuilder {
-    public override init(client: Client? = nil) {
-        super.init(client: client)
+    public override init() {
+        super.init()
         body.cryptoUpdateAccount = Proto_CryptoUpdateTransactionBody()
     }
 

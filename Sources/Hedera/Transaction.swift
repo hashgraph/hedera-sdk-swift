@@ -7,19 +7,18 @@ import NIO
 typealias ExecuteClosure = (Proto_Transaction) throws -> Proto_TransactionResponse
 
 public class Transaction {
+    public let transactionId: TransactionId
+
     var inner: Proto_Transaction
-    var client: Client?
-    let txId: TransactionId
     let nodeId: AccountId
     let kind: TransactionKind
 
-    init(_ client: Client?, _ tx: Proto_Transaction) {
+    init(_ tx: Proto_Transaction) {
         let body = try! Proto_TransactionBody.init(serializedData: tx.bodyBytes)
 
-        self.client = client
         inner = tx
         if !inner.hasSigMap { inner.sigMap = Proto_SignatureMap() }
-        txId = TransactionId(body.transactionID)!
+        transactionId = TransactionId(body.transactionID)!
         nodeId = AccountId(body.nodeAccountID)
         kind = TransactionKind(body.data!)
     }
@@ -67,10 +66,10 @@ public class Transaction {
 
     // MARK: - Public API
 
-    public convenience init?(_ client: Client?, bytes: Data) {
+    public convenience init?(bytes: Data) {
         guard let tx = try? Proto_Transaction.init(serializedData: bytes) else { return nil }
         guard (try? Proto_TransactionBody.init(serializedData: tx.bodyBytes)) != nil else { return nil }
-        self.init(client, tx)
+        self.init(tx)
     }
 
     public var bytes: Bytes {
@@ -108,17 +107,15 @@ public class Transaction {
         return self
     }
     
-    public func execute() -> Result<TransactionId, HederaError> {
+    public func execute(client: Client) -> Result<TransactionId, HederaError> {
         do {
-            return try executeAsync().wait()
+            return try executeAsync(client: client).wait()
         } catch {
             return .failure(HederaError(message: "RPC error: \(error)"))
         }
     }
 
-    public func executeAsync() -> EventLoopFuture<Result<TransactionId, HederaError>> {
-        guard let client = client else { fatalError("client must not be nil") }
-
+    public func executeAsync(client: Client) -> EventLoopFuture<Result<TransactionId, HederaError>> {
         guard let node = client.nodes[nodeId] else {
             return client.eventLoopGroup.next().makeFailedFuture(HederaError(message: "node ID for transaction not found in Client"))
         }
@@ -144,7 +141,7 @@ public class Transaction {
 
                         usleep(delayUs)
                     case .ok:
-                        return .success(self.txId)
+                        return .success(self.transactionId)
                     default:
                         return .failure(HederaError(message: "preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)"))
                     }
@@ -155,35 +152,43 @@ public class Transaction {
         }
     }
 
-    public func queryReceipt() -> Result<TransactionReceipt, HederaError> {
-        guard let client = client else { return .failure(HederaError(message: "client must not be nil")) }
+    public func queryReceipt(client: Client) -> Result<TransactionReceipt, HederaError> {
+        guard let node = client.nodes[nodeId] else {
+            return .failure(HederaError(message: "node ID for transaction not found in Client"))
+        }
 
-        return TransactionReceiptQuery(client: client)
-            .setTransaction(txId)
-            .execute()
+        return TransactionReceiptQuery(node: node)
+            .setTransaction(transactionId)
+            .execute(client: client)
     }
 
-    public func queryReceiptAsync() -> EventLoopFuture<Result<TransactionReceipt, HederaError>> {
-        guard let client = client else { fatalError("client must not be nil") }
+    public func queryReceiptAsync(client: Client) -> EventLoopFuture<Result<TransactionReceipt, HederaError>> {
+        guard let node = client.nodes[nodeId] else {
+            return client.eventLoopGroup.next().makeFailedFuture(HederaError(message: "node ID for transaction not found in Client"))
+        }
 
-        return TransactionReceiptQuery(client: client)
-            .setTransaction(txId)
-            .executeAsync()
+        return TransactionReceiptQuery(node: node)
+            .setTransaction(transactionId)
+            .executeAsync(client: client)
     }
 
-    public func queryRecord() -> Result<TransactionRecord, HederaError> {
-        guard let client = client else { return .failure(HederaError(message: "client must not be nil")) }
+    public func queryRecord(client: Client) -> Result<TransactionRecord, HederaError> {
+        guard let node = client.nodes[nodeId] else {
+            return .failure(HederaError(message: "node ID for transaction not found in Client"))
+        }
 
-        return TransactionRecordQuery(client: client)
-            .setTransaction(txId)
-            .execute()
+        return TransactionRecordQuery(node: node)
+            .setTransaction(transactionId)
+            .execute(client: client)
     }
 
-    public func queryRecordAsync() -> EventLoopFuture<Result<TransactionRecord, HederaError>> {
-        guard let client = client else { fatalError("client must not be nil") }
+    public func queryRecordAsync(client: Client) -> EventLoopFuture<Result<TransactionRecord, HederaError>> {
+        guard let node = client.nodes[nodeId] else {
+            return client.eventLoopGroup.next().makeFailedFuture(HederaError(message: "node ID for transaction not found in Client"))
+        }
 
-        return TransactionRecordQuery(client: client)
-            .setTransaction(txId)
-            .executeAsync()
+        return TransactionRecordQuery(node: node)
+            .setTransaction(transactionId)
+            .executeAsync(client: client)
     }
 }

@@ -2,8 +2,8 @@ import Sodium
 import Foundation
 
 public class ContractCallLocalQuery: QueryBuilder<FunctionResult> {
-    public override init(client: Client) {
-        super.init(client: client)
+    public override init(node: Node) {
+        super.init(node: node)
 
         body.contractCallLocal = Proto_ContractCallLocalQuery()
     }

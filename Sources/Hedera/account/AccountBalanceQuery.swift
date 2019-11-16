@@ -1,6 +1,6 @@
 public class AccountBalanceQuery: QueryBuilder<UInt64> {
-    public override init(client: Client) {
-        super.init(client: client)
+    public override init(node: Node) {
+        super.init(node: node)
 
         body.cryptogetAccountBalance = Proto_CryptoGetAccountBalanceQuery()
     }

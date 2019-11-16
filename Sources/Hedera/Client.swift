@@ -101,16 +101,14 @@ public class Client {
         return self
     }
 
-    func pickNode() -> Node {
+    public func pickNode() -> Node {
         nodes.randomElement()!.value
     }
 
     /// Gets the balance of the operator's account in tiny bars.
     /// - Returns: The operator's account balance.
     public func getAccountBalance() -> Result<UInt64, HederaError> {
-        AccountBalanceQuery(client: self)
-            .setAccount(self.operator!.id)
-            .execute()
+        getAccountBalance(account: self.operator!.id)
     }
 
     /// Gets the balance of the given account in tiny bars.
@@ -118,17 +116,15 @@ public class Client {
     ///   - account: The account to check the balance of.
     /// - Returns: `account`'s balance.
     public func getAccountBalance(account: AccountId) -> Result<UInt64, HederaError> {
-        AccountBalanceQuery(client: self)
+        AccountBalanceQuery(node: node ?? pickNode())
             .setAccount(account)
-            .execute()
+            .execute(client: self)
     }
 
     /// Gets the operator's account info.
     /// - Returns: The operator's account info.
     public func getAccountInfo() -> Result<AccountInfo, HederaError> {
-        AccountInfoQuery(client: self)
-            .setAccount(self.operator!.id)
-            .execute()
+        getAccountInfo(account: self.operator!.id)
     }
 
     /// Gets the given account's account info.
@@ -136,17 +132,15 @@ public class Client {
     ///   - account: The account to get the info of.
     /// - Returns: `account`'s account info.
     public func getAccountInfo(account: AccountId) -> Result<AccountInfo, HederaError> {
-        AccountInfoQuery(client: self)
+        AccountInfoQuery(node: node ?? pickNode())
             .setAccount(account)
-            .execute()
+            .execute(client: self)
     }
 
     /// Gets the operator's Transaction Records.
     /// - Returns: The operator's Transaction Records.
     public func getAccountRecords() -> Result<[TransactionRecord], HederaError> {
-        AccountRecordsQuery(client: self)
-            .setAccount(self.operator!.id)
-            .execute()
+        getAccountRecords(account: self.operator!.id)
     }
 
     /// Gets the given account's transaction records.
@@ -154,9 +148,9 @@ public class Client {
     ///   - account: The account to get the transaction records for.
     /// - Returns: `account`'s transaction records.
     public func getAccountRecords(account: AccountId) -> Result<[TransactionRecord], HederaError> {
-        AccountRecordsQuery(client: self)
+        AccountRecordsQuery(node: node ?? pickNode())
             .setAccount(account)
-            .execute()
+            .execute(client: self)
     }
 
     func grpcClient(for node: Node) -> HederaGRPCClient {

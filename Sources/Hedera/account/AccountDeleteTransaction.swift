@@ -1,8 +1,8 @@
 import SwiftProtobuf
 
 public final class AccountDeleteTransaction: TransactionBuilder {
-    public override init(client: Client? = nil) {
-        super.init(client: client)
+    public override init() {
+        super.init()
 
         body.cryptoDelete = Proto_CryptoDeleteTransactionBody()
     }

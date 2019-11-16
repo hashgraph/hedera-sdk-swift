@@ -26,14 +26,14 @@ let newAccountKey = Ed25519PrivateKey()
 
 print("private key for new account: \(newAccountKey)")
 
-let tx = AccountCreateTransaction(client: client)
+let tx = AccountCreateTransaction()
     .setInitialBalance(0)
     .setKey(newAccountKey.publicKey)
     .setMemo("Create Account Example - Swift SDK")
-    .build()
+    .build(client: client)
     
-try! tx.execute().get()
+try! tx.execute(client: client).get()
 
-let receipt = try! tx.queryReceipt().get()
+let receipt = try! tx.queryReceipt(client: client).get()
 
 print("Account created: \(receipt.accountId!)")

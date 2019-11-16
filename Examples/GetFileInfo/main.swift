@@ -23,9 +23,9 @@ let client = clientFromEnvironment(eventLoopGroup: eventLoopGroup)
     .setMaxTransactionFee(100_000_000)
     .setMaxQueryPayment(1_000_000_000)
 
-let fileInfo = try! FileInfoQuery(client: client)
+let fileInfo = try! FileInfoQuery(node: client.pickNode())
     .setFile(FileId(119300))
-    .execute()
+    .execute(client: client)
     .get()
 
 print("FileInfo Example succeeded with result \(fileInfo)")

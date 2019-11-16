@@ -7,8 +7,8 @@ import Foundation
 /// If the contract you wish to delete does not have an admin key set, then the contract is
 /// essentially immutable and cannot be deleted.
 public class ContractDeleteTransaction: TransactionBuilder {
-    public override init(client: Client? = nil) {
-        super.init(client: client)
+    public override init() {
+        super.init()
 
         body.contractDeleteInstance = Proto_ContractDeleteTransactionBody()
     }

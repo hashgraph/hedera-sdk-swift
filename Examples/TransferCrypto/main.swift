@@ -22,14 +22,14 @@ defer {
 let client = clientFromEnvironment(eventLoopGroup: eventLoopGroup)
     .setMaxTransactionFee(100_000_000)
 
-let tx = CryptoTransferTransaction(client: client)
+let tx = CryptoTransferTransaction()
     .add(sender: AccountId("0.0.3")!, amount: 10000)
     .add(recipient: AccountId("0.0.2")!, amount: 10000)
     .setMemo("Transfer Crypto Example - Swift SDK")
-    .build()
+    .build(client: client)
     
-let transactionId = try! tx.execute().get()
+let transactionId = try! tx.execute(client: client).get()
 
-let receipt = try! tx.queryReceipt().get()
+let receipt = try! tx.queryReceipt(client: client).get()
 
 print("Crypto transferred successfully")

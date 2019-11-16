@@ -1,8 +1,8 @@
 import Foundation
 
 public final class AccountCreateTransaction: TransactionBuilder {
-    public override init(client: Client? = nil) {
-        super.init(client: client)
+    public override init() {
+        super.init()
 
         var inner = Proto_CryptoCreateTransactionBody()
         // Required fixed autorenew duration (roughly 1/4 year)

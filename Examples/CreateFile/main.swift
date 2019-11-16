@@ -24,15 +24,15 @@ let client = clientFromEnvironment(eventLoopGroup: eventLoopGroup)
 
 let publicKey = Ed25519PrivateKey(ProcessInfo.processInfo.environment["OPERATOR_KEY"]!)!.publicKey
 
-let tx = FileCreateTransaction(client: client)
+let tx = FileCreateTransaction()
     .addKey(publicKey)
     .setContents("This is a test")
     .setMemo("File Create Example - Swift SDK")
     .setMaxTransactionFee(1_000_000_000)
-    .build()
+    .build(client: client)
 
-try! tx.execute().get()
+try! tx.execute(client: client).get()
 
-let receipt = try! tx.queryReceipt().get()
+let receipt = try! tx.queryReceipt(client: client).get()
 
 print("File created: \(receipt.fileId!)")
