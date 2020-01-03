@@ -33,6 +33,10 @@ let package = Package(
 
         // Examples
         .target(
+            name: "GetAccountBalanceExample",
+            dependencies: ["Hedera"],
+            path: "Examples/GetAccountBalance"),
+        .target(
             name: "CreateAccountExample",
             dependencies: ["Hedera"],
             path: "Examples/CreateAccount"),

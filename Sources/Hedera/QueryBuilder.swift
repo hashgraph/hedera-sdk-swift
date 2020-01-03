@@ -94,11 +94,11 @@ public class QueryBuilder<Response> {
     func methodForQuery(_ grpc: HederaGRPCClient) -> (Proto_Query, CallOptions?) -> UnaryCall<Proto_Query, Proto_Response> {
         switch body.query {
         case .none:
-            fatalError("tried to execute empty query")
+            fatalError("unreachable: nil query")
         case .contractCallLocal:
             return grpc.contractService.contractCallLocalMethod
         case .getByKey:
-            fatalError("missing getByKey?")
+            fatalError("not implemented: GetByKeyQuery")
         case .getBySolidityID:
             return grpc.contractService.getBySolidityID
         case .contractGetInfo:
@@ -106,7 +106,7 @@ public class QueryBuilder<Response> {
         case .contractGetBytecode:
             return grpc.contractService.contractGetBytecode
         case .contractGetRecords:
-            fatalError("missing contractGetRecords?")
+            return grpc.contractService.getTxRecordByContractID
         case .cryptogetAccountBalance:
             return grpc.cryptoService.cryptoGetBalance
         case .cryptoGetAccountRecords:
@@ -116,7 +116,6 @@ public class QueryBuilder<Response> {
         case .cryptoGetClaim:
             return grpc.cryptoService.getClaim
         case .cryptoGetProxyStakers:
-            // NOTE: this not yet implemented
             return grpc.cryptoService.getStakersByAccountID
         case .fileGetContents:
             return grpc.fileService.getFileContent
