@@ -1,6 +1,6 @@
 public class AccountBalanceQuery: QueryBuilder<UInt64> {
-    public override init(node: Node) {
-        super.init(node: node)
+    public override init() {
+        super.init()
 
         body.cryptogetAccountBalance = Proto_CryptoGetAccountBalanceQuery()
     }
@@ -13,7 +13,7 @@ public class AccountBalanceQuery: QueryBuilder<UInt64> {
 
     override func mapResponse(_ response: Proto_Response) -> Result<UInt64, HederaError> {
         guard case .cryptogetAccountBalance(let response) = response.response else {
-            return .failure(HederaError(message: "unreachable: query response was not of type account balance"))
+            return .failure(HederaError.message("unreachable: query response was not of type account balance"))
         }
 
         return .success(response.balance)

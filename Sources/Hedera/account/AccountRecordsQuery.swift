@@ -1,6 +1,6 @@
 public class AccountRecordsQuery: QueryBuilder<[TransactionRecord]> {
-    public override init(node: Node) {
-        super.init(node: node)
+    public override init() {
+        super.init()
 
         body.cryptoGetAccountRecords = Proto_CryptoGetAccountRecordsQuery()
     }
@@ -13,7 +13,7 @@ public class AccountRecordsQuery: QueryBuilder<[TransactionRecord]> {
 
     override func mapResponse(_ response: Proto_Response) -> Result<[TransactionRecord], HederaError> {
         guard case .cryptoGetAccountRecords(let response) = response.response else {
-            return .failure(HederaError(message: "Query response was not of type crypto account records"))
+            return .failure(HederaError.message("Query response was not of type crypto account records"))
         }
 
         return .success(response.records.map(TransactionRecord.init))

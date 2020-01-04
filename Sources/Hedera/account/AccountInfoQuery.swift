@@ -1,6 +1,6 @@
 public class AccountInfoQuery: QueryBuilder<AccountInfo> {
-    public override init(node: Node) {
-        super.init(node: node)
+    public override init() {
+        super.init()
 
         body.cryptoGetInfo = Proto_CryptoGetInfoQuery()
     }
@@ -13,7 +13,7 @@ public class AccountInfoQuery: QueryBuilder<AccountInfo> {
 
     override func mapResponse(_ response: Proto_Response) -> Result<AccountInfo, HederaError> {
         guard case .cryptoGetInfo(let response) =  response.response else {
-            return .failure(HederaError(message: "query response was not of type account info"))
+            return .failure(HederaError.message("query response was not of type account info"))
         }
 
         return .success(AccountInfo(response.accountInfo))

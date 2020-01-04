@@ -1,6 +1,6 @@
 public final class TransactionRecordQuery: QueryBuilder<TransactionRecord> {
-    public override init(node: Node) {
-        super.init(node: node)
+    public override init() {
+        super.init()
 
         body.transactionGetRecord = Proto_TransactionGetRecordQuery()
     }
@@ -17,7 +17,7 @@ public final class TransactionRecordQuery: QueryBuilder<TransactionRecord> {
 
     override func mapResponse(_ response: Proto_Response) -> Result<TransactionRecord, HederaError> {
         guard case .transactionGetRecord(let response) = response.response else {
-            return .failure(HederaError(message: "query response was not of type 'transactionGetRecord'"))
+            return .failure(HederaError.message("query response was not of type 'transactionGetRecord'"))
         }
 
         return .success(TransactionRecord(response.transactionRecord))

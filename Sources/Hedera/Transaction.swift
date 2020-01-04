@@ -23,7 +23,8 @@ public class Transaction {
         kind = TransactionKind(body.data!)
     }
 
-    func methodForTransaction(_ grpc: HederaGRPCClient) -> (Proto_Transaction, CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    func methodForTransaction(_ grpc: HederaGRPCClient) ->
+        (Proto_Transaction, CallOptions?) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
         switch kind {
         case .contractCall:
             return grpc.contractService.contractCallMethod
@@ -106,88 +107,74 @@ public class Transaction {
 
         return self
     }
-    
+
     public func execute(client: Client) -> Result<TransactionId, HederaError> {
         do {
             return try executeAsync(client: client).wait()
         } catch {
-            return .failure(HederaError(message: "RPC error: \(error)"))
+            return .failure(HederaError.message("RPC error: \(error)"))
         }
     }
 
     public func executeAsync(client: Client) -> EventLoopFuture<Result<TransactionId, HederaError>> {
-        guard let node = client.nodes[nodeId] else {
-            return client.eventLoopGroup.next().makeFailedFuture(HederaError(message: "node ID for transaction not found in Client"))
+        guard let node = client.network[nodeId] else {
+            return client.eventLoopGroup
+                .next()
+                .makeFailedFuture(HederaError.message("node ID for transaction not found in Client"))
         }
 
         return client.eventLoopGroup.next().submit {
             let startTime = Date()
             var attempt: UInt8 = 0
 
-            sleep(Backoff.initialDelay)
-
-            while(true) {
+            var delay = Backoff.initialDelay
+            while true {
+                // client.eventLoopGroup.next().scheduleTask(in: delay, task: () throws -> T)
                 attempt += 1
-            
-                let response = Result { try self.methodForTransaction(client.grpcClient(for: node))(self.inner, nil).response.wait() }
+
+                let response = Result {
+                    try self.methodForTransaction(client.grpcClient(for: node))(self.inner, nil).response.wait()
+                }
                 switch response {
                 case .success(let response):
                     switch response.nodeTransactionPrecheckCode {
                     case .busy:
                         // stop trying if the delay will put us over `validDuration`
                         guard let delayUs = Backoff.getDelayUs(startTime: startTime, attempt: attempt) else {
-                            return .failure(HederaError(message: "execute timed out"))
+                            return .failure(HederaError.message("execute timed out"))
                         }
 
                         usleep(delayUs)
                     case .ok:
                         return .success(self.transactionId)
                     default:
-                        return .failure(HederaError(message: "preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)"))
+                        return .failure(HederaError.message("preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)"))
                     }
                 case .failure(let error):
-                    return .failure(HederaError(message: "\(error)"))
+                    return .failure(HederaError.message("\(error)"))
                 }
             }
         }
     }
 
-    public func queryReceipt(client: Client) -> Result<TransactionReceipt, HederaError> {
-        guard let node = client.nodes[nodeId] else {
-            return .failure(HederaError(message: "node ID for transaction not found in Client"))
-        }
+    public func queryReceipt(client: Client) -> EventLoopFuture<Result<TransactionReceipt, HederaError>> {
+        // guard let node = client.network[nodeId] else {
+        //     return client.eventLoopGroup.next().makeFailedFuture
+        //(HederaError.message("node ID for transaction not found in Client"))
+        // }
 
-        return TransactionReceiptQuery(node: node)
-            .setTransaction(transactionId)
-            .execute(client: client)
-    }
-
-    public func queryReceiptAsync(client: Client) -> EventLoopFuture<Result<TransactionReceipt, HederaError>> {
-        guard let node = client.nodes[nodeId] else {
-            return client.eventLoopGroup.next().makeFailedFuture(HederaError(message: "node ID for transaction not found in Client"))
-        }
-
-        return TransactionReceiptQuery(node: node)
+        return TransactionReceiptQuery()
             .setTransaction(transactionId)
             .executeAsync(client: client)
     }
 
-    public func queryRecord(client: Client) -> Result<TransactionRecord, HederaError> {
-        guard let node = client.nodes[nodeId] else {
-            return .failure(HederaError(message: "node ID for transaction not found in Client"))
-        }
+    public func queryRecord(client: Client) -> EventLoopFuture<Result<TransactionRecord, HederaError>> {
+        // guard let node = client.network[nodeId] else {
+        //     return client.eventLoopGroup.next().makeFailedFuture(Hedera
+        //Error.message("node ID for transaction not found in Client"))
+        // }
 
-        return TransactionRecordQuery(node: node)
-            .setTransaction(transactionId)
-            .execute(client: client)
-    }
-
-    public func queryRecordAsync(client: Client) -> EventLoopFuture<Result<TransactionRecord, HederaError>> {
-        guard let node = client.nodes[nodeId] else {
-            return client.eventLoopGroup.next().makeFailedFuture(HederaError(message: "node ID for transaction not found in Client"))
-        }
-
-        return TransactionRecordQuery(node: node)
+        return TransactionRecordQuery()
             .setTransaction(transactionId)
             .executeAsync(client: client)
     }

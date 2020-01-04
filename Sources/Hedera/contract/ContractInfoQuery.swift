@@ -25,8 +25,8 @@ public struct ContractInfo {
 }
 
 public class ContractInfoQuery: QueryBuilder<ContractInfo> {
-    public override init(node: Node) {
-        super.init(node: node)
+    public override init() {
+        super.init()
 
         body.contractGetInfo = Proto_ContractGetInfoQuery()
     }
@@ -39,7 +39,7 @@ public class ContractInfoQuery: QueryBuilder<ContractInfo> {
 
     override func mapResponse(_ response: Proto_Response) -> Result<ContractInfo, HederaError> {
         guard case .contractGetInfo(let response) = response.response else {
-            return .failure(HederaError(message: "query response was not of type contract info"))
+            return .failure(HederaError.message("query response was not of type contract info"))
         }
 
         return .success(ContractInfo(response.contractInfo))

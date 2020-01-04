@@ -13,8 +13,8 @@ public struct FileContents {
 }
 
 public class FileContentsQuery: QueryBuilder<FileContents> {
-    public override init(node: Node) {
-        super.init(node: node)
+    public override init() {
+        super.init()
 
         body.fileGetContents = Proto_FileGetContentsQuery()
     }
@@ -27,10 +27,10 @@ public class FileContentsQuery: QueryBuilder<FileContents> {
 
     override func mapResponse(_ response: Proto_Response) -> Result<FileContents, HederaError> {
         guard case .fileGetContents(let response) = response.response else {
-            return .failure(HederaError(message: "query response was not of type file contents"))
+            return .failure(HederaError.message("query response was not of type file contents"))
         }
 
         return .success(FileContents(response.fileContents))
     }
-    
+
 }

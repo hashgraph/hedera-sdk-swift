@@ -61,11 +61,6 @@ public class TransactionBuilder {
             if !body.hasTransactionValidDuration {
                 setTransactionValidDuration(maxValidDuration)
             }
-
-            if !body.hasNodeAccountID {
-                let node = client.node ?? client.pickNode()
-                setNodeAccount(node.accountId)
-            }
         }
 
         var tx = Proto_Transaction()

@@ -1,7 +1,7 @@
 import SwiftProtobuf
 import Foundation
 import GRPC
-import NIO 
+import NIO
 
 let maxQueryCost: Int64 = 10_000_000_000
 
@@ -10,15 +10,14 @@ typealias QueryExecuteClosure = (Proto_Query) throws -> Proto_Response
 public class QueryBuilder<Response> {
     var body = Proto_Query()
     var header = Proto_QueryHeader()
-    let node: Node
     var needsPayment: Bool { true }
 
-    init(node: Node) {
-        self.node = node
-    }
+    init() {}
 
     @discardableResult
     public func setPayment(client: Client, amount: UInt64) -> Self {
+        let node = client.pickNode()
+
         header.payment = CryptoTransferTransaction()
             .setNodeAccount(node.accountId)
             .add(recipient: node.accountId, amount: amount)
@@ -41,6 +40,7 @@ public class QueryBuilder<Response> {
 
     @discardableResult
     public func requestCost(_ client: Client) -> Result<UInt64, HederaError> {
+        let node = client.pickNode()
         let responseType = header.responseType
         let payment = header.payment
 
@@ -54,19 +54,19 @@ public class QueryBuilder<Response> {
         setPayment(client: client, amount: 0)
 
         do {
-            return try methodForQuery(client.grpcClient(for: node))(body, nil).response.map { (response) -> Result<UInt64, HederaError> in
-                let header = self.getResponseHeader(response)
-                let preCheckCode = header.nodeTransactionPrecheckCode
-                if preCheckCode != .ok && preCheckCode != .success {
-                    return .failure(HederaError(message: "Received error code: \(header.nodeTransactionPrecheckCode) while requesting query cost"))
-                } else {
-                    return .success(header.cost)
-                }
+            return try methodForQuery(client.grpcClient(for: node))(body, nil)
+                .response.map { (response) -> Result<UInt64, HederaError> in
+                    let header = self.getResponseHeader(response)
+                    let preCheckCode = header.nodeTransactionPrecheckCode
+                    if preCheckCode != .ok && preCheckCode != .success {
+                        return .failure(HederaError.message("Received error code: \(header.nodeTransactionPrecheckCode) while requesting query cost"))
+                    } else {
+                        return .success(header.cost)
+                    }
             }.wait()
         } catch let error {
-            return .failure(HederaError(message: "failed to get cost for query: \(error)"))
+            return .failure(HederaError.message("failed to get cost for query: \(error)"))
         }
-        
     }
 
     func getResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
@@ -130,21 +130,17 @@ public class QueryBuilder<Response> {
         }
     }
 
-    public func execute(client: Client) -> Result<Response, HederaError> {
-        do {
-            return try executeAsync(client: client).wait()
-        } catch {
-            return .failure(HederaError(message: "RPC error: \(error)"))
-        }
-    }
-
     public func executeAsync(client: Client) -> EventLoopFuture<Result<Response, HederaError>> {
+        let node = client.pickNode()
+
         if needsPayment && !header.hasPayment {
             switch requestCost(client) {
             case .success(let cost):
                 if let maxQueryPayment = client.maxQueryPayment {
                     if cost > maxQueryPayment {
-                        return client.eventLoopGroup.next().makeFailedFuture(HederaError(message: "Query payment exceeds maxQueryPayment set on the client"))
+                        return client.eventLoopGroup
+                            .next()
+                            .makeFailedFuture(HederaError.queryPaymentExceedsMax)
                     }
                 }
 
@@ -160,10 +156,10 @@ public class QueryBuilder<Response> {
 
             sleep(Backoff.initialDelay)
 
-            while(true) {
+            while true {
                 attempt += 1
-            
-                let response = Result { try self.methodForQuery(client.grpcClient(for: self.node))(self.body, nil).response.wait() }
+
+                let response = Result { try self.methodForQuery(client.grpcClient(for: node))(self.body, nil).response.wait() }
                 switch response {
                 case .success(let response):
                     let header = self.getResponseHeader(response)
@@ -175,15 +171,15 @@ public class QueryBuilder<Response> {
                     } else if self.shouldRetry(precheck) {
                          // stop trying if the delay will put us over `validDuration`
                         guard let delayUs = Backoff.getDelayUs(startTime: startTime, attempt: attempt) else {
-                            return .failure(HederaError(message: "execute timed out"))
+                            return .failure(HederaError.message("execute timed out"))
                         }
 
                         usleep(delayUs)
                     } else {
-                        return .failure(HederaError(message: "preCheckCode was not OK: \(precheck)"))
+                        return .failure(HederaError.message("preCheckCode was not OK: \(precheck)"))
                     }
                 case .failure(let error):
-                    return .failure(HederaError(message: "\(error)"))
+                    return .failure(HederaError.message("\(error)"))
                 }
             }
         }

@@ -1,8 +1,8 @@
 import Foundation
 
 public class ContractGetRecordsQuery: QueryBuilder<[TransactionRecord]> {
-    public override init(node: Node) {
-        super.init(node: node)
+    public override init() {
+        super.init()
 
         body.contractGetRecords = Proto_ContractGetRecordsQuery()
     }
@@ -17,7 +17,7 @@ public class ContractGetRecordsQuery: QueryBuilder<[TransactionRecord]> {
 
     override func mapResponse(_ response: Proto_Response) -> Result<[TransactionRecord], HederaError> {
         guard case .contractGetRecordsResponse(let response) =  response.response else {
-            return .failure(HederaError(message: "query response was not of type 'contractGetRecords'"))
+            return .failure(HederaError.message("query response was not of type 'contractGetRecords'"))
         }
 
         return .success(response.records.map(TransactionRecord.init))

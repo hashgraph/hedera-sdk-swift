@@ -2,8 +2,8 @@ import Sodium
 import Foundation
 
 public class ContractCallLocalQuery: QueryBuilder<Void> {
-    public override init(node: Node) {
-        super.init(node: node)
+    public override init() {
+        super.init()
 
         body.contractCallLocal = Proto_ContractCallLocalQuery()
     }
@@ -28,8 +28,8 @@ public class ContractCallLocalQuery: QueryBuilder<Void> {
     }
 
     override func mapResponse(_ response: Proto_Response) -> Result<Void, HederaError> {
-        guard case .contractCallLocal(let response) =  response.response else {
-            return .failure(HederaError(message: "query response was not of type 'contractCallLocal'"))
+        guard case .contractCallLocal(_) =  response.response else {
+            return .failure(HederaError.message("query response was not of type 'contractCallLocal'"))
         }
 
         return .success(())
