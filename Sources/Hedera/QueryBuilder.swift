@@ -12,34 +12,33 @@ public class QueryBuilder<Response> {
     var header = Proto_QueryHeader()
     var needsPayment: Bool { true }
 
+    var maxQueryPayment: UInt64?
+    var queryPayment: UInt64?
+
     init() {}
 
     @discardableResult
-    public func setPayment(client: Client, amount: UInt64) -> Self {
-        let node = client.pickNode()
-
-        header.payment = CryptoTransferTransaction()
-            .setNodeAccount(node.accountId)
-            .add(recipient: node.accountId, amount: amount)
-            .add(sender: client.operator!.id, amount: amount)
-            .setMaxTransactionFee(100_000_000)
-            .build(client: client)
-            .addSigPair(publicKey: client.operator!.publicKey,
-                        signer: client.operator!.signer)
-            .toProto()
-
+    public func setMaxQueryPayment(_ max: UInt64) -> Self {
+        maxQueryPayment = max
         return self
     }
 
     @discardableResult
-    public func setPayment(_ transaction: Transaction) -> Self {
+    public func setQueryPayment(_ amount: UInt64) -> Self {
+        queryPayment = amount
+        return self
+    }
+
+    @discardableResult
+    public func setQueryPaymentTransaction(_ transaction: Transaction) -> Self {
         header.payment = transaction.toProto()
 
         return self
     }
 
     @discardableResult
-    public func requestCost(_ client: Client) -> Result<UInt64, HederaError> {
+    public func getCost(_ client: Client) -> Result<UInt64, HederaError> {
+        // Pick a node to use
         let node = client.pickNode()
         let responseType = header.responseType
         let payment = header.payment
@@ -51,7 +50,12 @@ public class QueryBuilder<Response> {
         }
 
         header.responseType = Proto_ResponseType.costAnswer
-        setPayment(client: client, amount: 0)
+        header.payment = CryptoTransferTransaction()
+            .add(sender: client.operator!.id, amount: 0)
+            .add(recipient: node.accountId, amount: 0)
+            .build(client: client)
+            .addSigPair(publicKey: client.operator!.publicKey, signer: client.operator!.signer)
+            .toProto()
 
         do {
             return try methodForQuery(client.grpcClient(for: node))(body, nil)
@@ -59,7 +63,11 @@ public class QueryBuilder<Response> {
                     let header = self.getResponseHeader(response)
                     let preCheckCode = header.nodeTransactionPrecheckCode
                     if preCheckCode != .ok && preCheckCode != .success {
-                        return .failure(HederaError.message("Received error code: \(header.nodeTransactionPrecheckCode) while requesting query cost"))
+                        return .failure(
+                            HederaError.message(
+                                "Received error code: \(header.nodeTransactionPrecheckCode) while requesting query cost"
+                            )
+                        )
                     } else {
                         return .success(header.cost)
                     }
@@ -91,7 +99,8 @@ public class QueryBuilder<Response> {
         }
     }
 
-    func methodForQuery(_ grpc: HederaGRPCClient) -> (Proto_Query, CallOptions?) -> UnaryCall<Proto_Query, Proto_Response> {
+    func methodForQuery(_ grpc: HederaGRPCClient) -> (Proto_Query, CallOptions?) ->
+        UnaryCall<Proto_Query, Proto_Response> {
         switch body.query {
         case .none:
             fatalError("unreachable: nil query")
@@ -130,24 +139,53 @@ public class QueryBuilder<Response> {
         }
     }
 
-    public func executeAsync(client: Client) -> EventLoopFuture<Result<Response, HederaError>> {
-        let node = client.pickNode()
+    func generateQueryPaymentTransaction(client: Client, node: Node, amount: UInt64) {
+        let tx = CryptoTransferTransaction()
+            .setNodeAccount(node.accountId)
+            .add(sender: client.operator!.id, amount: amount)
+            .add(recipient: node.accountId, amount: amount)
+            .setMaxTransactionFee(defaultMaxTransactionFee)
+            .build(client: client)
+            .addSigPair(publicKey: client.operator!.publicKey, signer: client.operator!.signer)
 
-        if needsPayment && !header.hasPayment {
-            switch requestCost(client) {
-            case .success(let cost):
-                if let maxQueryPayment = client.maxQueryPayment {
-                    if cost > maxQueryPayment {
+        setQueryPaymentTransaction(tx)
+    }
+
+    public func executeAsync(client: Client) -> EventLoopFuture<Result<Response, HederaError>> {
+        let node: Node
+
+        if needsPayment {
+            if header.hasPayment {
+                let txBytes = header.payment.bodyBytes
+                let tx = try! Proto_Transaction(serializedData: txBytes)
+                node = client.network[AccountId(tx.body.nodeAccountID)]!
+            } else if let amount = queryPayment {
+                node = client.pickNode()
+                generateQueryPaymentTransaction(client: client, node: node, amount: amount)
+
+            } else if maxQueryPayment != nil || client.maxQueryPayment != nil {
+                node = client.pickNode()
+
+                let maxAmount = maxQueryPayment ?? client.maxQueryPayment!
+
+                switch getCost(client) {
+                case .success(let cost):
+                    if cost > maxAmount {
                         return client.eventLoopGroup
                             .next()
                             .makeFailedFuture(HederaError.queryPaymentExceedsMax)
                     }
-                }
 
-                setPayment(client: client, amount: cost)
-            case .failure(let error):
-                return client.eventLoopGroup.next().makeFailedFuture(error)
+                    generateQueryPaymentTransaction(client: client, node: node, amount: cost)
+                case .failure(let error):
+                    return client.eventLoopGroup.next().makeFailedFuture(error)
+                }
+            } else {
+                // If we reach here there will not be a proper payment set on the query so it will fail anyway
+                node = client.pickNode()
             }
+        } else {
+            node = client.pickNode()
         }
 
         return client.eventLoopGroup.next().submit {
@@ -159,7 +197,9 @@ public class QueryBuilder<Response> {
             while true {
                 attempt += 1
 
-                let response = Result { try self.methodForQuery(client.grpcClient(for: node))(self.body, nil).response.wait() }
+                let response = Result {
+                    try self.methodForQuery(client.grpcClient(for: node))(self.body, nil).response.wait()
+                }
                 switch response {
                 case .success(let response):
                     let header = self.getResponseHeader(response)
