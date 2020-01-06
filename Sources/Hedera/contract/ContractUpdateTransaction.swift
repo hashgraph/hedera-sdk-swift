@@ -13,10 +13,37 @@ public class ContractUpdateTransaction: TransactionBuilder {
         body.contractUpdateInstance = Proto_ContractUpdateTransactionBody()
     }
 
-    /// Set a new admin Ed25519PublicKey
+    /// Set the contract id to be updated
     @discardableResult
-    public func setAdminKey(_ key: Ed25519PublicKey) -> Self {
+    public func setContractId(_ id: ContractId) -> Self {
+        body.contractUpdateInstance.contractID = id.toProto()
+
+        return self
+    }
+
+    /// Set a new admin PublicKey
+    @discardableResult
+    public func setAdminKey(_ key: PublicKey) -> Self {
         body.contractUpdateInstance.adminKey = key.toProto()
+
+        return self
+    }
+
+    /// Update or set the proxy account id
+    ///
+    /// - SeeAlso:
+    ///     `ContractCreateTransaction::setProxyAccount`
+    @discardableResult
+    public func setProxyAccountId(_ id: AccountId) -> Self {
+        body.contractUpdateInstance.proxyAccountID = id.toProto()
+
+        return self
+    }
+
+    /// Update the solidity file to be used
+    @discardableResult
+    public func setBytecodeFileId(_ id: FileId) -> Self {
+        body.contractUpdateInstance.fileID = id.toProto()
 
         return self
     }
@@ -29,40 +56,21 @@ public class ContractUpdateTransaction: TransactionBuilder {
         return self
     }
 
-    /// Update the solidity file to be used
-    @discardableResult
-    public func setBytecodeFile(_ id: FileId) -> Self {
-        body.contractUpdateInstance.fileID = id.toProto()
-
-        return self
-    }
-
-    /// Set the contract id to be updated
-    @discardableResult
-    public func setContract(_ id: ContractId) -> Self {
-        body.contractUpdateInstance.contractID = id.toProto()
-
-        return self
-    }
-
     /// Update the expiration time
     ///
     /// Extend the expiration of the instance and its account to this time 
     /// (no effect if it already is this time or later)
     @discardableResult
     public func setExpirationTime(_ date: Date) -> Self {
-        body.fileCreate.expirationTime = date.toProto()
+        body.contractUpdateInstance.expirationTime = date.toProto()
 
         return self
     }
 
-    /// Update or set the proxy account id
-    ///
-    /// - SeeAlso:
-    ///     `ContractCreateTransaction::setProxyAccount`
+    /// Set or update the memo for the contract
     @discardableResult
-    public func setProxyAccount(_ id: AccountId) -> Self {
-        body.contractUpdateInstance.proxyAccountID = id.toProto()
+    public func setContractMemo(_ memo: String) -> Self {
+        body.contractUpdateInstance.memo = memo
 
         return self
     }
