@@ -51,8 +51,8 @@ public class QueryBuilder<Response> {
 
         header.responseType = Proto_ResponseType.costAnswer
         header.payment = CryptoTransferTransaction()
-            .add(sender: client.operator!.id, amount: 0)
-            .add(recipient: node.accountId, amount: 0)
+            .addSender(client.operator!.id, amount: 0)
+            .addRecipient(node.accountId, amount: 0)
             .build(client: client)
             .addSigPair(publicKey: client.operator!.publicKey, signer: client.operator!.signer)
             .toProto()
@@ -142,8 +142,8 @@ public class QueryBuilder<Response> {
     func generateQueryPaymentTransaction(client: Client, node: Node, amount: UInt64) {
         let tx = CryptoTransferTransaction()
             .setNodeAccount(node.accountId)
-            .add(sender: client.operator!.id, amount: amount)
-            .add(recipient: node.accountId, amount: amount)
+            .addSender(client.operator!.id, amount: amount)
+            .addRecipient(node.accountId, amount: amount)
             .setMaxTransactionFee(defaultMaxTransactionFee)
             .build(client: client)
             .addSigPair(publicKey: client.operator!.publicKey, signer: client.operator!.signer)

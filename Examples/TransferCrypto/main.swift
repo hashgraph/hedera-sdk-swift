@@ -23,8 +23,8 @@ let client = clientFromEnvironment(eventLoopGroup: eventLoopGroup)
     .setMaxTransactionFee(100_000_000)
 
 let tx = CryptoTransferTransaction()
-    .add(sender: AccountId("0.0.3")!, amount: 10000)
-    .add(recipient: AccountId("0.0.2")!, amount: 10000)
+    .addSender(AccountId("0.0.3")!, amount: 10000)
+    .addRecipient(AccountId("0.0.2")!, amount: 10000)
     .setMemo("Transfer Crypto Example - Swift SDK")
     .build(client: client)
 
