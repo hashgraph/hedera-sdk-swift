@@ -13,7 +13,7 @@ public class FileDeleteTransaction: TransactionBuilder {
 
     /// Set the file to delete
     @discardableResult
-    public func setFile(_ id: FileId) -> Self {
+    public func setFileId(_ id: FileId) -> Self {
         body.fileDelete.fileID = id.toProto()
 
         return self
