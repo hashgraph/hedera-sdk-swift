@@ -27,7 +27,7 @@ let publicKey = Ed25519PrivateKey(ProcessInfo.processInfo.environment["OPERATOR_
 let tx = FileCreateTransaction()
     .addKey(publicKey)
     .setContents("This is a test")
-    .setMemo("File Create Example - Swift SDK")
+    .setTransactionMemo("File Create Example - Swift SDK")
     .setMaxTransactionFee(1_000_000_000)
     .build(client: client)
 

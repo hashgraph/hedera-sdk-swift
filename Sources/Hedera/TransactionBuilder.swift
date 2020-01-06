@@ -1,5 +1,6 @@
 import SwiftProtobuf
 import Foundation
+import NIO
 
 // Transactions are only valid for 2 minutes
 let maxValidDuration = TimeInterval(2 * 60)
@@ -14,36 +15,34 @@ public class TransactionBuilder {
     @discardableResult
     public func setTransactionId(_ id: TransactionId) -> Self {
         body.transactionID = id.toProto()
-        return self
-    }
 
-    @discardableResult
-    public func setNodeAccount(_ id: AccountId) -> Self {
-        body.nodeAccountID = id.toProto()
         return self
     }
 
     @discardableResult
     public func setMaxTransactionFee(_ fee: UInt64) -> Self {
         body.transactionFee = fee
+
         return self
     }
 
     @discardableResult
     public func setTransactionValidDuration(_ duration: TimeInterval) -> Self {
         body.transactionValidDuration = duration.toProto()
+
         return self
     }
 
     @discardableResult
-    public func setGenerateRecord(_ generateRecord: Bool) -> Self {
-        body.generateRecord = generateRecord
-        return self
-    }
-
-    @discardableResult
-    public func setMemo(_ memo: String) -> Self {
+    public func setTransactionMemo(_ memo: String) -> Self {
         body.memo = memo
+        return self
+    }
+
+    /// Set the account of the node that will submit the transaction to the network.
+    @discardableResult
+    public func setNodeAccountId(_ id: AccountId) -> Self {
+        body.nodeAccountID = id.toProto()
         return self
     }
 
@@ -54,27 +53,22 @@ public class TransactionBuilder {
                 body.transactionFee = client.maxTransactionFee
             }
 
-            if !body.hasTransactionID {
-                setTransactionId(TransactionId(account: client.operator!.id))
+            if !body.hasNodeAccountID {
+                setNodeAccountId(client.pickNode().accountId)
             }
 
-            if !body.hasTransactionValidDuration {
-                setTransactionValidDuration(maxValidDuration)
+            if !body.hasTransactionID {
+                setTransactionId(TransactionId(account: client.operator!.id))
             }
         }
 
         var tx = Proto_Transaction()
         tx.body = body
-        // swiftlint:disable:next force_try
-        tx.bodyBytes = try! body.serializedData()
 
-        let transaction = Transaction(tx)
+        return Transaction(tx)
+    }
 
-        // Sign with the operator, if present
-        if let client = client, let clientOperator = client.operator {
-            transaction.addSigPair(publicKey: clientOperator.publicKey, signer: clientOperator.signer)
-        }
-
-        return transaction
+    public func execute(client: Client) -> EventLoopFuture<Result<TransactionId, HederaError>> {
+        build(client: client).executeAsync(client: client)
     }
 }

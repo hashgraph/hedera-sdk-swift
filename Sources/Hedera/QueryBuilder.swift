@@ -141,7 +141,7 @@ public class QueryBuilder<Response> {
 
     func generateQueryPaymentTransaction(client: Client, node: Node, amount: UInt64) {
         let tx = CryptoTransferTransaction()
-            .setNodeAccount(node.accountId)
+            .setNodeAccountId(node.accountId)
             .addSender(client.operator!.id, amount: amount)
             .addRecipient(node.accountId, amount: amount)
             .setMaxTransactionFee(defaultMaxTransactionFee)

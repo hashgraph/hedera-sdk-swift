@@ -29,7 +29,7 @@ print("private key for new account: \(newAccountKey)")
 let tx = AccountCreateTransaction()
     .setInitialBalance(0)
     .setKey(newAccountKey.publicKey)
-    .setMemo("Create Account Example - Swift SDK")
+    .setTransactionMemo("Create Account Example - Swift SDK")
     .build(client: client)
 
 try! tx.execute(client: client).get()

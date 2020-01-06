@@ -25,7 +25,7 @@ let client = clientFromEnvironment(eventLoopGroup: eventLoopGroup)
 let tx = CryptoTransferTransaction()
     .addSender(AccountId("0.0.3")!, amount: 10000)
     .addRecipient(AccountId("0.0.2")!, amount: 10000)
-    .setMemo("Transfer Crypto Example - Swift SDK")
+    .setTransactionMemo("Transfer Crypto Example - Swift SDK")
     .build(client: client)
 
 let transactionId = try! tx.execute(client: client).get()
