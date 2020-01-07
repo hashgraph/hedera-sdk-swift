@@ -8,8 +8,13 @@ public struct Ed25519PrivateKey {
     private let inner: Sign.KeyPair
 
     /// Generate a new private key
-    public init() {
-        inner = sodium.sign.keyPair()!
+    public static func generate() -> Self? {
+        Ed25519PrivateKey()
+    }
+
+    private init?() {
+        guard let keypair = sodium.sign.keyPair() else { return nil }
+        inner = keypair
     }
 
     /// Initialize a private key from bytes

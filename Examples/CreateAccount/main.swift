@@ -22,7 +22,7 @@ defer {
 let client = clientFromEnvironment(eventLoopGroup: eventLoopGroup)
     .setMaxTransactionFee(100_000_000)
 
-let newAccountKey = Ed25519PrivateKey()
+let newAccountKey = Ed25519PrivateKey.generate()!
 
 print("private key for new account: \(newAccountKey)")
 
