@@ -37,15 +37,15 @@ public class ContractInfoQuery: QueryBuilder<ContractInfo> {
         return self
     }
 
-    override func setHeader() {
-        body.contractGetInfo.header = header
+    override func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        callback(&body.contractGetInfo.header)
     }
 
-    override func mapResponse(_ response: Proto_Response) -> Result<ContractInfo, HederaError> {
+    override func mapResponse(_ response: Proto_Response) -> ContractInfo {
         guard case .contractGetInfo(let response) = response.response else {
-            return .failure(HederaError.message("query response was not of type contract info"))
+            fatalError("unreachable: response is not contractGetInfo")
         }
 
-        return .success(ContractInfo(response.contractInfo))
+        return ContractInfo(response.contractInfo)
     }
 }

@@ -15,15 +15,15 @@ public class ContractGetRecordsQuery: QueryBuilder<[TransactionRecord]> {
         return self
     }
 
-    override func setHeader() {
-        body.contractGetRecords.header = header
+    override func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        callback(&body.contractGetRecords.header)
     }
 
-    override func mapResponse(_ response: Proto_Response) -> Result<[TransactionRecord], HederaError> {
-        guard case .contractGetRecordsResponse(let response) =  response.response else {
-            return .failure(HederaError.message("query response was not of type 'contractGetRecords'"))
+    override func mapResponse(_ response: Proto_Response) -> [TransactionRecord] {
+        guard case .contractGetRecordsResponse(let response) = response.response else {
+            fatalError("unreachable: response is not contractGetRecords")
         }
 
-        return .success(response.records.map(TransactionRecord.init))
+        return response.records.map(TransactionRecord.init)
     }
 }

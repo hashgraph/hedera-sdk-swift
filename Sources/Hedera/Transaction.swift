@@ -156,26 +156,4 @@ public class Transaction {
             }
         }
     }
-
-    public func queryReceipt(client: Client) -> EventLoopFuture<Result<TransactionReceipt, HederaError>> {
-        // guard let node = client.network[nodeId] else {
-        //     return client.eventLoopGroup.next().makeFailedFuture
-        //(HederaError.message("node ID for transaction not found in Client"))
-        // }
-
-        return TransactionReceiptQuery()
-            .setTransaction(transactionId)
-            .executeAsync(client: client)
-    }
-
-    public func queryRecord(client: Client) -> EventLoopFuture<Result<TransactionRecord, HederaError>> {
-        // guard let node = client.network[nodeId] else {
-        //     return client.eventLoopGroup.next().makeFailedFuture(Hedera
-        //Error.message("node ID for transaction not found in Client"))
-        // }
-
-        return TransactionRecordQuery()
-            .setTransaction(transactionId)
-            .executeAsync(client: client)
-    }
 }

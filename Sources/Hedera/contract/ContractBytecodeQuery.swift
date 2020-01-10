@@ -14,16 +14,16 @@ public class ContractBytecodeQuery: QueryBuilder<Data> {
 
         return self
     }
-
-    override func setHeader() {
-        body.contractGetBytecode.header = header
+    
+    override func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        callback(&body.contractGetBytecode.header)
     }
 
-    override func mapResponse(_ response: Proto_Response) -> Result<Data, HederaError> {
+    override func mapResponse(_ response: Proto_Response) -> Data {
         guard case .contractGetBytecodeResponse(let response) = response.response else {
-            return .failure(HederaError.message("query response was not of type contract bytecode"))
+            fatalError("unreachable: response is not contractGetBytecode")
         }
 
-        return .success(response.bytecode)
+        return response.bytecode
     }
 }

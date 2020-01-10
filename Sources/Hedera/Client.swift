@@ -21,7 +21,9 @@ typealias HederaGRPCClient = (fileService: Proto_FileServiceServiceClient,
     cryptoService: Proto_CryptoServiceServiceClient,
     contractService: Proto_SmartContractServiceServiceClient)
 
-let defaultMaxTransactionFee: UInt64 = 100_000_000
+let defaultMaxTransactionFee: UInt64 = 100_000_000 // 1h
+
+let defaultMaxQueryPayment: UInt64 = 100_000_000 // 1h
 
 public class Client {
     var `operator`: Operator?
@@ -37,7 +39,7 @@ public class Client {
     /// The maximum payment that can be automatically attached to a query.
     /// If this is not set, payments will not be made automatically for queries.
     /// This can be overridden for an individual query with `.setPayment()`.
-    var maxQueryPayment: UInt64?
+    var maxQueryPayment: UInt64 = defaultMaxQueryPayment
 
     /// Eventloop that will be shared by all grpc clients
     let eventLoopGroup: EventLoopGroup

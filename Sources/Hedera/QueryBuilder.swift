@@ -3,13 +3,11 @@ import Foundation
 import GRPC
 import NIO
 
-let maxQueryCost: Int64 = 10_000_000_000
-
 typealias QueryExecuteClosure = (Proto_Query) throws -> Proto_Response
 
-public class QueryBuilder<Response> {
+public class QueryBuilder<R> {
     var body = Proto_Query()
-    var header = Proto_QueryHeader()
+    // var header = Proto_QueryHeader()
     var needsPayment: Bool { true }
 
     var maxQueryPayment: UInt64?
@@ -31,52 +29,55 @@ public class QueryBuilder<Response> {
 
     @discardableResult
     public func setQueryPaymentTransaction(_ transaction: Transaction) -> Self {
-        header.payment = transaction.toProto()
+        withHeader {
+            $0.payment = transaction.toProto()
+        }
 
         return self
     }
 
     @discardableResult
-    public func getCost(_ client: Client) -> Result<UInt64, HederaError> {
-        // Pick a node to use
-        let node = client.pickNode()
-        let responseType = header.responseType
-        let payment = header.payment
+    func getCost(client: Client, node: Node) -> EventLoopFuture<UInt64> {
+        // Store the current response type and payment
+        let responseType = withHeader { $0.responseType }
+        let payment = withHeader { $0.payment }
 
         // Reset the responseType and payment of header
+        // at the end of the function
         defer {
-            header.responseType = responseType
-            header.payment = payment
+            withHeader {
+                $0.responseType = responseType
+                $0.payment = payment
+            }
         }
 
-        header.responseType = Proto_ResponseType.costAnswer
-        header.payment = CryptoTransferTransaction()
-            .addSender(client.operator!.id, amount: 0)
-            .addRecipient(node.accountId, amount: 0)
-            .build(client: client)
-            .addSigPair(publicKey: client.operator!.publicKey, signer: client.operator!.signer)
-            .toProto()
+        withHeader {
+            // COST_ANSWER tells HAPI to return only the cost for the given query
+            $0.responseType = .costAnswer
 
-        setHeader()
-
-        do {
-            return try methodForQuery(client.grpcClient(for: node))(body, nil)
-                .response.map { (response) -> Result<UInt64, HederaError> in
-                    let header = self.getResponseHeader(response)
-                    let preCheckCode = header.nodeTransactionPrecheckCode
-                    if preCheckCode != .ok && preCheckCode != .success {
-                        return .failure(
-                            HederaError.message(
-                                "Received error code: \(header.nodeTransactionPrecheckCode) while requesting query cost"
-                            )
-                        )
-                    } else {
-                        return .success(header.cost)
-                    }
-            }.wait()
-        } catch let error {
-            return .failure(HederaError.message("failed to get cost for query: \(error)"))
+            // COST_ANSWER requires a 0 payment and does not actually process it
+            $0.payment = CryptoTransferTransaction()
+                .addSender(client.operator!.id, amount: 0)
+                .addRecipient(node.accountId, amount: 0)
+                .build(client: client)
+                .addSigPair(publicKey: client.operator!.publicKey, signer: client.operator!.signer)
+                .toProto()
         }
+
+        let req = getQueryMethod(client.grpcClient(for: node))(body, nil)
+        let resp = req.response
+
+        return resp.flatMapResult { (response) -> Result<UInt64, HederaError> in
+            let header = self.getResponseHeader(response)
+            let preCheckCode = header.nodeTransactionPrecheckCode
+
+            return resultFromCode(preCheckCode, success: header.cost)
+        }
+    }
+
+    @discardableResult
+    public func getCost(client: Client) -> EventLoopFuture<UInt64> {
+        return getCost(client: client, node: client.pickNode())
     }
 
     func getResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
@@ -97,12 +98,14 @@ public class QueryBuilder<Response> {
         case .transactionGetReceipt(let res): return res.header
         case .transactionGetRecord(let res): return res.header
         case .transactionGetFastRecord(let res): return res.header
-        default: fatalError("unrecognized query response header")
+
+        default: fatalError("unreachable: unknown query response")
         }
     }
 
-    func methodForQuery(_ grpc: HederaGRPCClient) -> (Proto_Query, CallOptions?) ->
-        UnaryCall<Proto_Query, Proto_Response> {
+    func getQueryMethod(
+        _ grpc: HederaGRPCClient
+    ) -> (Proto_Query, CallOptions?) -> UnaryCall<Proto_Query, Proto_Response> {
         switch body.query {
         case .none:
             fatalError("unreachable: nil query")
@@ -153,76 +156,80 @@ public class QueryBuilder<Response> {
         setQueryPaymentTransaction(tx)
     }
 
-    public func executeAsync(client: Client) -> EventLoopFuture<Result<Response, HederaError>> {
-        let node: Node
+    public func execute(client: Client) -> EventLoopFuture<R> {
+        let eventLoop = client.eventLoopGroup.next()
+        let nodeFut: EventLoopFuture<Node>
 
         if needsPayment {
-            if header.hasPayment {
-                let txBytes = header.payment.bodyBytes
+            if withHeader({ $0.hasPayment }) {
+                let txBytes = withHeader { $0.payment.bodyBytes }
+
+                // We can be reasonably confident that the data bytes are valid
                 let tx = try! Proto_Transaction(serializedData: txBytes)
-                node = client.network[AccountId(tx.body.nodeAccountID)]!
+
+                nodeFut = eventLoop.makeSucceededFuture(
+                    client.network[AccountId(tx.body.nodeAccountID)]!)
             } else if let amount = queryPayment {
-                node = client.pickNode()
+                let node = client.pickNode()
+
                 generateQueryPaymentTransaction(client: client, node: node, amount: amount)
 
-            } else if maxQueryPayment != nil || client.maxQueryPayment != nil {
-                node = client.pickNode()
+                nodeFut = eventLoop.makeSucceededFuture(node)
+            } else {
+                let node = client.pickNode()
+                let maxAmount = maxQueryPayment ?? client.maxQueryPayment
 
-                let maxAmount = maxQueryPayment ?? client.maxQueryPayment!
-
-                switch getCost(client) {
-                case .success(let cost):
+                nodeFut = getCost(client: client).flatMapResult { (cost) -> Result<Node, HederaError> in
                     if cost > maxAmount {
-                        return client.eventLoopGroup
-                            .next()
-                            .makeFailedFuture(HederaError.queryPaymentExceedsMax)
+                        return .failure(HederaError.queryPaymentExceedsMax)
                     }
 
-                    generateQueryPaymentTransaction(client: client, node: node, amount: cost)
-                case .failure(let error):
-                    return client.eventLoopGroup.next().makeFailedFuture(error)
+                    self.generateQueryPaymentTransaction(client: client, node: node, amount: cost)
+
+                    return .success(node)
                 }
-            } else {
-                // If we reach here there will not be a proper payment set on the query so it will fail anyway
-                node = client.pickNode()
             }
         } else {
-            node = client.pickNode()
+            nodeFut = eventLoop.makeSucceededFuture(client.pickNode())
         }
 
-        return client.eventLoopGroup.next().submit {
-            let startTime = Date()
-            var attempt: UInt8 = 0
+        // TODO: Sometime in the future run a local validator
 
-            sleep(Backoff.initialDelay)
+        return nodeFut.flatMap { node in 
+            self.innerExecute(eventLoop: eventLoop, client: client, node: node, startTime: Date(), attempt: 0)
+        }
+    }
+    
+    func innerExecute(eventLoop: EventLoop, client: Client, node: Node, startTime: Date, attempt: UInt8) -> EventLoopFuture<R> {
+        guard let delay = Backoff.getDelay(startTime: startTime, attempt: attempt) else {
+            return eventLoop.makeFailedFuture(HederaError.timedOut)
+        }
 
-            while true {
-                attempt += 1
+        let delayPromise = eventLoop.makePromise(of: Void.self)
 
-                let response = Result {
-                    try self.methodForQuery(client.grpcClient(for: node))(self.body, nil).response.wait()
-                }
-                switch response {
-                case .success(let response):
-                    let header = self.getResponseHeader(response)
-                    let precheck = header.nodeTransactionPrecheckCode
+        eventLoop.scheduleTask(in: delay) {
+            delayPromise.succeed(())
+        }
 
-                    if precheck == .ok || precheck == .success {
-                        return self.mapResponse(response)
+        return delayPromise.futureResult.flatMap {
+            self.getQueryMethod(client.grpcClient(for: node))(self.body, nil).response
+        }.flatMap { resp in
+            let header = self.getResponseHeader(resp)
+            let code = header.nodeTransactionPrecheckCode
 
-                    } else if self.shouldRetry(precheck) {
-                         // stop trying if the delay will put us over `validDuration`
-                        guard let delayUs = Backoff.getDelayUs(startTime: startTime, attempt: attempt) else {
-                            return .failure(HederaError.message("execute timed out"))
-                        }
+            print(" RECEIVED \(code)")
 
-                        usleep(delayUs)
-                    } else {
-                        return .failure(HederaError.message("preCheckCode was not OK: \(precheck)"))
-                    }
-                case .failure(let error):
-                    return .failure(HederaError.message("\(error)"))
-                }
+            if self.shouldRetry(code) {
+                return self.innerExecute(
+                    eventLoop: eventLoop, client: client, node: node, startTime: startTime, attempt: attempt + 1)
+            }
+
+            switch resultFromCode(code, success: self.mapResponse(resp)) {
+                case .success(let res):
+                    return eventLoop.makeSucceededFuture(res)
+
+                case .failure(let err):
+                    return eventLoop.makeFailedFuture(err)
             }
         }
     }
@@ -231,11 +238,11 @@ public class QueryBuilder<Response> {
         precheckCode == .busy
     }
 
-    func setHeader() {
-        fatalError("setHeader must be overriden")
+    func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        fatalError("withHeader must be overriden")
     }
 
-    func mapResponse(_ response: Proto_Response) -> Result<Response, HederaError> {
+    func mapResponse(_ response: Proto_Response) -> R {
         fatalError("mapResponse member must be overridden")
     }
 

@@ -25,16 +25,15 @@ public class FileContentsQuery: QueryBuilder<FileContents> {
         return self
     }
 
-    override func setHeader() {
-        body.fileGetContents.header = header
+    override func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        callback(&body.fileGetContents.header)
     }
 
-    override func mapResponse(_ response: Proto_Response) -> Result<FileContents, HederaError> {
+    override func mapResponse(_ response: Proto_Response) -> FileContents {
         guard case .fileGetContents(let response) = response.response else {
-            return .failure(HederaError.message("query response was not of type file contents"))
+            fatalError("unreachable: response is not fileGetContents")
         }
 
-        return .success(FileContents(response.fileContents))
+        return FileContents(response.fileContents)
     }
-
 }

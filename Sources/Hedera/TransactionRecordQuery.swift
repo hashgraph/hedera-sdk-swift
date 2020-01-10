@@ -15,15 +15,15 @@ public final class TransactionRecordQuery: QueryBuilder<TransactionRecord> {
         precheckCode == .busy || precheckCode == .unknown || precheckCode == .ok
     }
 
-    override func setHeader() {
-        body.transactionGetRecord.header = header
+    override func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        callback(&body.transactionGetRecord.header)
     }
 
-    override func mapResponse(_ response: Proto_Response) -> Result<TransactionRecord, HederaError> {
+    override func mapResponse(_ response: Proto_Response) -> TransactionRecord {
         guard case .transactionGetRecord(let response) = response.response else {
-            return .failure(HederaError.message("query response was not of type 'transactionGetRecord'"))
+            fatalError("unreachable: response is not transactionGetRecord")
         }
 
-        return .success(TransactionRecord(response.transactionRecord))
+        return TransactionRecord(response.transactionRecord)
     }
 }

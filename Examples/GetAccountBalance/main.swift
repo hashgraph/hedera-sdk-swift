@@ -25,7 +25,8 @@ defer {
 let client = clientFromEnvironment(eventLoopGroup: eventLoopGroup)
 
 let balance = try! AccountBalanceQuery()
-    .executeAsync(client: client)
+    .setAccountId(AccountId(2))
+    .execute(client: client)
     .wait()
 
 print("balance = \(balance)")

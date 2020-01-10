@@ -11,15 +11,15 @@ public class AccountBalanceQuery: QueryBuilder<UInt64> {
         return self
     }
 
-    override func setHeader() {
-        body.cryptogetAccountBalance.header = header
+    override func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        callback(&body.cryptogetAccountBalance.header)
     }
 
-    override func mapResponse(_ response: Proto_Response) -> Result<UInt64, HederaError> {
+    override func mapResponse(_ response: Proto_Response) -> UInt64 {
         guard case .cryptogetAccountBalance(let response) = response.response else {
-            return .failure(HederaError.message("unreachable: query response was not of type account balance"))
+            fatalError("unreachable: response is not cryptogetAccountBalance")
         }
 
-        return .success(response.balance)
+        return response.balance
     }
 }

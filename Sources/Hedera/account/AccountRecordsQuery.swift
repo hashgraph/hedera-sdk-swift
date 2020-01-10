@@ -11,15 +11,15 @@ public class AccountRecordsQuery: QueryBuilder<[TransactionRecord]> {
         return self
     }
 
-    override func setHeader() {
-        body.cryptoGetAccountRecords.header = header
+    override func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        callback(&body.cryptoGetAccountRecords.header)
     }
 
-    override func mapResponse(_ response: Proto_Response) -> Result<[TransactionRecord], HederaError> {
+    override func mapResponse(_ response: Proto_Response) -> [TransactionRecord] {
         guard case .cryptoGetAccountRecords(let response) = response.response else {
-            return .failure(HederaError.message("Query response was not of type crypto account records"))
+            fatalError("unreachable: response is not cryptoGetAccountRecords")
         }
 
-        return .success(response.records.map(TransactionRecord.init))
+        return response.records.map(TransactionRecord.init)
     }
 }

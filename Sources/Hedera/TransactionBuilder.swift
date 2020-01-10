@@ -64,6 +64,7 @@ public class TransactionBuilder {
 
         var tx = Proto_Transaction()
         tx.body = body
+        tx.bodyBytes = try! body.serializedData()
 
         return Transaction(tx)
     }
