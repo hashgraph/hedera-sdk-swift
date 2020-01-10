@@ -27,6 +27,10 @@ public class ContractCallLocalQuery: QueryBuilder<Void> {
         return self
     }
 
+    override func setHeader() {
+        body.contractCallLocal.header = header
+    }
+
     override func mapResponse(_ response: Proto_Response) -> Result<Void, HederaError> {
         guard case .contractCallLocal(_) =  response.response else {
             return .failure(HederaError.message("query response was not of type 'contractCallLocal'"))

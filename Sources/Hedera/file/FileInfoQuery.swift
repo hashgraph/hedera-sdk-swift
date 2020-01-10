@@ -31,6 +31,10 @@ public class FileInfoQuery: QueryBuilder<FileInfo> {
         return self
     }
 
+    override func setHeader() {
+        body.fileGetInfo.header = header
+    }
+
     override func mapResponse(_ response: Proto_Response) -> Result<FileInfo, HederaError> {
         guard case .fileGetInfo(let response) = response.response else {
             return .failure(HederaError.message("query response was not of type file info"))

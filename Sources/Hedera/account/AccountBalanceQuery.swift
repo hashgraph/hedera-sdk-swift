@@ -6,9 +6,13 @@ public class AccountBalanceQuery: QueryBuilder<UInt64> {
     }
 
     @discardableResult
-    public func setAccount(_ id: AccountId) -> Self {
+    public func setAccountId(_ id: AccountId) -> Self {
         body.cryptogetAccountBalance.accountID = id.toProto()
         return self
+    }
+
+    override func setHeader() {
+        body.cryptogetAccountBalance.header = header
     }
 
     override func mapResponse(_ response: Proto_Response) -> Result<UInt64, HederaError> {

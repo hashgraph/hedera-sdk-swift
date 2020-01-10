@@ -11,6 +11,10 @@ public class TransactionReceiptQuery: QueryBuilder<TransactionReceipt> {
         precheckCode == .busy || precheckCode == .unknown || precheckCode == .ok
     }
 
+    override func setHeader() {
+        body.transactionGetReceipt.header = header
+    }
+
     override func mapResponse(_ response: Proto_Response) -> Result<TransactionReceipt, HederaError> {
         guard case .transactionGetReceipt(let response) = response.response else {
             return .failure(HederaError.message("query response is not of type transaction receipt"))

@@ -57,6 +57,8 @@ public class QueryBuilder<Response> {
             .addSigPair(publicKey: client.operator!.publicKey, signer: client.operator!.signer)
             .toProto()
 
+        setHeader()
+
         do {
             return try methodForQuery(client.grpcClient(for: node))(body, nil)
                 .response.map { (response) -> Result<UInt64, HederaError> in
@@ -227,6 +229,10 @@ public class QueryBuilder<Response> {
 
     func shouldRetry(_ precheckCode: Proto_ResponseCodeEnum) -> Bool {
         precheckCode == .busy
+    }
+
+    func setHeader() {
+        fatalError("setHeader must be overriden")
     }
 
     func mapResponse(_ response: Proto_Response) -> Result<Response, HederaError> {

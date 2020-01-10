@@ -15,6 +15,10 @@ public class ContractBytecodeQuery: QueryBuilder<Data> {
         return self
     }
 
+    override func setHeader() {
+        body.contractGetBytecode.header = header
+    }
+
     override func mapResponse(_ response: Proto_Response) -> Result<Data, HederaError> {
         guard case .contractGetBytecodeResponse(let response) = response.response else {
             return .failure(HederaError.message("query response was not of type contract bytecode"))
