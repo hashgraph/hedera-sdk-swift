@@ -2,17 +2,7 @@ import SwiftProtobuf
 import Foundation
 import Sodium
 
-public struct FileContents {
-    let fileId: FileId
-    let contents: Data
-
-    init(_ contents: Proto_FileGetContentsResponse.FileContents) {
-        fileId = FileId(contents.fileID)
-        self.contents = contents.contents
-    }
-}
-
-public class FileContentsQuery: QueryBuilder<FileContents> {
+public class FileContentsQuery: QueryBuilder<Bytes> {
     public override init() {
         super.init()
 
@@ -29,11 +19,11 @@ public class FileContentsQuery: QueryBuilder<FileContents> {
         callback(&body.fileGetContents.header)
     }
 
-    override func mapResponse(_ response: Proto_Response) -> FileContents {
+    override func mapResponse(_ response: Proto_Response) -> Bytes {
         guard case .fileGetContents(let response) = response.response else {
             fatalError("unreachable: response is not fileGetContents")
         }
 
-        return FileContents(response.fileContents)
+        return Bytes(response.fileContents.contents)
     }
 }

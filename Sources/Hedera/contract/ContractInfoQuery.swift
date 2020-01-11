@@ -6,21 +6,21 @@ public struct ContractInfo {
     let contractId: ContractId
     let accountId: AccountId
     let contractAccountId: String
-    let adminKey: Ed25519PublicKey?
+    let adminKey: PublicKey?
     let expirationTime: Date
     let autoRenewPeriod: TimeInterval
     let storage: UInt64
-    let memo: String
+    let contractMemo: String
 
     init(_ contractInfo: Proto_ContractGetInfoResponse.ContractInfo) {
         contractId = ContractId(contractInfo.contractID)
         accountId = AccountId(contractInfo.accountID)
         contractAccountId = contractInfo.contractAccountID
-        adminKey = Ed25519PublicKey(contractInfo.adminKey)
+        adminKey = PublicKey.fromProto(contractInfo.adminKey)
         expirationTime = Date(contractInfo.expirationTime)
         autoRenewPeriod = TimeInterval(contractInfo.autoRenewPeriod)!
         storage = UInt64(contractInfo.storage)
-        memo = contractInfo.memo
+        contractMemo = contractInfo.memo
     }
 }
 

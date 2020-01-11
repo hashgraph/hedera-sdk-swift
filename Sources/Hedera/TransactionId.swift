@@ -1,27 +1,28 @@
 import SwiftProtobuf
 import Foundation
+import NIO
 
 public struct TransactionId {
-    let accountId: AccountId
-    let transactionValidStart: Date
+    public let accountId: AccountId
+    public let validStart: Date
 
     public init(account id: AccountId) {
         accountId = id
 
         // Allow the transaction to be accepted as long as the
         // server is not more than 10 seconds behind us
-        transactionValidStart = Date(timeIntervalSinceNow: -10)
+        validStart = Date(timeIntervalSinceNow: -10)
     }
 
     public init(account id: AccountId, validStart: Date) {
         accountId = id
-        transactionValidStart = validStart
+        self.validStart = validStart
     }
 }
 
 extension TransactionId: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
-        "\(accountId)@\(transactionValidStart.wholeSecondsSince1970).\(transactionValidStart.nanosSinceSecondSince1970)"
+        "\(accountId)@\(validStart.wholeSecondsSince1970).\(validStart.nanosSinceSecondSince1970)"
     }
 
     public var debugDescription: String {
@@ -38,7 +39,7 @@ extension TransactionId: LosslessStringConvertible {
         guard let start = Date(String(atParts[atParts.startIndex.advanced(by: 1)])) else { return nil }
 
         accountId = AccountId(id)
-        transactionValidStart = start
+        validStart = start
     }
 }
 
@@ -48,7 +49,7 @@ extension TransactionId: ProtoConvertible {
     func toProto() -> Proto {
         var proto = Proto()
         proto.accountID = accountId.toProto()
-        proto.transactionValidStart = transactionValidStart.toProto()
+        proto.transactionValidStart = validStart.toProto()
 
         return proto
     }
@@ -57,6 +58,16 @@ extension TransactionId: ProtoConvertible {
         guard proto.hasTransactionValidStart && proto.hasAccountID else { return nil }
 
         accountId = AccountId(proto.accountID)
-        transactionValidStart = Date(proto.transactionValidStart)
+        validStart = Date(proto.transactionValidStart)
+    }
+}
+
+extension TransactionId {
+    public func getReceipt(client: Client) -> EventLoopFuture<TransactionReceipt> {
+        TransactionReceiptQuery().setTransactionId(self).execute(client: client)
+    }
+
+    public func getRecord(client: Client) -> EventLoopFuture<TransactionRecord> {
+        TransactionRecordQuery().setTransactionId(self).execute(client: client)
     }
 }

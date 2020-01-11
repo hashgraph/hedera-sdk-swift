@@ -13,7 +13,7 @@ public class ContractExecuteTransaction: TransactionBuilder {
     ///
     /// The function must be payable to use this method
     @discardableResult
-    public func setAmount(_ amount: UInt64) -> Self {
+    public func setPayableAmount(_ amount: UInt64) -> Self {
         body.contractCall.amount = Int64(amount)
 
         return self

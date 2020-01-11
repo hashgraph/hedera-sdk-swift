@@ -5,6 +5,7 @@ public final class TransactionRecordQuery: QueryBuilder<TransactionRecord> {
         body.transactionGetRecord = Proto_TransactionGetRecordQuery()
     }
 
+    @discardableResult
     public func setTransactionId(_ id: TransactionId) -> Self {
         body.transactionGetRecord.transactionID = id.toProto()
 

@@ -3,14 +3,14 @@ import Foundation
 public struct AccountInfo {
     let accountId: AccountId
     let contractAccountId: String?
-    let deleted: Bool
+    let isDeleted: Bool
     let proxyAccountId: AccountId?
     let proxyReceived: UInt64
     let key: PublicKey
     let balance: UInt64
     let generateSendRecordThreshold: UInt64
     let generateReceiveRecordThreshold: UInt64
-    let receiverSigRequired: Bool
+    let isReceiverSigRequired: Bool
     let expirationTime: Date
     let autoRenewPeriod: TimeInterval
 
@@ -24,14 +24,14 @@ public struct AccountInfo {
 
         accountId = AccountId(accountInfo.accountID)
         contractAccountId = accountInfo.contractAccountID.isEmpty ? nil : accountInfo.contractAccountID
-        deleted = accountInfo.deleted
+        isDeleted = accountInfo.deleted
         self.proxyAccountId = proxyAccountId
         proxyReceived = UInt64(accountInfo.proxyReceived)
         key = PublicKey.fromProto(accountInfo.key)!
         balance = accountInfo.balance
         generateSendRecordThreshold = accountInfo.generateSendRecordThreshold
         generateReceiveRecordThreshold = accountInfo.generateReceiveRecordThreshold
-        receiverSigRequired = accountInfo.receiverSigRequired
+        isReceiverSigRequired = accountInfo.receiverSigRequired
         expirationTime = Date(accountInfo.expirationTime)
         autoRenewPeriod = TimeInterval(accountInfo.autoRenewPeriod)!
     }

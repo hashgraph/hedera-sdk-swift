@@ -6,15 +6,15 @@ public struct FileInfo {
     let fileId: FileId
     let size: UInt64
     let expirationTime: Date
-    let deleted: Bool
-    let keys: KeyList
+    let isDeleted: Bool
+    let keys: [PublicKey]
 
     init(_ info: Proto_FileGetInfoResponse.FileInfo) {
         fileId = FileId(info.fileID)
         size = UInt64(info.size)
         expirationTime = Date(info.expirationTime)
-        deleted = info.deleted
-        keys = KeyList(info.keys)!
+        isDeleted = info.deleted
+        keys = KeyList(info.keys)!.keys
     }
 }
 

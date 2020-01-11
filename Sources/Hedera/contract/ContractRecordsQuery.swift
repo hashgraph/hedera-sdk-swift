@@ -1,6 +1,6 @@
 import Foundation
 
-public class ContractGetRecordsQuery: QueryBuilder<[TransactionRecord]> {
+public class ContractRecordsQuery: QueryBuilder<[TransactionRecord]> {
     public override init() {
         super.init()
 
