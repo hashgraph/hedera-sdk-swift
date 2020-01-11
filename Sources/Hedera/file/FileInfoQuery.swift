@@ -1,23 +1,3 @@
-import SwiftProtobuf
-import Foundation
-import Sodium
-
-public struct FileInfo {
-    let fileId: FileId
-    let size: UInt64
-    let expirationTime: Date
-    let isDeleted: Bool
-    let keys: [PublicKey]
-
-    init(_ info: Proto_FileGetInfoResponse.FileInfo) {
-        fileId = FileId(info.fileID)
-        size = UInt64(info.size)
-        expirationTime = Date(info.expirationTime)
-        isDeleted = info.deleted
-        keys = KeyList(info.keys)!.keys
-    }
-}
-
 public class FileInfoQuery: QueryBuilder<FileInfo> {
     public override init() {
         super.init()
