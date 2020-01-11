@@ -2,7 +2,7 @@ public class TransactionReceiptQuery: QueryBuilder<TransactionReceipt> {
     override var needsPayment: Bool { false }
 
     @discardableResult
-    public func setTransaction(_ id: TransactionId) -> Self {
+    public func setTransactionId(_ id: TransactionId) -> Self {
         body.transactionGetReceipt.transactionID = id.toProto()
         return self
     }

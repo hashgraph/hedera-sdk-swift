@@ -9,7 +9,7 @@ public class ContractBytecodeQuery: QueryBuilder<Data> {
         body.contractGetBytecode = Proto_ContractGetBytecodeQuery()
     }
 
-    public func setContract(_ id: ContractId) -> Self {
+    public func setContractId(_ id: ContractId) -> Self {
         body.contractGetBytecode.contractID = id.toProto()
 
         return self

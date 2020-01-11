@@ -7,9 +7,9 @@ public class ContractGetRecordsQuery: QueryBuilder<[TransactionRecord]> {
         body.contractGetRecords = Proto_ContractGetRecordsQuery()
     }
 
-    /// Set the contract id to get the records of.
+    /// Set the contract to get the records of.
     @discardableResult
-    public func setContract(_ id: ContractId) -> Self {
+    public func setContractId(_ id: ContractId) -> Self {
         body.contractGetRecords.contractID = id.toProto()
 
         return self

@@ -31,7 +31,7 @@ public class ContractInfoQuery: QueryBuilder<ContractInfo> {
         body.contractGetInfo = Proto_ContractGetInfoQuery()
     }
 
-    public func setContract(_ id: ContractId) -> Self {
+    public func setContractId(_ id: ContractId) -> Self {
         body.contractGetInfo.contractID = id.toProto()
 
         return self

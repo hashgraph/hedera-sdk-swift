@@ -6,7 +6,7 @@ public class AccountRecordsQuery: QueryBuilder<[TransactionRecord]> {
     }
 
     @discardableResult
-    public func setAccount(_ id: AccountId) -> Self {
+    public func setAccountId(_ id: AccountId) -> Self {
         body.cryptoGetAccountRecords.accountID = id.toProto()
         return self
     }

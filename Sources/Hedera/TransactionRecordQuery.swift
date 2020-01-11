@@ -5,7 +5,7 @@ public final class TransactionRecordQuery: QueryBuilder<TransactionRecord> {
         body.transactionGetRecord = Proto_TransactionGetRecordQuery()
     }
 
-    public func setTransaction(_ id: TransactionId) -> Self {
+    public func setTransactionId(_ id: TransactionId) -> Self {
         body.transactionGetRecord.transactionID = id.toProto()
 
         return self

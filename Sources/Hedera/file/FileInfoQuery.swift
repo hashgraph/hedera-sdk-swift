@@ -25,7 +25,7 @@ public class FileInfoQuery: QueryBuilder<FileInfo> {
         body.fileGetInfo = Proto_FileGetInfoQuery()
     }
 
-    public func setFile(_ id: FileId) -> Self {
+    public func setFileId(_ id: FileId) -> Self {
         body.fileGetInfo.fileID = id.toProto()
 
         return self

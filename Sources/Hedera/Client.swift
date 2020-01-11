@@ -39,7 +39,7 @@ public class Client {
     /// The maximum payment that can be automatically attached to a query.
     /// If this is not set, payments will not be made automatically for queries.
     /// This can be overridden for an individual query with `.setPayment()`.
-    var maxQueryPayment: UInt64 = defaultMaxQueryPayment
+    var maxQueryPayment = defaultMaxQueryPayment
 
     /// Eventloop that will be shared by all grpc clients
     let eventLoopGroup: EventLoopGroup

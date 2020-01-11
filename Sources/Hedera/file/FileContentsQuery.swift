@@ -19,7 +19,7 @@ public class FileContentsQuery: QueryBuilder<FileContents> {
         body.fileGetContents = Proto_FileGetContentsQuery()
     }
 
-    public func setFile(_ id: FileId) -> Self {
+    public func setFileId(_ id: FileId) -> Self {
         body.fileGetContents.fileID = id.toProto()
 
         return self

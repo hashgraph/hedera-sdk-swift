@@ -21,7 +21,7 @@ public class ContractExecuteTransaction: TransactionBuilder {
 
     /// Set the contract id to be executed
     @discardableResult
-    public func setContract(_ id: ContractId) -> Self {
+    public func setContractId(_ id: ContractId) -> Self {
         body.contractCall.contractID = id.toProto()
 
         return self

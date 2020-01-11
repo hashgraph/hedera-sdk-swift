@@ -8,9 +8,9 @@ public class ContractCallLocalQuery: QueryBuilder<Void> {
         body.contractCallLocal = Proto_ContractCallLocalQuery()
     }
 
-    /// Set the contract id to call
+    /// Set the contract to call
     @discardableResult
-    public func setContract(_ id: ContractId) -> Self {
+    public func setContractId(_ id: ContractId) -> Self {
         body.contractCallLocal.contractID = id.toProto()
 
         return self

@@ -5,7 +5,7 @@ public class AccountInfoQuery: QueryBuilder<AccountInfo> {
         body.cryptoGetInfo = Proto_CryptoGetInfoQuery()
     }
 
-    public func setAccount(_ id: AccountId) -> Self {
+    public func setAccountId(_ id: AccountId) -> Self {
         body.cryptoGetInfo.accountID = id.toProto()
 
         return self
