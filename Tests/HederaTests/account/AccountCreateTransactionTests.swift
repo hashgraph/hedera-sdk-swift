@@ -12,7 +12,7 @@ final class AccountCreateTransactionTests: XCTestCase {
         let date = Date(timeIntervalSince1970: 1554158542)
         let key = Ed25519PrivateKey("302e020100300506032b6570042204203b054fade7a2b0869c6bd4a63b7017cbae7855d12acc357bea718e2c3e805962")!
         let tx = AccountCreateTransaction()
-            .setNodeAccount(AccountId(3))
+            .setNodeAccountId(AccountId(3))
             .setTransactionId(TransactionId(account: AccountId(2), validStart: date))
             .setKey(key.publicKey)
             .setInitialBalance(450)

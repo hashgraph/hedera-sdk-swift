@@ -65,6 +65,71 @@ public class Transaction {
         inner
     }
 
+    /// Add an Ed25519 signature pair to the signature map
+    @discardableResult
+    func addSigPair(publicKey: Ed25519PublicKey, signature: Bytes) -> Self {
+        var sigPair = Proto_SignaturePair()
+        sigPair.pubKeyPrefix = Data(publicKey.bytes)
+        sigPair.ed25519 = Data(signature)
+
+        inner.sigMap.sigPair.append(sigPair)
+
+        return self
+    }
+
+    /// Add an Ed25519 signature pair to the signature map
+    @discardableResult
+    func addSigPair(publicKey: Ed25519PublicKey, signer: Signer) -> Self {
+        var sigPair = Proto_SignaturePair()
+        sigPair.pubKeyPrefix = Data(publicKey.bytes)
+        sigPair.ed25519 = Data(signer(Bytes(inner.bodyBytes)))
+
+        inner.sigMap.sigPair.append(sigPair)
+
+        return self
+    }
+
+    func signWithOperator(client: Client) {
+        guard let oper = client.operator else { return }
+
+        addSigPair(publicKey: oper.publicKey, signer: oper.signer)
+    }
+
+    func innerExecute(
+        eventLoop: EventLoop,
+        client: Client,
+        node: Node,
+        startTime: Date,
+        attempt: UInt8
+    ) -> EventLoopFuture<TransactionId> {
+        guard let delay = Backoff.getDelay(startTime: startTime, attempt: attempt) else {
+            return eventLoop.makeFailedFuture(HederaError.timedOut)
+        }
+
+        let delayPromise = eventLoop.makePromise(of: Void.self)
+
+        eventLoop.scheduleTask(in: delay) {
+            delayPromise.succeed(())
+        }
+
+        return delayPromise.futureResult.flatMap {
+            self.methodForTransaction(client.grpcClient(for: node))(self.inner, nil).response
+        }.flatMap { resp in
+            let code = resp.nodeTransactionPrecheckCode
+
+            if code == .busy {
+                return self.innerExecute(eventLoop: eventLoop, client: client, node: node, startTime: startTime, attempt: attempt + 1)
+            }
+
+            switch resultFromCode(code, success: { self.transactionId }) {
+            case .success(let res):
+                return eventLoop.makeSucceededFuture(res)
+            case .failure(let err):
+                return eventLoop.makeFailedFuture(err)
+            }
+        }
+    }
+
     // MARK: - Public API
 
     public convenience init?(bytes: Data) {
@@ -84,75 +149,31 @@ public class Transaction {
         return addSigPair(publicKey: key.publicKey, signature: sig)
     }
 
-    /// Add an Ed25519 signature pair to the signature map
     @discardableResult
-    public func addSigPair(publicKey: Ed25519PublicKey, signature: Bytes) -> Self {
-        var sigPair = Proto_SignaturePair()
-        sigPair.pubKeyPrefix = Data(publicKey.bytes)
-        sigPair.ed25519 = Data(signature)
-
-        inner.sigMap.sigPair.append(sigPair)
-
-        return self
+    public func signWith(publicKey: Ed25519PublicKey, signer: Signer) -> Self {
+        addSigPair(publicKey: publicKey, signer: signer)
     }
 
-    /// Add an Ed25519 signature pair to the signature map
-    @discardableResult
-    public func addSigPair(publicKey: Ed25519PublicKey, signer: Signer) -> Self {
-        var sigPair = Proto_SignaturePair()
-        sigPair.pubKeyPrefix = Data(publicKey.bytes)
-        sigPair.ed25519 = Data(signer(Bytes(inner.bodyBytes)))
-
-        inner.sigMap.sigPair.append(sigPair)
-
-        return self
-    }
-
-    public func execute(client: Client) -> Result<TransactionId, HederaError> {
-        do {
-            return try executeAsync(client: client).wait()
-        } catch {
-            return .failure(HederaError.message("RPC error: \(error)"))
-        }
-    }
-
-    public func executeAsync(client: Client) -> EventLoopFuture<Result<TransactionId, HederaError>> {
+    public func execute(client: Client) -> EventLoopFuture<TransactionId> {
         guard let node = client.network[nodeId] else {
             return client.eventLoopGroup
                 .next()
                 .makeFailedFuture(HederaError.message("node ID for transaction not found in Client"))
         }
+        let eventLoop = client.eventLoopGroup.next()
 
-        return client.eventLoopGroup.next().submit {
-            let startTime = Date()
-            var attempt: UInt8 = 0
+        return self.methodForTransaction(client.grpcClient(for: node))(self.inner, nil).response.flatMap { resp in
+            let code = resp.nodeTransactionPrecheckCode
 
-            var delay = Backoff.initialDelay
-            while true {
-                // client.eventLoopGroup.next().scheduleTask(in: delay, task: () throws -> T)
-                attempt += 1
+            if code == .busy {
+                return self.innerExecute(eventLoop: eventLoop, client: client, node: node, startTime: Date(), attempt: 0)
+            }
 
-                let response = Result {
-                    try self.methodForTransaction(client.grpcClient(for: node))(self.inner, nil).response.wait()
-                }
-                switch response {
-                case .success(let response):
-                    switch response.nodeTransactionPrecheckCode {
-                    case .busy:
-                        // stop trying if the delay will put us over `validDuration`
-                        guard let delayUs = Backoff.getDelayUs(startTime: startTime, attempt: attempt) else {
-                            return .failure(HederaError.message("execute timed out"))
-                        }
-
-                        usleep(delayUs)
-                    case .ok:
-                        return .success(self.transactionId)
-                    default:
-                        return .failure(HederaError.message("preCheckCode was not OK: \(response.nodeTransactionPrecheckCode)"))
-                    }
-                case .failure(let error):
-                    return .failure(HederaError.message("\(error)"))
-                }
+            switch resultFromCode(code, success: { self.transactionId }) {
+            case .success(let res):
+                return eventLoop.makeSucceededFuture(res)
+            case .failure(let err):
+                return eventLoop.makeFailedFuture(err)
             }
         }
     }

@@ -64,15 +64,33 @@ public class QueryBuilder<R> {
                 .toProto()
         }
 
-        let req = getQueryMethod(client.grpcClient(for: node))(body, nil)
-        let resp = req.response
+        let eventLoop = client.eventLoopGroup.next()
 
-        return resp.flatMapResult { (response) -> Result<UInt64, HederaError> in
-            let header = self.getResponseHeader(response)
-            let preCheckCode = header.nodeTransactionPrecheckCode
+        return self.getQueryMethod(client.grpcClient(for: node))(self.body, nil)
+            .response
+            .flatMap { resp in
+                let header = self.getResponseHeader(resp)
+                let code = header.nodeTransactionPrecheckCode
 
-            return resultFromCode(preCheckCode, success: header.cost)
-        }
+                if self.shouldRetry(code) {
+                    return self.innerExecute(
+                        eventLoop: eventLoop,
+                        client: client,
+                        node: node,
+                        startTime: Date(),
+                        attempt: 0,
+                        successValueMapper: { self.getResponseHeader($0).cost }
+                    )
+                }
+
+                switch resultFromCode(code, success: { header.cost }) {
+                case .success(let res):
+                    return eventLoop.makeSucceededFuture(res)
+
+                case .failure(let err):
+                    return eventLoop.makeFailedFuture(err)
+                }
+            }
     }
 
     @discardableResult
@@ -195,12 +213,43 @@ public class QueryBuilder<R> {
 
         // TODO: Sometime in the future run a local validator
 
-        return nodeFut.flatMap { node in 
-            self.innerExecute(eventLoop: eventLoop, client: client, node: node, startTime: Date(), attempt: 0)
+        return nodeFut.flatMap { node in
+            self.getQueryMethod(client.grpcClient(for: node))(self.body, nil)
+                .response
+                .flatMap { resp in
+                    let header = self.getResponseHeader(resp)
+                    let code = header.nodeTransactionPrecheckCode
+
+                    if self.shouldRetry(code) {
+                        return self.innerExecute(
+                            eventLoop: eventLoop,
+                            client: client,
+                            node: node,
+                            startTime: Date(),
+                            attempt: 0,
+                            successValueMapper: self.mapResponse
+                        )
+                    }
+
+                    switch resultFromCode(code, success: { self.mapResponse(resp) }) {
+                    case .success(let res):
+                        return eventLoop.makeSucceededFuture(res)
+
+                    case .failure(let err):
+                        return eventLoop.makeFailedFuture(err)
+                    }
+                }
         }
     }
-    
-    func innerExecute(eventLoop: EventLoop, client: Client, node: Node, startTime: Date, attempt: UInt8) -> EventLoopFuture<R> {
+
+    func innerExecute<T>(
+        eventLoop: EventLoop,
+        client: Client,
+        node: Node,
+        startTime: Date,
+        attempt: UInt8,
+        successValueMapper: @escaping (Proto_Response) -> T
+    ) -> EventLoopFuture<T> {
         guard let delay = Backoff.getDelay(startTime: startTime, attempt: attempt) else {
             return eventLoop.makeFailedFuture(HederaError.timedOut)
         }
@@ -221,15 +270,21 @@ public class QueryBuilder<R> {
 
             if self.shouldRetry(code) {
                 return self.innerExecute(
-                    eventLoop: eventLoop, client: client, node: node, startTime: startTime, attempt: attempt + 1)
+                    eventLoop: eventLoop,
+                    client: client,
+                    node: node,
+                    startTime: startTime,
+                    attempt: attempt + 1,
+                    successValueMapper: successValueMapper
+                )
             }
 
-            switch resultFromCode(code, success: self.mapResponse(resp)) {
-                case .success(let res):
-                    return eventLoop.makeSucceededFuture(res)
+            switch resultFromCode(code, success: { successValueMapper(resp) }) {
+            case .success(let res):
+                return eventLoop.makeSucceededFuture(res)
 
-                case .failure(let err):
-                    return eventLoop.makeFailedFuture(err)
+            case .failure(let err):
+                return eventLoop.makeFailedFuture(err)
             }
         }
     }

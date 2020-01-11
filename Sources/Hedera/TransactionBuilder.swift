@@ -63,13 +63,12 @@ public class TransactionBuilder {
         }
 
         var tx = Proto_Transaction()
-        tx.body = body
         tx.bodyBytes = try! body.serializedData()
 
         return Transaction(tx)
     }
 
-    public func execute(client: Client) -> EventLoopFuture<Result<TransactionId, HederaError>> {
-        build(client: client).executeAsync(client: client)
+    public func execute(client: Client) -> EventLoopFuture<TransactionId> {
+        build(client: client).execute(client: client)
     }
 }
