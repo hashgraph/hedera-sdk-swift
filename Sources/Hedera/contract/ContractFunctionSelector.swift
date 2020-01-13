@@ -1,3 +1,5 @@
+import CryptoSwift
+
 fileprivate enum Argument {
     case UInt8
     case Int8
@@ -96,7 +98,7 @@ public class ContractFunctionSelector {
 
     @discardableResult
 	public func addInt32() -> Self {
-		self.addParam(Solidity(type: Argument.UInt32, array: false))
+		self.addParam(Solidity(type: Argument.Int32, array: false))
 	}
 
     @discardableResult
@@ -180,15 +182,16 @@ public class ContractFunctionSelector {
         return self
     }
 
-    public func build(name: String?) -> [UInt8] {
+    public func build(_ name: String?) -> Result<[UInt8], HederaError> {
         if name != nil {
             self.name = name
         } else if self.name == nil {
-            // TODO: Throw error
-            return [0, 0, 0, 0]
+            return .failure(HederaError(message: "Function name was not specified in build method"))
         }
 
-        // TODO: Use Keccak to hash the function signature
-        return [0, 0, 0, 0]
+        let function = "\(self.name!)(\(self.params))"
+        var result: [UInt8] = Digest.sha3(Array(function.utf8), variant: .keccak256)
+
+        return .success(Array(result[0...3]))
     }
 }
