@@ -1,7 +1,7 @@
 import Sodium
 import Foundation
 
-public class ContractCallLocalQuery: QueryBuilder<Void> {
+public class ContractCallQuery: QueryBuilder<Void> {
     public override init(node: Node) {
         super.init(node: node)
 
