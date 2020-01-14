@@ -32,8 +32,8 @@ let tx = AccountCreateTransaction()
     .setTransactionMemo("Create Account Example - Swift SDK")
     .build(client: client)
 
-try! tx.execute(client: client).get()
+let transactionId = try! tx.execute(client: client).wait()
 
-let receipt = try! tx.queryReceipt(client: client).wait().get()
+let receipt = try! transactionId.getReceipt(client: client).wait()
 
-print("Account created: \(receipt.accountId!)")
+print("Account created: \(receipt.accountId)")

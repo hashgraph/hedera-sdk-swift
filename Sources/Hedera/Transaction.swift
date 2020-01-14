@@ -161,6 +161,8 @@ public class Transaction {
                 .makeFailedFuture(HederaError.message("node ID for transaction not found in Client"))
         }
         let eventLoop = client.eventLoopGroup.next()
+        
+        signWithOperator(client: client)
 
         return self.methodForTransaction(client.grpcClient(for: node))(self.inner, nil).response.flatMap { resp in
             let code = resp.nodeTransactionPrecheckCode

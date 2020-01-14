@@ -12,7 +12,7 @@ let package = Package(
         .library(name: "Hedera", targets: ["Hedera"]),
 
         // Examples
-        // .executable(name: "CreateAccountExample", targets: ["CreateAccountExample"]),
+        .executable(name: "CreateAccountExample", targets: ["CreateAccountExample"]),
         // .executable(name: "GetFileInfoExample", targets: ["GetFileInfoExample"]),
         // .executable(name: "CreateFileExample", targets: ["CreateFileExample"]),
         // .executable(name: "TransferCryptoExample", targets: ["TransferCryptoExample"]),
@@ -37,10 +37,10 @@ let package = Package(
             name: "GetAccountBalanceExample",
             dependencies: ["Hedera"],
             path: "Examples/GetAccountBalance"),
-        // .target(
-        //     name: "CreateAccountExample",
-        //     dependencies: ["Hedera"],
-        //     path: "Examples/CreateAccount"),
+        .target(
+            name: "CreateAccountExample",
+            dependencies: ["Hedera"],
+            path: "Examples/CreateAccount"),
         // .target(
         //     name: "GetFileInfoExample",
         //     dependencies: ["Hedera"],
