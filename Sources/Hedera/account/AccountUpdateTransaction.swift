@@ -26,14 +26,14 @@ public final class AccountUpdateTransaction: TransactionBuilder {
     }
 
     @discardableResult
-    public func setReceiveRecordThreshold(_ threshold: UInt64) -> Self {
-        body.cryptoUpdateAccount.receiveRecordThresholdWrapper = Google_Protobuf_UInt64Value(threshold)
+    public func setReceiveRecordThreshold(_ threshold: Hbar) -> Self {
+        body.cryptoUpdateAccount.receiveRecordThresholdWrapper = Google_Protobuf_UInt64Value(UInt64(threshold.asTinybar()))
         return self
     }
 
     @discardableResult
-    public func setSendRecordThreshold(_ threshold: UInt64) -> Self {
-        body.cryptoUpdateAccount.sendRecordThresholdWrapper = Google_Protobuf_UInt64Value(threshold)
+    public func setSendRecordThreshold(_ threshold: Hbar) -> Self {
+        body.cryptoUpdateAccount.sendRecordThresholdWrapper = Google_Protobuf_UInt64Value(UInt64(threshold.asTinybar()))
         return self
     }
 

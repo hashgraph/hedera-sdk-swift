@@ -20,8 +20,8 @@ public class TransactionBuilder {
     }
 
     @discardableResult
-    public func setMaxTransactionFee(_ fee: UInt64) -> Self {
-        body.transactionFee = fee
+    public func setMaxTransactionFee(_ fee: Hbar) -> Self {
+        body.transactionFee = UInt64(fee.asTinybar())
 
         return self
     }
@@ -50,7 +50,7 @@ public class TransactionBuilder {
         // If we have a client, set some defaults if they have not already been set
         if let client = client {
             if body.transactionFee == 0 {
-                body.transactionFee = client.maxTransactionFee
+                setMaxTransactionFee(client.maxTransactionFee)
             }
 
             if !body.hasNodeAccountID {

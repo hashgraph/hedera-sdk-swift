@@ -4,7 +4,7 @@ import Foundation
 public struct TransactionRecord {
     public let transactionId: TransactionId
     public let transactionHash: Bytes
-    public let transactionFee: UInt64
+    public let transactionFee: Hbar
     public let consensusTimestamp: Date?
     public let transactionMemo: String?
     public let receipt: TransactionReceipt
@@ -18,7 +18,7 @@ public struct TransactionRecord {
 
         transactionId = TransactionId(proto.transactionID)!
         transactionHash = Bytes(proto.transactionHash)
-        transactionFee = UInt64(proto.transactionFee)
+        transactionFee = Hbar.fromTinybar(amount: Int64(proto.transactionFee))
         consensusTimestamp = proto.hasConsensusTimestamp ? Date(proto.consensusTimestamp): nil
         transactionMemo = proto.memo.isEmpty ? nil : proto.memo
         receipt = TransactionReceipt(proto.receipt)
@@ -29,28 +29,10 @@ public struct TransactionRecord {
 
 public struct Transfer {
     public let accountId: AccountId
-    public let amount: UInt64
+    public let amount: Hbar
 
     init(_ proto: Proto_AccountAmount) {
         accountId = AccountId(proto.accountID)
-        amount = UInt64(proto.amount)
+        amount = Hbar.fromTinybar(amount: proto.amount)
     }
 }
-
-// public enum ContractResultType {
-//     case call(FunctionResult)
-//     case create(FunctionResult)
-
-//     init?(_ body: Proto_TransactionRecord.OneOf_Body?) {
-//         if let body = body {
-//             switch body {
-//             case .contractCallResult(let result):
-//                 self = ContractResultType.call(FunctionResult(result))
-//             case .contractCreateResult(let result):
-//                 self = ContractResultType.create(FunctionResult(result))
-//             }
-//         } else {
-//             return nil
-//         }
-//     }
-// }

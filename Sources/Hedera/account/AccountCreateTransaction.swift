@@ -3,17 +3,16 @@ import Foundation
 public final class AccountCreateTransaction: TransactionBuilder {
     public override init() {
         super.init()
+        body.cryptoCreateAccount = Proto_CryptoCreateTransactionBody()
 
-        var inner = Proto_CryptoCreateTransactionBody()
         // Required fixed autorenew duration (roughly 1/4 year)
-        inner.autoRenewPeriod = TimeInterval(7_890_000).toProto()
+        setAutoRenewPeriod(TimeInterval(7_890_000))
         // Default to maximum values for record thresholds. Without this, records 
         // would be auto-created whenever a send or receive transaction takes place
         // for this new account. This should be an explicit ask.
-        inner.sendRecordThreshold = UInt64(Int64.max)
-        inner.receiveRecordThreshold = UInt64(Int64.max)
+        setSendRecordThreshold(Hbar.MAX)
+        setReceiveRecordThreshold(Hbar.MAX)
 
-        body.cryptoCreateAccount = inner
     }
 
     @discardableResult
@@ -31,22 +30,22 @@ public final class AccountCreateTransaction: TransactionBuilder {
     }
 
     @discardableResult
-    public func setInitialBalance(_ balance: UInt64) -> Self {
-        body.cryptoCreateAccount.initialBalance = balance
+    public func setInitialBalance(_ balance: Hbar) -> Self {
+        body.cryptoCreateAccount.initialBalance = UInt64(balance.asTinybar())
 
         return self
     }
 
     @discardableResult
-    public func setReceiveRecordThreshold(_ threshold: UInt64) -> Self {
-        body.cryptoCreateAccount.receiveRecordThreshold = threshold
+    public func setReceiveRecordThreshold(_ threshold: Hbar) -> Self {
+        body.cryptoCreateAccount.receiveRecordThreshold = UInt64(threshold.asTinybar())
 
         return self
     }
 
     @discardableResult
-    public func setSendRecordThreshold(_ threshold: UInt64) -> Self {
-        body.cryptoCreateAccount.sendRecordThreshold = threshold
+    public func setSendRecordThreshold(_ threshold: Hbar) -> Self {
+        body.cryptoCreateAccount.sendRecordThreshold = UInt64(threshold.asTinybar())
 
         return self
     }

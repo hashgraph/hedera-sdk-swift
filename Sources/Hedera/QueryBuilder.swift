@@ -10,19 +10,19 @@ public class QueryBuilder<R> {
     // var header = Proto_QueryHeader()
     var needsPayment: Bool { true }
 
-    var maxQueryPayment: UInt64?
-    var queryPayment: UInt64?
+    var maxQueryPayment: Hbar?
+    var queryPayment: Hbar?
 
     init() {}
 
     @discardableResult
-    public func setMaxQueryPayment(_ max: UInt64) -> Self {
+    public func setMaxQueryPayment(_ max: Hbar) -> Self {
         maxQueryPayment = max
         return self
     }
 
     @discardableResult
-    public func setQueryPayment(_ amount: UInt64) -> Self {
+    public func setQueryPayment(_ amount: Hbar) -> Self {
         queryPayment = amount
         return self
     }
@@ -37,7 +37,7 @@ public class QueryBuilder<R> {
     }
 
     @discardableResult
-    func getCost(client: Client, node: Node) -> EventLoopFuture<UInt64> {
+    func getCost(client: Client, node: Node) -> EventLoopFuture<Hbar> {
         // Store the current response type and payment
         let responseType = withHeader { $0.responseType }
         let payment = withHeader { $0.payment }
@@ -57,14 +57,15 @@ public class QueryBuilder<R> {
 
             // COST_ANSWER requires a 0 payment and does not actually process it
             $0.payment = CryptoTransferTransaction()
-                .addSender(client.operator!.id, amount: 0)
-                .addRecipient(node.accountId, amount: 0)
+                .addSender(client.operator!.id, amount: Hbar.ZERO)
+                .addRecipient(node.accountId, amount: Hbar.ZERO)
                 .build(client: client)
                 .addSigPair(publicKey: client.operator!.publicKey, signer: client.operator!.signer)
                 .toProto()
         }
 
         let eventLoop = client.eventLoopGroup.next()
+        let successValueMapper = { Hbar.fromTinybar(amount: Int64(self.getResponseHeader($0).cost)) }
 
         return self.getQueryMethod(client.grpcClient(for: node))(self.body, nil)
             .response
@@ -79,11 +80,11 @@ public class QueryBuilder<R> {
                         node: node,
                         startTime: Date(),
                         attempt: 0,
-                        successValueMapper: { self.getResponseHeader($0).cost }
+                        successValueMapper: successValueMapper
                     )
                 }
 
-                switch resultFromCode(code, success: { header.cost }) {
+                switch resultFromCode(code, success: { successValueMapper(resp) }) {
                 case .success(let res):
                     return eventLoop.makeSucceededFuture(res)
 
@@ -94,7 +95,7 @@ public class QueryBuilder<R> {
     }
 
     @discardableResult
-    public func getCost(client: Client) -> EventLoopFuture<UInt64> {
+    public func getCost(client: Client) -> EventLoopFuture<Hbar> {
         return getCost(client: client, node: client.pickNode())
     }
 
@@ -162,7 +163,7 @@ public class QueryBuilder<R> {
         }
     }
 
-    func generateQueryPaymentTransaction(client: Client, node: Node, amount: UInt64) {
+    func generateQueryPaymentTransaction(client: Client, node: Node, amount: Hbar) {
         let tx = CryptoTransferTransaction()
             .setNodeAccountId(node.accountId)
             .addSender(client.operator!.id, amount: amount)

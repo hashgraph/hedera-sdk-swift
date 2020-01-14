@@ -13,8 +13,10 @@ public class ContractExecuteTransaction: TransactionBuilder {
     ///
     /// The function must be payable to use this method
     @discardableResult
-    public func setPayableAmount(_ amount: UInt64) -> Self {
-        body.contractCall.amount = Int64(amount)
+    public func setPayableAmount(_ amount: Hbar) -> Self {
+        guard amount > Hbar.ZERO else { fatalError("payable amount must be nonnegative") }
+        
+        body.contractCall.amount = amount.asTinybar()
 
         return self
     }

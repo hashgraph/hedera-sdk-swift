@@ -41,11 +41,12 @@ public class ContractCreateTransaction: TransactionBuilder {
 
     /// Set the initial balance of a contract
     ///
-    /// Although the type of `balance` is UInt64, the valid range is [0, 2^63-1]
+    /// Initial balance must be nonnegative.
     /// The contract will take ownership of the initial balance
     @discardableResult
-    public func setInitialBalance(_ balance: UInt64) -> Self {
-        body.contractCreateInstance.initialBalance = Int64(balance)
+    public func setInitialBalance(_ balance: Hbar) -> Self {
+        guard balance > Hbar.ZERO else { fatalError("initial balance must be nonnegative") }
+        body.contractCreateInstance.initialBalance = balance.asTinybar()
 
         return self
     }

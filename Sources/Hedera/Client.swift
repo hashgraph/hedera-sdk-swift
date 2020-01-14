@@ -1,6 +1,7 @@
 import Sodium
 import GRPC
 import NIO
+import Foundation
 
 struct Node {
     let accountId: AccountId
@@ -21,9 +22,9 @@ typealias HederaGRPCClient = (fileService: Proto_FileServiceServiceClient,
     cryptoService: Proto_CryptoServiceServiceClient,
     contractService: Proto_SmartContractServiceServiceClient)
 
-let defaultMaxTransactionFee: UInt64 = 100_000_000 // 1h
+let defaultMaxTransactionFee = Hbar(hbar: Decimal(1))! // 1h
 
-let defaultMaxQueryPayment: UInt64 = 100_000_000 // 1h
+let defaultMaxQueryPayment = Hbar(hbar: Decimal(1))! // 1h
 
 public class Client {
     var `operator`: Operator?
@@ -93,11 +94,11 @@ public class Client {
     /// This can be overridden for an individual transaction with `.setTransactionFee()`.
     ///
     /// - Parameters:
-    ///   - max: The maximum transaction fee, in tinybars.
+    ///   - max: The maximum transaction fee.
     ///
     /// - Returns: Self for fluent usage.
     @discardableResult
-    public func setMaxTransactionFee(_ max: UInt64) -> Self {
+    public func setMaxTransactionFee(_ max: Hbar) -> Self {
         maxTransactionFee = max
         return self
     }
@@ -110,7 +111,7 @@ public class Client {
     ///
     /// - Returns: Self for fluent usage.
     @discardableResult
-    public func setMaxQueryPayment(_ max: UInt64) -> Self {
+    public func setMaxQueryPayment(_ max: Hbar) -> Self {
         maxQueryPayment = max
         return self
     }

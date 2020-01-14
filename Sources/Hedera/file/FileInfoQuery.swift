@@ -1,8 +1,16 @@
+import NIO
+
 public class FileInfoQuery: QueryBuilder<FileInfo> {
     public override init() {
         super.init()
 
         body.fileGetInfo = Proto_FileGetInfoQuery()
+    }
+
+    override func getCost(client: Client, node: Node) -> EventLoopFuture<Hbar> {
+        super.getCost(client: client, node: node).map { cost in
+            return max(cost, Hbar.fromTinybar(amount: 25))
+        }
     }
 
     public func setFileId(_ id: FileId) -> Self {

@@ -5,11 +5,11 @@ public struct AccountInfo {
     public let contractAccountId: String?
     public let isDeleted: Bool
     public let proxyAccountId: AccountId?
-    public let proxyReceived: UInt64
+    public let proxyReceived: Hbar
     public let key: PublicKey
-    public let balance: UInt64
-    public let generateSendRecordThreshold: UInt64
-    public let generateReceiveRecordThreshold: UInt64
+    public let balance: Hbar
+    public let generateSendRecordThreshold: Hbar
+    public let generateReceiveRecordThreshold: Hbar
     public let isReceiverSigRequired: Bool
     public let expirationTime: Date
     public let autoRenewPeriod: TimeInterval
@@ -26,11 +26,11 @@ public struct AccountInfo {
         contractAccountId = accountInfo.contractAccountID.isEmpty ? nil : accountInfo.contractAccountID
         isDeleted = accountInfo.deleted
         self.proxyAccountId = proxyAccountId
-        proxyReceived = UInt64(accountInfo.proxyReceived)
+        proxyReceived = Hbar.fromTinybar(amount: accountInfo.proxyReceived)
         key = PublicKey.fromProto(accountInfo.key)!
-        balance = accountInfo.balance
-        generateSendRecordThreshold = accountInfo.generateSendRecordThreshold
-        generateReceiveRecordThreshold = accountInfo.generateReceiveRecordThreshold
+        balance = Hbar.fromTinybar(amount: Int64(accountInfo.balance))
+        generateSendRecordThreshold = Hbar.fromTinybar(amount: Int64(accountInfo.generateSendRecordThreshold))
+        generateReceiveRecordThreshold = Hbar.fromTinybar(amount: Int64(accountInfo.generateReceiveRecordThreshold))
         isReceiverSigRequired = accountInfo.receiverSigRequired
         expirationTime = Date(accountInfo.expirationTime)
         autoRenewPeriod = TimeInterval(accountInfo.autoRenewPeriod)!

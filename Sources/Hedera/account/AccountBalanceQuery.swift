@@ -1,4 +1,4 @@
-public class AccountBalanceQuery: QueryBuilder<UInt64> {
+public class AccountBalanceQuery: QueryBuilder<Hbar> {
     public override init() {
         super.init()
 
@@ -15,11 +15,11 @@ public class AccountBalanceQuery: QueryBuilder<UInt64> {
         callback(&body.cryptogetAccountBalance.header)
     }
 
-    override func mapResponse(_ response: Proto_Response) -> UInt64 {
+    override func mapResponse(_ response: Proto_Response) -> Hbar {
         guard case .cryptogetAccountBalance(let response) = response.response else {
             fatalError("unreachable: response is not cryptogetAccountBalance")
         }
 
-        return response.balance
+        return Hbar.fromTinybar(amount: Int64(response.balance))
     }
 }
