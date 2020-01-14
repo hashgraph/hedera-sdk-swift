@@ -2,35 +2,28 @@ import SwiftProtobuf
 import Foundation
 import Sodium
 
-public struct FileContents {
-    let fileId: FileId
-    let contents: Data
-
-    init(_ contents: Proto_FileGetContentsResponse.FileContents) {
-        fileId = FileId(contents.fileID)
-        self.contents = contents.contents
-    }
-}
-
-public class FileContentsQuery: QueryBuilder<FileContents> {
-    public override init(node: Node) {
-        super.init(node: node)
+public class FileContentsQuery: QueryBuilder<Bytes> {
+    public override init() {
+        super.init()
 
         body.fileGetContents = Proto_FileGetContentsQuery()
     }
 
-    public func setFile(_ id: FileId) -> Self {
+    public func setFileId(_ id: FileId) -> Self {
         body.fileGetContents.fileID = id.toProto()
 
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) -> Result<FileContents, HederaError> {
+    override func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        callback(&body.fileGetContents.header)
+    }
+
+    override func mapResponse(_ response: Proto_Response) -> Bytes {
         guard case .fileGetContents(let response) = response.response else {
-            return .failure(HederaError(message: "query response was not of type file contents"))
+            fatalError("unreachable: response is not fileGetContents")
         }
 
-        return .success(FileContents(response.fileContents))
+        return Bytes(response.fileContents.contents)
     }
-    
 }

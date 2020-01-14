@@ -13,7 +13,7 @@ public class ContractExecuteTransaction: TransactionBuilder {
     ///
     /// The function must be payable to use this method
     @discardableResult
-    public func setAmount(_ amount: UInt64) -> Self {
+    public func setPayableAmount(_ amount: UInt64) -> Self {
         body.contractCall.amount = Int64(amount)
 
         return self
@@ -21,7 +21,7 @@ public class ContractExecuteTransaction: TransactionBuilder {
 
     /// Set the contract id to be executed
     @discardableResult
-    public func setContract(_ id: ContractId) -> Self {
+    public func setContractId(_ id: ContractId) -> Self {
         body.contractCall.contractID = id.toProto()
 
         return self

@@ -3,23 +3,27 @@ import Foundation
 import Sodium
 
 public class ContractBytecodeQuery: QueryBuilder<Data> {
-    public override init(node: Node) {
-        super.init(node: node)
+    public override init() {
+        super.init()
 
         body.contractGetBytecode = Proto_ContractGetBytecodeQuery()
     }
 
-    public func setContract(_ id: ContractId) -> Self {
+    public func setContractId(_ id: ContractId) -> Self {
         body.contractGetBytecode.contractID = id.toProto()
 
         return self
     }
+    
+    override func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        callback(&body.contractGetBytecode.header)
+    }
 
-    override func mapResponse(_ response: Proto_Response) -> Result<Data, HederaError> {
+    override func mapResponse(_ response: Proto_Response) -> Data {
         guard case .contractGetBytecodeResponse(let response) = response.response else {
-            return .failure(HederaError(message: "query response was not of type contract bytecode"))
+            fatalError("unreachable: response is not contractGetBytecode")
         }
 
-        return .success(response.bytecode)
+        return response.bytecode
     }
 }

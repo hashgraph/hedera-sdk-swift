@@ -12,10 +12,30 @@ public class FileUpdateTransaction: TransactionBuilder {
         body.fileUpdate = Proto_FileUpdateTransactionBody()
     }
 
+    /// Set the file to be updated
+    @discardableResult
+    public func setFileId(_ id: FileId) -> Self {
+        body.fileUpdate.fileID = id.toProto()
+
+        return self
+    }
+
     /// Set a new expiration time of the file
     @discardableResult
     public func setExpirationTime(_ date: Date) -> Self {
         body.fileUpdate.expirationTime = date.toProto()
+
+        return self
+    }
+
+    /// Add a key to the new list of keys for this file
+    @discardableResult
+    public func addKey(_ key: PublicKey) -> Self {
+        if !body.fileUpdate.hasKeys {
+            body.fileUpdate.keys = Proto_KeyList()
+        }
+
+        body.fileUpdate.keys.keys.append(key.toProto())
 
         return self
     }
@@ -40,14 +60,6 @@ public class FileUpdateTransaction: TransactionBuilder {
     @discardableResult
     public func setContents(_ string: String) -> Self {
         body.fileUpdate.contents = Data(Array(string.utf8))
-
-        return self
-    }
-
-    /// Set the file to be updated
-    @discardableResult
-    public func setFile(_ id: FileId) -> Self {
-        body.fileUpdate.fileID = id.toProto()
 
         return self
     }

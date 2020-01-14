@@ -9,17 +9,17 @@ public final class CryptoTransferTransaction: TransactionBuilder {
     }
 
     @discardableResult
-    public func add(sender: AccountId, amount: UInt64) -> Self {
-        add(account: sender, amount: -Int64(amount))
+    public func addSender(_ sender: AccountId, amount: UInt64) -> Self {
+        addTransfer(account: sender, amount: -Int64(amount))
     }
 
     @discardableResult
-    public func add(recipient: AccountId, amount: UInt64) -> Self {
-        add(account: recipient, amount: Int64(amount))
+    public func addRecipient(_ recipient: AccountId, amount: UInt64) -> Self {
+        addTransfer(account: recipient, amount: Int64(amount))
     }
 
     @discardableResult
-    public func add(account: AccountId, amount: Int64) -> Self {
+    public func addTransfer(account: AccountId, amount: Int64) -> Self {
         var accountAmount = Proto_AccountAmount()
         accountAmount.accountID = account.toProto()
         accountAmount.amount = amount

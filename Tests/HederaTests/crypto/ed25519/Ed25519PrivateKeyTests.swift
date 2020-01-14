@@ -15,7 +15,7 @@ let signature = "73bea53f31ca9c42a422ecb7516ec08d0bbd1a6bfd630ccf10ec1872454814d
 
 final class Ed25519PrivateKeyTests: XCTestCase {
     func testGenerate() {
-        XCTAssertNoThrow(Ed25519PrivateKey())
+        XCTAssertNotNil(Ed25519PrivateKey.generate())
     }
 
     func testFromBytes() {

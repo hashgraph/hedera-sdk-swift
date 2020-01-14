@@ -1,6 +1,12 @@
 public final class KeyList: PublicKey {
     var keys: [PublicKey]
 
+    override public init() {
+        keys = []
+
+        super.init()
+    }
+
     required init?(_ proto: Proto_Key) {
         guard proto.keyList.keys.count > 0 else { return nil }
         keys = proto.keyList.keys.compactMap(PublicKey.fromProto)
@@ -32,5 +38,19 @@ public final class KeyList: PublicKey {
         proto.keys = keys.map { $0.toProto() }
 
         return proto
+    }
+
+    @discardableResult
+    public func add(_ key: PublicKey) -> Self {
+        keys.append(key)
+
+        return self
+    }
+
+    @discardableResult
+    public func addAll(_ keys: [PublicKey]) -> Self {
+        self.keys.append(contentsOf: keys)
+
+        return self
     }
 }

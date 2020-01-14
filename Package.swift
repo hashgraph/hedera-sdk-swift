@@ -13,10 +13,11 @@ let package = Package(
 
         // Examples
         .executable(name: "CreateAccountExample", targets: ["CreateAccountExample"]),
-        .executable(name: "GetFileInfoExample", targets: ["GetFileInfoExample"]),
-        .executable(name: "CreateFileExample", targets: ["CreateFileExample"]),
-        .executable(name: "TransferCryptoExample", targets: ["TransferCryptoExample"]),
-        .executable(name: "SimpleAccountRecordsExample", targets: ["SimpleAccountRecordsExample"]),
+        // .executable(name: "GetFileInfoExample", targets: ["GetFileInfoExample"]),
+        // .executable(name: "CreateFileExample", targets: ["CreateFileExample"]),
+        // .executable(name: "TransferCryptoExample", targets: ["TransferCryptoExample"]),
+        // .executable(name: "SimpleAccountRecordsExample", targets: ["SimpleAccountRecordsExample"]),
+        .executable(name: "GetAccountBalanceExample", targets: ["GetAccountBalanceExample"]),
     ],
     dependencies: [
         .package(url: "https://github.com/jedisct1/swift-sodium", .exact("0.8.0")),
@@ -40,21 +41,21 @@ let package = Package(
             name: "CreateAccountExample",
             dependencies: ["Hedera"],
             path: "Examples/CreateAccount"),
-        .target(
-            name: "GetFileInfoExample",
-            dependencies: ["Hedera"],
-            path: "Examples/GetFileInfo"),
-        .target(
-            name: "CreateFileExample",
-            dependencies: ["Hedera"],
-            path: "Examples/CreateFile"),
-        .target(
-            name: "TransferCryptoExample",
-            dependencies: ["Hedera"],
-            path: "Examples/TransferCrypto"),
-        .target(
-            name: "SimpleAccountRecordsExample",
-            dependencies: ["Hedera"],
-            path: "Examples/SimpleAccountRecords"),
+        // .target(
+        //     name: "GetFileInfoExample",
+        //     dependencies: ["Hedera"],
+        //     path: "Examples/GetFileInfo"),
+        // .target(
+        //     name: "CreateFileExample",
+        //     dependencies: ["Hedera"],
+        //     path: "Examples/CreateFile"),
+        // .target(
+        //     name: "TransferCryptoExample",
+        //     dependencies: ["Hedera"],
+        //     path: "Examples/TransferCrypto"),
+        // .target(
+        //     name: "SimpleAccountRecordsExample",
+        //     dependencies: ["Hedera"],
+        //     path: "Examples/SimpleAccountRecords"),
     ]
 )

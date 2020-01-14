@@ -2,7 +2,7 @@ public class TransactionReceiptQuery: QueryBuilder<TransactionReceipt> {
     override var needsPayment: Bool { false }
 
     @discardableResult
-    public func setTransaction(_ id: TransactionId) -> Self {
+    public func setTransactionId(_ id: TransactionId) -> Self {
         body.transactionGetReceipt.transactionID = id.toProto()
         return self
     }
@@ -11,11 +11,15 @@ public class TransactionReceiptQuery: QueryBuilder<TransactionReceipt> {
         precheckCode == .busy || precheckCode == .unknown || precheckCode == .ok
     }
 
-    override func mapResponse(_ response: Proto_Response) -> Result<TransactionReceipt, HederaError> {
+    override func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        callback(&body.transactionGetReceipt.header)
+    }
+
+    override func mapResponse(_ response: Proto_Response) -> TransactionReceipt {
         guard case .transactionGetReceipt(let response) = response.response else {
-            return .failure(HederaError(message: "query response is not of type transaction receipt"))
+            fatalError("unreachable: response is not transactionGetReceipt")
         }
 
-        return .success(TransactionReceipt(response.receipt))
+        return TransactionReceipt(response.receipt)
     }
 }

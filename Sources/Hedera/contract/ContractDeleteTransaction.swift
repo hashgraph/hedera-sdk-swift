@@ -15,7 +15,7 @@ public class ContractDeleteTransaction: TransactionBuilder {
 
     /// Set the contract to be deleted
     @discardableResult
-    public func setContract(_ id: ContractId) -> Self {
+    public func setContractId(_ id: ContractId) -> Self {
         body.contractDeleteInstance.contractID = id.toProto()
 
         return self

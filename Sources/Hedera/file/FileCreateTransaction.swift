@@ -21,11 +21,11 @@ public class FileCreateTransaction: TransactionBuilder {
         return self
     }
 
-    /// Add a Ed25519PublicKey that will be required to create and update this file
+    /// Add a PublicKey that will be required to create and update this file
     /// 
     /// At least one key must be provided
     @discardableResult
-    public func addKey(_ key: Ed25519PublicKey) -> Self {
+    public func addKey(_ key: PublicKey) -> Self {
         body.fileCreate.keys.keys.append(key.toProto())
 
         return self

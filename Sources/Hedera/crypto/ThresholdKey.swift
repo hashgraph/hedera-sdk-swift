@@ -2,9 +2,9 @@ public final class ThresholdKey: PublicKey {
     let threshold: UInt32
     var keys: [PublicKey]
 
-    init(threshold: UInt32, keys: [PublicKey] = []) {
+    init(threshold: UInt32) {
         self.threshold = threshold
-        self.keys = keys
+        self.keys = []
         super.init()
     }
 
@@ -35,13 +35,13 @@ public final class ThresholdKey: PublicKey {
     }
 
     @discardableResult
-    public func addKey(_ key: PublicKey) -> Self {
+    public func add(_ key: PublicKey) -> Self {
         keys.append(key)
         return self
     }
 
     @discardableResult
-    public func addKeys(_ keys: [PublicKey]) -> Self {
+    public func addAll(_ keys: [PublicKey]) -> Self {
         self.keys.append(contentsOf: keys)
         return self
     }

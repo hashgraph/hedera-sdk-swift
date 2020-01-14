@@ -9,46 +9,22 @@ public class ContractCreateTransaction: TransactionBuilder {
         body.contractCreateInstance = Proto_ContractCreateTransactionBody()
     }
 
-    /// Set the admin Ed25519PublicKey. 
-    ///
-    /// The admin key is required to modify the contract. If the admin key is null, then 
-    /// the contract becomes immutable and the only way to modify the contract would be to
-    /// recreate it; this time with an admin key.
-    @discardableResult
-    public func setAdminKey(_ key: Ed25519PublicKey) -> Self {
-        body.contractCreateInstance.adminKey = key.toProto()
-
-        return self
-    }
-
-    /// Set the auto renew period in seconds for the to be created contract
-    @discardableResult
-    public func setAutoRenewPeriod(_ period: TimeInterval) -> Self {
-        body.contractCreateInstance.autoRenewPeriod = period.toProto()
-
-        return self
-    }
-
     /// Set the file id for the solidity contract
     @discardableResult
-    public func setBytecodeFile(_ id: FileId) -> Self {
+    public func setBytecodeFileId(_ id: FileId) -> Self {
         body.contractCreateInstance.fileID = id.toProto()
 
         return self
     }
 
-    /// Set the contract constructor parameters in solidity format
+    /// Set the admin PublicKey. 
+    ///
+    /// The admin key is required to modify the contract. If the admin key is null, then 
+    /// the contract becomes immutable and the only way to modify the contract would be to
+    /// recreate it; this time with an admin key.
     @discardableResult
-    public func setConstructorParameters(_ bytes: Bytes) -> Self {
-        body.contractCreateInstance.constructorParameters = Data(bytes)
-
-        return self
-    }
-
-    /// Set the contract constructor parameters in solidity format
-    @discardableResult
-    public func setConstructorParameters(_ data: Data) -> Self {
-        body.contractCreateInstance.constructorParameters = data
+    public func setAdminKey(_ key: PublicKey) -> Self {
+        body.contractCreateInstance.adminKey = key.toProto()
 
         return self
     }
@@ -80,38 +56,41 @@ public class ContractCreateTransaction: TransactionBuilder {
     /// invalid account, or is an account that isn't a node, then this account is automatically proxy 
     /// staked to a node chosen by the network, but without earning payments. 
     @discardableResult
-    public func setProxyAccount(_ id: AccountId) -> Self {
+    public func setProxyAccountId(_ id: AccountId) -> Self {
         body.contractCreateInstance.proxyAccountID = id.toProto()
 
         return self
     }
 
-    /// Set the shard where the contract will be created
+    /// Set the auto renew period in seconds for the to be created contract
     @discardableResult
-    public func setShard(id: UInt64) -> Self {
-        var shard = Proto_ShardID()
-        shard.shardNum = Int64(id)
-        body.contractCreateInstance.shardID = shard
+    public func setAutoRenewPeriod(_ period: TimeInterval) -> Self {
+        body.contractCreateInstance.autoRenewPeriod = period.toProto()
 
         return self
     }
 
-    /// Set the realm where the contract will be created
+    /// Set the contract constructor parameters in solidity format
     @discardableResult
-    public func setRealm(id: UInt64) -> Self {
-        var realm = Proto_RealmID()
-        realm.realmNum = Int64(id)
-        body.contractCreateInstance.realmID = realm
+    public func setConstructorParameters(_ bytes: Bytes) -> Self {
+        body.contractCreateInstance.constructorParameters = Data(bytes)
 
         return self
     }
 
-    /// Set the admin key for the new realm to be created for this contract
-    ///
-    /// This requires the realm to be set to nil.
+    /// Set the contract constructor parameters in solidity format
     @discardableResult
-    public func setNewRealmAdminKey(_ key: PublicKey) -> Self {
-        body.contractCreateInstance.newRealmAdminKey = key.toProto()
+    public func setConstructorParameters(_ data: Data) -> Self {
+        body.contractCreateInstance.constructorParameters = data
+
+        return self
+    }
+
+    /// Set a memo for the contract itself
+    @discardableResult
+    public func setContractMemo(_ memo: String) -> Self {
+        body.contractCreateInstance.memo = memo
+
         return self
     }
 }

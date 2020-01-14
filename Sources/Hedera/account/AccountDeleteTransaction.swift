@@ -7,17 +7,17 @@ public final class AccountDeleteTransaction: TransactionBuilder {
         body.cryptoDelete = Proto_CryptoDeleteTransactionBody()
     }
 
-    /// Sets the account which will receive all remaining hbars
+    /// Sets the account to be deleted
     @discardableResult
-    public func setTransferAccount(_ id: AccountId) -> Self {
-        body.cryptoDelete.transferAccountID = id.toProto()
+    public func setDeleteAccountId(_ id: AccountId) -> Self {
+        body.cryptoDelete.deleteAccountID = id.toProto()
         return self
     }
 
-    /// Sets the account to be deleted
+    /// Sets the account which will receive all remaining hbars
     @discardableResult
-    public func setDeleteAccount(_ id: AccountId) -> Self {
-        body.cryptoDelete.deleteAccountID = id.toProto()
+    public func setTransferAccountId(_ id: AccountId) -> Self {
+        body.cryptoDelete.transferAccountID = id.toProto()
         return self
     }
 }
