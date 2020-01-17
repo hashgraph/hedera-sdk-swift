@@ -9,8 +9,8 @@ public func clientFromEnvironment(eventLoopGroup: EventLoopGroup) -> Client {
     guard let operatorId = ProcessInfo.processInfo.environment["OPERATOR_ID"] else { fatalError("environment variable OPERATOR_ID must be set")}
     guard let operatorKey = ProcessInfo.processInfo.environment["OPERATOR_KEY"] else { fatalError("environment variable OPERATOR_KEY must be set")}
 
-    return Client(node: AccountId(nodeId)!, address: address, eventLoopGroup: eventLoopGroup)
-        .setOperator(Operator(id: AccountId(operatorId)!, privateKey: Ed25519PrivateKey(operatorKey)!))
+    return Client(network: [address: AccountId(nodeId)!], eventLoopGroup: eventLoopGroup)
+        .setOperator(id: AccountId(operatorId)!, privateKey: Ed25519PrivateKey(operatorKey)!)
 }
 
 // Make sure to shutdown the eventloop once we're done so we don't leak threads
@@ -22,18 +22,18 @@ defer {
 let client = clientFromEnvironment(eventLoopGroup: eventLoopGroup)
     .setMaxTransactionFee(100_000_000)
 
-let newAccountKey = Ed25519PrivateKey()
+let newAccountKey = Ed25519PrivateKey.generate()!
 
 print("private key for new account: \(newAccountKey)")
 
 let tx = AccountCreateTransaction()
     .setInitialBalance(0)
     .setKey(newAccountKey.publicKey)
-    .setMemo("Create Account Example - Swift SDK")
+    .setTransactionMemo("Create Account Example - Swift SDK")
     .build(client: client)
-    
+
 try! tx.execute(client: client).get()
 
-let receipt = try! tx.queryReceipt(client: client).get()
+let receipt = try! tx.queryReceipt(client: client).wait().get()
 
 print("Account created: \(receipt.accountId!)")

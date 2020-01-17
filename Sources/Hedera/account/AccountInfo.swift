@@ -1,18 +1,18 @@
 import Foundation
 
 public struct AccountInfo {
-    let accountId: AccountId
-    let contractAccountId: String?
-    let deleted: Bool
-    let proxyAccountId: AccountId?
-    let proxyReceived: UInt64
-    let key: PublicKey
-    let balance: UInt64
-    let generateSendRecordThreshold: UInt64
-    let generateReceiveRecordThreshold: UInt64
-    let receiverSigRequired: Bool
-    let expirationTime: Date
-    let autoRenewPeriod: TimeInterval
+    public let accountId: AccountId
+    public let contractAccountId: String?
+    public let isDeleted: Bool
+    public let proxyAccountId: AccountId?
+    public let proxyReceived: Hbar
+    public let key: PublicKey
+    public let balance: Hbar
+    public let generateSendRecordThreshold: Hbar
+    public let generateReceiveRecordThreshold: Hbar
+    public let isReceiverSigRequired: Bool
+    public let expirationTime: Date
+    public let autoRenewPeriod: TimeInterval
 
     init(_ accountInfo: Proto_CryptoGetInfoResponse.AccountInfo) {
         let proxyAccountId: AccountId?
@@ -24,14 +24,14 @@ public struct AccountInfo {
 
         accountId = AccountId(accountInfo.accountID)
         contractAccountId = accountInfo.contractAccountID.isEmpty ? nil : accountInfo.contractAccountID
-        deleted = accountInfo.deleted
+        isDeleted = accountInfo.deleted
         self.proxyAccountId = proxyAccountId
-        proxyReceived = UInt64(accountInfo.proxyReceived)
+        proxyReceived = Hbar.fromTinybar(amount: accountInfo.proxyReceived)
         key = PublicKey.fromProto(accountInfo.key)!
-        balance = accountInfo.balance
-        generateSendRecordThreshold = accountInfo.generateSendRecordThreshold
-        generateReceiveRecordThreshold = accountInfo.generateReceiveRecordThreshold
-        receiverSigRequired = accountInfo.receiverSigRequired
+        balance = Hbar.fromTinybar(amount: Int64(accountInfo.balance))
+        generateSendRecordThreshold = Hbar.fromTinybar(amount: Int64(accountInfo.generateSendRecordThreshold))
+        generateReceiveRecordThreshold = Hbar.fromTinybar(amount: Int64(accountInfo.generateReceiveRecordThreshold))
+        isReceiverSigRequired = accountInfo.receiverSigRequired
         expirationTime = Date(accountInfo.expirationTime)
         autoRenewPeriod = TimeInterval(accountInfo.autoRenewPeriod)!
     }

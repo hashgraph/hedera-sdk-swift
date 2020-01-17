@@ -1,11 +1,12 @@
 public final class TransactionRecordQuery: QueryBuilder<TransactionRecord> {
-    public override init(node: Node) {
-        super.init(node: node)
+    public override init() {
+        super.init()
 
         body.transactionGetRecord = Proto_TransactionGetRecordQuery()
     }
 
-    public func setTransaction(_ id: TransactionId) -> Self {
+    @discardableResult
+    public func setTransactionId(_ id: TransactionId) -> Self {
         body.transactionGetRecord.transactionID = id.toProto()
 
         return self
@@ -15,11 +16,15 @@ public final class TransactionRecordQuery: QueryBuilder<TransactionRecord> {
         precheckCode == .busy || precheckCode == .unknown || precheckCode == .ok
     }
 
-    override func mapResponse(_ response: Proto_Response) -> Result<TransactionRecord, HederaError> {
+    override func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        callback(&body.transactionGetRecord.header)
+    }
+
+    override func mapResponse(_ response: Proto_Response) -> TransactionRecord {
         guard case .transactionGetRecord(let response) = response.response else {
-            return .failure(HederaError(message: "query response was not of type 'transactionGetRecord'"))
+            fatalError("unreachable: response is not transactionGetRecord")
         }
 
-        return .success(TransactionRecord(response.transactionRecord))
+        return TransactionRecord(response.transactionRecord)
     }
 }

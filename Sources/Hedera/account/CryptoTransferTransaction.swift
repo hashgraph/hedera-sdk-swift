@@ -9,20 +9,22 @@ public final class CryptoTransferTransaction: TransactionBuilder {
     }
 
     @discardableResult
-    public func add(sender: AccountId, amount: UInt64) -> Self {
-        add(account: sender, amount: -Int64(amount))
+    public func addSender(_ sender: AccountId, amount: Hbar) -> Self {
+        guard amount > Hbar.ZERO else { fatalError("amount must be nonnegative")}
+        return addTransfer(account: sender, amount: Hbar.fromTinybar(amount: -amount.asTinybar()))
     }
 
     @discardableResult
-    public func add(recipient: AccountId, amount: UInt64) -> Self {
-        add(account: recipient, amount: Int64(amount))
+    public func addRecipient(_ recipient: AccountId, amount: Hbar) -> Self {
+        guard amount > Hbar.ZERO else { fatalError("amount must be nonnegative")}
+        return addTransfer(account: recipient, amount: amount)
     }
 
     @discardableResult
-    public func add(account: AccountId, amount: Int64) -> Self {
+    public func addTransfer(account: AccountId, amount: Hbar) -> Self {
         var accountAmount = Proto_AccountAmount()
         accountAmount.accountID = account.toProto()
-        accountAmount.amount = amount
+        accountAmount.amount = amount.asTinybar()
 
         body.cryptoTransfer.transfers.accountAmounts.append(accountAmount)
 

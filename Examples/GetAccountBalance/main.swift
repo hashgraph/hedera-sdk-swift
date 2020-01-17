@@ -11,8 +11,8 @@ public func clientFromEnvironment(eventLoopGroup: EventLoopGroup) -> Client {
         fatalError("environment variables OPERATOR_KEY and OPERATOR_ID must be present")
     }
 
-    return Client(node: AccountId(3), address: "0.testnet.hedera.com:50211", eventLoopGroup: eventLoopGroup)
-        .setOperator(Operator(id: AccountId(operatorId!)!, privateKey: Ed25519PrivateKey(operatorKey!)!))
+    return Client(network: ["0.testnet.hedera.com:50211": AccountId(3)], eventLoopGroup: eventLoopGroup)
+        .setOperator(id: AccountId(operatorId!)!, privateKey: Ed25519PrivateKey(operatorKey!)!)
 }
 
 let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
@@ -24,7 +24,9 @@ defer {
 
 let client = clientFromEnvironment(eventLoopGroup: eventLoopGroup)
 
-let balance = AccountBalanceQuery(node: client.pickNode())
+let balance = try! AccountBalanceQuery()
+    .setAccountId(AccountId(2))
     .execute(client: client)
+    .wait()
 
 print("balance = \(balance)")

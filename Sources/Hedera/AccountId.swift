@@ -52,8 +52,20 @@ extension AccountId {
         self.init(EntityId(shard: shard, realm: realm, num: num))
     }
 
-    /// Create an EntityId with shard and realm set to 0.
+    /// Create an AccountId with shard and realm set to 0.
     public convenience init(_ num: UInt64) {
         self.init(EntityId(num: num))
+    }
+
+    public var shard: UInt64 {
+        id.shard
+    }
+
+    public var realm: UInt64 {
+        id.realm
+    }
+
+    public var account: UInt64 {
+        id.num
     }
 }

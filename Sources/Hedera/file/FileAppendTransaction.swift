@@ -12,6 +12,14 @@ public class FileAppendTransaction: TransactionBuilder {
         body.fileAppend = Proto_FileAppendTransactionBody()
     }
 
+    /// Set the file to be append the contents to
+    @discardableResult
+    public func setFileId(_ id: FileId) -> Self {
+        body.fileAppend.fileID = id.toProto()
+
+        return self
+    }
+
     /// Set the content to be appened to the file
     @discardableResult
     public func setContents(_ data: Data) -> Self {
@@ -32,14 +40,6 @@ public class FileAppendTransaction: TransactionBuilder {
     @discardableResult
     public func setContents(_ string: String) -> Self {
         body.fileAppend.contents = Data(Array(string.utf8))
-
-        return self
-    }
-
-    /// Set the file to be append the contents to
-    @discardableResult
-    public func setFile(_ id: FileId) -> Self {
-        body.fileAppend.fileID = id.toProto()
 
         return self
     }

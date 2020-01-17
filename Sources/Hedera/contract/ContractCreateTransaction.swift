@@ -9,14 +9,56 @@ public class ContractCreateTransaction: TransactionBuilder {
         body.contractCreateInstance = Proto_ContractCreateTransactionBody()
     }
 
-    /// Set the admin Ed25519PublicKey. 
+    /// Set the file id for the solidity contract
+    @discardableResult
+    public func setBytecodeFileId(_ id: FileId) -> Self {
+        body.contractCreateInstance.fileID = id.toProto()
+
+        return self
+    }
+
+    /// Set the admin PublicKey. 
     ///
     /// The admin key is required to modify the contract. If the admin key is null, then 
     /// the contract becomes immutable and the only way to modify the contract would be to
     /// recreate it; this time with an admin key.
     @discardableResult
-    public func setAdminKey(_ key: Ed25519PublicKey) -> Self {
+    public func setAdminKey(_ key: PublicKey) -> Self {
         body.contractCreateInstance.adminKey = key.toProto()
+
+        return self
+    }
+
+    /// Set the amount of tinybars to be used to create the transaction
+    ///
+    /// Although the type of `gas` is UInt64, the valid range is [0, 2^63-1]
+    @discardableResult
+    public func setGas(_ gas: UInt64) -> Self {
+        body.contractCreateInstance.gas = Int64(gas)
+
+        return self
+    }
+
+    /// Set the initial balance of a contract
+    ///
+    /// Initial balance must be nonnegative.
+    /// The contract will take ownership of the initial balance
+    @discardableResult
+    public func setInitialBalance(_ balance: Hbar) -> Self {
+        guard balance > Hbar.ZERO else { fatalError("initial balance must be nonnegative") }
+        body.contractCreateInstance.initialBalance = balance.asTinybar()
+
+        return self
+    }
+
+    /// Set the proxy account
+    ///
+    /// ID of the account to which this account is proxy staked. If the ID is null, or is an 
+    /// invalid account, or is an account that isn't a node, then this account is automatically proxy 
+    /// staked to a node chosen by the network, but without earning payments. 
+    @discardableResult
+    public func setProxyAccountId(_ id: AccountId) -> Self {
+        body.contractCreateInstance.proxyAccountID = id.toProto()
 
         return self
     }
@@ -25,14 +67,6 @@ public class ContractCreateTransaction: TransactionBuilder {
     @discardableResult
     public func setAutoRenewPeriod(_ period: TimeInterval) -> Self {
         body.contractCreateInstance.autoRenewPeriod = period.toProto()
-
-        return self
-    }
-
-    /// Set the file id for the solidity contract
-    @discardableResult
-    public func setBytecodeFile(_ id: FileId) -> Self {
-        body.contractCreateInstance.fileID = id.toProto()
 
         return self
     }
@@ -53,65 +87,11 @@ public class ContractCreateTransaction: TransactionBuilder {
         return self
     }
 
-    /// Set the amount of tinybars to be used to create the transaction
-    ///
-    /// Although the type of `gas` is UInt64, the valid range is [0, 2^63-1]
+    /// Set a memo for the contract itself
     @discardableResult
-    public func setGas(_ gas: UInt64) -> Self {
-        body.contractCreateInstance.gas = Int64(gas)
+    public func setContractMemo(_ memo: String) -> Self {
+        body.contractCreateInstance.memo = memo
 
-        return self
-    }
-
-    /// Set the initial balance of a contract
-    ///
-    /// Although the type of `balance` is UInt64, the valid range is [0, 2^63-1]
-    /// The contract will take ownership of the initial balance
-    @discardableResult
-    public func setInitialBalance(_ balance: UInt64) -> Self {
-        body.contractCreateInstance.initialBalance = Int64(balance)
-
-        return self
-    }
-
-    /// Set the proxy account
-    ///
-    /// ID of the account to which this account is proxy staked. If the ID is null, or is an 
-    /// invalid account, or is an account that isn't a node, then this account is automatically proxy 
-    /// staked to a node chosen by the network, but without earning payments. 
-    @discardableResult
-    public func setProxyAccount(_ id: AccountId) -> Self {
-        body.contractCreateInstance.proxyAccountID = id.toProto()
-
-        return self
-    }
-
-    /// Set the shard where the contract will be created
-    @discardableResult
-    public func setShard(id: UInt64) -> Self {
-        var shard = Proto_ShardID()
-        shard.shardNum = Int64(id)
-        body.contractCreateInstance.shardID = shard
-
-        return self
-    }
-
-    /// Set the realm where the contract will be created
-    @discardableResult
-    public func setRealm(id: UInt64) -> Self {
-        var realm = Proto_RealmID()
-        realm.realmNum = Int64(id)
-        body.contractCreateInstance.realmID = realm
-
-        return self
-    }
-
-    /// Set the admin key for the new realm to be created for this contract
-    ///
-    /// This requires the realm to be set to nil.
-    @discardableResult
-    public func setNewRealmAdminKey(_ key: PublicKey) -> Self {
-        body.contractCreateInstance.newRealmAdminKey = key.toProto()
         return self
     }
 }

@@ -1,21 +1,33 @@
+import NIO
+
 public class AccountInfoQuery: QueryBuilder<AccountInfo> {
-    public override init(node: Node) {
-        super.init(node: node)
+    public override init() {
+        super.init()
 
         body.cryptoGetInfo = Proto_CryptoGetInfoQuery()
     }
 
-    public func setAccount(_ id: AccountId) -> Self {
+    override func getCost(client: Client, node: Node) -> EventLoopFuture<Hbar> {
+        super.getCost(client: client, node: node).map { cost in
+            return max(cost, Hbar.fromTinybar(amount: 25))
+        }
+    }
+
+    public func setAccountId(_ id: AccountId) -> Self {
         body.cryptoGetInfo.accountID = id.toProto()
 
         return self
     }
 
-    override func mapResponse(_ response: Proto_Response) -> Result<AccountInfo, HederaError> {
-        guard case .cryptoGetInfo(let response) =  response.response else {
-            return .failure(HederaError(message: "query response was not of type account info"))
+    override func withHeader<R>(_ callback: (inout Proto_QueryHeader) -> R) -> R {
+        callback(&body.cryptoGetInfo.header)
+    }
+
+    override func mapResponse(_ response: Proto_Response) -> AccountInfo {
+        guard case .cryptoGetInfo(let response) = response.response else {
+            fatalError("unreachable: response is not cryptoGetInfo")
         }
 
-        return .success(AccountInfo(response.accountInfo))
+        return AccountInfo(response.accountInfo)
     }
 }
