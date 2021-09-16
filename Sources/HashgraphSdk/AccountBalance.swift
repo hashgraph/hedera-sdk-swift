@@ -7,26 +7,19 @@ public final class AccountBalance {
 
     init() {
     }
-
-    init(_ hbar: Hbar, _ tokens: [TokenId: UInt64], _ tokenDecimals: [TokenId: UInt32]) {
-        self.hbar = hbar
-        self.tokens = tokens
-        self.tokenDecimals = tokenDecimals
-    }
 }
 
 extension AccountBalance: ProtobufConvertible {
     convenience init?(_ proto: Proto_CryptoGetAccountBalanceResponse) {
-        let balance = Hbar(proto.balance)
-        let tokens = Dictionary(uniqueKeysWithValues: proto.tokenBalances.map { (TokenId($0.tokenID), $0.balance) })
-        let tokenDecimals = Dictionary(uniqueKeysWithValues: proto.tokenBalances.map { (TokenId($0.tokenID), $0.decimals) })
+        self.init()
 
-        self.init(balance, tokens, tokenDecimals)
+        hbar = Hbar(proto.balance)
+        tokens = Dictionary(uniqueKeysWithValues: proto.tokenBalances.map { (TokenId($0.tokenID), $0.balance) })
+        tokenDecimals = Dictionary(uniqueKeysWithValues: proto.tokenBalances.map { (TokenId($0.tokenID), $0.decimals) })
     }
 
     func toProtobuf() -> Proto_CryptoGetAccountBalanceResponse {
         var proto = Proto_CryptoGetAccountBalanceResponse()
-        proto.balance = hbar.toProtobuf()
         var tokenBalances: [TokenId: (UInt64, UInt32)] = [:]
 
         for (token, balance) in tokens {
@@ -39,6 +32,7 @@ extension AccountBalance: ProtobufConvertible {
             }
         }
 
+        proto.balance = hbar.toProtobuf()
         proto.tokenBalances = tokenBalances.map{
             var tokenBalance = Proto_TokenBalance()
             tokenBalance.tokenID = $0.key.toProtobuf()
