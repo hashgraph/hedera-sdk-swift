@@ -33,6 +33,12 @@ struct EntityId {
         realm = UInt64(proto.realmNum)
         num = UInt64(proto.fileNum)
     }
+
+    init(_ proto: Proto_TokenID) {
+        shard = UInt64(proto.shardNum)
+        realm = UInt64(proto.realmNum)
+        num = UInt64(proto.tokenNum)
+    }
 }
 
 extension EntityId: Equatable {

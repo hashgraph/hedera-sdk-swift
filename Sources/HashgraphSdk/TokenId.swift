@@ -1,6 +1,6 @@
 import HederaProtoServices
 
-public final class AccountId {
+public final class TokenId {
     let id: EntityId
 
     init(_ entity: EntityId) {
@@ -8,33 +8,33 @@ public final class AccountId {
     }
 }
 
-extension AccountId: ProtobufConvertible {
-    func toProtobuf() -> Proto_AccountID {
-        var proto = Proto_AccountID()
+extension TokenId: ProtobufConvertible {
+    func toProtobuf() -> Proto_TokenID {
+        var proto = Proto_TokenID()
         proto.shardNum = Int64(id.shard)
         proto.realmNum = Int64(id.realm)
-        proto.accountNum = Int64(id.num)
+        proto.tokenNum = Int64(id.num)
         return proto
     }
 
-    public convenience init(_ proto: Proto_AccountID) {
+    public convenience init(_ proto: Proto_TokenID) {
         self.init(EntityId(proto))
     }
 }
 
-extension AccountId: Equatable {
-    public static func == (lhs: AccountId, rhs: AccountId) -> Bool {
+extension TokenId: Equatable {
+    public static func == (lhs: TokenId, rhs: TokenId) -> Bool {
         lhs.id == rhs.id
     }
 }
 
-extension AccountId: Hashable {
+extension TokenId: Hashable {
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }
 }
 
-extension AccountId: CustomStringConvertible, CustomDebugStringConvertible {
+extension TokenId: CustomStringConvertible, CustomDebugStringConvertible {
     public var description: String {
         id.description
     }
@@ -44,14 +44,14 @@ extension AccountId: CustomStringConvertible, CustomDebugStringConvertible {
     }
 }
 
-extension AccountId: LosslessStringConvertible {
+extension TokenId: LosslessStringConvertible {
     public convenience init?(_ description: String) {
         guard let id = EntityId(description) else { return nil }
         self.init(id)
     }
 }
 
-extension AccountId {
+extension TokenId {
     public convenience init(shard: UInt64 = 0, realm: UInt64 = 0, num: UInt64) {
         self.init(EntityId(shard: shard, realm: realm, num: num))
     }
