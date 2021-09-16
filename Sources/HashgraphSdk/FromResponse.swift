@@ -4,5 +4,5 @@ protocol FromResponse {
     associatedtype ProtobufResponse
     associatedtype SdkResponse
 
-    func mapResponse(_ response: ProtobufResponse) -> SdkResponse
+    func mapResponse(_ response: ProtobufResponse) -> SdkResponse?
 }
