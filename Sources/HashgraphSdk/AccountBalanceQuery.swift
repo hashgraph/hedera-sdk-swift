@@ -1,4 +1,5 @@
 import HederaProtoServices
+import HederaCryptoSwift
 
 public final class AccountBalanceQuery  {
     var accountId: Optional<AccountId> = nil
