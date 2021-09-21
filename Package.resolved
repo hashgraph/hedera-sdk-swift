@@ -20,11 +20,11 @@
         }
       },
       {
-        "package": "HederaCryptoSwift",
+        "package": "HederaCrypto",
         "repositoryURL": "git@github.com:launchbadge/hedera-crypto-swift.git",
         "state": {
           "branch": "main",
-          "revision": "123c56b36b6fdfb34a625555a8f631da1a7c348b",
+          "revision": "400cb233da4bd49a05e1ff7ebd93e61c5b4de44f",
           "version": null
         }
       },

@@ -17,7 +17,7 @@ let package = Package(
     dependencies: [
         // Dependencies declare other packages that this package depends on.
         // .package(url: /* package url */, from: "1.0.0"),
-        .package(name: "HederaCryptoSwift", url: "git@github.com:launchbadge/hedera-crypto-swift.git", .branch("main")),
+        .package(name: "HederaCrypto", url: "git@github.com:launchbadge/hedera-crypto-swift.git", .branch("main")),
         .package(name: "HederaProto", url: "git@github.com:hashgraph/hedera-protobufs-swift.git", .branch("main")),
         .package(url: "https://github.com/grpc/grpc-swift", .exact("1.4.1")),
     ],
@@ -28,7 +28,7 @@ let package = Package(
             name: "HashgraphSdk",
             dependencies: [
                 .product(name: "HederaProtoServices", package: "HederaProto"),
-                "HederaCryptoSwift",
+                "HederaCrypto",
                 .product(name: "GRPC", package: "grpc-swift")
             ]),
         .testTarget(
