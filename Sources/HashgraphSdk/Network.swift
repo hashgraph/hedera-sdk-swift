@@ -1,7 +1,11 @@
+import GRPC
+import NIO
+
 class Network {
     var network: [AccountId:Node] = [:]
     var nodes: [Node] = []
     var networkName: NetworkName?
+    var eventLoopGroup: EventLoopGroup
 
     init(_ network: [String: AccountId]) {
         for (url, accountId) in network {
@@ -9,6 +13,8 @@ class Network {
             nodes.append(node)
             self.network[accountId] = node
         }
+
+        eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
     }
 
     static func forNetwork(_ network: [String: AccountId]) -> Network {
@@ -59,6 +65,10 @@ class Network {
         network["34.82.78.255:50211"] = AccountId(20)
 
         return Network(network)
+    }
+
+    deinit {
+        try! eventLoopGroup.syncShutdownGracefully()
     }
 
     func getNetwork() -> [String:AccountId] {

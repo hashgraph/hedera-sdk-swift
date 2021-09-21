@@ -1,4 +1,4 @@
-public class Query<O: ProtobufConvertible> : Executable<O> {
+public class Query<S: MethodDescriptor, O: ProtobufConvertible> : Executable<O> {
     var maxQueryPayment: Hbar?
     var queryPayment: Hbar?
 
@@ -16,5 +16,9 @@ public class Query<O: ProtobufConvertible> : Executable<O> {
 
     func isPaymentRequired() -> Bool {
         true
+    }
+
+    func execute(_ client: Client) {
+        let descriptor = S.getMethodDescriptor;
     }
 }

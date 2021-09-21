@@ -1,12 +1,19 @@
 import HederaProtoServices
+import GRPC
 
-public final class AccountBalanceQuery : Query<AccountBalance> {
+public final class AccountBalanceQuery : Query<AccountBalanceQuery, AccountBalance> {
     var accountId: Optional<AccountId> = nil
 
     @discardableResult
     public func setAccountId(_ accountId: AccountId) -> Self {
         self.accountId = accountId
         return self
+    }
+}
+
+extension AccountBalanceQuery: MethodDescriptor {
+    public static func getMethodDescriptor(_ node: Node) -> (Proto_Query, CallOptions?) -> UnaryCall<Proto_Query, Proto_Response> {
+        node.getCrypto().cryptoGetBalance
     }
 }
 

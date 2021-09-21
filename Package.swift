@@ -19,6 +19,7 @@ let package = Package(
         // .package(url: /* package url */, from: "1.0.0"),
         .package(name: "HederaCryptoSwift", url: "git@github.com:launchbadge/hedera-crypto-swift.git", .branch("main")),
         .package(name: "HederaProto", url: "git@github.com:hashgraph/hedera-protobufs-swift.git", .branch("main")),
+        .package(url: "https://github.com/grpc/grpc-swift", .exact("1.4.1")),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -27,8 +28,8 @@ let package = Package(
             name: "HashgraphSdk",
             dependencies: [
                 .product(name: "HederaProtoServices", package: "HederaProto"),
-                "HederaCryptoSwift"
-//                .product(name: "GRPC", package: "grpc-swift")
+                "HederaCryptoSwift",
+                .product(name: "GRPC", package: "grpc-swift")
             ]),
         .testTarget(
             name: "HashgraphSdkTests",
