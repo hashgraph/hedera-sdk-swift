@@ -9,7 +9,7 @@ public final class TokenId {
 }
 
 extension TokenId: ProtobufConvertible {
-    func toProtobuf() -> Proto_TokenID {
+    public func toProtobuf() -> Proto_TokenID {
         var proto = Proto_TokenID()
         proto.shardNum = Int64(id.shard)
         proto.realmNum = Int64(id.realm)

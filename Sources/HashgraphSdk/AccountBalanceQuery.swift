@@ -1,11 +1,7 @@
 import HederaProtoServices
-import HederaCryptoSwift
 
-public final class AccountBalanceQuery  {
+public final class AccountBalanceQuery : Query<AccountBalance> {
     var accountId: Optional<AccountId> = nil
-
-    public init() {
-    }
 
     @discardableResult
     public func setAccountId(_ accountId: AccountId) -> Self {
@@ -15,13 +11,13 @@ public final class AccountBalanceQuery  {
 }
 
 extension AccountBalanceQuery: ProtobufConvertible {
-    convenience init?(_ proto: Proto_Query) {
+    public convenience init?(_ proto: Proto_Query) {
         self.init()
 
         setAccountId(AccountId(proto.cryptogetAccountBalance.accountID))
     }
 
-    func toProtobuf() -> Proto_Query {
+    public func toProtobuf() -> Proto_Query {
         var proto = Proto_Query()
 
         if let accountId = accountId {

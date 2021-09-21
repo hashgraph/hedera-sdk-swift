@@ -1,7 +1,7 @@
 public final class Hbar {
     var tinybars: UInt64
 
-    init(_ tinybars: UInt64) {
+    public init(_ tinybars: UInt64) {
         self.tinybars = tinybars
     }
 
@@ -11,7 +11,7 @@ public final class Hbar {
 }
 
 extension Hbar: ProtobufConvertible {
-    func toProtobuf() -> UInt64 {
+    public func toProtobuf() -> UInt64 {
         tinybars
     }
 }

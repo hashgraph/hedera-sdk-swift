@@ -10,7 +10,7 @@ public final class AccountBalance {
 }
 
 extension AccountBalance: ProtobufConvertible {
-    convenience init?(_ proto: Proto_CryptoGetAccountBalanceResponse) {
+    public convenience init?(_ proto: Proto_CryptoGetAccountBalanceResponse) {
         self.init()
 
         hbar = Hbar(proto.balance)
@@ -18,7 +18,7 @@ extension AccountBalance: ProtobufConvertible {
         tokenDecimals = Dictionary(uniqueKeysWithValues: proto.tokenBalances.map { (TokenId($0.tokenID), $0.decimals) })
     }
 
-    func toProtobuf() -> Proto_CryptoGetAccountBalanceResponse {
+    public func toProtobuf() -> Proto_CryptoGetAccountBalanceResponse {
         var proto = Proto_CryptoGetAccountBalanceResponse()
         var tokenBalances: [TokenId: (UInt64, UInt32)] = [:]
 
