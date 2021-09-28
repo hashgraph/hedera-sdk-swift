@@ -1,5 +1,6 @@
 import GRPC
 import HederaProtoServices
+import NIO
 
 public class Node {
     var accountId: AccountId
@@ -33,5 +34,9 @@ public class Node {
 
         crypto = Proto_CryptoServiceClient(channel: getConnection())
         return crypto!
+    }
+
+    func close() -> EventLoopFuture<Void>? {
+        connection?.close()
     }
 }

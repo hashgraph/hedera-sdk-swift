@@ -6,6 +6,7 @@ class Network {
     var nodes: [Node] = []
     var networkName: NetworkName?
     var eventLoopGroup: EventLoopGroup
+    var maxNodesPerRequest: UInt32?
 
     init(_ network: [String: AccountId]) {
         for (url, accountId) in network {
@@ -83,5 +84,28 @@ class Network {
 
     func getNetworkName() -> NetworkName? {
         networkName
+    }
+
+    func getNumberOfMostHealthyNodes(_ count: Int) -> ArraySlice<Node> {
+        nodes[0..<count]
+    }
+
+    func getNumberOfNodesPerRequest() -> Int {
+        if let maxNodesPerRequest = maxNodesPerRequest {
+            return max(Int(maxNodesPerRequest), nodes.count)
+        } else {
+            return (nodes.count + 3 - 1) / 3
+        }
+    }
+
+    func getNodeAccountIdsForExecute() -> [AccountId] {
+        getNumberOfMostHealthyNodes(getNumberOfNodesPerRequest()).map { $0.accountId }
+    }
+
+    func close() -> EventLoopFuture<Void> {
+        EventLoopFuture<Void>.whenAllSucceed(
+                nodes.map { $0.close() }.filter { $0 != nil }.map { $0! },
+                on: eventLoopGroup.next()
+        ).map { (results: [Void]) -> Void in Void() }
     }
 }

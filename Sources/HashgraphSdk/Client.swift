@@ -1,8 +1,12 @@
 import HederaCryptoSwift
+import Foundation
 
 public class Client {
     var `operator`: Operator?
     var network: Network
+    var maxAttempts: UInt = 10
+    var maxBackoff: TimeInterval = 8
+    var minBackoff: TimeInterval = 0.25
 
     init(_ network: Network) {
         self.network = network
