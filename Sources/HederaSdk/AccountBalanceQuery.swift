@@ -11,7 +11,7 @@ public final class AccountBalanceQuery : Query<AccountBalance> {
         return self
     }
 
-    public convenience init(_ proto: Proto_Query) {
+    convenience init(_ proto: Proto_Query) {
         self.init()
 
         setAccountId(AccountId(proto.cryptogetAccountBalance.accountID))
@@ -21,11 +21,11 @@ public final class AccountBalanceQuery : Query<AccountBalance> {
         false
     }
 
-    override func execute(_ node: Node) -> UnaryCall<Proto_Query, Proto_Response> {
-        node.getCrypto().cryptoGetBalance(toProtobuf(), callOptions: nil)
+    override func executeAsync(_ node: Node) -> UnaryCall<Proto_Query, Proto_Response> {
+        node.getCrypto().cryptoGetBalance(makeRequest(), callOptions: nil)
     }
 
-    override func toProtobuf() -> Proto_Query {
+    override func makeRequest() -> Proto_Query {
         var proto = Proto_Query()
 
         if let accountId = accountId {
@@ -33,6 +33,14 @@ public final class AccountBalanceQuery : Query<AccountBalance> {
         }
 
         return proto
+    }
+
+    override func mapResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
+        response.cryptogetAccountBalance.header
+    }
+
+    override func mapResponse(_ response: Proto_Response) -> AccountBalance {
+        AccountBalance(response.cryptogetAccountBalance)!
     }
 }
 

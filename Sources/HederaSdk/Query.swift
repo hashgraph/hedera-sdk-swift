@@ -20,6 +20,12 @@ public class Query<O: ProtobufConvertible> : Executable<O, Proto_Query, Proto_Re
         true
     }
 
+    override func onExecuteAsync(_ client: Client) {
+        if (!isPaymentRequired()) {
+            return
+        }
+    }
+
     func mapResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
         fatalError("not implemented")
     }

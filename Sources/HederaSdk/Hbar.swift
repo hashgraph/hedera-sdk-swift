@@ -15,3 +15,13 @@ extension Hbar: ProtobufConvertible {
         tinybars
     }
 }
+
+extension Hbar: CustomStringConvertible {
+    public var description: String {
+        String(tinybars)
+    }
+
+    public var debugDescription: String {
+        description
+    }
+}

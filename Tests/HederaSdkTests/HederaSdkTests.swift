@@ -1,5 +1,5 @@
     import XCTest
-    @testable import HashgraphSdk
+    @testable import HederaSdk
 
     final class HashgraphSdkTests: XCTestCase {
         func testExample() {

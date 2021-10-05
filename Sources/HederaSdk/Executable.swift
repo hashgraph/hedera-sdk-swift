@@ -17,14 +17,14 @@ public class Executable<O: ProtobufConvertible, RequestT, ResponseT> {
     var minBackoff: TimeInterval?
     var nextNodeIndex: Int = 0
 
-    init() {
+    public init() {
     }
 
-    func onExecute(_ client: Client) {
+    func onExecuteAsync(_ client: Client) {
         fatalError("not implemented")
     }
 
-    func toProtobuf() -> RequestT {
+    func makeRequest() -> RequestT {
         fatalError("not implemented")
     }
 
@@ -51,22 +51,32 @@ public class Executable<O: ProtobufConvertible, RequestT, ResponseT> {
         fatalError("not implemented")
     }
 
-    func execute(_ node: Node) -> UnaryCall<RequestT, ResponseT> {
+    func executeAsync(_ node: Node) -> UnaryCall<RequestT, ResponseT> {
         fatalError("not implemented")
     }
 
-    func execute(_ attempt: Int, _ eventLoop: EventLoop) -> EventLoopFuture<O> {
+    func executeAsync(_ attempt: Int, _ eventLoop: EventLoop) -> EventLoopFuture<O> {
         let node = nodes[nextNodeIndex]
 
-        // TODO: max attempt check
+        if attempt >= maxAttempts! {
+            return eventLoop.makeFailedFuture(MaxAttemptsExceededError(maxAttempts!))
+        }
+
         // TODO: Node health check and delay
 
-        return execute(node)
+        return executeAsync(node)
                 .response
                 .flatMap { response in
             switch self.shouldRetry(response) {
             case .retry:
-                return self.execute(attempt + 1, eventLoop)
+                let backoff = eventLoop.makePromise(of: Void.self)
+                let delay = max(Double(self.minBackoff!), 250 * pow(2.0, (Double(attempt - 1))))
+
+                eventLoop.scheduleTask(in: TimeAmount.milliseconds(Int64(delay))) {
+                    backoff.succeed(())
+                }
+
+                return backoff.futureResult.flatMap{ v in self.executeAsync(attempt + 1, eventLoop) }
             case .error:
                 return eventLoop.makeFailedFuture(self.mapStatusError(response))
             case .finished:
@@ -75,16 +85,16 @@ public class Executable<O: ProtobufConvertible, RequestT, ResponseT> {
         }
     }
 
-    public func execute(_ client: Client) -> EventLoopFuture<O> {
+    public func executeAsync(_ client: Client) -> EventLoopFuture<O> {
         maxAttempts = maxAttempts ?? client.maxAttempts
         maxBackoff = maxBackoff ?? client.maxBackoff
         minBackoff = minBackoff ?? client.minBackoff
 
-        onExecute(client)
+        onExecuteAsync(client)
 
         nodeAccountIds = client.network.getNodeAccountIdsForExecute()
         nodes = nodeAccountIds.map { client.network.network[$0]! }
 
-        return execute(1, client.network.eventLoopGroup.next())
+        return executeAsync(1, client.network.eventLoopGroup.next())
     }
 }

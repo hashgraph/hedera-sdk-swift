@@ -44,3 +44,13 @@ extension AccountBalance: ProtobufConvertible {
         return proto
     }
 }
+
+extension AccountBalance: CustomStringConvertible {
+    public var description: String {
+        "hbars: \(hbar)\ntokens: \(tokens.description)\ntokenDecimals: \(tokenDecimals.description)"
+    }
+
+    public var debugDescription: String {
+        description
+    }
+}

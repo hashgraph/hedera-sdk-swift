@@ -1,4 +1,4 @@
-import HederaCryptoSwift
+import HederaCrypto
 import Foundation
 
 public class Client {
@@ -12,11 +12,17 @@ public class Client {
         self.network = network
     }
 
-    static func forNetwork(_ network: [String: AccountId]) -> Client {
+    public static func forNetwork(_ network: [String: AccountId]) -> Client {
         Client(Network.forNetwork(network))
     }
 
-    func getOperatorAccountId() -> AccountId? {
+    @discardableResult
+    public func setOperator(_ accountId: AccountId, _ privateKey: PrivateKey) -> Self {
+        `operator` = Operator(accountId, privateKey)
+        return self
+    }
+
+    public func getOperatorAccountId() -> AccountId? {
         if let `operator` = `operator` {
             return `operator`.accountId
         } else {
@@ -24,7 +30,7 @@ public class Client {
         }
     }
 
-    func getOperatorPublicKey() -> PublicKey? {
+    public func getOperatorPublicKey() -> PublicKey? {
         if let `operator` = `operator` {
             return `operator`.publicKey
         } else {
@@ -33,23 +39,28 @@ public class Client {
     }
 
     @discardableResult
-    func setNetworkName(_ networkName: NetworkName) -> Self {
+    public func setNetworkName(_ networkName: NetworkName) -> Self {
         network.setNetworkName(networkName)
         return self
     }
 
-    func getNetworkName() -> NetworkName? {
+    public func getNetworkName() -> NetworkName? {
         network.getNetworkName()
-    }}
+    }
+}
 
 class Operator {
     var accountId: AccountId
     var transactionSigner: (_ data: [UInt8]) -> [UInt8]
     var publicKey: PublicKey
 
-    init(_ accountId: AccountId, _ transactionSigner: @escaping (_ data: [UInt8]) -> [UInt8], publicKey: PublicKey) {
+    init(_ accountId: AccountId, _ transactionSigner: @escaping (_ data: [UInt8]) -> [UInt8], _ publicKey: PublicKey) {
         self.accountId = accountId
         self.transactionSigner = transactionSigner
         self.publicKey = publicKey
+    }
+
+    convenience init(_ accountId: AccountId, _ privateKey: PrivateKey) {
+        self.init(accountId, privateKey.sign, privateKey.publicKey)
     }
 }
