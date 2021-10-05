@@ -1,7 +1,7 @@
 class MaxAttemptsExceededError: Error {
-    public var maxAttempts: UInt
+  public var maxAttempts: UInt
 
-    init(_ maxAttempts: UInt) {
-        self.maxAttempts = maxAttempts
-    }
+  init(_ maxAttempts: UInt) {
+    self.maxAttempts = maxAttempts
+  }
 }

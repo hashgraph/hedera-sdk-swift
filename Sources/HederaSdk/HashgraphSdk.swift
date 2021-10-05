@@ -1,3 +1,3 @@
 struct HashgraphSdk {
-    var text = "Hello, World!"
+  var text = "Hello, World!"
 }

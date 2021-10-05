@@ -1,8 +1,8 @@
 import SwiftProtobuf
 
 protocol FromResponse {
-    associatedtype ProtobufResponse
-    associatedtype SdkResponse
+  associatedtype ProtobufResponse
+  associatedtype SdkResponse
 
-    func mapResponse(_ response: ProtobufResponse) -> SdkResponse?
+  func mapResponse(_ response: ProtobufResponse) -> SdkResponse?
 }
