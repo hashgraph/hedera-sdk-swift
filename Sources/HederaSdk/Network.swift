@@ -10,7 +10,7 @@ class Network {
 
   init(_ network: [String: AccountId]) {
     for (url, accountId) in network {
-      let node = Node(url, accountId)
+      let node = Node(url, accountId)!
       nodes.append(node)
       self.network[accountId] = node
     }

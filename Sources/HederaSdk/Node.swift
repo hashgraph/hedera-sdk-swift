@@ -2,15 +2,21 @@ import GRPC
 import HederaProtoServices
 import NIO
 
-public class Node {
+class Node: ManagedNode {
   var accountId: AccountId
-  var address: NodeAddress
-  var connection: ClientConnection?
   var crypto: Proto_CryptoServiceClient?
 
-  init(_ address: String, _ accountId: AccountId) {
+  init(_ address: ManagedNodeAddress, _ accountId: AccountId) {
     self.accountId = accountId
-    self.address = NodeAddress(address)
+    super.init(address)
+  }
+
+  convenience init?(_ address: String, _ accountId: AccountId) {
+    guard let managedNodeAddress = ManagedNodeAddress(address) else {
+      return nil
+    }
+
+    self.init(managedNodeAddress, accountId)
   }
 
   func getConnection() -> ClientConnection {
@@ -19,7 +25,7 @@ public class Node {
     }
 
     let configuration = ClientConnection.Configuration.default(
-      target: .hostAndPort(address.address, Int(address.port ?? 0)),
+      target: .hostAndPort(address.address, Int(address.port)),
       eventLoopGroup: PlatformSupport.makeEventLoopGroup(loopCount: 1)
     )
     connection = ClientConnection(configuration: configuration)
