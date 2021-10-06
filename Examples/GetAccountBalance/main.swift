@@ -11,7 +11,7 @@ import NIO
 //    fatalError("environment variables OPERATOR_KEY and OPERATOR_ID must be present")
 //}
 
-let client = Client.forNetwork(["0.testnet.hedera.com:50211": AccountId(3)])
+let client = Client.forTestnet()
 //        .setOperator(AccountId(operatorId!)!, PrivateKey(operatorKey!)!)
 
 let balance = try! AccountBalanceQuery()

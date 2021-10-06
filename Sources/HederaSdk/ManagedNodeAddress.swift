@@ -4,7 +4,7 @@ final class ManagedNodeAddress {
   var address: String
   var port: UInt16
 
-  required init(_ address: String, _ port: UInt16) {
+  init(_ address: String, _ port: UInt16) {
     self.address = address
     self.port = port
   }
@@ -47,7 +47,7 @@ final class ManagedNodeAddress {
 }
 
 let hostAndPort = try! NSRegularExpression(
-  pattern: #"^(?<address>\\S+):(?<port>\\d+)$"#,
+  pattern: #"^(?<address>\S+):(?<port>\d+)$"#,
   options: []
 )
 
@@ -65,7 +65,7 @@ extension ManagedNodeAddress: LosslessStringConvertible {
     }
 
     if let addressRange = Range(match.range(withName: "address"), in: description),
-      let portRange = Range(match.range(withName: "address"), in: description)
+      let portRange = Range(match.range(withName: "port"), in: description)
     {
       let address = String(description[addressRange])
       guard let port = UInt16(String(description[portRange])) else {
@@ -73,6 +73,7 @@ extension ManagedNodeAddress: LosslessStringConvertible {
       }
 
       self.init(address, port)
+      return
     }
 
     return nil

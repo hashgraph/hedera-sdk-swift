@@ -8,9 +8,12 @@ class Network {
   var eventLoopGroup: EventLoopGroup
   var maxNodesPerRequest: UInt32?
 
-  init(_ network: [String: AccountId]) {
+  init?(_ network: [String: AccountId]) {
     for (url, accountId) in network {
-      let node = Node(url, accountId)!
+      guard let node = Node(url, accountId) else {
+        return nil
+      }
+
       nodes.append(node)
       self.network[accountId] = node
     }
@@ -18,7 +21,7 @@ class Network {
     eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
   }
 
-  static func forNetwork(_ network: [String: AccountId]) -> Network {
+  static func forNetwork(_ network: [String: AccountId]) -> Network? {
     Network(network)
   }
 
@@ -30,7 +33,7 @@ class Network {
     network["3.previewnet.hedera.com:50211"] = AccountId(6)
     network["4.previewnet.hedera.com:50211"] = AccountId(7)
 
-    return Network(network)
+    return Network(network)!
   }
 
   static func forTestnet() -> Network {
@@ -41,7 +44,7 @@ class Network {
     network["3.testnet.hedera.com:50211"] = AccountId(6)
     network["4.testnet.hedera.com:50211"] = AccountId(7)
 
-    return Network(network)
+    return Network(network)!
   }
 
   static func forMainnet() -> Network {
@@ -65,7 +68,7 @@ class Network {
     network["34.89.87.138:50211"] = AccountId(19)
     network["34.82.78.255:50211"] = AccountId(20)
 
-    return Network(network)
+    return Network(network)!
   }
 
   deinit {

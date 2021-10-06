@@ -23,14 +23,6 @@ class ManagedNode {
     self.address = address
   }
 
-  convenience init?(_ description: String) {
-    if let address = ManagedNodeAddress(description) {
-      self.init(address)
-    }
-
-    return nil
-  }
-
   func isHealthy() -> Bool {
     backoffUntil < Date().timeIntervalSince1970
   }

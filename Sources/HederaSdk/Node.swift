@@ -12,11 +12,9 @@ class Node: ManagedNode {
   }
 
   convenience init?(_ address: String, _ accountId: AccountId) {
-    guard let managedNodeAddress = ManagedNodeAddress(address) else {
-      return nil
-    }
+    let managedNodeAddress = ManagedNodeAddress(address)
 
-    self.init(managedNodeAddress, accountId)
+    self.init(managedNodeAddress!, accountId)
   }
 
   func getConnection() -> ClientConnection {

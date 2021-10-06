@@ -8,12 +8,28 @@ public class Client {
   var maxBackoff: TimeInterval = 8
   var minBackoff: TimeInterval = 0.25
 
-  init(_ network: Network) {
+  init?(_ network: Network?) {
+    guard let network = network else {
+      return nil
+    }
+
     self.network = network
   }
 
-  public static func forNetwork(_ network: [String: AccountId]) -> Client {
+  public static func forNetwork(_ network: [String: AccountId]) -> Client? {
     Client(Network.forNetwork(network))
+  }
+
+  public static func forMainnet() -> Client {
+    Client(Network.forMainnet())!
+  }
+
+  public static func forTestnet() -> Client {
+    Client(Network.forTestnet())!
+  }
+
+  public static func forPreviewnet() -> Client {
+    Client(Network.forPreviewnet())!
   }
 
   @discardableResult
