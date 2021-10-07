@@ -17,6 +17,10 @@ public class Client {
     network = Network(eventLoopGroup)
   }
 
+  deinit {
+    try! eventLoopGroup.syncShutdownGracefully()
+  }
+
   public static func forNetwork(_ network: [String: AccountId]) -> EventLoopFuture<Client> {
     let client = Client()
     return client.setNetwork(Network.forNetwork(client.eventLoopGroup, network))
@@ -44,7 +48,7 @@ public class Client {
     }
   }
 
-  func setNetwork(_ network: [String: AccountId]) -> EventLoopFuture<Client> {
+  public func setNetwork(_ network: [String: AccountId]) -> EventLoopFuture<Client> {
     self.network.setNetwork(network).map { _ in self }
   }
 

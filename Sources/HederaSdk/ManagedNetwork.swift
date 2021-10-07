@@ -30,10 +30,6 @@ class ManagedNetwork<ManagedNodeT: ManagedNode, KeyT: Hashable, SdkNetworkT: Seq
     self.eventLoopGroup = eventLoopGroup
   }
 
-  deinit {
-    try! eventLoopGroup.syncShutdownGracefully()
-  }
-
   func getMinBackoff() -> TimeInterval {
     minBackoff
   }
