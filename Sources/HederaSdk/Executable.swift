@@ -43,6 +43,18 @@ public class Executable<O: ProtobufConvertible, RequestT, ResponseT> {
     }
   }
 
+  func shouldRetryExceptionally(_ status: GRPCStatus) -> Bool {
+    switch status.code {
+    case .unauthenticated, .resourceExhausted,
+      .internalError
+    where status.description.range(
+      of: ".*\\brst[0-9a-zA-Z]stream\\b.*", options: .regularExpression) != nil:
+      return true
+    default:
+      return false
+    }
+  }
+
   func mapResponse(_ response: ResponseT) -> O {
     fatalError("not implemented")
   }
@@ -62,11 +74,23 @@ public class Executable<O: ProtobufConvertible, RequestT, ResponseT> {
 
     let node = nodes[Int(nextNodeIndex)]
 
-    // TODO: Node health check and delay
+    if !node.isHealthy() {
+      return eventLoop.scheduleTask(
+        in: TimeAmount.milliseconds(Int64(node.getRemainingTimeForBackoff()))
+      ) { () }
+      .futureResult.flatMap { _ in self.executeAsync(attempt, eventLoop) }
+    }
 
-    return executeAsync(node)
-      .response
-      .flatMap { response in
+    let call = executeAsync(node)
+    let responseFuture = call.response
+
+    return call.status
+      .flatMap { status in responseFuture.map { ($0, status) } }
+      .flatMap { (response, status) in
+        if self.shouldRetryExceptionally(status) {
+          return self.executeAsync(attempt + 1, eventLoop)
+        }
+
         switch self.shouldRetry(response) {
         case .retry:
           let delay = max(Double(self.minBackoff!), 250 * pow(2.0, (Double(attempt - 1))))

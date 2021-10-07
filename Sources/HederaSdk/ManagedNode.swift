@@ -60,6 +60,10 @@ class ManagedNode {
     return connection!
   }
 
+  func getRemainingTimeForBackoff() -> TimeInterval {
+    backoffUntil - Date().timeIntervalSince1970
+  }
+
   func close() -> EventLoopFuture<Void>? {
     connection?.close()
   }
