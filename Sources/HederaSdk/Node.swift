@@ -17,19 +17,6 @@ class Node: ManagedNode {
     self.init(managedNodeAddress!, accountId)
   }
 
-  func getConnection() -> ClientConnection {
-    if let connection = connection {
-      return connection
-    }
-
-    let configuration = ClientConnection.Configuration.default(
-      target: .hostAndPort(address.address, Int(address.port)),
-      eventLoopGroup: PlatformSupport.makeEventLoopGroup(loopCount: 1)
-    )
-    connection = ClientConnection(configuration: configuration)
-    return connection!
-  }
-
   func getCrypto() -> Proto_CryptoServiceClient {
     if let crypto = crypto {
       return crypto
@@ -37,9 +24,5 @@ class Node: ManagedNode {
 
     crypto = Proto_CryptoServiceClient(channel: getConnection())
     return crypto!
-  }
-
-  func close() -> EventLoopFuture<Void>? {
-    connection?.close()
   }
 }

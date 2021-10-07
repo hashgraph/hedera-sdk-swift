@@ -69,14 +69,10 @@ public class Executable<O: ProtobufConvertible, RequestT, ResponseT> {
       .flatMap { response in
         switch self.shouldRetry(response) {
         case .retry:
-          let backoff = eventLoop.makePromise(of: Void.self)
           let delay = max(Double(self.minBackoff!), 250 * pow(2.0, (Double(attempt - 1))))
 
-          eventLoop.scheduleTask(in: TimeAmount.milliseconds(Int64(delay))) {
-            backoff.succeed(())
-          }
-
-          return backoff.futureResult.flatMap { v in self.executeAsync(attempt + 1, eventLoop) }
+          return eventLoop.scheduleTask(in: TimeAmount.milliseconds(Int64(delay))) { () }
+            .futureResult.flatMap { _ in self.executeAsync(attempt + 1, eventLoop) }
         case .error:
           return eventLoop.makeFailedFuture(self.mapStatusError(response))
         case .finished:

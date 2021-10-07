@@ -11,7 +11,7 @@ import NIO
 //    fatalError("environment variables OPERATOR_KEY and OPERATOR_ID must be present")
 //}
 
-let client = Client.forTestnet()
+let client = try! Client.forTestnet().wait()
 //        .setOperator(AccountId(operatorId!)!, PrivateKey(operatorKey!)!)
 
 let balance = try! AccountBalanceQuery()

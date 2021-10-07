@@ -46,6 +46,23 @@ class ManagedNode {
       return .greater
     }
   }
+
+  func getConnection() -> ClientConnection {
+    if let connection = connection {
+      return connection
+    }
+
+    let configuration = ClientConnection.Configuration.default(
+      target: .hostAndPort(address.address, Int(address.port)),
+      eventLoopGroup: PlatformSupport.makeEventLoopGroup(loopCount: 1)
+    )
+    connection = ClientConnection(configuration: configuration)
+    return connection!
+  }
+
+  func close() -> EventLoopFuture<Void>? {
+    connection?.close()
+  }
 }
 
 extension ManagedNode: Comparable, Equatable {

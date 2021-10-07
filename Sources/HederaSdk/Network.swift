@@ -1,31 +1,23 @@
 import GRPC
 import NIO
 
-class Network {
-  var network: [AccountId: Node] = [:]
-  var nodes: [Node] = []
-  var networkName: NetworkName?
-  var eventLoopGroup: EventLoopGroup
+// https://stackoverflow.com/questions/41383937/reverse-swift-dictionary-lookup
+extension Dictionary where Value: Equatable {
+  func key(forValue value: Value) -> Key? {
+    first { $0.1 == value }?.0
+  }
+}
+
+class Network: ManagedNetwork<Node, AccountId, [String: AccountId]> {
   var maxNodesPerRequest: UInt32?
 
-  init?(_ network: [String: AccountId]) {
-    for (url, accountId) in network {
-      guard let node = Node(url, accountId) else {
-        return nil
-      }
-
-      nodes.append(node)
-      self.network[accountId] = node
-    }
-
-    eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+  static func forNetwork(_ eventLoopGroup: EventLoopGroup, _ network: [String: AccountId])
+    -> EventLoopFuture<Network>
+  {
+    Network(eventLoopGroup).setNetwork(network)
   }
 
-  static func forNetwork(_ network: [String: AccountId]) -> Network? {
-    Network(network)
-  }
-
-  static func forPreviewnet() -> Network {
+  static func forPreviewnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<Network> {
     var network: [String: AccountId] = [:]
     network["0.previewnet.hedera.com:50211"] = AccountId(3)
     network["1.previewnet.hedera.com:50211"] = AccountId(4)
@@ -33,10 +25,10 @@ class Network {
     network["3.previewnet.hedera.com:50211"] = AccountId(6)
     network["4.previewnet.hedera.com:50211"] = AccountId(7)
 
-    return Network(network)!
+    return Network(eventLoopGroup).setNetwork(network)
   }
 
-  static func forTestnet() -> Network {
+  static func forTestnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<Network> {
     var network: [String: AccountId] = [:]
     network["0.testnet.hedera.com:50211"] = AccountId(3)
     network["1.testnet.hedera.com:50211"] = AccountId(4)
@@ -44,10 +36,10 @@ class Network {
     network["3.testnet.hedera.com:50211"] = AccountId(6)
     network["4.testnet.hedera.com:50211"] = AccountId(7)
 
-    return Network(network)!
+    return Network(eventLoopGroup).setNetwork(network)
   }
 
-  static func forMainnet() -> Network {
+  static func forMainnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<Network> {
     var network: [String: AccountId] = [:]
     network["35.237.200.180:50211"] = AccountId(3)
     network["35.186.191.247:50211"] = AccountId(4)
@@ -68,25 +60,11 @@ class Network {
     network["34.89.87.138:50211"] = AccountId(19)
     network["34.82.78.255:50211"] = AccountId(20)
 
-    return Network(network)!
-  }
-
-  deinit {
-    try! eventLoopGroup.syncShutdownGracefully()
+    return Network(eventLoopGroup).setNetwork(network)
   }
 
   func getNetwork() -> [String: AccountId] {
     Dictionary(uniqueKeysWithValues: network.map { ($1.address.description, $0) })
-  }
-
-  @discardableResult
-  func setNetworkName(_ networkName: NetworkName) -> Self {
-    self.networkName = networkName
-    return self
-  }
-
-  func getNetworkName() -> NetworkName? {
-    networkName
   }
 
   func getNumberOfMostHealthyNodes(_ count: Int) -> ArraySlice<Node> {
@@ -105,10 +83,25 @@ class Network {
     getNumberOfMostHealthyNodes(getNumberOfNodesPerRequest()).map { $0.accountId }
   }
 
-  func close() -> EventLoopFuture<Void> {
-    EventLoopFuture<Void>.whenAllSucceed(
-      nodes.map { $0.close() }.filter { $0 != nil }.map { $0! },
-      on: eventLoopGroup.next()
-    ).map { (results: [Void]) -> Void in Void() }
+  override func createNodeFromNetworkEntry(_ entry: (String, AccountId)) -> Node? {
+    Node(entry.0, entry.1)
+  }
+
+  override func addNodeToNetwork(_ node: Node) {
+    network[node.accountId] = node
+  }
+
+  override func getNodesToRemove(_ network: [String: AccountId]) -> [Int] {
+    stride(from: nodes.count - 1, to: 0, by: -1).compactMap { i in
+      network.key(forValue: nodes[i].accountId).map { _ in i }
+    }
+  }
+
+  override func removeNodeFromNetwork(_ node: Node) {
+    network.removeValue(forKey: node.accountId)
+  }
+
+  override func checkNetworkContainsEntry(_ entry: (String, AccountId)) -> Bool {
+    network.contains(where: { $0.key == entry.1 })
   }
 }

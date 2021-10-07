@@ -1,5 +1,7 @@
 import Foundation
+import GRPC
 import HederaCrypto
+import NIO
 
 public class Client {
   var `operator`: Operator?
@@ -8,28 +10,42 @@ public class Client {
   var maxBackoff: TimeInterval = 8
   var minBackoff: TimeInterval = 0.25
 
-  init?(_ network: Network?) {
-    guard let network = network else {
-      return nil
+  let eventLoopGroup: EventLoopGroup
+
+  init() {
+    eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+    network = Network(eventLoopGroup)
+  }
+
+  public static func forNetwork(_ network: [String: AccountId]) -> EventLoopFuture<Client> {
+    let client = Client()
+    return client.setNetwork(Network.forNetwork(client.eventLoopGroup, network))
+  }
+
+  public static func forMainnet() -> EventLoopFuture<Client> {
+    let client = Client()
+    return client.setNetwork(Network.forMainnet(client.eventLoopGroup))
+  }
+
+  public static func forTestnet() -> EventLoopFuture<Client> {
+    let client = Client()
+    return client.setNetwork(Network.forTestnet(client.eventLoopGroup))
+  }
+
+  public static func forPreviewnet() -> EventLoopFuture<Client> {
+    let client = Client()
+    return client.setNetwork(Network.forPreviewnet(client.eventLoopGroup))
+  }
+
+  func setNetwork(_ network: EventLoopFuture<Network>) -> EventLoopFuture<Client> {
+    network.map { network in
+      self.network = network
+      return self
     }
-
-    self.network = network
   }
 
-  public static func forNetwork(_ network: [String: AccountId]) -> Client? {
-    Client(Network.forNetwork(network))
-  }
-
-  public static func forMainnet() -> Client {
-    Client(Network.forMainnet())!
-  }
-
-  public static func forTestnet() -> Client {
-    Client(Network.forTestnet())!
-  }
-
-  public static func forPreviewnet() -> Client {
-    Client(Network.forPreviewnet())!
+  func setNetwork(_ network: [String: AccountId]) -> EventLoopFuture<Client> {
+    self.network.setNetwork(network).map { _ in self }
   }
 
   @discardableResult
