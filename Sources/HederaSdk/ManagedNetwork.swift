@@ -150,9 +150,9 @@ class ManagedNetwork<ManagedNodeT: ManagedNode, KeyT: Hashable, SdkNetworkT: Seq
         if $0.attempts >= maxNodeAttempts {
           removeNodeFromNetwork($0)
           futures.append($0)
-          return true
-        } else {
           return false
+        } else {
+          return true
         }
       }
     }
