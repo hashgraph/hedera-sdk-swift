@@ -15,7 +15,7 @@ public class Executable<O: ProtobufConvertible, RequestT, ResponseT> {
   var maxAttempts: UInt?
   var maxBackoff: TimeInterval?
   var minBackoff: TimeInterval?
-  var nextNodeIndex: Int = 0
+  var nextNodeIndex: UInt = 0
 
   public init() {
   }
@@ -56,11 +56,11 @@ public class Executable<O: ProtobufConvertible, RequestT, ResponseT> {
   }
 
   func executeAsync(_ attempt: Int, _ eventLoop: EventLoop) -> EventLoopFuture<O> {
-    let node = nodes[nextNodeIndex]
-
     if attempt >= maxAttempts! {
       return eventLoop.makeFailedFuture(MaxAttemptsExceededError(maxAttempts!))
     }
+
+    let node = nodes[Int(nextNodeIndex)]
 
     // TODO: Node health check and delay
 
@@ -88,9 +88,8 @@ public class Executable<O: ProtobufConvertible, RequestT, ResponseT> {
 
     onExecuteAsync(client)
 
-    nodeAccountIds = client.network.getNodeAccountIdsForExecute()
-    nodes = nodeAccountIds.map { client.network.network[$0]! }
-
-    return executeAsync(1, client.network.eventLoopGroup.next())
+    return client.network.getNodeAccountIdsForExecute().map {
+      self.nodes = $0.compactMap { client.network.network[$0] }
+    }.flatMap { self.executeAsync(1, client.network.eventLoopGroup.next()) }
   }
 }

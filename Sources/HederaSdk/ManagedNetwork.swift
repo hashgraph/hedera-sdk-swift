@@ -142,6 +142,33 @@ class ManagedNetwork<ManagedNodeT: ManagedNode, KeyT: Hashable, SdkNetworkT: Seq
     ).map { (results: [Void]) -> Void in Void() }.map { self as! T }
   }
 
+  func removeDeadNodes() -> EventLoopFuture<Void>? {
+    var futures: [ManagedNodeT] = []
+
+    if let maxNodeAttempts = maxNodeAttempts {
+      nodes = nodes.filter {
+        if $0.attempts >= maxNodeAttempts {
+          removeNodeFromNetwork($0)
+          futures.append($0)
+          return true
+        } else {
+          return false
+        }
+      }
+    }
+
+    return EventLoopFuture<Void>.whenAllSucceed(
+      futures.compactMap { $0.close() },
+      on: eventLoopGroup.next()
+    ).map { (results: [Void]) -> Void in Void() }
+  }
+
+  func getNumberOfMostHealthyNodes(_ count: Int) -> EventLoopFuture<ArraySlice<ManagedNodeT>> {
+    nodes.sort()
+    return removeDeadNodes().map { $0.map { _ in self.nodes[0..<1] } }
+      ?? eventLoopGroup.next().makeSucceededFuture(nodes[0..<min(count, nodes.count)])
+  }
+
   func close() -> EventLoopFuture<Void> {
     EventLoopFuture<Void>.whenAllSucceed(
       nodes.compactMap { $0.close() },

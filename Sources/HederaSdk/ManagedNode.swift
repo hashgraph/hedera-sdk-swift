@@ -52,11 +52,11 @@ class ManagedNode {
       return connection
     }
 
-    let configuration = ClientConnection.Configuration.default(
-      target: .hostAndPort(address.address, Int(address.port)),
-      eventLoopGroup: PlatformSupport.makeEventLoopGroup(loopCount: 1)
-    )
-    connection = ClientConnection(configuration: configuration)
+    connection = ClientConnection(
+      configuration: ClientConnection.Configuration.default(
+        target: .hostAndPort(address.address, Int(address.port)),
+        eventLoopGroup: PlatformSupport.makeEventLoopGroup(loopCount: 1)
+      ))
     return connection!
   }
 

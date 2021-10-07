@@ -67,10 +67,6 @@ class Network: ManagedNetwork<Node, AccountId, [String: AccountId]> {
     Dictionary(uniqueKeysWithValues: network.map { ($1.address.description, $0) })
   }
 
-  func getNumberOfMostHealthyNodes(_ count: Int) -> ArraySlice<Node> {
-    nodes[0..<count]
-  }
-
   func getNumberOfNodesPerRequest() -> Int {
     if let maxNodesPerRequest = maxNodesPerRequest {
       return max(Int(maxNodesPerRequest), nodes.count)
@@ -79,8 +75,8 @@ class Network: ManagedNetwork<Node, AccountId, [String: AccountId]> {
     }
   }
 
-  func getNodeAccountIdsForExecute() -> [AccountId] {
-    getNumberOfMostHealthyNodes(getNumberOfNodesPerRequest()).map { $0.accountId }
+  func getNodeAccountIdsForExecute() -> EventLoopFuture<[AccountId]> {
+    getNumberOfMostHealthyNodes(getNumberOfNodesPerRequest()).map { $0.map { $0.accountId } }
   }
 
   override func createNodeFromNetworkEntry(_ entry: (String, AccountId)) -> Node? {

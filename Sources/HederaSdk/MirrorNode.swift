@@ -3,20 +3,22 @@ import HederaProtoServices
 import NIO
 
 class MirrorNode: ManagedNode {
-    var consensusServiceClient: Proto_ConsensusServiceClient?
+  var consensus: Proto_ConsensusServiceClient?
 
-    convenience init?(_ address: String) {
-        let managedNodeAddress = ManagedNodeAddress(address)
-
-        self.init(managedNodeAddress!)
+  convenience init?(_ address: String) {
+    if let managedNodeAddress = ManagedNodeAddress(address) {
+      self.init(managedNodeAddress)
     }
 
-    func getConsensusServiceClient() -> Proto_ConsensusServiceClient {
-        if let consensusServiceClient = consensusServiceClient {
-            return consensusServiceClient
-        }
+    return nil
+  }
 
-        consensusServiceClient = Proto_ConsensusServiceClient(channel: getConnection())
-        return consensusServiceClient!
+  func getConsensus() -> Proto_ConsensusServiceClient {
+    if let consensus = consensus {
+      return consensus
     }
+
+    consensus = Proto_ConsensusServiceClient(channel: getConnection())
+    return consensus!
+  }
 }
