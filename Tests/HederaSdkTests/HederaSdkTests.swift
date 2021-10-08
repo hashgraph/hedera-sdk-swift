@@ -3,77 +3,76 @@
 
     final class HashgraphSdkTests: XCTestCase {
         func testSetNetwork() {
-            var client = try! Client.forTestnet().wait()
+            var client = try! Client.forNetwork([:]).wait()
 
-            var nodes: [String: AccountId] = [:]
-            nodes["0.testnet.hedera.com:50211"] = AccountId.init(3)
-            nodes["1.testnet.hedera.com:50211"] = AccountId.init(4)
-            client = try! client.setNetwork(nodes).wait()
+            let defaultNetwork: [String: AccountId] = [
+                "0.testnet.hedera.com:50211": AccountId(3),
+                "1.testnet.hedera.com:50211": AccountId(4),
+            ]
 
-//            var mir = client.getMirrorNetwork()!
-//            print(mir.count)
+            client = try! client.setNetwork(defaultNetwork).wait()
+            XCTAssertEqual(client.getNetwork(), defaultNetwork)
 
-            var network = client.getNetwork()!
-            XCTAssertEqual(network.count, 2)
-            XCTAssertEqual(network["0.testnet.hedera.com:50211"]!, AccountId.init(3))
-            XCTAssertEqual(network["1.testnet.hedera.com:50211"]!, AccountId.init(4))
+            client = try! client.setNetwork(defaultNetwork).wait()
+            XCTAssertEqual(client.getNetwork(), defaultNetwork)
 
-            nodes.removeAll()
-            nodes["0.testnet.hedera.com:50211"] = AccountId.init(3)
-            nodes["1.testnet.hedera.com:50211"] = AccountId.init(4)
-            nodes["2.testnet.hedera.com:50211"] = AccountId.init(5)
-            client = try! client.setNetwork(nodes).wait()
+            let defaultNetworkWithExtraNode: [String: AccountId] = [
+                "0.testnet.hedera.com:50211": AccountId(3),
+                "1.testnet.hedera.com:50211": AccountId(4),
+                "2.testnet.hedera.com:50211": AccountId(5),
+            ]
 
-            network.removeAll()
-            network = client.getNetwork()!
-            XCTAssertEqual(network.count, 3)
-            XCTAssertEqual(network["0.testnet.hedera.com:50211"]!, AccountId.init(3))
-            XCTAssertEqual(network["1.testnet.hedera.com:50211"]!, AccountId.init(4))
-            XCTAssertEqual(network["2.testnet.hedera.com:50211"]!, AccountId.init(5))
+            client = try! client.setNetwork(defaultNetworkWithExtraNode).wait()
+            XCTAssertEqual(client.getNetwork(), defaultNetworkWithExtraNode)
 
-            nodes.removeAll()
-            nodes["2.testnet.hedera.com:50211"] = AccountId.init(5)
-            client = try! client.setNetwork(nodes).wait()
+            let singleNodeNetwork: [String: AccountId] = [
+                "2.testnet.hedera.com:50211": AccountId(5),
+            ]
 
-            network.removeAll()
-            network = client.getNetwork()!
-            XCTAssertEqual(network.count, 1)
-            XCTAssertEqual(network["2.testnet.hedera.com:50211"]!, AccountId.init(5))
+            client = try! client.setNetwork(singleNodeNetwork).wait()
+            XCTAssertEqual(client.getNetwork(), singleNodeNetwork)
+
+            let singleNodeNetworkWithDifferentAccountId: [String: AccountId] = [
+                "2.testnet.hedera.com:50211": AccountId(6),
+            ]
+
+            client = try! client.setNetwork(singleNodeNetworkWithDifferentAccountId).wait()
+            XCTAssertEqual(client.getNetwork(), singleNodeNetworkWithDifferentAccountId)
         }
 
-//        func testSetMirrorNetwork() {
-//            var client = try! Client.forTestnet().wait()
-//
-//            var nodes: [String: AccountId] = [:]
-//            nodes["0.testnet.hedera.com:50211"] = AccountId.init(3)
-//            nodes["1.testnet.hedera.com:50211"] = AccountId.init(4)
-//            client = try! client.setNetwork(nodes).wait()
-//
-//            var network = client.getNetwork()!
-//            XCTAssertEqual(network.count, 2)
-//            XCTAssertEqual(network["0.testnet.hedera.com:50211"]!, AccountId.init(3))
-//            XCTAssertEqual(network["1.testnet.hedera.com:50211"]!, AccountId.init(4))
-//
-//            nodes.removeAll()
-//            nodes["0.testnet.hedera.com:50211"] = AccountId.init(3)
-//            nodes["1.testnet.hedera.com:50211"] = AccountId.init(4)
-//            nodes["2.testnet.hedera.com:50211"] = AccountId.init(5)
-//            client = try! client.setNetwork(nodes).wait()
-//
-//            network.removeAll()
-//            network = client.getNetwork()!
-//            XCTAssertEqual(network.count, 3)
-//            XCTAssertEqual(network["0.testnet.hedera.com:50211"]!, AccountId.init(3))
-//            XCTAssertEqual(network["1.testnet.hedera.com:50211"]!, AccountId.init(4))
-//            XCTAssertEqual(network["2.testnet.hedera.com:50211"]!, AccountId.init(5))
-//
-//            nodes.removeAll()
-//            nodes["2.testnet.hedera.com:50211"] = AccountId.init(5)
-//            client = try! client.setNetwork(nodes).wait()
-//
-//            network.removeAll()
-//            network = client.getNetwork()!
-//            XCTAssertEqual(network.count, 1)
-//            XCTAssertEqual(network["2.testnet.hedera.com:50211"]!, AccountId.init(5))
-//        }
+        func testSetMirrorNetwork() {
+            var client = try! Client.forNetwork([:]).wait()
+
+            let defaultNetwork: [String] = [
+                "0.testnet.hedera.com:5600",
+            ]
+
+            client = try! client.setMirrorNetwork(defaultNetwork).wait()
+            XCTAssertEqual(client.getMirrorNetwork(), defaultNetwork)
+
+            client = try! client.setMirrorNetwork(defaultNetwork).wait()
+            XCTAssertEqual(client.getMirrorNetwork(), defaultNetwork)
+
+            let defaultNetworkWithExtraNode: [String] = [
+                "0.testnet.hedera.com:5600",
+                "1.testnet.hedera.com:5600",
+            ]
+
+            client = try! client.setMirrorNetwork(defaultNetworkWithExtraNode).wait()
+            XCTAssertEqual(client.getMirrorNetwork(), defaultNetworkWithExtraNode)
+
+            let singleNodeNetwork: [String] = [
+                "1.testnet.hedera.com:5600",
+            ]
+
+            client = try! client.setMirrorNetwork(singleNodeNetwork).wait()
+            XCTAssertEqual(client.getMirrorNetwork(), singleNodeNetwork)
+
+            let singleNodeNetworkWithDifferentAccountId: [String] = [
+                "2.testnet.hedera.com:5600",
+            ]
+
+            client = try! client.setMirrorNetwork(singleNodeNetworkWithDifferentAccountId).wait()
+            XCTAssertEqual(client.getMirrorNetwork(), singleNodeNetworkWithDifferentAccountId)
+        }
     }

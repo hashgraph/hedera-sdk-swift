@@ -12,9 +12,12 @@ class Node: ManagedNode {
   }
 
   convenience init?(_ address: String, _ accountId: AccountId) {
-    let managedNodeAddress = ManagedNodeAddress(address)
+    if let managedNodeAddress = ManagedNodeAddress(address) {
+      self.init(managedNodeAddress, accountId)
+      return
+    }
 
-    self.init(managedNodeAddress!, accountId)
+    return nil
   }
 
   func getCrypto() -> Proto_CryptoServiceClient {

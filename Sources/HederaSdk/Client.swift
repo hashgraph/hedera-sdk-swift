@@ -30,21 +30,27 @@ public class Client {
 
   public static func forMainnet() -> EventLoopFuture<Client> {
     let client = Client()
-    return client.setNetwork(Network.forMainnet(client.eventLoopGroup))
+    return client.setNetwork(Network.forMainnet(client.eventLoopGroup)).flatMap {
+      $0.setMirrorNetwork(MirrorNetwork.forMainnet($0.eventLoopGroup))
+    }
   }
 
   public static func forTestnet() -> EventLoopFuture<Client> {
     let client = Client()
-    return client.setNetwork(Network.forTestnet(client.eventLoopGroup))
+    return client.setNetwork(Network.forTestnet(client.eventLoopGroup)).flatMap {
+      $0.setMirrorNetwork(MirrorNetwork.forTestnet($0.eventLoopGroup))
+    }
   }
 
   public static func forPreviewnet() -> EventLoopFuture<Client> {
     let client = Client()
-    return client.setNetwork(Network.forPreviewnet(client.eventLoopGroup))
+    return client.setNetwork(Network.forPreviewnet(client.eventLoopGroup)).flatMap {
+      $0.setMirrorNetwork(MirrorNetwork.forPreviewnet($0.eventLoopGroup))
+    }
   }
 
   func setNetwork(_ network: EventLoopFuture<Network>) -> EventLoopFuture<Client> {
-   network.map { network in
+    network.map { network in
       self.network = network
       return self
     }
@@ -54,6 +60,18 @@ public class Client {
     self.network.setNetwork(network).map { _ in self }
   }
 
+  func setMirrorNetwork(_ mirrorNetwork: EventLoopFuture<MirrorNetwork>) -> EventLoopFuture<Client>
+  {
+    mirrorNetwork.map { mirrorNetwork in
+      self.mirrorNetwork = mirrorNetwork
+      return self
+    }
+  }
+
+  public func setMirrorNetwork(_ mirrorNetwork: [String]) -> EventLoopFuture<Client> {
+    self.mirrorNetwork.setNetwork(mirrorNetwork).map { _ in self }
+  }
+
   @discardableResult
   public func setOperator(_ accountId: AccountId, _ privateKey: PrivateKey) -> Self {
     `operator` = Operator(accountId, privateKey)
@@ -61,19 +79,11 @@ public class Client {
   }
 
   public func getOperatorAccountId() -> AccountId? {
-    if let `operator` = `operator` {
-      return `operator`.accountId
-    } else {
-      return nil
-    }
+    `operator`?.accountId
   }
 
   public func getOperatorPublicKey() -> PublicKey? {
-    if let `operator` = `operator` {
-      return `operator`.publicKey
-    } else {
-      return nil
-    }
+    `operator`?.publicKey
   }
 
   @discardableResult
@@ -88,10 +98,6 @@ public class Client {
 
   public func getNetwork() -> [String: AccountId]? {
     network.getNetwork()
-  }
-
-  public func setMirrorNetwork(_ network: [String]) -> EventLoopFuture<Client> {
-    mirrorNetwork.setNetwork(network).map { _ in self }
   }
 
   public func getMirrorNetwork() -> [String]? {

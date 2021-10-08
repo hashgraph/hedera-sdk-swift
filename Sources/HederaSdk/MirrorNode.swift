@@ -8,6 +8,7 @@ class MirrorNode: ManagedNode {
   convenience init?(_ address: String) {
     if let managedNodeAddress = ManagedNodeAddress(address) {
       self.init(managedNodeAddress)
+      return
     }
 
     return nil

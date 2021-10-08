@@ -4,7 +4,7 @@ import NIO
 // https://stackoverflow.com/questions/41383937/reverse-swift-dictionary-lookup
 extension Dictionary where Value: Equatable {
   func key(forValue value: Value) -> Key? {
-    first { $0.1 != value }?.0
+    first { $0.1 == value }?.0
   }
 }
 
@@ -88,8 +88,9 @@ class Network: ManagedNetwork<Node, AccountId, [String: AccountId]> {
   }
 
   override func getNodesToRemove(_ network: [String: AccountId]) -> [Int] {
-    stride(from: nodes.count-1, to: 0, by: -1).compactMap { i in
-      network.key(forValue: nodes[i].accountId).map { _ in i }
+    stride(from: nodes.count - 1, to: -1, by: -1).compactMap { i in
+      !network.values.contains(nodes[i].accountId)
+        || network.key(forValue: nodes[i].accountId)! != nodes[i].address.description ? i : nil
     }
   }
 
