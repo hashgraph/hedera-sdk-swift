@@ -6,6 +6,7 @@ import NIO
 public class Client {
   var `operator`: Operator?
   var network: Network
+  var mirrorNetwork: MirrorNetwork
   var maxAttempts: UInt = 10
   var maxBackoff: TimeInterval = 8
   var minBackoff: TimeInterval = 0.25
@@ -15,6 +16,7 @@ public class Client {
   init() {
     eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
     network = Network(eventLoopGroup)
+    mirrorNetwork = MirrorNetwork(eventLoopGroup)
   }
 
   deinit {
@@ -42,7 +44,7 @@ public class Client {
   }
 
   func setNetwork(_ network: EventLoopFuture<Network>) -> EventLoopFuture<Client> {
-    network.map { network in
+   network.map { network in
       self.network = network
       return self
     }
@@ -82,6 +84,18 @@ public class Client {
 
   public func getNetworkName() -> NetworkName? {
     network.getNetworkName()
+  }
+
+  public func getNetwork() -> [String: AccountId]? {
+    network.getNetwork()
+  }
+
+  public func setMirrorNetwork(_ network: [String]) -> EventLoopFuture<Client> {
+    mirrorNetwork.setNetwork(network).map { _ in self }
+  }
+
+  public func getMirrorNetwork() -> [String]? {
+    mirrorNetwork.getNetwork()
   }
 }
 

@@ -113,12 +113,14 @@ class ManagedNetwork<ManagedNodeT: ManagedNode, KeyT: Hashable, SdkNetworkT: Seq
         addNodeToNetwork(node)
         nodes.append(node)
       }
+
     }
 
     var futures: [EventLoopFuture<Void>?] = []
 
     for index in getNodesToRemove(network) {
       let node = nodes[index]
+      nodes.remove(at: index)
       futures.append(node.close())
       removeNodeFromNetwork(node)
     }
