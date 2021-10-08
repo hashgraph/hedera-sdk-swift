@@ -9,7 +9,7 @@ enum ExecutionState {
   case error
 }
 
-public class Executable<O: ProtobufConvertible, RequestT, ResponseT> {
+public class Executable<O, RequestT, ResponseT> {
   var nodeAccountIds: [AccountId] = []
   var nodes: [Node] = []
   var maxAttempts: UInt?
@@ -20,11 +20,47 @@ public class Executable<O: ProtobufConvertible, RequestT, ResponseT> {
   public init() {
   }
 
-  func onExecuteAsync(_ client: Client) {
+  public func getMinBackoff() -> TimeInterval? {
+    minBackoff
+  }
+
+  public func setMinBackoff(_ minBackoff: TimeInterval) -> Self {
+    self.minBackoff = minBackoff
+    return self
+  }
+
+  public func getMaxBackoff() -> TimeInterval? {
+    maxBackoff
+  }
+
+  public func setMaxBackoff(_ maxBackoff: TimeInterval) -> Self {
+    self.maxBackoff = maxBackoff
+    return self
+  }
+
+  public func getMaxAttempts() -> UInt? {
+    maxAttempts
+  }
+
+  public func setMaxAttempts(_ maxAttempts: UInt) -> Self {
+    self.maxAttempts = maxAttempts
+    return self
+  }
+
+  public func getNodeAccountIds() -> [AccountId] {
+    nodeAccountIds
+  }
+
+  public func setNodeAccountIds(_ nodeAccountIds: [AccountId]) throws -> Self {
+    self.nodeAccountIds = nodeAccountIds
+    return self
+  }
+
+  func onExecuteAsync(_ client: Client) throws {
     fatalError("not implemented")
   }
 
-  func makeRequest() -> RequestT {
+  func makeRequest() throws -> RequestT {
     fatalError("not implemented")
   }
 
@@ -110,10 +146,14 @@ public class Executable<O: ProtobufConvertible, RequestT, ResponseT> {
     maxBackoff = maxBackoff ?? client.maxBackoff
     minBackoff = minBackoff ?? client.minBackoff
 
-    onExecuteAsync(client)
+    do {
+      try onExecuteAsync(client)
+    } catch {
+      return client.eventLoopGroup.next().makeFailedFuture(error)
+    }
 
     return client.network.getNodeAccountIdsForExecute().map {
       self.nodes = $0.compactMap { client.network.network[$0] }
-    }.flatMap { self.executeAsync(1, client.network.eventLoopGroup.next()) }
+    }.flatMap { self.executeAsync(1, client.eventLoopGroup.next()) }
   }
 }

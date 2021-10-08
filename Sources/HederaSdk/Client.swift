@@ -10,6 +10,7 @@ public class Client {
   var maxAttempts: UInt = 10
   var maxBackoff: TimeInterval = 8
   var minBackoff: TimeInterval = 0.25
+  var defaultMaxTransactionFee: Hbar?
 
   let eventLoopGroup: EventLoopGroup
 
@@ -102,6 +103,15 @@ public class Client {
 
   public func getMirrorNetwork() -> [String]? {
     mirrorNetwork.getNetwork()
+  }
+
+  public func getDefaultMaxTransactionFee() -> Hbar? {
+    defaultMaxTransactionFee
+  }
+
+  public func setDefaultMaxTransactionFee(_ defaultMaxTransactionFee: Hbar) -> Self {
+    self.defaultMaxTransactionFee = defaultMaxTransactionFee
+    return self
   }
 }
 

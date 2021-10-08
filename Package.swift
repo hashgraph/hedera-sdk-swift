@@ -26,9 +26,10 @@ let package = Package(
         .target(
             name: "HederaSdk",
             dependencies: [
-                .product(name: "HederaProtoServices", package: "HederaProto"),
-                "HederaCrypto",
-                .product(name: "GRPC", package: "grpc-swift")
+              .product(name: "HederaProtoServices", package: "HederaProto"),
+//              .product(name: "HederaProtoSdk", package: "HederaProto"),
+              "HederaCrypto",
+              .product(name: "GRPC", package: "grpc-swift")
             ]),
         .testTarget(name: "HederaSdkTests", dependencies: ["HederaSdk"]),
         .target(

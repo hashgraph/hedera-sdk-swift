@@ -33,9 +33,4 @@ public class Query<O: ProtobufConvertible>: Executable<O, Proto_Query, Proto_Res
   override func shouldRetry(_ response: Proto_Response) -> ExecutionState {
     super.shouldRetry(mapResponseHeader(response).nodeTransactionPrecheckCode)
   }
-
-  //    func execute(_ client: Client) {
-  //        let node = client.network.getNodeAccountIdsForExecute();
-  //        let descriptor = S.getMethodDescriptor;
-  //    }
 }
