@@ -9,7 +9,7 @@ enum Order {
   case greater
 }
 
-class ManagedNode {
+class ManagedNode<KeyT> {
   var address: ManagedNodeAddress
   var connection: ClientConnection?
   var lastUsed: UInt64 = 0
@@ -21,6 +21,10 @@ class ManagedNode {
 
   init(_ address: ManagedNodeAddress) {
     self.address = address
+  }
+
+  func getKey() -> KeyT {
+    fatalError("not implemented")
   }
 
   func isHealthy() -> Bool {

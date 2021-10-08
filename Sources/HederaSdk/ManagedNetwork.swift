@@ -10,7 +10,7 @@ extension String: LocalizedError {
   public var errorDescription: String? { return self }
 }
 
-class ManagedNetwork<ManagedNodeT: ManagedNode, KeyT: Hashable, SdkNetworkT: Sequence> {
+class ManagedNetwork<ManagedNodeT: ManagedNode<KeyT>, KeyT: Hashable, SdkNetworkT: Sequence> {
   var network: [KeyT: ManagedNodeT] = [:]
   var nodes: [ManagedNodeT] = []
 
@@ -84,15 +84,7 @@ class ManagedNetwork<ManagedNodeT: ManagedNode, KeyT: Hashable, SdkNetworkT: Seq
     fatalError("not implemented")
   }
 
-  func addNodeToNetwork(_ node: ManagedNodeT) {
-    fatalError("not implemented")
-  }
-
   func getNodesToRemove(_ network: SdkNetworkT) -> [Int] {
-    fatalError("not implemented")
-  }
-
-  func removeNodeFromNetwork(_ node: ManagedNodeT) {
     fatalError("not implemented")
   }
 
@@ -110,7 +102,7 @@ class ManagedNetwork<ManagedNodeT: ManagedNode, KeyT: Hashable, SdkNetworkT: Seq
         guard let node = createNodeFromNetworkEntry(entry) else {
           return eventLoop.makeFailedFuture("failed to create network node from network entry")
         }
-        addNodeToNetwork(node)
+        self.network[node.getKey()] = node
         nodes.append(node)
       }
 
@@ -122,7 +114,7 @@ class ManagedNetwork<ManagedNodeT: ManagedNode, KeyT: Hashable, SdkNetworkT: Seq
       let node = nodes[index]
       nodes.remove(at: index)
       futures.append(node.close())
-      removeNodeFromNetwork(node)
+      self.network.removeValue(forKey: node.getKey())
     }
 
     for entry in network {
@@ -131,7 +123,7 @@ class ManagedNetwork<ManagedNodeT: ManagedNode, KeyT: Hashable, SdkNetworkT: Seq
           return eventLoop.makeFailedFuture("failed to create network node from network entry")
         }
 
-        addNodeToNetwork(node)
+        self.network[node.getKey()] = node
         nodes.append(node)
       }
     }
@@ -150,7 +142,7 @@ class ManagedNetwork<ManagedNodeT: ManagedNode, KeyT: Hashable, SdkNetworkT: Seq
     if let maxNodeAttempts = maxNodeAttempts {
       nodes = nodes.filter {
         if $0.attempts >= maxNodeAttempts {
-          removeNodeFromNetwork($0)
+          network.removeValue(forKey: $0.getKey())
           futures.append($0)
           return false
         } else {

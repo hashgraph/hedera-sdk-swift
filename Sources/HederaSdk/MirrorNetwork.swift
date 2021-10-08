@@ -36,18 +36,10 @@ class MirrorNetwork: ManagedNetwork<MirrorNode, String, [String]> {
     MirrorNode(entry)
   }
 
-  override func addNodeToNetwork(_ node: MirrorNode) {
-    network[node.address.description] = node
-  }
-
   override func getNodesToRemove(_ network: [String]) -> [Int] {
     self.network.enumerated().compactMap {
       network.contains($0.element.key) ? nil : $0.offset
     }.reversed()
-  }
-
-  override func removeNodeFromNetwork(_ node: MirrorNode) {
-    network.removeValue(forKey: node.address.description)
   }
 
   override func checkNetworkContainsEntry(_ entry: String) -> Bool {

@@ -83,19 +83,11 @@ class Network: ManagedNetwork<Node, AccountId, [String: AccountId]> {
     Node(entry.0, entry.1)
   }
 
-  override func addNodeToNetwork(_ node: Node) {
-    network[node.accountId] = node
-  }
-
   override func getNodesToRemove(_ network: [String: AccountId]) -> [Int] {
     stride(from: nodes.count - 1, to: -1, by: -1).compactMap { i in
       !network.values.contains(nodes[i].accountId)
         || network.key(forValue: nodes[i].accountId)! != nodes[i].address.description ? i : nil
     }
-  }
-
-  override func removeNodeFromNetwork(_ node: Node) {
-    network.removeValue(forKey: node.accountId)
   }
 
   override func checkNetworkContainsEntry(_ entry: (String, AccountId)) -> Bool {
