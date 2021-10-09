@@ -1,8 +1,16 @@
 public final class Hbar {
   var tinybars: UInt64
 
-  public init(_ hbars: UInt64) {
+  public init(_ tinybars: UInt64) {
+    self.tinybars = tinybars
+  }
+
+  public init(hbars: UInt64) {
     tinybars = hbars * HbarUnit.hbar.rawValue
+  }
+
+  public init(_ value: UInt64, _ unit: HbarUnit) {
+    tinybars = value * unit.rawValue
   }
 
   func toHbarUnit(_ hbarUnit: HbarUnit) -> UInt64 {
@@ -30,7 +38,9 @@ extension Hbar: ProtobufConvertible {
 
 extension Hbar: CustomStringConvertible {
   public var description: String {
-    String(tinybars)
+    tinybars > HbarUnit.hbar.rawValue
+      ? "\(Double(tinybars) / Double(HbarUnit.hbar.rawValue)) \(HbarUnit.hbar)"
+      : "\(tinybars) \(HbarUnit.tinybar)"
   }
 
   public var debugDescription: String {

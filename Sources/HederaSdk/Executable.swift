@@ -1,5 +1,6 @@
 import Foundation
 import GRPC
+import HederaCrypto
 import HederaProtoServices
 import NIO
 
@@ -9,13 +10,29 @@ enum ExecutionState {
   case error
 }
 
+extension Array {
+  subscript(circular index: Int) -> Element {
+    self[Int(index) % count]
+  }
+}
+
 public class Executable<O, RequestT, ResponseT> {
+  var requests: [RequestT?] = []
   var nodeAccountIds: [AccountId] = []
+  var transactionIds: [TransactionId] = []
+  var publicKeys: [PublicKey] = []
+  var signers: [((_ bytes: [UInt8]) -> [UInt8])?] = []
   var nodes: [Node] = []
+
   var maxAttempts: UInt?
   var maxBackoff: TimeInterval?
   var minBackoff: TimeInterval?
-  var nextNodeIndex: UInt = 0
+  var nextNodeIndex: Int = 0
+  var nextTransactionIdIndex: Int = 0
+
+  var index: Int {
+    nextNodeIndex + nextTransactionIdIndex * nodeAccountIds.count
+  }
 
   public init() {
   }
@@ -57,7 +74,17 @@ public class Executable<O, RequestT, ResponseT> {
   }
 
   func onExecuteAsync(_ client: Client) throws {
-    fatalError("not implemented")
+    if !isFrozen() {
+      try freezeWith(client)
+    }
+
+    // TODO: Checksum validation
+
+    if let operatorId = client.getOperatorAccountId(), let transactionId = transactionIds.first,
+      operatorId == transactionId.accountId
+    {
+      signWithOperator(client)
+    }
   }
 
   func makeRequest() throws -> RequestT {
@@ -91,7 +118,93 @@ public class Executable<O, RequestT, ResponseT> {
     }
   }
 
-  func mapResponse(_ response: ResponseT) -> O {
+  func requireFrozen() throws {
+    if isFrozen() {
+      throw "request must be frozen"
+    }
+  }
+
+  func requireNotFrozen() throws {
+    if isFrozen() {
+      throw "request is immutable; it has at least one signature or has been explicitly frozen"
+    }
+  }
+
+  public func isFrozen() -> Bool {
+    !requests.isEmpty
+  }
+
+  func isTransactionIdRequired() -> Bool {
+    false
+  }
+
+  @discardableResult
+  public func freeze() throws -> Self {
+    try freezeWith(nil)
+  }
+
+  @discardableResult
+  public func freezeWith(_ client: Client?) throws -> Self {
+    if isFrozen() {
+      return self
+    }
+
+    if transactionIds.isEmpty && isTransactionIdRequired() {
+      guard let operatorId = client?.getOperatorAccountId() else {
+        throw "Transaction ID must be set, or a client with an operator must be provided"
+      }
+
+      transactionIds.append(TransactionId.generate(operatorId))
+    } else {
+      transactionIds.append(TransactionId(AccountId(0), Date(timeIntervalSince1970: 0)))
+    }
+
+    if nodeAccountIds.isEmpty {
+      guard let client = client else {
+        throw "Node account IDs must be set, or a client must be provided"
+      }
+
+      nodeAccountIds = try client.network.getNodeAccountIdsForExecute().wait()
+    }
+
+    requests = [RequestT?](repeating: nil, count: nodeAccountIds.count)
+
+    return self
+  }
+
+  @discardableResult
+  public func sign(_ privateKey: PrivateKey) -> Self {
+    signWith(privateKey.publicKey, privateKey.sign)
+  }
+
+  @discardableResult
+  public func signWithOperator(_ client: Client) -> Self {
+    client.`operator`.map { signWith($0.publicKey, $0.transactionSigner) } ?? self
+  }
+
+  @discardableResult
+  public func signWith(_ publicKey: PublicKey, _ signer: @escaping (_ bytes: [UInt8]) -> [UInt8])
+    -> Self
+  {
+    if publicKeys.contains(where: { $0.bytes == publicKey.bytes }) {
+      return self
+    }
+
+    publicKeys.append(publicKey)
+    signers.append(signer)
+
+    return self
+  }
+
+  func makeAllRequests() throws {
+    try requests = (0..<nodeAccountIds.count).map { try makeRequest($0) }
+  }
+
+  func makeRequest(_ index: Int) throws -> RequestT {
+    fatalError("not implemented")
+  }
+
+  func mapResponse(_ index: Int, _ response: ResponseT) -> O {
     fatalError("not implemented")
   }
 
@@ -99,16 +212,16 @@ public class Executable<O, RequestT, ResponseT> {
     fatalError("not implemented")
   }
 
-  func executeAsync(_ node: Node) -> UnaryCall<RequestT, ResponseT> {
+  func executeAsync(_ index: Int) -> UnaryCall<RequestT, ResponseT> {
     fatalError("not implemented")
   }
 
-  func executeAsync(_ attempt: Int, _ eventLoop: EventLoop) -> EventLoopFuture<O> {
+  func executeAsync(_ attempt: UInt, _ eventLoop: EventLoop) -> EventLoopFuture<O> {
     if attempt >= maxAttempts! {
       return eventLoop.makeFailedFuture(MaxAttemptsExceededError(maxAttempts!))
     }
 
-    let node = nodes[Int(nextNodeIndex)]
+    let node = nodes[circular: nextNodeIndex]
 
     if !node.isHealthy() {
       return eventLoop.scheduleTask(
@@ -117,7 +230,7 @@ public class Executable<O, RequestT, ResponseT> {
       .futureResult.flatMap { _ in self.executeAsync(attempt, eventLoop) }
     }
 
-    let call = executeAsync(node)
+    let call = executeAsync(index)
     let responseFuture = call.response
 
     return call.status
@@ -136,12 +249,21 @@ public class Executable<O, RequestT, ResponseT> {
         case .error:
           return eventLoop.makeFailedFuture(self.mapStatusError(response))
         case .finished:
-          return eventLoop.makeSucceededFuture(self.mapResponse(response))
+          self.nextNodeIndex = self.nextNodeIndex + 1 % self.nodeAccountIds.count
+          self.nextTransactionIdIndex = self.nextTransactionIdIndex + 1 % self.transactionIds.count
+
+          return eventLoop.makeSucceededFuture(self.mapResponse(self.index, response))
         }
       }
   }
 
   public func executeAsync(_ client: Client) -> EventLoopFuture<O> {
+    do {
+      try freezeWith(client)
+    } catch {
+      return client.eventLoopGroup.next().makeFailedFuture(error)
+    }
+
     maxAttempts = maxAttempts ?? client.maxAttempts
     maxBackoff = maxBackoff ?? client.maxBackoff
     minBackoff = minBackoff ?? client.minBackoff
