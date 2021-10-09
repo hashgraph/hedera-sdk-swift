@@ -1,23 +1,26 @@
 import HederaProtoServices
 
 public final class AccountBalance {
-  var hbar: Hbar = Hbar(0)
-  var tokens: [TokenId: UInt64] = [:]
-  var tokenDecimals: [TokenId: UInt32] = [:]
+  public let hbars: Hbar
+  public let tokens: [TokenId: UInt64]
+  public let tokenDecimals: [TokenId: UInt32]
 
-  init() {
+  init(_ hbars: Hbar, _ tokens: [TokenId: UInt64], _ tokenDecimals: [TokenId: UInt32]) {
+    self.hbars = hbars
+    self.tokens = tokens
+    self.tokenDecimals = tokenDecimals
   }
 }
 
 extension AccountBalance: ProtobufConvertible {
   public convenience init?(_ proto: Proto_CryptoGetAccountBalanceResponse) {
-    self.init()
-
-    hbar = Hbar(proto.balance)
-    tokens = Dictionary(
+    let hbars = Hbar(proto.balance)
+    let tokens = Dictionary(
       uniqueKeysWithValues: proto.tokenBalances.map { (TokenId($0.tokenID), $0.balance) })
-    tokenDecimals = Dictionary(
+    let tokenDecimals = Dictionary(
       uniqueKeysWithValues: proto.tokenBalances.map { (TokenId($0.tokenID), $0.decimals) })
+
+    self.init(hbars, tokens, tokenDecimals)
   }
 
   public func toProtobuf() -> Proto_CryptoGetAccountBalanceResponse {
@@ -34,7 +37,7 @@ extension AccountBalance: ProtobufConvertible {
       }
     }
 
-    proto.balance = hbar.toProtobuf()
+    proto.balance = hbars.toProtobuf()
     proto.tokenBalances = tokenBalances.map {
       var tokenBalance = Proto_TokenBalance()
       tokenBalance.tokenID = $0.key.toProtobuf()
@@ -49,7 +52,7 @@ extension AccountBalance: ProtobufConvertible {
 
 extension AccountBalance: CustomStringConvertible {
   public var description: String {
-    "hbars: \(hbar)\ntokens: \(tokens.description)\ntokenDecimals: \(tokenDecimals.description)"
+    "hbars: \(hbars)\ntokens: \(tokens.description)\ntokenDecimals: \(tokenDecimals.description)"
   }
 
   public var debugDescription: String {

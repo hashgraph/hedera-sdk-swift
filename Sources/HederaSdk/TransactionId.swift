@@ -1,7 +1,7 @@
 import Foundation
 import HederaProtoServices
 
-final class TransactionId {
+public final class TransactionId {
   let accountId: AccountId
   let validStart: Date
   var scheduled: Bool = false
@@ -90,7 +90,7 @@ extension TransactionId: Hashable {
 }
 
 extension TransactionId: CustomStringConvertible, CustomDebugStringConvertible {
-  var description: String {
+  public var description: String {
     "\(accountId)@\(Int64(validStart.timeIntervalSince1970)).\(Int32(Int64(validStart.timeIntervalSince1970 * 1_000_000_000) % 1_000_000_000))"
       + (scheduled ? "?scheduled" : "")
   }
