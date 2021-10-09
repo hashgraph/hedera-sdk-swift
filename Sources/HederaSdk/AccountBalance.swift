@@ -52,7 +52,11 @@ extension AccountBalance: ProtobufConvertible {
 
 extension AccountBalance: CustomStringConvertible {
   public var description: String {
-    "hbars: \(hbars)\ntokens: \(tokens.description)\ntokenDecimals: \(tokenDecimals.description)"
+    """
+    hbars: \(hbars)
+    tokens: \(tokens.description)
+    tokenDecimals: \(tokenDecimals.description)
+    """
   }
 
   public var debugDescription: String {

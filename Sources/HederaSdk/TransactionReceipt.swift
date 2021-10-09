@@ -66,3 +66,22 @@ extension TransactionReceipt: ProtobufConvertible {
     return proto
   }
 }
+
+extension TransactionReceipt: CustomStringConvertible, CustomDebugStringConvertible {
+  public var description: String {
+    """
+    status: \(status)
+    exchangeRate: \(String(describing: exchangeRate))
+    accountId: \(String(describing: accountId))
+    topicSequenceNumber: \(topicSequenceNumber)
+    topicRunningHash: \(topicRunningHash)
+    totalSupply: \(totalSupply)
+    scheduledTransactionId: \(String(describing: scheduledTransactionId))
+    serials: \(serials)
+    """
+  }
+
+  public var debugDescription: String {
+    description
+  }
+}

@@ -7,7 +7,7 @@ let DEFAULT_MAX_BACKOFF: TimeInterval = TimeInterval(8000)
 
 // https://stackoverflow.com/questions/31443645/simplest-way-to-throw-an-error-exception-with-a-custom-message-in-swift
 extension String: LocalizedError {
-  public var errorDescription: String? { return self }
+  public var errorDescription: String? { self }
 }
 
 class ManagedNetwork<ManagedNodeT: ManagedNode<KeyT>, KeyT: Hashable, SdkNetworkT: Sequence> {

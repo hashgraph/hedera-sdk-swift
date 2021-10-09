@@ -34,3 +34,17 @@ extension ExchangeRate: ProtobufConvertible {
     return proto
   }
 }
+
+extension ExchangeRate: CustomStringConvertible, CustomDebugStringConvertible {
+  public var description: String {
+    """
+    hbars: \(hbars)
+    cents: \(cents)
+    expirationTime: \(String(describing: expirationTime))
+    """
+  }
+
+  public var debugDescription: String {
+    description
+  }
+}
