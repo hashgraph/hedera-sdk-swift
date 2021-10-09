@@ -1,5 +1,6 @@
 import Foundation
 import HederaProtoServices
+import NIO
 
 public final class TransactionId {
   let accountId: AccountId
@@ -37,6 +38,12 @@ public final class TransactionId {
   public func setScheduled(_ scheduled: Bool) -> Self {
     self.scheduled = scheduled
     return self
+  }
+
+  public func getReceiptAsync(_ client: Client) -> EventLoopFuture<TransactionReceipt> {
+    TransactionReceiptQuery()
+      .setTransactionId(self)
+      .executeAsync(client)
   }
 }
 

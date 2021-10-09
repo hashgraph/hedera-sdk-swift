@@ -1,4 +1,5 @@
 import Foundation
+import NIO
 
 class TransactionResponse {
   let transactionId: TransactionId
@@ -30,5 +31,12 @@ class TransactionResponse {
 
   public func getScheduledTransactionId() -> TransactionId? {
     scheduledTransactionId
+  }
+
+  public func getReceiptAsync(_ client: Client) -> EventLoopFuture<TransactionReceipt> {
+    try! TransactionReceiptQuery()
+      .setNodeAccountIds([nodeAccountId])
+      .setTransactionId(transactionId)
+      .executeAsync(client)
   }
 }
