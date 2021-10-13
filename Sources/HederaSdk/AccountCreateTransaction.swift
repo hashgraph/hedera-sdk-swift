@@ -6,59 +6,6 @@ import NIO
 
 var DEFAULT_AUTO_RENEW_PERIOD: Double = 7776000
 
-extension Key {
-    func fromProtobuf(_ key: Proto_Key) -> Key? {
-        switch key.key {
-        case .ed25519:
-            return PublicKey.fromBytes(bytes: key.ed25519.bytes)
-        case .keyList:
-            return KeyList(key.keyList)
-        case .contractID:
-            return ContractId(key.contractID)
-        case .thresholdKey:
-            return KeyList(key.thresholdKey.keys,thresholdKey: key.thresholdKey.threshold)
-        case .rsa3072, .ecdsa384, .none:
-            return nil
-        }
-    }
-}
-
-extension KeyList {
-    func fromProtobuf(_ proto: Proto_Key) -> Key {
-        var list = KeyList()
-        guard proto.keyList.keys.count > 0 else { return nil }
-        list.keys = proto.keyList.keys.compactMap(proto.keyList.keys)
-
-        // Don't want to silently throw away keys we don't recognize
-        guard proto.keyList.keys.count == keys.count else { return nil }
-
-
-        super.init()
-    }
-
-    func fromProtobuf(_ proto: Proto_KeyList, thresholdKey: UInt32) -> Key {
-        var list = KeyList()
-        guard proto.keys.count > 0 else { return nil }
-        keys = proto.keys.compactMap(Key.fromProtobufKey)
-        self.threshold = thresholdKey
-
-        // Don't want to silently throw away keys we don't recognize
-        guard proto.keys.count == keys.count else { return nil }
-    }
-}
-
-
-
-init?(_ proto: Proto_KeyList, thresholdKey: UInt32) {
-    guard proto.keys.count > 0 else { return nil }
-    keys = proto.keys.compactMap(Key.fromProtobufKey)
-    self.threshold = thresholdKey
-
-    // Don't want to silently throw away keys we don't recognize
-    guard proto.keys.count == keys.count else { return nil }
-    super.init()
-}
-
 class AccountCreateTransaction: Transaction {
     var proxyAccountId: AccountId? = nil
     var key: Key? = nil
@@ -107,7 +54,7 @@ class AccountCreateTransaction: Transaction {
         self.init()
 
         setProxyAccountId(AccountId(proto.cryptoCreateAccount.proxyAccountID))
-        setKey(Key.fromProtobufKey(proto.cryptoCreateAccount.key))
+        setKey(Key.fromProtobuf(proto.cryptoCreateAccount.key)!)
         setAccountMemo(proto.cryptoCreateAccount.memo)
         setAutoRenewPeriod(TimeInterval(proto.cryptoCreateAccount.autoRenewPeriod.seconds))
         setInitialBalance(Hbar.fromTinybars(proto.cryptoCreateAccount.initialBalance))
@@ -129,9 +76,8 @@ class AccountCreateTransaction: Transaction {
             body.proxyAccountID = proxyAccountId!.toProtobuf()
         }
 
-        var k: PrivateKey
         if key != nil {
-            body.key = k.toProtobuf()
+            body.key = key!.toProtobufKey()!
         }
 
         return body
