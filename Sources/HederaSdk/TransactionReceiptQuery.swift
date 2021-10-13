@@ -19,22 +19,28 @@ class TransactionReceiptQuery: Query<TransactionReceipt> {
     false
   }
 
-  override func executeAsync(_ index: Int) -> UnaryCall<Proto_Query, Proto_Response> {
-    nodes[circular: index].getCrypto().getTransactionReceipts(makeRequest(index))
+  override func executeAsync(_ index: Int, save: Bool? = true) -> UnaryCall<
+    Proto_Query, Proto_Response
+  > {
+    nodes[circular: index].getCrypto().getTransactionReceipts(makeRequest(index, save: save))
   }
 
-  override func makeRequest(_ index: Int) -> Proto_Query {
+  override func makeRequest(_ index: Int, save: Bool? = true) -> Proto_Query {
     if let query = requests[index] {
       return query
     }
 
-    requests[index] = Proto_Query()
+    var proto = Proto_Query()
 
     if let transactionId = transactionId {
-      requests[index]!.transactionGetReceipt.transactionID = transactionId.toProtobuf()
+      proto.transactionGetReceipt.transactionID = transactionId.toProtobuf()
     }
 
-    return requests[index]!
+    if save ?? false {
+      requests[index] = proto
+    }
+
+    return proto
   }
 
   override func mapResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
@@ -43,5 +49,40 @@ class TransactionReceiptQuery: Query<TransactionReceipt> {
 
   override func mapResponse(_ index: Int, _ response: Proto_Response) -> TransactionReceipt {
     TransactionReceipt(response.transactionGetReceipt.receipt)!
+  }
+
+  override func mapStatusError(_ response: Proto_Response) -> Error {
+    if case .error = shouldRetry(mapResponseHeader(response).nodeTransactionPrecheckCode) {
+      return PrecheckStatusError(
+        status: mapResponseHeader(response).nodeTransactionPrecheckCode,
+        transactionId: transactionIds.first!)
+    }
+
+    return PrecheckStatusError(
+      status: response.transactionGetReceipt.receipt.status, transactionId: transactionIds.first!)
+  }
+
+  override func shouldRetry(_ response: Proto_Response) -> ExecutionState {
+    if case .retry = shouldRetry(mapResponseHeader(response).nodeTransactionPrecheckCode) {
+      return .retry
+    }
+
+    switch response.transactionGetReceipt.receipt.status {
+    case .platformNotActive, .busy, .unknown, .receiptNotFound:
+      return .retry
+    default:
+      return .finished
+    }
+  }
+
+  override func shouldRetry(_ code: Proto_ResponseCodeEnum) -> ExecutionState {
+    switch code {
+    case .platformNotActive, .busy, .unknown, .receiptNotFound:
+      return .retry
+    case .ok:
+      return .finished
+    default:
+      return .error
+    }
   }
 }

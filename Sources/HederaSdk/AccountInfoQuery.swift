@@ -1,8 +1,9 @@
+import Foundation
 import GRPC
 import HederaProtoServices
 import NIO
 
-public final class AccountBalanceQuery: Query<AccountBalance> {
+public final class AccountInfoQuery: Query<AccountInfo> {
   var accountId: AccountId? = nil
 
   @discardableResult
@@ -14,18 +15,13 @@ public final class AccountBalanceQuery: Query<AccountBalance> {
   convenience init(_ proto: Proto_Query) {
     self.init()
 
-    setAccountId(AccountId(proto.cryptogetAccountBalance.accountID))
-  }
-
-  override func isPaymentRequired() -> Bool {
-    false
+    setAccountId(AccountId(proto.cryptoGetInfo.accountID))
   }
 
   override func executeAsync(_ index: Int, save: Bool? = true) -> UnaryCall<
     Proto_Query, Proto_Response
   > {
-    nodes[circular: index].getCrypto().cryptoGetBalance(
-      makeRequest(index, save: save), callOptions: nil)
+    nodes[circular: index].getCrypto().getAccountInfo(makeRequest(index, save: save))
   }
 
   override func makeRequest(_ index: Int, save: Bool? = true) -> Proto_Query {
@@ -35,11 +31,11 @@ public final class AccountBalanceQuery: Query<AccountBalance> {
 
     var proto = Proto_Query()
 
-    // TODO: What happens if we don't d this
-    proto.cryptogetAccountBalance = Proto_CryptoGetAccountBalanceQuery()
+    // TODO: What happens if we don't do this
+    proto.cryptoGetInfo = Proto_CryptoGetInfoQuery()
 
     if let accountId = accountId {
-      proto.cryptogetAccountBalance.accountID = accountId.toProtobuf()
+      proto.cryptoGetInfo.accountID = accountId.toProtobuf()
     }
 
     if save ?? false {
@@ -50,10 +46,10 @@ public final class AccountBalanceQuery: Query<AccountBalance> {
   }
 
   override func mapResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
-    response.cryptogetAccountBalance.header
+    response.cryptoGetInfo.header
   }
 
-  override func mapResponse(_ index: Int, _ response: Proto_Response) -> AccountBalance {
-    AccountBalance(response.cryptogetAccountBalance)!
+  override func mapResponse(_ index: Int, _ response: Proto_Response) -> AccountInfo {
+    AccountInfo(response.cryptoGetInfo.accountInfo)!
   }
 }

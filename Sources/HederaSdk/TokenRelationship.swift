@@ -68,3 +68,18 @@ extension TokenRelationship: ProtobufConvertible {
     return proto
   }
 }
+
+extension TokenRelationship: CustomStringConvertible, CustomDebugStringConvertible {
+  public var description: String {
+    """
+    tokenId: \(tokenId),
+    symbol: \(symbol),
+    balance: \(balance),
+    kycStatus: \(String(describing: kycStatus)),
+    freezeStatus: \(String(describing: freezeStatus)),
+    """
+  }
+  public var debugDescription: String {
+    description
+  }
+}

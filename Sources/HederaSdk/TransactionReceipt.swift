@@ -14,10 +14,10 @@ public final class TransactionReceipt {
   public let scheduledTransactionId: TransactionId?
   public let serials: [UInt64]
 
-  init(
-    _ status: Proto_ResponseCodeEnum, _ exchangeRate: ExchangeRate?, _ accountId: AccountId?,
-    _ topicSequenceNumber: UInt64, _ topicRunningHash: [UInt8], _ totalSupply: UInt64,
-    _ scheduledTransactionId: TransactionId?, _ serials: [UInt64]
+  public init(
+    status: Proto_ResponseCodeEnum, exchangeRate: ExchangeRate?, accountId: AccountId?,
+    topicSequenceNumber: UInt64, topicRunningHash: [UInt8], totalSupply: UInt64,
+    scheduledTransactionId: TransactionId?, serials: [UInt64]
   ) {
     self.status = status
     self.exchangeRate = exchangeRate
@@ -33,13 +33,15 @@ public final class TransactionReceipt {
 extension TransactionReceipt: ProtobufConvertible {
   public convenience init?(_ proto: Proto_TransactionReceipt) {
     self.init(
-      proto.status,
-      proto.hasExchangeRate ? ExchangeRate(proto.exchangeRate.currentRate) : nil,
-      proto.hasAccountID ? AccountId(proto.accountID) : nil, proto.topicSequenceNumber,
-      proto.topicRunningHash.bytes,
-      proto.newTotalSupply,
-      proto.hasScheduledTransactionID ? TransactionId(proto.scheduledTransactionID) : nil,
-      proto.serialNumbers.map { UInt64($0) }
+      status: proto.status,
+      exchangeRate: proto.hasExchangeRate ? ExchangeRate(proto.exchangeRate.currentRate) : nil,
+      accountId: proto.hasAccountID ? AccountId(proto.accountID) : nil,
+      topicSequenceNumber: proto.topicSequenceNumber,
+      topicRunningHash: proto.topicRunningHash.bytes,
+      totalSupply: proto.newTotalSupply,
+      scheduledTransactionId: proto.hasScheduledTransactionID
+        ? TransactionId(proto.scheduledTransactionID) : nil,
+      serials: proto.serialNumbers.map { UInt64($0) }
     )
   }
 

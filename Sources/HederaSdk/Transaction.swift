@@ -27,7 +27,10 @@ extension PublicKey {
   }
 }
 
-class Transaction: Executable<TransactionResponse, Proto_Transaction, Proto_TransactionResponse> {
+public class Transaction: Executable<
+  TransactionResponse, Proto_Transaction, Proto_TransactionResponse
+>
+{
   var innerSignedTransactions: [Proto_SignedTransaction] = []
 
   var transactionValidDuration: TimeInterval = 120
@@ -104,14 +107,12 @@ class Transaction: Executable<TransactionResponse, Proto_Transaction, Proto_Tran
   //  }
 
   @discardableResult
-  override func freezeWith(_ client: Client?) throws -> Self {
+  public override func freezeWith(_ client: Client?) throws -> Self {
     try super.freezeWith(client)
 
     maxTransactionFee =
       maxTransactionFee ?? client?.getDefaultMaxTransactionFee() ?? defaultMaxTransactionFee
-
     innerSignedTransactions = try (0..<nodeAccountIds.count).map { try makeSignedRequest($0) }
-
     return self
   }
 
@@ -125,6 +126,7 @@ class Transaction: Executable<TransactionResponse, Proto_Transaction, Proto_Tran
     transactionBody.transactionValidDuration = transactionValidDuration.toProtobuf()
     transactionBody.memo = memo ?? ""
     transactionBody.nodeAccountID = nodeAccountIds[Int(index) % nodeAccountIds.count].toProtobuf()
+    transactionBody.transactionID = transactionIds[Int(index) % transactionIds.count].toProtobuf()
 
     onFreeze(&transactionBody)
 
@@ -132,23 +134,28 @@ class Transaction: Executable<TransactionResponse, Proto_Transaction, Proto_Tran
   }
 
   func makeSignedRequest(_ index: Int) throws -> Proto_SignedTransaction {
-    innerSignedTransactions[index] = Proto_SignedTransaction()
-    innerSignedTransactions[index].bodyBytes = try makeTransactionBody(index).serializedData()
-    return innerSignedTransactions[index]
+    var proto = Proto_SignedTransaction()
+    proto.bodyBytes = try makeTransactionBody(index).serializedData()
+    return proto
   }
 
   override func makeAllRequests() throws {
     let _ = try (0..<innerSignedTransactions.count).map { try makeRequest($0) }
   }
 
-  override func makeRequest(_ index: Int) throws -> Proto_Transaction {
+  override func makeRequest(_ index: Int, save: Bool? = true) throws -> Proto_Transaction {
     if let transaction = requests[index], !transaction.signedTransactionBytes.isEmpty {
       return transaction
     }
 
-    requests[index] = Proto_Transaction()
-    requests[index]!.signedTransactionBytes = try signTransaction(index).serializedData()
-    return requests[index]!
+    var proto = Proto_Transaction()
+    proto.signedTransactionBytes = try signTransaction(index).serializedData()
+
+    if save ?? false {
+      requests[index] = proto
+    }
+
+    return proto
   }
 
   func signTransaction(_ index: Int) -> Proto_SignedTransaction {
@@ -180,6 +187,11 @@ class Transaction: Executable<TransactionResponse, Proto_Transaction, Proto_Tran
 
     return TransactionResponse(transactionId, nodeAccountIds[index], hash, nil)
 
+  }
+
+  override func mapStatusError(_ response: Proto_TransactionResponse) -> Error {
+    PrecheckStatusError(
+      status: response.nodeTransactionPrecheckCode, transactionId: transactionIds.first!)
   }
 
   override func shouldRetry(_ response: Proto_TransactionResponse) -> ExecutionState {

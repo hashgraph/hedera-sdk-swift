@@ -77,9 +77,13 @@ public class Executable<O, RequestT, ResponseT> {
     return self
   }
 
-  func onExecuteAsync(_ client: Client) throws {
+  func onExecuteAsync(_ client: Client) -> EventLoopFuture<Client> {
     if !isFrozen() {
-      try freezeWith(client)
+      do {
+        try freezeWith(client)
+      } catch {
+        return client.eventLoopGroup.next().makeFailedFuture(error)
+      }
     }
 
     // TODO: Checksum validation
@@ -89,6 +93,8 @@ public class Executable<O, RequestT, ResponseT> {
     {
       signWithOperator(client)
     }
+
+    return client.eventLoopGroup.next().makeSucceededFuture(client)
   }
 
   func makeRequest() throws -> RequestT {
@@ -101,7 +107,7 @@ public class Executable<O, RequestT, ResponseT> {
 
   func shouldRetry(_ code: Proto_ResponseCodeEnum) -> ExecutionState {
     switch code {
-    case .platformNotActive, .busy:
+    case .platformNotActive, .busy, .unknown:
       return .retry
     case .ok:
       return .finished
@@ -139,7 +145,7 @@ public class Executable<O, RequestT, ResponseT> {
   }
 
   func isTransactionIdRequired() -> Bool {
-    false
+    true
   }
 
   @discardableResult
@@ -204,7 +210,7 @@ public class Executable<O, RequestT, ResponseT> {
     try requests = (0..<nodeAccountIds.count).map { try makeRequest($0) }
   }
 
-  func makeRequest(_ index: Int) throws -> RequestT {
+  func makeRequest(_ index: Int, save: Bool? = true) throws -> RequestT {
     fatalError("not implemented")
   }
 
@@ -216,7 +222,7 @@ public class Executable<O, RequestT, ResponseT> {
     fatalError("not implemented")
   }
 
-  func executeAsync(_ index: Int) -> UnaryCall<RequestT, ResponseT> {
+  func executeAsync(_ index: Int, save: Bool? = true) throws -> UnaryCall<RequestT, ResponseT> {
     fatalError("not implemented")
   }
 
@@ -234,31 +240,36 @@ public class Executable<O, RequestT, ResponseT> {
       .futureResult.flatMap { _ in self.executeAsync(attempt, eventLoop) }
     }
 
-    let call = executeAsync(index)
-    let responseFuture = call.response
+    do {
+      let call = try executeAsync(index)
+      let responseFuture = call.response
 
-    return call.status
-      .flatMap { status in responseFuture.map { ($0, status) } }
-      .flatMap { (response, status) in
-        if self.shouldRetryExceptionally(status) {
-          return self.executeAsync(attempt + 1, eventLoop)
+      return call.status
+        .flatMap { status in responseFuture.map { ($0, status) } }
+        .flatMap { (response, status) in
+          if self.shouldRetryExceptionally(status) {
+            return self.executeAsync(attempt + 1, eventLoop)
+          }
+
+          switch self.shouldRetry(response) {
+          case .retry:
+            let delay = max(Double(self.minBackoff!), 250 * pow(2.0, (Double(attempt - 1))))
+
+            return eventLoop.scheduleTask(in: TimeAmount.milliseconds(Int64(delay))) { () }
+              .futureResult.flatMap { _ in self.executeAsync(attempt + 1, eventLoop) }
+          case .error:
+            return eventLoop.makeFailedFuture(self.mapStatusError(response))
+          case .finished:
+            self.nextNodeIndex = self.nextNodeIndex + 1 % self.nodeAccountIds.count
+            self.nextTransactionIdIndex =
+              self.nextTransactionIdIndex + 1 % self.transactionIds.count
+
+            return eventLoop.makeSucceededFuture(self.mapResponse(self.index, response))
+          }
         }
-
-        switch self.shouldRetry(response) {
-        case .retry:
-          let delay = max(Double(self.minBackoff!), 250 * pow(2.0, (Double(attempt - 1))))
-
-          return eventLoop.scheduleTask(in: TimeAmount.milliseconds(Int64(delay))) { () }
-            .futureResult.flatMap { _ in self.executeAsync(attempt + 1, eventLoop) }
-        case .error:
-          return eventLoop.makeFailedFuture(self.mapStatusError(response))
-        case .finished:
-          self.nextNodeIndex = self.nextNodeIndex + 1 % self.nodeAccountIds.count
-          self.nextTransactionIdIndex = self.nextTransactionIdIndex + 1 % self.transactionIds.count
-
-          return eventLoop.makeSucceededFuture(self.mapResponse(self.index, response))
-        }
-      }
+    } catch {
+      return eventLoop.makeFailedFuture(error)
+    }
   }
 
   public func executeAsync(_ client: Client) -> EventLoopFuture<O> {
@@ -272,14 +283,10 @@ public class Executable<O, RequestT, ResponseT> {
     maxBackoff = maxBackoff ?? client.maxBackoff
     minBackoff = minBackoff ?? client.minBackoff
 
-    do {
-      try onExecuteAsync(client)
-    } catch {
-      return client.eventLoopGroup.next().makeFailedFuture(error)
+    return onExecuteAsync(client).flatMap {
+      $0.network.getNodeAccountIdsForExecute().map {
+        self.nodes = $0.compactMap { client.network.network[$0] }
+      }.flatMap { self.executeAsync(1, client.eventLoopGroup.next()) }
     }
-
-    return client.network.getNodeAccountIdsForExecute().map {
-      self.nodes = $0.compactMap { client.network.network[$0] }
-    }.flatMap { self.executeAsync(1, client.eventLoopGroup.next()) }
   }
 }

@@ -37,5 +37,14 @@ let package = Package(
                 name: "GetAccountBalanceExample",
                 dependencies: ["HederaSdk"],
                 path: "Examples/GetAccountBalance"),
+      .target(
+              name: "GetAccountInfoExample",
+              dependencies: ["HederaSdk"],
+              path: "Examples/GetAccountInfo"),
+      .target(
+              name: "TransferHbarsExample",
+              dependencies: ["HederaSdk"],
+              path: "Examples/TransferHbars"),
     ]
+
 )

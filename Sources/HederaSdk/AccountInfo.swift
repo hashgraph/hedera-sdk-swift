@@ -9,8 +9,6 @@ public final class AccountInfo {
   public let proxyReceived: Hbar
   //  public let key: Key
   public let balance: Hbar
-  public let sendRecordThreshold: Hbar
-  public let receiveRecordThreshold: Hbar
   public let isReceiverSignatureRequired: Bool
   public let expirationTime: Date?
   public let autoRenewPeriod: TimeInterval?
@@ -20,7 +18,7 @@ public final class AccountInfo {
 
   init(
     accountId: AccountId?, contractAccountId: String, isDeleted: Bool, proxyAccountId: AccountId?,
-    proxyReceived: Hbar, balance: Hbar, sendRecordThreshold: Hbar, receiveRecordThreshold: Hbar,
+    proxyReceived: Hbar, balance: Hbar,
     isReceiverSignatureRequired: Bool, expirationTime: Date?, autoRenewPeriod: TimeInterval?,
     tokenRelationships: [TokenId: TokenRelationship], accountMemo: String, ownedNfts: UInt64
   ) {
@@ -30,8 +28,6 @@ public final class AccountInfo {
     self.proxyAccountId = proxyAccountId
     self.proxyReceived = proxyReceived
     self.balance = balance
-    self.sendRecordThreshold = sendRecordThreshold
-    self.receiveRecordThreshold = receiveRecordThreshold
     self.isReceiverSignatureRequired = isReceiverSignatureRequired
     self.expirationTime = expirationTime
     self.autoRenewPeriod = autoRenewPeriod
@@ -50,8 +46,6 @@ extension AccountInfo: ProtobufConvertible {
       proxyAccountId: proto.hasProxyAccountID ? AccountId(proto.proxyAccountID) : nil,
       proxyReceived: Hbar(proto.proxyReceived),
       balance: Hbar(proto.balance),
-      sendRecordThreshold: Hbar(proto.generateReceiveRecordThreshold),
-      receiveRecordThreshold: Hbar(proto.generateReceiveRecordThreshold),
       isReceiverSignatureRequired: proto.receiverSigRequired,
       expirationTime: proto.hasExpirationTime ? Date(proto.expirationTime) : nil,
       autoRenewPeriod: proto.hasAutoRenewPeriod ? TimeInterval(proto.autoRenewPeriod) : nil,
@@ -70,8 +64,6 @@ extension AccountInfo: ProtobufConvertible {
     proto.deleted = isDeleted
     proto.proxyReceived = Int64(proxyReceived.toProtobuf())
     proto.balance = balance.toProtobuf()
-    proto.generateSendRecordThreshold = sendRecordThreshold.toProtobuf()
-    proto.generateReceiveRecordThreshold = receiveRecordThreshold.toProtobuf()
     proto.receiverSigRequired = isReceiverSignatureRequired
     proto.memo = accountMemo
     proto.tokenRelationships = tokenRelationships.map { $0.value.toProtobuf() }
@@ -94,5 +86,26 @@ extension AccountInfo: ProtobufConvertible {
     }
 
     return proto
+  }
+}
+
+extension AccountInfo: CustomStringConvertible, CustomDebugStringConvertible {
+  public var description: String {
+    """
+    accountId: \(String(describing: accountId)),
+    contractAccountId: \(contractAccountId),
+    isDeleted: \(isDeleted),
+    proxyAccountId: \(String(describing: proxyAccountId)),
+    balance: \(balance),
+    isReceiverSignatureRequired: \(isReceiverSignatureRequired),
+    expirationTime: \(String(describing: expirationTime)),
+    autoRenewPeriod: \(String(describing: autoRenewPeriod)),
+    tokenRelationships: \(tokenRelationships.map { $0.value.description }),
+    accountMemo: \(accountMemo),
+    ownedNfts: \(ownedNfts),
+    """
+  }
+  public var debugDescription: String {
+    description
   }
 }

@@ -1,7 +1,7 @@
 import Foundation
 import NIO
 
-class TransactionResponse {
+public final class TransactionResponse {
   let transactionId: TransactionId
   let nodeAccountId: AccountId
   let transactionHash: [UInt8]
@@ -38,5 +38,27 @@ class TransactionResponse {
       .setNodeAccountIds([nodeAccountId])
       .setTransactionId(transactionId)
       .executeAsync(client)
+      .flatMap {
+        if case .success = $0.status {
+          return client.eventLoopGroup.next().makeSucceededFuture($0)
+        } else {
+          return client.eventLoopGroup.next().makeFailedFuture(
+            ReceiptStatusError(transactionId: self.transactionId, receipt: $0))
+        }
+      }
+  }
+}
+
+extension TransactionResponse: CustomStringConvertible, CustomDebugStringConvertible {
+  public var description: String {
+    """
+    transactionId: \(transactionId),
+    nodeAccountId: \(nodeAccountId),
+    transactionHash: \(transactionHash),
+    scheduledTransactionId: \(String(describing: scheduledTransactionId)),
+    """
+  }
+  public var debugDescription: String {
+    description
   }
 }

@@ -41,26 +41,52 @@ public final class Hbar {
     self.init(value * Int64(unit.rawValue))
   }
 
-  func toHbarUnit(_ hbarUnit: HbarUnit) -> Double {
+  public func toHbarUnit(_ hbarUnit: HbarUnit) -> Double {
     Double(tinybars) / Double(hbarUnit.rawValue)
   }
 
-  static func fromHbarUnit(_ number: Int64, _ hbarUnit: HbarUnit) -> Hbar {
+  public static func fromHbarUnit(_ number: Int64, _ hbarUnit: HbarUnit) -> Hbar {
     Hbar(number, hbarUnit)
   }
 
-  func toTinybars() -> Int64 {
+  public func toTinybars() -> Int64 {
     tinybars
   }
 
-  static func fromTinybars(_ tinybars: UInt64) -> Hbar {
+  public static func fromTinybars(_ tinybars: UInt64) -> Hbar {
     Hbar(tinybars / HbarUnit.hbar.rawValue)
+  }
+
+  public static func + (left: Hbar, right: Hbar) -> Hbar {
+    Hbar(left.tinybars + right.tinybars)
   }
 }
 
 extension Hbar: ProtobufConvertible {
   public func toProtobuf() -> UInt64 {
-    UInt64(tinybars)
+    UInt64(bitPattern: tinybars)
+  }
+}
+
+extension Hbar: Comparable {
+  public static func == (lhs: Hbar, rhs: Hbar) -> Bool {
+    lhs.tinybars == rhs.tinybars
+  }
+
+  public static func < (lhs: Hbar, rhs: Hbar) -> Bool {
+    lhs.tinybars < rhs.tinybars
+  }
+
+  public static func <= (lhs: Hbar, rhs: Hbar) -> Bool {
+    lhs.tinybars <= rhs.tinybars
+  }
+
+  public static func >= (lhs: Hbar, rhs: Hbar) -> Bool {
+    lhs.tinybars >= rhs.tinybars
+  }
+
+  public static func > (lhs: Hbar, rhs: Hbar) -> Bool {
+    lhs.tinybars > rhs.tinybars
   }
 }
 

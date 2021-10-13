@@ -18,7 +18,8 @@ public final class TransactionId {
 
   public static func generate(_ accountId: AccountId) -> TransactionId {
     self.init(
-      accountId, Date().addingTimeInterval(Double.random(in: 0..<1) * 5_000_000_000 + 8_000_000_000)
+      accountId, Date()
+      //            .addingTimeInterval(-Double.random(in: 0..<5))
     )
   }
 
@@ -54,8 +55,8 @@ extension Date: ProtobufConvertible {
 
   public func toProtobuf() -> Proto_Timestamp {
     var proto = Proto_Timestamp()
-    proto.seconds = Int64(timeIntervalSince1970)
-    proto.nanos = Int32(Int64(timeIntervalSince1970 * 1_000_000_000) % 1_000_000_000)
+    proto.seconds = Int64(floor(timeIntervalSince1970))
+    proto.nanos = Int32(Int64(timeIntervalSince1970.truncatingRemainder(dividingBy: 1) * 1_000_000))
     return proto
   }
 }
@@ -98,7 +99,7 @@ extension TransactionId: Hashable {
 
 extension TransactionId: CustomStringConvertible, CustomDebugStringConvertible {
   public var description: String {
-    "\(accountId)@\(Int64(validStart.timeIntervalSince1970)).\(Int32(Int64(validStart.timeIntervalSince1970 * 1_000_000_000) % 1_000_000_000))"
+    "\(accountId)@\(validStart.timeIntervalSince1970)"
       + (scheduled ? "?scheduled" : "")
   }
 
