@@ -1,27 +1,55 @@
 public final class Hbar {
-  var tinybars: UInt64
+  var tinybars: Int64
 
-  public init(_ tinybars: UInt64) {
+  public convenience init(_ tinybars: Int) {
+    self.init(Int64(tinybars))
+  }
+
+  public convenience init(_ tinybars: UInt) {
+    self.init(UInt64(tinybars))
+  }
+
+  public convenience init(_ tinybars: UInt64) {
+    self.init(Int64(tinybars))
+  }
+
+  public init(_ tinybars: Int64) {
     self.tinybars = tinybars
   }
 
-  public init(hbars: UInt64) {
-    tinybars = hbars * HbarUnit.hbar.rawValue
+  public convenience init(hbars: Int) {
+    self.init(hbars: Int64(hbars))
   }
 
-  public init(_ value: UInt64, _ unit: HbarUnit) {
-    tinybars = value * unit.rawValue
+  public convenience init(hbars: UInt) {
+    self.init(hbars: UInt64(hbars))
+  }
+
+  public convenience init(hbars: UInt64) {
+    self.init(hbars: Int64(hbars))
+  }
+
+  public convenience init(hbars: Int64) {
+    self.init(hbars, HbarUnit.hbar)
+  }
+
+  public convenience init(_ value: UInt64, _ unit: HbarUnit) {
+    self.init(Int64(value), unit)
+  }
+
+  public convenience init(_ value: Int64, _ unit: HbarUnit) {
+    self.init(value * Int64(unit.rawValue))
   }
 
   func toHbarUnit(_ hbarUnit: HbarUnit) -> Double {
     Double(tinybars) / Double(hbarUnit.rawValue)
   }
 
-  static func fromHbarUnit(_ number: UInt64, _ hbarUnit: HbarUnit) -> Hbar {
-    Hbar(number * hbarUnit.rawValue)
+  static func fromHbarUnit(_ number: Int64, _ hbarUnit: HbarUnit) -> Hbar {
+    Hbar(number, hbarUnit)
   }
 
-  func toTinybars() -> UInt64 {
+  func toTinybars() -> Int64 {
     tinybars
   }
 
@@ -32,7 +60,7 @@ public final class Hbar {
 
 extension Hbar: ProtobufConvertible {
   public func toProtobuf() -> UInt64 {
-    tinybars
+    UInt64(tinybars)
   }
 }
 

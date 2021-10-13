@@ -41,6 +41,7 @@ public class Executable<O, RequestT, ResponseT> {
     minBackoff
   }
 
+  @discardableResult
   public func setMinBackoff(_ minBackoff: TimeInterval) -> Self {
     self.minBackoff = minBackoff
     return self
@@ -50,6 +51,7 @@ public class Executable<O, RequestT, ResponseT> {
     maxBackoff
   }
 
+  @discardableResult
   public func setMaxBackoff(_ maxBackoff: TimeInterval) -> Self {
     self.maxBackoff = maxBackoff
     return self
@@ -59,6 +61,7 @@ public class Executable<O, RequestT, ResponseT> {
     maxAttempts
   }
 
+  @discardableResult
   public func setMaxAttempts(_ maxAttempts: UInt) -> Self {
     self.maxAttempts = maxAttempts
     return self
@@ -68,6 +71,7 @@ public class Executable<O, RequestT, ResponseT> {
     nodeAccountIds
   }
 
+  @discardableResult
   public func setNodeAccountIds(_ nodeAccountIds: [AccountId]) throws -> Self {
     self.nodeAccountIds = nodeAccountIds
     return self

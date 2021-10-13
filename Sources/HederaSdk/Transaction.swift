@@ -31,7 +31,7 @@ class Transaction: Executable<TransactionResponse, Proto_Transaction, Proto_Tran
   var innerSignedTransactions: [Proto_SignedTransaction] = []
 
   var transactionValidDuration: TimeInterval = 120
-  var defaultMaxTransactionFee = Hbar(2)
+  var defaultMaxTransactionFee = Hbar(hbars: 2)
   var maxTransactionFee: Hbar?
   var memo: String?
 
