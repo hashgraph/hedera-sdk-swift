@@ -18,7 +18,7 @@ let package = Package(
         // .package(url: /* package url */, from: "1.0.0"),
         .package(name: "HederaCrypto", url: "git@github.com:launchbadge/hedera-crypto-swift.git", .branch("main")),
         .package(name: "HederaProto", url: "git@github.com:hashgraph/hedera-protobufs-swift.git", .branch("main")),
-        .package(url: "https://github.com/grpc/grpc-swift", .exact("1.4.1")),
+        .package(url: "https://github.com/grpc/grpc-swift", .exact("1.4.0")),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", .upToNextMajor(from: "1.4.1"))
     ],
     targets: [

@@ -8,12 +8,12 @@ extension Key {
         case .ed25519:
             return PublicKey.fromBytes(bytes: key.ed25519.bytes)
         case .keyList:
-            var keyList = KeyList()
+            let keyList = KeyList()
             return keyList.fromProtobuf(key.keyList, thresholdKey: 0)
         case .contractID:
             return ContractId(key.contractID)
         case .thresholdKey:
-            var keyList = KeyList()
+            let keyList = KeyList()
             return keyList.fromProtobuf(key.thresholdKey.keys, thresholdKey: key.thresholdKey.threshold)
         case .rsa3072, .ecdsa384, .none:
             return nil
@@ -47,8 +47,8 @@ extension Key {
 extension KeyList {
     func fromProtobuf(_ proto: Proto_Key) -> Key? {
         guard proto.keyList.keys.count > 0 else { return nil }
-        var keys = proto.keyList.keys.compactMap(Key.fromProtobuf)
-        var list = KeyList.of(keys: keys)
+        let keys = proto.keyList.keys.compactMap(Key.fromProtobuf)
+        let list = KeyList.of(keys: keys)
 
         guard proto.keyList.keys.count == keys.count else { return nil }
 
@@ -57,11 +57,11 @@ extension KeyList {
 
     func fromProtobuf(_ proto: Proto_KeyList, thresholdKey: UInt32) -> Key? {
         guard proto.keys.count > 0 else { return nil }
-        var keys = proto.keys.compactMap(Key.fromProtobuf)
-        var list = KeyList.of(keys: keys)
+        let keys = proto.keys.compactMap(Key.fromProtobuf)
+        let list = KeyList.of(keys: keys)
 
         guard proto.keys.count == keys.count else { return nil }
-        list.setTreshold(threshold: thresholdKey)
+        let _ = list.setTreshold(threshold: thresholdKey)
 
         return list
     }

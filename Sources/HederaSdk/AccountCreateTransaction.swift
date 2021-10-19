@@ -61,14 +61,14 @@ class AccountCreateTransaction: Transaction {
         setReceiverSignatureRequired(proto.cryptoCreateAccount.receiverSigRequired)
     }
 
-    override func executeAsync(_ index: Int) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-        nodes[circular: index].getCrypto().createAccount(try! makeRequest(index))
+    override func executeAsync(_ index: Int, save: Bool? = true) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        nodes[circular: index].getCrypto().createAccount(try! makeRequest(index, save: save))
     }
 
     func build() -> Proto_CryptoCreateTransactionBody {
         var body = Proto_CryptoCreateTransactionBody()
         body.memo = accountMemo
-        body.initialBalance = initialBalance.toTinybars()
+        body.initialBalance = UInt64(initialBalance.toTinybars())
         body.receiverSigRequired = receiversSigRequired
         body.autoRenewPeriod = autoRenewPeriod.toProtobuf()
 

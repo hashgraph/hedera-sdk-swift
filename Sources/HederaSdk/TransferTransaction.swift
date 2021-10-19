@@ -22,16 +22,23 @@ public final class TransferTransaction: Transaction {
     nodes[circular: index].getCrypto().cryptoTransfer(try makeRequest(index, save: save))
   }
 
-  override func onFreeze(_ body: inout Proto_TransactionBody) {
-    var cryptoTransfer = body.cryptoTransfer
-    var transfers = cryptoTransfer.transfers
+  func build() -> Proto_CryptoTransferTransactionBody {
+    var proto = Proto_CryptoTransferTransactionBody()
+    var transfers = Proto_TransferList()
+
     transfers.accountAmounts = hbarTransfers.map {
       var proto = Proto_AccountAmount()
       proto.accountID = $0.key.toProtobuf()
       proto.amount = Int64(bitPattern: $0.value.toProtobuf())
       return proto
     }
-    cryptoTransfer.transfers = transfers
-    body.cryptoTransfer = cryptoTransfer
+
+    proto.transfers = transfers
+
+    return proto
+  }
+
+  override func onFreeze(_ body: inout Proto_TransactionBody) {
+    body.cryptoTransfer = build()
   }
 }
