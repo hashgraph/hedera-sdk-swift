@@ -48,26 +48,39 @@ public class Query<O>: Executable<O, Proto_Query, Proto_Response> {
       }
   }
 
-  //  func makeRequest(_ index: Int, save: Bool? = true) -> Proto_Query {
-  //    var from = Proto_AccountAmount()
-  //    accountAmount.accountID = transactionIds.first!.accountId
-  //    accountAmount.amount = queryPayment!.toProtobuf()
-  //
-  //    var to = Proto_AccountAmount()
-  //    accountAmount.accountID = nodes[circular: index].accountId.toProtobuf()
-  //    accountAmount.amount = -queryPayment!.toProtobuf()
-  //
-  //    var accountAmounts = [from, to]
-  //
-  //    var transfers = Proto_TransferList()
-  //    transfers.accountAmounts = accountAmounts
-  //
-  //    var transactionBody = Proto_CryptoTransferTransactionBody()
-  //    proto.transfers = transfers
-  //
-  //    var bodyBytes = try transactionBody.serializedData()
-  //
-  //  }
+  override func makeRequest(_ index: Int, save: Bool? = true) throws -> Proto_Query {
+    if let query = requests[index] {
+      return query
+    }
+
+    var proto = Proto_Query()
+
+    onMakeRequest(&proto)
+
+    if isPaymentRequired() {
+        var header = Proto_QueryHeader()
+        let transaction = try TransferTransaction()
+          .addHbarTransfer(transactionIds.first!.accountId, queryPayment!)
+          .addHbarTransfer(nodes[circular: index].accountId, queryPayment!)
+
+        header.payment = try transaction.makeRequest(0, save: false)
+        onFreeze(&proto, header)
+    }
+
+    if save ?? false {
+        requests[index] = proto
+    }
+
+    return proto
+  }
+
+  func onMakeRequest(_ proto: inout Proto_Query) {
+    fatalError("not implemented")
+  }
+
+  func onFreeze(_ query: inout Proto_Query, _ header: Proto_QueryHeader) {
+    fatalError("not implemented")
+  }
 
   func mapResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
     fatalError("not implemented")
@@ -96,8 +109,17 @@ final class CostQuery<O>: Query<Hbar> {
   }
 
   override func makeRequest(_ index: Int, save: Bool? = true) throws -> Proto_Query {
-    requests[index] = try query.makeRequest(index, save: false)
-    return requests[index]!
+    var proto = try query.makeRequest(index, save: false)
+    var header = Proto_QueryHeader()
+    header.responseType = .costAnswer
+
+    query.onFreeze(&proto, header)
+
+    if save ?? false {
+        requests[index] = proto
+    }
+
+    return proto
   }
 
   override func mapStatusError(_ response: Proto_Response) -> Error {

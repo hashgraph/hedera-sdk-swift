@@ -106,14 +106,10 @@ public class Transaction: Executable<
   //    return try proto.serializedData()
   //  }
 
-  @discardableResult
-  public override func freezeWith(_ client: Client?) throws -> Self {
-    try super.freezeWith(client)
-
+  override func onFreezeWith(_ client: Client?) throws {
     maxTransactionFee =
       maxTransactionFee ?? client?.getDefaultMaxTransactionFee() ?? defaultMaxTransactionFee
     innerSignedTransactions = try (0..<nodeAccountIds.count).map { try makeSignedRequest($0) }
-    return self
   }
 
   func onFreeze(_ transactionBody: inout Proto_TransactionBody) {

@@ -25,28 +25,20 @@ public final class AccountBalanceQuery: Query<AccountBalance> {
     Proto_Query, Proto_Response
   > {
     nodes[circular: index].getCrypto().cryptoGetBalance(
-      makeRequest(index, save: save), callOptions: nil)
+      try! makeRequest(index, save: save), callOptions: nil)
   }
 
-  override func makeRequest(_ index: Int, save: Bool? = true) -> Proto_Query {
-    if let query = requests[index] {
-      return query
-    }
-
-    var proto = Proto_Query()
-
+  override func onMakeRequest(_ proto: inout Proto_Query) {
     // TODO: What happens if we don't d this
     proto.cryptogetAccountBalance = Proto_CryptoGetAccountBalanceQuery()
 
     if let accountId = accountId {
       proto.cryptogetAccountBalance.accountID = accountId.toProtobuf()
     }
+  }
 
-    if save ?? false {
-      requests[index] = proto
-    }
-
-    return proto
+  override func onFreeze(_ query: inout Proto_Query, _ header: Proto_QueryHeader) {
+    query.cryptogetAccountBalance.header = header
   }
 
   override func mapResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {

@@ -179,7 +179,12 @@ public class Executable<O, RequestT, ResponseT> {
 
     requests = [RequestT?](repeating: nil, count: nodeAccountIds.count)
 
+    try onFreezeWith(client)
+
     return self
+  }
+
+  func onFreezeWith(_ client: Client?) throws {
   }
 
   @discardableResult

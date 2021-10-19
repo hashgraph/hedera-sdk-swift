@@ -21,28 +21,20 @@ public final class AccountInfoQuery: Query<AccountInfo> {
   override func executeAsync(_ index: Int, save: Bool? = true) -> UnaryCall<
     Proto_Query, Proto_Response
   > {
-    nodes[circular: index].getCrypto().getAccountInfo(makeRequest(index, save: save))
+    nodes[circular: index].getCrypto().getAccountInfo(try! makeRequest(index, save: save))
   }
 
-  override func makeRequest(_ index: Int, save: Bool? = true) -> Proto_Query {
-    if let query = requests[index] {
-      return query
-    }
-
-    var proto = Proto_Query()
-
+  override func onMakeRequest(_ proto: inout Proto_Query) {
     // TODO: What happens if we don't do this
     proto.cryptoGetInfo = Proto_CryptoGetInfoQuery()
 
     if let accountId = accountId {
       proto.cryptoGetInfo.accountID = accountId.toProtobuf()
     }
+  }
 
-    if save ?? false {
-      requests[index] = proto
-    }
-
-    return proto
+  override func onFreeze(_ query: inout Proto_Query, _ header: Proto_QueryHeader) {
+    query.cryptoGetInfo.header = header
   }
 
   override func mapResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
