@@ -1,7 +1,7 @@
 import HederaProtoServices
 
 public final class TokenId {
-  let id: EntityId
+  var id: EntityId
 
   init(_ entity: EntityId) {
     id = entity
@@ -69,7 +69,11 @@ extension TokenId {
     id.realm
   }
 
-  public var account: UInt64 {
+  public var token: UInt64 {
     id.num
+  }
+
+  public func validate(_ client: Client) throws {
+    try id.validate(client)
   }
 }

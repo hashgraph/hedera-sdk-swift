@@ -75,4 +75,35 @@
             client = try! client.setMirrorNetwork(singleNodeNetworkWithDifferentAccountId).wait()
             XCTAssertEqual(client.getMirrorNetwork(), singleNodeNetworkWithDifferentAccountId)
         }
+
+        func testEntityId() {
+            var client = try! Client.forTestnet().wait()
+            if let id = try? AccountId("0.0.123-rmkyk") {
+                try! id.validate(client)
+                XCTAssertEqual(String(id.account), "123")
+            }
+//            if let id2 = try? AccountId("0.0.123-rmdjg") {
+//                XCTAssertThrowsError(try id2.validate(client)) { error in
+//                    XCTAssertEqual(error as! EntityIdError, EntityIdError.wrongChecksum("Invalid ID: checksum does not match, possible network mismatch"))
+//                }
+//            }
+//            if let id = try? ContractId("0.0.123-rmkyk") {
+//                try! id.validate(client)
+//                XCTAssertEqual(String(id.contract), "123")
+//            }
+//            if let id2 = try? ContractId("0.0.123-rmdjg") {
+//                XCTAssertThrowsError(try id2.validate(client)) { error in
+//                    XCTAssertEqual(error as! EntityIdError, EntityIdError.wrongChecksum("Invalid ID: checksum does not match, possible network mismatch"))
+//                }
+//            }
+//            if let id = try? TokenId("0.0.123-rmkyk") {
+//                try! id.validate(client)
+//                XCTAssertEqual(String(id.token), "123")
+//            }
+//            if let id2 = try? TokenId("0.0.123-rmdjg") {
+//                XCTAssertThrowsError(try id2.validate(client)) { error in
+//                    XCTAssertEqual(error as! EntityIdError, EntityIdError.wrongChecksum("Invalid ID: checksum does not match, possible network mismatch"))
+//                }
+//            }
+        }
     }

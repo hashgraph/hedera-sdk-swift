@@ -20,3 +20,16 @@ extension NetworkName: CustomStringConvertible, CustomDebugStringConvertible {
     description
   }
 }
+
+extension NetworkName {
+  func ledgerId() -> String {
+    switch self {
+    case .mainnet:
+      return "0"
+    case .testnet:
+      return "1"
+    case .previewnet:
+      return "2"
+    }
+  }
+}

@@ -25,7 +25,7 @@ class Network: ManagedNetwork<Node, AccountId, [String: AccountId]> {
     network["3.previewnet.hedera.com:50211"] = AccountId(6)
     network["4.previewnet.hedera.com:50211"] = AccountId(7)
 
-    return Network(eventLoopGroup).setNetwork(network)
+    return Network(eventLoopGroup).setNetworkName(.previewnet).setNetwork(network)
   }
 
   class func forTestnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<Network> {
@@ -36,7 +36,7 @@ class Network: ManagedNetwork<Node, AccountId, [String: AccountId]> {
     network["3.testnet.hedera.com:50211"] = AccountId(6)
     network["4.testnet.hedera.com:50211"] = AccountId(7)
 
-    return Network(eventLoopGroup).setNetwork(network)
+    return Network(eventLoopGroup).setNetworkName(.testnet).setNetwork(network)
   }
 
   class func forMainnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<Network> {
@@ -60,7 +60,7 @@ class Network: ManagedNetwork<Node, AccountId, [String: AccountId]> {
     network["34.89.87.138:50211"] = AccountId(19)
     network["34.82.78.255:50211"] = AccountId(20)
 
-    return Network(eventLoopGroup).setNetwork(network)
+    return Network(eventLoopGroup).setNetworkName(.mainnet).setNetwork(network)
   }
 
   func getNetwork() -> [String: AccountId] {

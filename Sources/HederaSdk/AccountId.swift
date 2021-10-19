@@ -1,7 +1,7 @@
 import HederaProtoServices
 
 public final class AccountId {
-  let id: EntityId
+  var id: EntityId
 
   init(_ entity: EntityId) {
     id = entity
@@ -71,5 +71,9 @@ extension AccountId {
 
   public var account: UInt64 {
     id.num
+  }
+
+  public func validate(_ client: Client) throws {
+    try id.validate(client)
   }
 }

@@ -11,6 +11,7 @@ public class Client {
   var maxBackoff: TimeInterval = 8
   var minBackoff: TimeInterval = 0.25
   var defaultMaxTransactionFee: Hbar?
+  var autoValidateChecksums: Bool = false
 
   let eventLoopGroup: EventLoopGroup
 
@@ -93,6 +94,12 @@ public class Client {
     return self
   }
 
+  @discardableResult
+  public func setAutoValidateChecksums(_ verify: Bool) -> Self {
+    autoValidateChecksums = verify
+    return self
+  }
+
   public func getNetworkName() -> NetworkName? {
     network.getNetworkName()
   }
@@ -107,6 +114,10 @@ public class Client {
 
   public func getDefaultMaxTransactionFee() -> Hbar? {
     defaultMaxTransactionFee
+  }
+
+  public func getAutoValidateChecksums() -> Bool {
+    autoValidateChecksums
   }
 
   public func setDefaultMaxTransactionFee(_ defaultMaxTransactionFee: Hbar) -> Self {

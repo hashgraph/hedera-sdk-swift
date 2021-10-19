@@ -2,7 +2,7 @@ import HederaCrypto
 import HederaProtoServices
 
 public final class ContractId: Key {
-  let id: EntityId
+  var id: EntityId
 
   //     // Overriding CustomStringConvertible and CustomDebugStringConvertible
   //    override public var description: String {
@@ -77,5 +77,9 @@ extension ContractId {
 
   public var contract: UInt64 {
     id.num
+  }
+
+  public func validate(_ client: Client) throws {
+    try id.validate(client)
   }
 }
