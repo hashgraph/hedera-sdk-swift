@@ -7,10 +7,10 @@ import NIO
 var DEFAULT_AUTO_RENEW_PERIOD: Double = 7776000
 
 class AccountCreateTransaction: Transaction {
-    var proxyAccountId: AccountId? = nil
-    var key: Key? = nil
-    var accountMemo: String = ""
-    var initialBalance: Hbar = Hbar(0)
+    var proxyAccountId: AccountId?
+    var key: Key?
+    var accountMemo: String?
+    var initialBalance: Hbar?
     var receiversSigRequired = false
     var autoRenewPeriod: TimeInterval = DEFAULT_AUTO_RENEW_PERIOD
 
@@ -67,10 +67,16 @@ class AccountCreateTransaction: Transaction {
 
     func build() -> Proto_CryptoCreateTransactionBody {
         var body = Proto_CryptoCreateTransactionBody()
-        body.memo = accountMemo
-        body.initialBalance = UInt64(initialBalance.toTinybars())
         body.receiverSigRequired = receiversSigRequired
         body.autoRenewPeriod = autoRenewPeriod.toProtobuf()
+
+        if let accountMemo = accountMemo {
+            body.memo = accountMemo
+        }
+
+        if let initialBalance = initialBalance {
+            body.initialBalance = initialBalance.toProtobuf()
+        }
 
         if let proxyAccountId = proxyAccountId {
             body.proxyAccountID = proxyAccountId.toProtobuf()
