@@ -72,12 +72,12 @@ class AccountCreateTransaction: Transaction {
         body.receiverSigRequired = receiversSigRequired
         body.autoRenewPeriod = autoRenewPeriod.toProtobuf()
 
-        if proxyAccountId != nil {
-            body.proxyAccountID = proxyAccountId!.toProtobuf()
+        if let proxyAccountId = proxyAccountId {
+            body.proxyAccountID = proxyAccountId.toProtobuf()
         }
 
-        if key != nil {
-            body.key = key!.toProtobufKey()!
+        if let key = key {
+            body.key = key.toProtobuf()
         }
 
         return body

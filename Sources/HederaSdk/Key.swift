@@ -7,69 +7,67 @@ extension Key {
         switch key.key {
         case .ed25519:
             return PublicKey.fromBytes(bytes: key.ed25519.bytes)
-        case .keyList:
-            let keyList = KeyList()
-            return keyList.fromProtobuf(key.keyList, thresholdKey: 0)
+        case .keyList, .thresholdKey:
+            return KeyList(key)
         case .contractID:
             return ContractId(key.contractID)
-        case .thresholdKey:
-            let keyList = KeyList()
-            return keyList.fromProtobuf(key.thresholdKey.keys, thresholdKey: key.thresholdKey.threshold)
         case .rsa3072, .ecdsa384, .none:
             return nil
         }
     }
 
-    func toProtobufKey() -> Proto_Key? {
-        var proto = Proto_Key()
-        switch self {
-        case let publicKey as PublicKey:
-            proto.ed25519 = Data(publicKey.bytes)
-            return proto
-        case let keyList as KeyList:
-            if keyList.getTreshold() == 0 {
-                proto.keyList =  keyList.toProtobuf()!
-                return proto
-            } else {
-                proto.thresholdKey.keys =  keyList.toProtobuf()!
-                proto.thresholdKey.threshold =  keyList.getTreshold()
-                return proto
-            }
-        case let contractId as ContractId:
-            proto.contractID = contractId.toProtobuf()
-            return proto
-        default:
-            return nil
+    func toProtobuf() -> Proto_Key {
+        if let publicKey = self as? PublicKey {
+            return publicKey.toProtobufKey()
+        } else if let keyList = self as? KeyList {
+            return keyList.toProtobufKey()
+        } else {
+            fatalError("not implemented")
         }
     }
 }
 
+extension PublicKey {
+    func toProtobufKey() -> Proto_Key {
+        var proto = Proto_Key()
+        proto.ecdsa384 = Data(bytes)
+        return proto
+    }
+}
+
 extension KeyList {
-    func fromProtobuf(_ proto: Proto_Key) -> Key? {
-        guard proto.keyList.keys.count > 0 else { return nil }
-        let keys = proto.keyList.keys.compactMap(Key.fromProtobuf)
-        let list = KeyList.of(keys: keys)
+    public convenience init?(_ proto: Proto_Key) {
+        self.init()
 
-        guard proto.keyList.keys.count == keys.count else { return nil }
+        switch proto.key {
+        case .keyList:
+            self.addAll(proto.keyList.keys.compactMap(Key.fromProtobuf))
+            break
+        case .thresholdKey:
+            self.setThreshold(threshold: proto.thresholdKey.threshold)
+            self.addAll(proto.thresholdKey.keys.keys.compactMap(Key.fromProtobuf))
+            break
+        default:
+            break
+        }
 
-        return list
     }
 
-    func fromProtobuf(_ proto: Proto_KeyList, thresholdKey: UInt32) -> Key? {
-        guard proto.keys.count > 0 else { return nil }
-        let keys = proto.keys.compactMap(Key.fromProtobuf)
-        let list = KeyList.of(keys: keys)
+    func toProtobufKey() -> Proto_Key {
+        var proto = Proto_Key()
 
-        guard proto.keys.count == keys.count else { return nil }
-        let _ = list.setTreshold(threshold: thresholdKey)
+        if let threshold = self.getThreshold() {
+            var thresholdKey = Proto_ThresholdKey()
+            var keyList = Proto_KeyList()
 
-        return list
-    }
-
-    func toProtobuf() -> Proto_KeyList? {
-        var proto = Proto_KeyList()
-        for key in self {
-            proto.keys.append(key.toProtobufKey()!)
+            keyList.keys = getKeys().map { $0.toProtobuf() }
+            thresholdKey.threshold = threshold
+            thresholdKey.keys = keyList
+            proto.thresholdKey = thresholdKey
+        } else {
+            var keyList = Proto_KeyList()
+            keyList.keys = getKeys().map { $0.toProtobuf() }
+            proto.keyList = keyList
         }
 
         return proto

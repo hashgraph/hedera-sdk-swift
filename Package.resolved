@@ -24,7 +24,7 @@
         "repositoryURL": "git@github.com:launchbadge/hedera-crypto-swift.git",
         "state": {
           "branch": "main",
-          "revision": "eb858f45fed00e6191584bf011d9a405ff67cf9f",
+          "revision": "ee47148409363fc432584384a86554015cbc4dcb",
           "version": null
         }
       },
@@ -89,6 +89,15 @@
           "branch": null,
           "revision": "e7f5278a26442dc46783ba7e063643d524e414a0",
           "version": "1.11.3"
+        }
+      },
+      {
+        "package": "SwiftProtobuf",
+        "repositoryURL": "https://github.com/apple/swift-protobuf.git",
+        "state": {
+          "branch": null,
+          "revision": "7e2c5f3cbbeea68e004915e3a8961e20bd11d824",
+          "version": "1.18.0"
         }
       },
       {
