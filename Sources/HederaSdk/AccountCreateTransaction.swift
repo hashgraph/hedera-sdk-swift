@@ -4,7 +4,7 @@ import GRPC
 import HederaProtoServices
 import NIO
 
-var DEFAULT_AUTO_RENEW_PERIOD: Double = 7776000
+let DEFAULT_AUTO_RENEW_PERIOD: Double = 7776000
 
 class AccountCreateTransaction: Transaction {
     var proxyAccountId: AccountId?
@@ -89,7 +89,7 @@ class AccountCreateTransaction: Transaction {
         return body
     }
 
-    override func onFreeze(_ transactionBody: inout Proto_TransactionBody) {
-        transactionBody.cryptoCreateAccount = build()
+    override func onFreeze(_ body: inout Proto_TransactionBody) {
+        body.cryptoCreateAccount = build()
     }
 }

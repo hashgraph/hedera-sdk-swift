@@ -122,6 +122,14 @@ final class CostQuery<O>: Query<Hbar> {
     return proto
   }
 
+  override func onFreeze(_ proto: inout Proto_Query, _ header: Proto_QueryHeader) {
+    query.onFreeze(&proto, header)
+  }
+
+  override func onMakeRequest(_ proto: inout Proto_Query) {
+    query.onMakeRequest(&proto)
+  }
+
   override func mapStatusError(_ response: Proto_Response) -> Error {
     PrecheckStatusError(
       status: mapResponseHeader(response).nodeTransactionPrecheckCode,
