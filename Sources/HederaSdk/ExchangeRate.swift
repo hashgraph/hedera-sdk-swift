@@ -14,7 +14,7 @@ public final class ExchangeRate {
 }
 
 extension ExchangeRate: ProtobufConvertible {
-  public convenience init?(_ proto: Proto_ExchangeRate) {
+  convenience init?(_ proto: Proto_ExchangeRate) {
     self.init(
       Hbar(UInt64(proto.hbarEquiv)),
       proto.centEquiv,
@@ -22,7 +22,7 @@ extension ExchangeRate: ProtobufConvertible {
         ? Date(timeIntervalSince1970: Double(proto.expirationTime.seconds)) : nil)
   }
 
-  public func toProtobuf() -> Proto_ExchangeRate {
+  func toProtobuf() -> Proto_ExchangeRate {
     var proto = Proto_ExchangeRate()
     proto.hbarEquiv = Int32(hbars.toProtobuf())
     proto.centEquiv = cents

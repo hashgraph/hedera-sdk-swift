@@ -12,6 +12,10 @@ public final class AccountInfoQuery: Query<AccountInfo> {
     return self
   }
 
+  public func getAccountId() -> AccountId? {
+    accountId
+  }
+
   convenience init(_ proto: Proto_Query) {
     self.init()
 
@@ -22,6 +26,10 @@ public final class AccountInfoQuery: Query<AccountInfo> {
     UnaryCall<Proto_Query, Proto_Response>
   {
     nodes[circular: index].getCrypto().getAccountInfo
+  }
+
+  override func isPaymentRequired() -> Bool {
+    true
   }
 
   override func onMakeRequest(_ proto: inout Proto_Query) {

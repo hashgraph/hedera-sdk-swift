@@ -53,8 +53,8 @@ public final class Hbar {
     tinybars
   }
 
-  public class func fromTinybars(_ tinybars: UInt64) -> Hbar {
-    Hbar(tinybars / HbarUnit.hbar.rawValue)
+  public static func fromTinybars(_ tinybars: Int64) -> Hbar {
+    Hbar(tinybars, HbarUnit.tinybar)
   }
 
   public static prefix func - (right: Hbar) -> Hbar {
@@ -71,8 +71,8 @@ public final class Hbar {
 }
 
 extension Hbar: ProtobufConvertible {
-  public func toProtobuf() -> UInt64 {
-    UInt64(bitPattern: tinybars)
+  func toProtobuf() -> Int64 {
+    Int64(tinybars)
   }
 }
 

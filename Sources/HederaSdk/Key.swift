@@ -36,7 +36,7 @@ extension PublicKey {
 }
 
 extension KeyList {
-  public convenience init?(_ proto: Proto_Key) {
+  convenience init?(_ proto: Proto_Key) {
     self.init()
 
     switch proto.key {

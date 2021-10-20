@@ -1,6 +1,6 @@
 import SwiftProtobuf
 
-public protocol ProtobufConvertible {
+protocol ProtobufConvertible {
   associatedtype Protobuf
 
   func toProtobuf() -> Protobuf

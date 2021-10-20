@@ -48,7 +48,7 @@ public final class TokenRelationship {
 }
 
 extension TokenRelationship: ProtobufConvertible {
-  public convenience init?(_ proto: Proto_TokenRelationship) {
+  convenience init?(_ proto: Proto_TokenRelationship) {
     self.init(
       tokenId: TokenId(proto.tokenID),
       symbol: proto.symbol,
@@ -58,7 +58,7 @@ extension TokenRelationship: ProtobufConvertible {
     )
   }
 
-  public func toProtobuf() -> Proto_TokenRelationship {
+  func toProtobuf() -> Proto_TokenRelationship {
     var proto = Proto_TokenRelationship()
     proto.tokenID = tokenId.toProtobuf()
     proto.symbol = symbol

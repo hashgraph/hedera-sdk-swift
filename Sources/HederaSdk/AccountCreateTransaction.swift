@@ -6,7 +6,7 @@ import NIO
 
 let DEFAULT_AUTO_RENEW_PERIOD: Double = 7_776_000
 
-class AccountCreateTransaction: Transaction {
+public final class AccountCreateTransaction: Transaction {
   var proxyAccountId: AccountId?
   var key: Key?
   var accountMemo: String?
@@ -50,6 +50,30 @@ class AccountCreateTransaction: Transaction {
     return self
   }
 
+  public func getProxyAccountId() -> AccountId? {
+    proxyAccountId
+  }
+
+  public func getKey() -> Key? {
+    key
+  }
+
+  public func getInitialBalance() -> Hbar? {
+    initialBalance
+  }
+
+  public func getReceiverSignatureRequired() -> Bool {
+    receiversSigRequired
+  }
+
+  public func getAutoRenewPeriod() -> TimeInterval {
+    autoRenewPeriod
+  }
+
+  public func getAccountMemo() -> String? {
+    accountMemo
+  }
+
   convenience init(_ proto: Proto_TransactionBody) {
     self.init()
 
@@ -57,7 +81,7 @@ class AccountCreateTransaction: Transaction {
     setKey(Key.fromProtobuf(proto.cryptoCreateAccount.key)!)
     setAccountMemo(proto.cryptoCreateAccount.memo)
     setAutoRenewPeriod(TimeInterval(proto.cryptoCreateAccount.autoRenewPeriod.seconds))
-    setInitialBalance(Hbar.fromTinybars(proto.cryptoCreateAccount.initialBalance))
+    setInitialBalance(Hbar.fromTinybars(Int64(proto.cryptoCreateAccount.initialBalance)))
     setReceiverSignatureRequired(proto.cryptoCreateAccount.receiverSigRequired)
   }
 
@@ -79,7 +103,7 @@ class AccountCreateTransaction: Transaction {
     }
 
     if let initialBalance = initialBalance {
-      body.initialBalance = initialBalance.toProtobuf()
+      body.initialBalance = UInt64(initialBalance.toProtobuf())
     }
 
     if let proxyAccountId = proxyAccountId {

@@ -2,7 +2,7 @@ import GRPC
 import HederaProtoServices
 import NIO
 
-public final class AccountBalanceQuery: Query<AccountBalance> {
+public final class AccountRecordsQuery: Query<[TransactionRecord]> {
   var accountId: AccountId? = nil
 
   @discardableResult
@@ -18,41 +18,44 @@ public final class AccountBalanceQuery: Query<AccountBalance> {
   convenience init(_ proto: Proto_Query) {
     self.init()
 
-    setAccountId(AccountId(proto.cryptogetAccountBalance.accountID))
-  }
-
-  override func isTransactionIdRequired() -> Bool {
-    false
+    setAccountId(AccountId(proto.cryptoGetAccountRecords.accountID))
   }
 
   override func isPaymentRequired() -> Bool {
-    false
+    true
   }
 
   override func getMethodDescriptor(_ index: Int) -> (_ request: Proto_Query, CallOptions?) ->
     UnaryCall<Proto_Query, Proto_Response>
   {
-    nodes[circular: index].getCrypto().cryptoGetBalance
+    nodes[circular: index].getCrypto().getAccountRecords
   }
 
   override func onMakeRequest(_ proto: inout Proto_Query) {
     // TODO: What happens if we don't d this
-    proto.cryptogetAccountBalance = Proto_CryptoGetAccountBalanceQuery()
+    proto.cryptoGetAccountRecords = Proto_CryptoGetAccountRecordsQuery()
 
     if let accountId = accountId {
-      proto.cryptogetAccountBalance.accountID = accountId.toProtobuf()
+      proto.cryptoGetAccountRecords.accountID = accountId.toProtobuf()
     }
   }
 
+  // TODO: Why does this need to exit here?
+  override func mapStatusError(_ response: Proto_Response) -> Error {
+    PrecheckStatusError(
+      status: response.cryptoGetAccountRecords.header.nodeTransactionPrecheckCode,
+      transactionId: transactionIds.first!)
+  }
+
   override func onFreeze(_ query: inout Proto_Query, _ header: Proto_QueryHeader) {
-    query.cryptogetAccountBalance.header = header
+    query.cryptoGetAccountRecords.header = header
   }
 
   override func mapResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
-    response.cryptogetAccountBalance.header
+    response.cryptoGetAccountRecords.header
   }
 
-  override func mapResponse(_ index: Int, _ response: Proto_Response) -> AccountBalance {
-    AccountBalance(response.cryptogetAccountBalance)!
+  override func mapResponse(_ index: Int, _ response: Proto_Response) -> [TransactionRecord] {
+    response.cryptoGetAccountRecords.records.map { TransactionRecord($0)! }
   }
 }

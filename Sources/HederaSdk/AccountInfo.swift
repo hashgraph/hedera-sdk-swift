@@ -38,7 +38,7 @@ public final class AccountInfo {
 }
 
 extension AccountInfo: ProtobufConvertible {
-  public convenience init?(_ proto: Proto_CryptoGetInfoResponse.AccountInfo) {
+  convenience init?(_ proto: Proto_CryptoGetInfoResponse.AccountInfo) {
     self.init(
       accountId: proto.hasAccountID ? AccountId(proto.accountID) : nil,
       contractAccountId: proto.contractAccountID,
@@ -58,12 +58,12 @@ extension AccountInfo: ProtobufConvertible {
     )
   }
 
-  public func toProtobuf() -> Proto_CryptoGetInfoResponse.AccountInfo {
+  func toProtobuf() -> Proto_CryptoGetInfoResponse.AccountInfo {
     var proto = Proto_CryptoGetInfoResponse.AccountInfo()
     proto.contractAccountID = contractAccountId
     proto.deleted = isDeleted
-    proto.proxyReceived = Int64(proxyReceived.toProtobuf())
-    proto.balance = balance.toProtobuf()
+    proto.proxyReceived = proxyReceived.toProtobuf()
+    proto.balance = UInt64(balance.toProtobuf())
     proto.receiverSigRequired = isReceiverSignatureRequired
     proto.memo = accountMemo
     proto.tokenRelationships = tokenRelationships.map { $0.value.toProtobuf() }

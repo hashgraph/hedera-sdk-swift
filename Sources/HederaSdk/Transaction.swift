@@ -11,7 +11,7 @@ extension TimeInterval: ProtobufConvertible {
     self.init(proto.seconds)
   }
 
-  public func toProtobuf() -> Proto_Duration {
+  func toProtobuf() -> Proto_Duration {
     var proto = Proto_Duration()
     proto.seconds = Int64(self)
     return proto
@@ -118,7 +118,7 @@ public class Transaction: Executable<
 
   func makeTransactionBody(_ index: Int) -> Proto_TransactionBody {
     var transactionBody = Proto_TransactionBody()
-    transactionBody.transactionFee = maxTransactionFee!.toProtobuf()
+    transactionBody.transactionFee = UInt64(maxTransactionFee!.toProtobuf())
     transactionBody.transactionValidDuration = transactionValidDuration.toProtobuf()
     transactionBody.memo = memo ?? ""
     transactionBody.nodeAccountID = nodeAccountIds[Int(index) % nodeAccountIds.count].toProtobuf()

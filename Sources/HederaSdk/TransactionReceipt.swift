@@ -31,7 +31,7 @@ public final class TransactionReceipt {
 }
 
 extension TransactionReceipt: ProtobufConvertible {
-  public convenience init?(_ proto: Proto_TransactionReceipt) {
+  convenience init?(_ proto: Proto_TransactionReceipt) {
     self.init(
       status: proto.status,
       exchangeRate: proto.hasExchangeRate ? ExchangeRate(proto.exchangeRate.currentRate) : nil,
@@ -45,7 +45,7 @@ extension TransactionReceipt: ProtobufConvertible {
     )
   }
 
-  public func toProtobuf() -> Proto_TransactionReceipt {
+  func toProtobuf() -> Proto_TransactionReceipt {
     var proto = Proto_TransactionReceipt()
     proto.status = status
     proto.topicSequenceNumber = topicSequenceNumber

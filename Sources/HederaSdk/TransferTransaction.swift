@@ -31,7 +31,7 @@ public final class TransferTransaction: Transaction {
     transfers.accountAmounts = hbarTransfers.map {
       var proto = Proto_AccountAmount()
       proto.accountID = $0.key.toProtobuf()
-      proto.amount = Int64(bitPattern: $0.value.toProtobuf())
+      proto.amount = $0.value.toProtobuf()
       return proto
     }
 

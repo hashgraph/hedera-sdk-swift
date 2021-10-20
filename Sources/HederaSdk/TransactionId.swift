@@ -53,7 +53,7 @@ extension Date: ProtobufConvertible {
     self.init(timeIntervalSince1970: Double(proto.seconds) + Double(proto.nanos) / 1_000_000_000)
   }
 
-  public func toProtobuf() -> Proto_Timestamp {
+  func toProtobuf() -> Proto_Timestamp {
     var proto = Proto_Timestamp()
     proto.seconds = Int64(floor(timeIntervalSince1970))
     proto.nanos = Int32(Int64(timeIntervalSince1970.truncatingRemainder(dividingBy: 1) * 1_000_000))
@@ -62,7 +62,7 @@ extension Date: ProtobufConvertible {
 }
 
 extension TransactionId: ProtobufConvertible {
-  public convenience init?(_ proto: Proto_TransactionID) {
+  convenience init?(_ proto: Proto_TransactionID) {
     guard let accountId = proto.hasAccountID ? AccountId(proto.accountID) : nil,
       let validStart = proto.hasTransactionValidStart ? Date(proto.transactionValidStart) : nil
     else {
@@ -73,7 +73,7 @@ extension TransactionId: ProtobufConvertible {
     setScheduled(proto.scheduled)
   }
 
-  public func toProtobuf() -> Proto_TransactionID {
+  func toProtobuf() -> Proto_TransactionID {
     var proto = Proto_TransactionID()
     proto.accountID = accountId.toProtobuf()
     proto.transactionValidStart = validStart.toProtobuf()
