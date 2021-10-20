@@ -30,6 +30,8 @@ public class Executable<O, RequestT, ResponseT> {
   var nextNodeIndex: Int = 0
   var nextTransactionIdIndex: Int = 0
 
+  var `operator`: Operator?
+
   var index: Int {
     nextNodeIndex + nextTransactionIdIndex * nodeAccountIds.count
   }
@@ -159,6 +161,8 @@ public class Executable<O, RequestT, ResponseT> {
       return self
     }
 
+    `operator` = client?.operator
+
     if transactionIds.isEmpty && isTransactionIdRequired() {
       guard let operatorId = client?.getOperatorAccountId() else {
         throw "Transaction ID must be set, or a client with an operator must be provided"
@@ -194,7 +198,12 @@ public class Executable<O, RequestT, ResponseT> {
 
   @discardableResult
   public func signWithOperator(_ client: Client) -> Self {
-    client.`operator`.map { signWith($0.publicKey, $0.transactionSigner) } ?? self
+    signWithOperator(client.operator)
+  }
+
+  @discardableResult
+  func signWithOperator(_ `operator`: Operator?) -> Self {
+    `operator`.map { signWith($0.publicKey, $0.transactionSigner) } ?? self
   }
 
   @discardableResult

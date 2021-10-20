@@ -1,81 +1,81 @@
-import HederaProtoServices
 import HederaCrypto
+import HederaProtoServices
 
 public final class ContractId: Key {
-    let id: EntityId
+  let id: EntityId
 
-//     // Overriding CustomStringConvertible and CustomDebugStringConvertible
-//    override public var description: String {
-//        id.description
-//    }
-//    override public var debugDescription: String {
-//        id.debugDescription
-//    }
+  //     // Overriding CustomStringConvertible and CustomDebugStringConvertible
+  //    override public var description: String {
+  //        id.description
+  //    }
+  //    override public var debugDescription: String {
+  //        id.debugDescription
+  //    }
 
-    convenience init?(_ proto: Proto_Key) {
-        guard case let .contractID(contractId) =  proto.key else { return nil }
+  convenience init?(_ proto: Proto_Key) {
+    guard case let .contractID(contractId) = proto.key else { return nil }
 
-        self.init(contractId)
-    }
+    self.init(contractId)
+  }
 
-    init(_ proto: Proto_ContractID) {
-        id = EntityId(proto)
-        super.init()
-    }
+  init(_ proto: Proto_ContractID) {
+    id = EntityId(proto)
+    super.init()
+  }
 
-    init(_  id: EntityId) {
-        self.id = id
-        super.init()
-    }
+  init(_ id: EntityId) {
+    self.id = id
+    super.init()
+  }
 
-    func toProtobuf() -> Proto_ContractID {
-        var proto = Proto_ContractID()
-        proto.shardNum = Int64(id.shard)
-        proto.realmNum = Int64(id.realm)
-        proto.contractNum = Int64(id.num)
+  func toProtobuf() -> Proto_ContractID {
+    var proto = Proto_ContractID()
+    proto.shardNum = Int64(id.shard)
+    proto.realmNum = Int64(id.realm)
+    proto.contractNum = Int64(id.num)
 
-        return proto
-    }
+    return proto
+  }
 }
 
 extension ContractId: Equatable {
-    public static func == (lhs: ContractId, rhs: ContractId) -> Bool {
-        lhs.id == rhs.id
-    }
+  public static func == (lhs: ContractId, rhs: ContractId) -> Bool {
+    lhs.id == rhs.id
+  }
 }
 
 extension ContractId: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(id)
+  }
 }
 
 extension ContractId: LosslessStringConvertible {
-    public convenience init?(_ description: String) {
-        guard let id = EntityId(description) else { return nil }
-        self.init(id)
-    }
+  public convenience init?(_ description: String) {
+    guard let id = EntityId(description) else { return nil }
+    self.init(id)
+  }
 }
 
 extension ContractId {
-    public convenience init(shard: UInt64 = 0, realm: UInt64 = 0, num: UInt64) {
-        self.init(EntityId(shard: shard, realm: realm, num: num))
-    }
+  public convenience init(shard: UInt64 = 0, realm: UInt64 = 0, num: UInt64) {
+    self.init(EntityId(shard: shard, realm: realm, num: num))
+  }
 
-    /// Create a ContractId with shard and realm set to 0.
-    public convenience init(_ num: UInt64) {
-        self.init(EntityId(num: num))
-    }
+  /// Create a ContractId with shard and realm set to 0.
+  public convenience init(_ num: UInt64) {
+    self.init(EntityId(num: num))
+  }
 
-    public var shard: UInt64 {
-        id.shard
-    }
+  public var shard: UInt64 {
+    id.shard
+  }
 
-    public var realm: UInt64 {
-        id.realm
-    }
+  public var realm: UInt64 {
+    id.realm
+  }
 
-    public var contract: UInt64 {
-        id.num
-    }
+  public var contract: UInt64 {
+    id.num
+  }
 }

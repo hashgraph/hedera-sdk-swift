@@ -37,6 +37,12 @@ public final class AccountInfoQuery: Query<AccountInfo> {
     query.cryptoGetInfo.header = header
   }
 
+  override func mapStatusError(_ response: Proto_Response) -> Error {
+    PrecheckStatusError(
+      status: response.cryptoGetInfo.header.nodeTransactionPrecheckCode,
+      transactionId: transactionIds.first!)
+  }
+
   override func mapResponseHeader(_ response: Proto_Response) -> Proto_ResponseHeader {
     response.cryptoGetInfo.header
   }

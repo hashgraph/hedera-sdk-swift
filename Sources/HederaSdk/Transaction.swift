@@ -71,7 +71,7 @@ public class Transaction: Executable<
   @discardableResult
   public override func setNodeAccountIds(_ nodeAccountIds: [AccountId]) throws -> Self {
     try requireNotFrozen()
-    return try super.setNodeAccountIds(nodeAccountIds)
+    return try super.setNodeAccountIds(nodeAccountIds) as! Self
   }
 
   @discardableResult

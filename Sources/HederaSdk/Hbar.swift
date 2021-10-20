@@ -57,6 +57,14 @@ public final class Hbar {
     Hbar(tinybars / HbarUnit.hbar.rawValue)
   }
 
+  public static prefix func - (right: Hbar) -> Hbar {
+    Hbar(-right.tinybars)
+  }
+
+  public static func - (left: Hbar, right: Hbar) -> Hbar {
+    Hbar(left.tinybars - right.tinybars)
+  }
+
   public static func + (left: Hbar, right: Hbar) -> Hbar {
     Hbar(left.tinybars + right.tinybars)
   }

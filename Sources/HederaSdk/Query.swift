@@ -27,7 +27,7 @@ public class Query<O>: Executable<O, Proto_Query, Proto_Response> {
   }
 
   override func onExecuteAsync(_ client: Client) -> EventLoopFuture<Client> {
-    if !isPaymentRequired() {
+    if !isPaymentRequired() || queryPayment != nil {
       return client.eventLoopGroup.next().makeSucceededFuture(client)
     }
 
@@ -58,17 +58,21 @@ public class Query<O>: Executable<O, Proto_Query, Proto_Response> {
     onMakeRequest(&proto)
 
     if isPaymentRequired() {
-        var header = Proto_QueryHeader()
-        let transaction = try TransferTransaction()
-          .addHbarTransfer(transactionIds.first!.accountId, queryPayment!)
-          .addHbarTransfer(nodes[circular: index].accountId, queryPayment!)
+      var header = Proto_QueryHeader()
+      let transaction = try TransferTransaction()
+        .setTransactionId(transactionIds.first!)
+        .setNodeAccountIds([nodeAccountIds[circular: index]])
+        .addHbarTransfer(transactionIds.first!.accountId, -queryPayment!)
+        .addHbarTransfer(nodes[circular: index].accountId, queryPayment!)
+        .freeze()
+        .signWithOperator(`operator`)
 
-        header.payment = try transaction.makeRequest(0, save: false)
-        onFreeze(&proto, header)
+      header.payment = try transaction.makeRequest(0, save: false)
+      onFreeze(&proto, header)
     }
 
     if save ?? false {
-        requests[index] = proto
+      requests[index] = proto
     }
 
     return proto
@@ -116,7 +120,7 @@ final class CostQuery<O>: Query<Hbar> {
     query.onFreeze(&proto, header)
 
     if save ?? false {
-        requests[index] = proto
+      requests[index] = proto
     }
 
     return proto

@@ -17,6 +17,10 @@ public final class AccountBalanceQuery: Query<AccountBalance> {
     setAccountId(AccountId(proto.cryptogetAccountBalance.accountID))
   }
 
+  override func isTransactionIdRequired() -> Bool {
+    false
+  }
+
   override func isPaymentRequired() -> Bool {
     false
   }
