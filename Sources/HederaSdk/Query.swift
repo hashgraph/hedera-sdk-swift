@@ -5,6 +5,7 @@ import NIO
 public class Query<O>: Executable<O, Proto_Query, Proto_Response> {
   var maxQueryPayment: Hbar?
   var queryPayment: Hbar?
+  var paymentTransaction: TransferTransaction?
 
   @discardableResult
   public func setMaxQueryPayment(_ maxQueryPayment: Hbar) -> Self {
@@ -33,10 +34,6 @@ public class Query<O>: Executable<O, Proto_Query, Proto_Response> {
 
     return getCostAsync(client)
       .flatMap {
-        if self.queryPayment != nil {
-          return client.eventLoopGroup.next().makeSucceededFuture(client)
-        }
-
         if let maxQueryPayment = self.maxQueryPayment, $0 > maxQueryPayment {
           return client.eventLoopGroup.next().makeFailedFuture(
             MaxQueryPaymentExceededError(query: self, cost: $0, maxCost: self.maxQueryPayment!))
@@ -48,7 +45,7 @@ public class Query<O>: Executable<O, Proto_Query, Proto_Response> {
       }
   }
 
-  override func makeRequest(_ index: Int, save: Bool? = true) throws -> Proto_Query {
+  override func makeRequest(_ index: Int, save: Bool = true) throws -> Proto_Query {
     if let query = requests[index] {
       return query
     }
@@ -57,21 +54,31 @@ public class Query<O>: Executable<O, Proto_Query, Proto_Response> {
 
     onMakeRequest(&proto)
 
-    if isPaymentRequired() {
-      var header = Proto_QueryHeader()
-      let transaction = try TransferTransaction()
-        .setTransactionId(transactionIds.first!)
-        .setNodeAccountIds([nodeAccountIds[circular: index]])
-        .addHbarTransfer(transactionIds.first!.accountId, -queryPayment!)
-        .addHbarTransfer(nodes[circular: index].accountId, queryPayment!)
+    if let queryPayment = queryPayment, let transactionId = transactionIds.first,
+      isPaymentRequired() || paymentTransaction == nil
+    {
+      paymentTransaction = try TransferTransaction()
+        .setTransactionId(transactionId)
+        .setNodeAccountIds(nodeAccountIds)
+        .addHbarTransfer(transactionId.accountId, -queryPayment)
+        .addHbarTransfer(nodes[circular: index].accountId, queryPayment)
         .freeze()
         .signWithOperator(`operator`)
 
-      header.payment = try transaction.makeRequest(0, save: false)
+      for (publicKey, signer) in zip(publicKeys, signers) {
+        guard let signer = signer else {
+          continue
+        }
+
+        paymentTransaction!.signWith(publicKey, signer)
+      }
+
+      var header = Proto_QueryHeader()
+      header.payment = try paymentTransaction!.makeRequest(index, save: false)
       onFreeze(&proto, header)
     }
 
-    if save ?? false {
+    if save {
       requests[index] = proto
     }
 
@@ -106,20 +113,31 @@ final class CostQuery<O>: Query<Hbar> {
     false
   }
 
-  override func executeAsync(_ index: Int, save: Bool? = true) throws -> UnaryCall<
-    Proto_Query, Proto_Response
-  > {
-    try query.executeAsync(index, save: false)
+  override func setNodes(_ nodes: [Node]) -> Self {
+    query.setNodes(nodes)
+    return super.setNodes(nodes)
   }
 
-  override func makeRequest(_ index: Int, save: Bool? = true) throws -> Proto_Query {
+  override func getMethodDescriptor(_ index: Int) -> (_ request: Proto_Query, CallOptions?) ->
+    UnaryCall<
+      Proto_Query, Proto_Response
+    >
+  {
+    query.getMethodDescriptor(index)
+  }
+
+  override func makeRequest(_ index: Int, save: Bool = true) throws -> Proto_Query {
+    if query.nodes.isEmpty || query.nodeAccountIds.isEmpty {
+      query.nodeAccountIds = nodeAccountIds
+      query.nodes = nodes
+    }
+
     var proto = try query.makeRequest(index, save: false)
     var header = Proto_QueryHeader()
     header.responseType = .costAnswer
-
     query.onFreeze(&proto, header)
 
-    if save ?? false {
+    if save {
       requests[index] = proto
     }
 

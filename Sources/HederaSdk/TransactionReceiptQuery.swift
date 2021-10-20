@@ -19,13 +19,15 @@ class TransactionReceiptQuery: Query<TransactionReceipt> {
     false
   }
 
-  override func executeAsync(_ index: Int, save: Bool? = true) -> UnaryCall<
-    Proto_Query, Proto_Response
-  > {
-    nodes[circular: index].getCrypto().getTransactionReceipts(makeRequest(index, save: save))
+  override func getMethodDescriptor(_ index: Int) -> (_ request: Proto_Query, CallOptions?) ->
+    UnaryCall<
+      Proto_Query, Proto_Response
+    >
+  {
+    nodes[circular: index].getCrypto().getTransactionReceipts
   }
 
-  override func makeRequest(_ index: Int, save: Bool? = true) -> Proto_Query {
+  override func makeRequest(_ index: Int, save: Bool = true) -> Proto_Query {
     if let query = requests[index] {
       return query
     }
@@ -36,7 +38,7 @@ class TransactionReceiptQuery: Query<TransactionReceipt> {
       proto.transactionGetReceipt.transactionID = transactionId.toProtobuf()
     }
 
-    if save ?? false {
+    if save {
       requests[index] = proto
     }
 

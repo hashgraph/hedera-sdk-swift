@@ -79,6 +79,12 @@ public class Executable<O, RequestT, ResponseT> {
     return self
   }
 
+  @discardableResult
+  func setNodes(_ nodes: [Node]) -> Self {
+    self.nodes = nodes
+    return self
+  }
+
   func onExecuteAsync(_ client: Client) -> EventLoopFuture<Client> {
     if !isFrozen() {
       do {
@@ -224,7 +230,7 @@ public class Executable<O, RequestT, ResponseT> {
     try requests = (0..<nodeAccountIds.count).map { try makeRequest($0) }
   }
 
-  func makeRequest(_ index: Int, save: Bool? = true) throws -> RequestT {
+  func makeRequest(_ index: Int, save: Bool = true) throws -> RequestT {
     fatalError("not implemented")
   }
 
@@ -236,7 +242,9 @@ public class Executable<O, RequestT, ResponseT> {
     fatalError("not implemented")
   }
 
-  func executeAsync(_ index: Int, save: Bool? = true) throws -> UnaryCall<RequestT, ResponseT> {
+  func getMethodDescriptor(_ index: Int) -> (_ request: RequestT, CallOptions?) -> UnaryCall<
+    RequestT, ResponseT
+  > {
     fatalError("not implemented")
   }
 
@@ -255,7 +263,7 @@ public class Executable<O, RequestT, ResponseT> {
     }
 
     do {
-      let call = try executeAsync(index)
+      let call = getMethodDescriptor(index)(try makeRequest(index), nil)
       let responseFuture = call.response
 
       return call.status
@@ -299,7 +307,7 @@ public class Executable<O, RequestT, ResponseT> {
 
     return onExecuteAsync(client).flatMap {
       $0.network.getNodeAccountIdsForExecute().map {
-        self.nodes = $0.compactMap { client.network.network[$0] }
+        self.setNodes($0.compactMap { client.network.network[$0] })
       }.flatMap { self.executeAsync(1, client.eventLoopGroup.next()) }
     }
   }

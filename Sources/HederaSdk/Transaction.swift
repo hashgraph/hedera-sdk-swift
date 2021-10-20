@@ -71,7 +71,7 @@ public class Transaction: Executable<
   @discardableResult
   public override func setNodeAccountIds(_ nodeAccountIds: [AccountId]) throws -> Self {
     try requireNotFrozen()
-    return try super.setNodeAccountIds(nodeAccountIds) as! Self
+    return try super.setNodeAccountIds(nodeAccountIds)
   }
 
   @discardableResult
@@ -139,7 +139,7 @@ public class Transaction: Executable<
     let _ = try (0..<innerSignedTransactions.count).map { try makeRequest($0) }
   }
 
-  override func makeRequest(_ index: Int, save: Bool? = true) throws -> Proto_Transaction {
+  override func makeRequest(_ index: Int, save: Bool = true) throws -> Proto_Transaction {
     if let transaction = requests[index], !transaction.signedTransactionBytes.isEmpty {
       return transaction
     }
@@ -147,7 +147,7 @@ public class Transaction: Executable<
     var proto = Proto_Transaction()
     proto.signedTransactionBytes = try signTransaction(index).serializedData()
 
-    if save ?? false {
+    if save {
       requests[index] = proto
     }
 

@@ -15,7 +15,6 @@ let client = try! Client.forTestnet().wait()
         .setOperator(AccountId(operatorId!)!, PrivateKey(operatorKey!)!)
 
 let info = try! AccountInfoQuery()
-        .setQueryPayment(Hbar(hbars: 1))
         .setAccountId(AccountId(3))
         .executeAsync(client)
         .wait()

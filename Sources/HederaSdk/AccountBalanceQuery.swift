@@ -25,11 +25,10 @@ public final class AccountBalanceQuery: Query<AccountBalance> {
     false
   }
 
-  override func executeAsync(_ index: Int, save: Bool? = true) -> UnaryCall<
-    Proto_Query, Proto_Response
-  > {
-    nodes[circular: index].getCrypto().cryptoGetBalance(
-      try! makeRequest(index, save: save), callOptions: nil)
+  override func getMethodDescriptor(_ index: Int) -> (_ request: Proto_Query, CallOptions?) ->
+    UnaryCall<Proto_Query, Proto_Response>
+  {
+    nodes[circular: index].getCrypto().cryptoGetBalance
   }
 
   override func onMakeRequest(_ proto: inout Proto_Query) {

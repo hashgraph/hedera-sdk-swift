@@ -16,10 +16,12 @@ public final class TransferTransaction: Transaction {
     return self
   }
 
-  override func executeAsync(_ index: Int, save: Bool? = true) throws -> UnaryCall<
-    Proto_Transaction, Proto_TransactionResponse
-  > {
-    nodes[circular: index].getCrypto().cryptoTransfer(try makeRequest(index, save: save))
+  override func getMethodDescriptor(_ index: Int) -> (_ request: Proto_Transaction, CallOptions?) ->
+    UnaryCall<
+      Proto_Transaction, Proto_TransactionResponse
+    >
+  {
+    nodes[circular: index].getCrypto().cryptoTransfer
   }
 
   func build() -> Proto_CryptoTransferTransactionBody {

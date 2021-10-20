@@ -18,10 +18,10 @@ public final class AccountInfoQuery: Query<AccountInfo> {
     setAccountId(AccountId(proto.cryptoGetInfo.accountID))
   }
 
-  override func executeAsync(_ index: Int, save: Bool? = true) -> UnaryCall<
-    Proto_Query, Proto_Response
-  > {
-    nodes[circular: index].getCrypto().getAccountInfo(try! makeRequest(index, save: save))
+  override func getMethodDescriptor(_ index: Int) -> (_ request: Proto_Query, CallOptions?) ->
+    UnaryCall<Proto_Query, Proto_Response>
+  {
+    nodes[circular: index].getCrypto().getAccountInfo
   }
 
   override func onMakeRequest(_ proto: inout Proto_Query) {
@@ -37,6 +37,7 @@ public final class AccountInfoQuery: Query<AccountInfo> {
     query.cryptoGetInfo.header = header
   }
 
+  // TODO: Why does this need to exit here?
   override func mapStatusError(_ response: Proto_Response) -> Error {
     PrecheckStatusError(
       status: response.cryptoGetInfo.header.nodeTransactionPrecheckCode,
