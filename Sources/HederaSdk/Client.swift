@@ -24,26 +24,26 @@ public class Client {
     try! eventLoopGroup.syncShutdownGracefully()
   }
 
-  public static func forNetwork(_ network: [String: AccountId]) -> EventLoopFuture<Client> {
+  public class func forNetwork(_ network: [String: AccountId]) -> EventLoopFuture<Client> {
     let client = Client()
     return client.setNetwork(Network.forNetwork(client.eventLoopGroup, network))
   }
 
-  public static func forMainnet() -> EventLoopFuture<Client> {
+  public class func forMainnet() -> EventLoopFuture<Client> {
     let client = Client()
     return client.setNetwork(Network.forMainnet(client.eventLoopGroup)).flatMap {
       $0.setMirrorNetwork(MirrorNetwork.forMainnet($0.eventLoopGroup))
     }
   }
 
-  public static func forTestnet() -> EventLoopFuture<Client> {
+  public class func forTestnet() -> EventLoopFuture<Client> {
     let client = Client()
     return client.setNetwork(Network.forTestnet(client.eventLoopGroup)).flatMap {
       $0.setMirrorNetwork(MirrorNetwork.forTestnet($0.eventLoopGroup))
     }
   }
 
-  public static func forPreviewnet() -> EventLoopFuture<Client> {
+  public class func forPreviewnet() -> EventLoopFuture<Client> {
     let client = Client()
     return client.setNetwork(Network.forPreviewnet(client.eventLoopGroup)).flatMap {
       $0.setMirrorNetwork(MirrorNetwork.forPreviewnet($0.eventLoopGroup))

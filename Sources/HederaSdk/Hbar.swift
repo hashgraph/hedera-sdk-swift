@@ -45,7 +45,7 @@ public final class Hbar {
     Double(tinybars) / Double(hbarUnit.rawValue)
   }
 
-  public static func fromHbarUnit(_ number: Int64, _ hbarUnit: HbarUnit) -> Hbar {
+  public class func fromHbarUnit(_ number: Int64, _ hbarUnit: HbarUnit) -> Hbar {
     Hbar(number, hbarUnit)
   }
 
@@ -53,7 +53,7 @@ public final class Hbar {
     tinybars
   }
 
-  public static func fromTinybars(_ tinybars: UInt64) -> Hbar {
+  public class func fromTinybars(_ tinybars: UInt64) -> Hbar {
     Hbar(tinybars / HbarUnit.hbar.rawValue)
   }
 

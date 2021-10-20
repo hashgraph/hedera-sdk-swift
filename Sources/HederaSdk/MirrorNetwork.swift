@@ -2,21 +2,21 @@ import GRPC
 import NIO
 
 class MirrorNetwork: ManagedNetwork<MirrorNode, String, [String]> {
-  static func forNetwork(_ eventLoopGroup: EventLoopGroup, _ network: [String]) -> EventLoopFuture<
+  class func forNetwork(_ eventLoopGroup: EventLoopGroup, _ network: [String]) -> EventLoopFuture<
     MirrorNetwork
   > {
     MirrorNetwork(eventLoopGroup).setNetwork(network)
   }
 
-  static func forPreviewnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<MirrorNetwork> {
+  class func forPreviewnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<MirrorNetwork> {
     MirrorNetwork(eventLoopGroup).setNetwork(["hcs.previewnet.mirrornode.hedera.com:5600"])
   }
 
-  static func forTestnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<MirrorNetwork> {
+  class func forTestnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<MirrorNetwork> {
     MirrorNetwork(eventLoopGroup).setNetwork(["hcs.testnet.mirrornode.hedera.com:5600"])
   }
 
-  static func forMainnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<MirrorNetwork> {
+  class func forMainnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<MirrorNetwork> {
     MirrorNetwork(eventLoopGroup).setNetwork(["hcs.mainnet.mirrornode.hedera.com:5600"])
   }
 

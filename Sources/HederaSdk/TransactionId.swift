@@ -12,11 +12,11 @@ public final class TransactionId {
     self.validStart = validStart
   }
 
-  public static func withValidStart(_ accountId: AccountId, _ validStart: Date) -> TransactionId {
+  public class func withValidStart(_ accountId: AccountId, _ validStart: Date) -> TransactionId {
     self.init(accountId, validStart)
   }
 
-  public static func generate(_ accountId: AccountId) -> TransactionId {
+  public class func generate(_ accountId: AccountId) -> TransactionId {
     self.init(
       accountId, Date()
       //            .addingTimeInterval(-Double.random(in: 0..<5))

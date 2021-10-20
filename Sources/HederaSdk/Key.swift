@@ -3,7 +3,7 @@ import HederaCrypto
 import HederaProtoServices
 
 extension Key {
-  static func fromProtobuf(_ key: Proto_Key) -> Key? {
+  class func fromProtobuf(_ key: Proto_Key) -> Key? {
     switch key.key {
     case .ed25519:
       return PublicKey.fromBytes(bytes: key.ed25519.bytes)

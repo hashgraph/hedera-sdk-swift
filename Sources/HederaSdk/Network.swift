@@ -11,13 +11,13 @@ extension Dictionary where Value: Equatable {
 class Network: ManagedNetwork<Node, AccountId, [String: AccountId]> {
   var maxNodesPerRequest: UInt32?
 
-  static func forNetwork(_ eventLoopGroup: EventLoopGroup, _ network: [String: AccountId])
+  class func forNetwork(_ eventLoopGroup: EventLoopGroup, _ network: [String: AccountId])
     -> EventLoopFuture<Network>
   {
     Network(eventLoopGroup).setNetwork(network)
   }
 
-  static func forPreviewnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<Network> {
+  class func forPreviewnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<Network> {
     var network: [String: AccountId] = [:]
     network["0.previewnet.hedera.com:50211"] = AccountId(3)
     network["1.previewnet.hedera.com:50211"] = AccountId(4)
@@ -28,7 +28,7 @@ class Network: ManagedNetwork<Node, AccountId, [String: AccountId]> {
     return Network(eventLoopGroup).setNetwork(network)
   }
 
-  static func forTestnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<Network> {
+  class func forTestnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<Network> {
     var network: [String: AccountId] = [:]
     network["0.testnet.hedera.com:50211"] = AccountId(3)
     network["1.testnet.hedera.com:50211"] = AccountId(4)
@@ -39,7 +39,7 @@ class Network: ManagedNetwork<Node, AccountId, [String: AccountId]> {
     return Network(eventLoopGroup).setNetwork(network)
   }
 
-  static func forMainnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<Network> {
+  class func forMainnet(_ eventLoopGroup: EventLoopGroup) -> EventLoopFuture<Network> {
     var network: [String: AccountId] = [:]
     network["35.237.200.180:50211"] = AccountId(3)
     network["35.186.191.247:50211"] = AccountId(4)
