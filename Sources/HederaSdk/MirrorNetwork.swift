@@ -2,8 +2,6 @@ import GRPC
 import NIO
 
 class MirrorNetwork: ManagedNetwork<MirrorNode, String, [String]> {
-  var maxNodesPerRequest: UInt32?
-
   static func forNetwork(_ eventLoopGroup: EventLoopGroup, _ network: [String]) -> EventLoopFuture<
     MirrorNetwork
   > {
@@ -24,16 +22,6 @@ class MirrorNetwork: ManagedNetwork<MirrorNode, String, [String]> {
 
   func getNetwork() -> [String] {
     network.map { $0.key }
-  }
-
-  func getNumberOfNodesPerRequest() -> Int {
-    maxNodesPerRequest.map {
-      max(Int($0), nodes.count)
-    } ?? (nodes.count + 3 - 1) / 3
-  }
-
-  override func createNodeFromNetworkEntry(_ entry: String) -> MirrorNode? {
-    MirrorNode(entry)
   }
 
   override func getNodesToRemove(_ network: [String]) -> [Int] {

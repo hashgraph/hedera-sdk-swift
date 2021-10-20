@@ -9,7 +9,7 @@ enum Order {
   case greater
 }
 
-class ManagedNode<KeyT> {
+class ManagedNode<KeyT, ElementT> {
   var address: ManagedNodeAddress
   var connection: ClientConnection?
   var lastUsed: UInt64 = 0
@@ -21,6 +21,10 @@ class ManagedNode<KeyT> {
 
   init(_ address: ManagedNodeAddress) {
     self.address = address
+  }
+
+  class func fromElement(_ element: ElementT) -> ManagedNode<KeyT, ElementT>? {
+    fatalError("not implemented")
   }
 
   func getKey() -> KeyT {

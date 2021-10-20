@@ -79,10 +79,6 @@ class Network: ManagedNetwork<Node, AccountId, [String: AccountId]> {
     getNumberOfMostHealthyNodes(getNumberOfNodesPerRequest()).map { $0.map { $0.accountId } }
   }
 
-  override func createNodeFromNetworkEntry(_ entry: (String, AccountId)) -> Node? {
-    Node(entry.0, entry.1)
-  }
-
   override func getNodesToRemove(_ network: [String: AccountId]) -> [Int] {
     stride(from: nodes.count - 1, to: -1, by: -1).compactMap { i in
       !network.values.contains(nodes[i].accountId)

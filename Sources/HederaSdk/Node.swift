@@ -2,7 +2,7 @@ import GRPC
 import HederaProtoServices
 import NIO
 
-class Node: ManagedNode<AccountId> {
+class Node: ManagedNode<AccountId, Dictionary<String, AccountId>.Element> {
   var accountId: AccountId
   var crypto: Proto_CryptoServiceClient?
 
@@ -18,6 +18,10 @@ class Node: ManagedNode<AccountId> {
     }
 
     return nil
+  }
+
+  override class func fromElement(_ element: (String, AccountId)) -> Node? {
+    Node(element.0, element.1)
   }
 
   override func getKey() -> AccountId {

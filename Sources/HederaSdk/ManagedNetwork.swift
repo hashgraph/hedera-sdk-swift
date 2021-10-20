@@ -10,7 +10,9 @@ extension String: LocalizedError {
   public var errorDescription: String? { self }
 }
 
-class ManagedNetwork<ManagedNodeT: ManagedNode<KeyT>, KeyT: Hashable, SdkNetworkT: Sequence> {
+class ManagedNetwork<
+  ManagedNodeT: ManagedNode<KeyT, SdkNetworkT.Element>, KeyT: Hashable, SdkNetworkT: Sequence
+> {
   var network: [KeyT: ManagedNodeT] = [:]
   var nodes: [ManagedNodeT] = []
 
@@ -80,10 +82,6 @@ class ManagedNetwork<ManagedNodeT: ManagedNode<KeyT>, KeyT: Hashable, SdkNetwork
     return self
   }
 
-  func createNodeFromNetworkEntry(_ entry: SdkNetworkT.Element) -> ManagedNodeT? {
-    fatalError("not implemented")
-  }
-
   func getNodesToRemove(_ network: SdkNetworkT) -> [Int] {
     fatalError("not implemented")
   }
@@ -99,7 +97,7 @@ class ManagedNetwork<ManagedNodeT: ManagedNode<KeyT>, KeyT: Hashable, SdkNetwork
 
     if nodes.isEmpty {
       for entry in network {
-        guard let node = createNodeFromNetworkEntry(entry) else {
+        guard let node = ManagedNodeT.fromElement(entry) as! ManagedNodeT? else {
           return eventLoop.makeFailedFuture("failed to create network node from network entry")
         }
         self.network[node.getKey()] = node
@@ -119,7 +117,7 @@ class ManagedNetwork<ManagedNodeT: ManagedNode<KeyT>, KeyT: Hashable, SdkNetwork
 
     for entry in network {
       if !checkNetworkContainsEntry(entry) {
-        guard let node = createNodeFromNetworkEntry(entry) else {
+        guard let node = ManagedNodeT.fromElement(entry) as! ManagedNodeT? else {
           return eventLoop.makeFailedFuture("failed to create network node from network entry")
         }
 

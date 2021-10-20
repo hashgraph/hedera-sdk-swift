@@ -2,7 +2,7 @@ import GRPC
 import HederaProtoServices
 import NIO
 
-class MirrorNode: ManagedNode<String> {
+class MirrorNode: ManagedNode<String, String> {
   var consensus: Proto_ConsensusServiceClient?
 
   convenience init?(_ address: String) {
@@ -12,6 +12,10 @@ class MirrorNode: ManagedNode<String> {
     }
 
     return nil
+  }
+
+  override class func fromElement(_ element: String) -> MirrorNode? {
+    MirrorNode(element)
   }
 
   override func getKey() -> String {
