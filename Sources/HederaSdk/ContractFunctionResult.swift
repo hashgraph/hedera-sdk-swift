@@ -49,3 +49,42 @@ extension ContractFunctionResult: ProtobufConvertible {
     return proto
   }
 }
+
+protocol DataConvertible {
+  init?(data: Data)
+  var data: Data { get }
+}
+
+extension DataConvertible where Self: ExpressibleByIntegerLiteral {
+
+  init?(data: Data) {
+    var value: Self = 0
+    guard data.count == MemoryLayout.size(ofValue: value) else { return nil }
+    _ = withUnsafeMutableBytes(of: &value, { data.copyBytes(to: $0) })
+    self = value
+  }
+
+  var data: Data {
+    withUnsafeBytes(of: self) { Data($0) }
+  }
+}
+
+extension Int: DataConvertible {}
+extension Int32: DataConvertible {}
+extension Int64: DataConvertible {}
+
+extension ContractFunctionResult {
+  public func getInt8(_ index: UInt64) -> Int8 {
+    Int8(contractCallResult[Int(index) * 32 + 31])
+  }
+
+  public func getInt32(_ index: UInt64) -> Int32 {
+    let subdataUsingIndex = contractCallResult[(index * 32) + 28..<(index + 1) * 32]
+    return Int32(data: subdataUsingIndex)!
+  }
+
+  public func getInt64(_ index: UInt64) -> Int64 {
+    let subdataUsingIndex = contractCallResult[(index * 32) + 24..<(index + 1) * 32]
+    return Int64(data: subdataUsingIndex)!
+  }
+}

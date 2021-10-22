@@ -9,9 +9,9 @@ enum Order {
   case greater
 }
 
-class ManagedNode<KeyT, ElementT> {
+class ManagedNode<KeyT, ElementT>: Channel {
   var address: ManagedNodeAddress
-  var connection: ClientConnection?
+  //  var connection: ClientConnection?
   var lastUsed: UInt64 = 0
   var useCount: UInt32 = 0
   var backoffUntil: TimeInterval = 0
@@ -21,6 +21,13 @@ class ManagedNode<KeyT, ElementT> {
 
   init(_ address: ManagedNodeAddress) {
     self.address = address
+    super.init(
+      ClientConnection(
+        configuration: ClientConnection.Configuration.default(
+          target: .hostAndPort(address.address, Int(address.port)),
+          eventLoopGroup: PlatformSupport.makeEventLoopGroup(loopCount: 1)
+        )))
+
   }
 
   class func fromElement(_ element: ElementT) -> ManagedNode<KeyT, ElementT>? {
@@ -56,16 +63,16 @@ class ManagedNode<KeyT, ElementT> {
   }
 
   func getConnection() -> ClientConnection {
-    if let connection = connection {
-      return connection
+    if let client = client {
+      return client
     }
 
-    connection = ClientConnection(
+    client = ClientConnection(
       configuration: ClientConnection.Configuration.default(
         target: .hostAndPort(address.address, Int(address.port)),
         eventLoopGroup: PlatformSupport.makeEventLoopGroup(loopCount: 1)
       ))
-    return connection!
+    return client!
   }
 
   func getRemainingTimeForBackoff() -> TimeInterval {
@@ -73,7 +80,7 @@ class ManagedNode<KeyT, ElementT> {
   }
 
   func close() -> EventLoopFuture<Void>? {
-    connection?.close()
+    client?.close()
   }
 }
 
