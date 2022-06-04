@@ -20,6 +20,20 @@
 dependencies: [
     .package(url: "https://github.com/hashgraph/hedera-sdk-swift.git", from: "0.1.0")
 ]
+targets: [
+    .executableTarget(
+        name: "MyApp",
+        dependencies: [
+            // your other dependencies
+            .product(name: "Hedera", package: "hedera-sdk-swift")
+        ],
+        // allows for using `@main` in a swift file built with swift package manager
+        swiftSettings: [
+            .unsafeFlags([
+                "-parse-as-library"
+            ])
+        ]),  
+]
 ```
 
 See ["Adding Package Dependencies to Your App"](https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app) for help on
@@ -28,17 +42,33 @@ adding a swift package to an Xcode project.
 ## Usage
 
 ```swift
+// main.swift
 import Hedera
 
-// connect to the Hedera network
-let client = Client.forTestnet()
+@main
+public enum Program {
+    public static func main() async throws {
+        let client = Client.forTestnet()
 
-// query the balance of an account
-let ab = try await AccountBalanceQuery()
-    .account_id(AccountId("0.0.1001")!)
-    .execute(client)
+        client.setPayerAccountId(AccountId(num: ...))
+        client.addDefaultSigner(PrivateKey("...")!)
 
-print("balance = \(ab.balance)")
+        let newKey = PrivateKey.generateEd25519()
+
+        print("private key = \(newKey)")
+        print("public key = \(newKey.publicKey)")
+
+        let response = try await AccountCreateTransaction()
+            .key(.single(newKey.publicKey))
+            .initialBalance(500_000_000)
+            .execute(client)
+
+        let receipt = try await response.getSuccessfulReceipt(client)
+        let newAccountId = receipt.accountId!
+
+        print("account address = \(newAccountId)")
+    }
+}
 ```
 
 See [examples](./Examples) for more usage.
