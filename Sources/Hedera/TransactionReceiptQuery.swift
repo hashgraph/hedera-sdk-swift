@@ -6,7 +6,7 @@
 public class TransactionReceiptQuery: Query<TransactionReceiptResponse> {
     /// The ID of the transaction for which the receipt is being requested.
     // TODO: TransactionId
-    public private(set) var transactionId: String?
+    public var transactionId: String?
 
     /// Set the ID of the transaction for which the receipt is being requested.
     @discardableResult
@@ -17,7 +17,7 @@ public class TransactionReceiptQuery: Query<TransactionReceiptResponse> {
     }
 
     /// Whether receipts of processing duplicate transactions should be returned.
-    public private(set) var includeDuplicates: Bool = false
+    public var includeDuplicates: Bool = false
 
     /// Sets whether receipts of processing duplicate transactions should be returned.
     @discardableResult
@@ -29,7 +29,7 @@ public class TransactionReceiptQuery: Query<TransactionReceiptResponse> {
 
     /// Whether the response should include the receipts of any child transactions spawned by the
     /// top-level transaction with the given transaction.
-    public private(set) var includeChildren: Bool = false
+    public var includeChildren: Bool = false
 
     /// Sets whether the response should include the receipts of any child transactions spawned by the
     /// top-level transaction with the given transaction.
@@ -47,12 +47,11 @@ public class TransactionReceiptQuery: Query<TransactionReceiptResponse> {
     }
 
     public override func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: AnyQueryCodingKeys.self)
-        var data = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .transactionReceipt)
+        var container = encoder.container(keyedBy: CodingKeys.self)
 
-        try data.encode(transactionId, forKey: .transactionId)
-        try data.encode(includeDuplicates, forKey: .includeDuplicates)
-        try data.encode(includeChildren, forKey: .includeChildren)
+        try container.encode(transactionId, forKey: .transactionId)
+        try container.encode(includeDuplicates, forKey: .includeDuplicates)
+        try container.encode(includeChildren, forKey: .includeChildren)
 
         try super.encode(to: encoder)
     }

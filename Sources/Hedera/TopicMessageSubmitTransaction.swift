@@ -15,7 +15,7 @@ public final class TopicMessageSubmitTransaction: Transaction {
     public override init() {}
 
     /// The topic ID to submit this message to.
-    public private(set) var topicId: TopicId?
+    public var topicId: TopicId?
 
     /// Sets the topic ID to submit this message to.
     @discardableResult
@@ -27,7 +27,7 @@ public final class TopicMessageSubmitTransaction: Transaction {
 
     /// Message to be submitted.
     /// Max size of the Transaction (including signatures) is 6KiB.
-    public private(set) var message: Data = Data()
+    public var message: Data = Data()
 
     /// Sets the message to be submitted.
     @discardableResult
@@ -41,7 +41,7 @@ public final class TopicMessageSubmitTransaction: Transaction {
     ///
     /// Should get copied to every subsequent chunk in a fragmented message.
     // TODO: TransactionId
-    public private(set) var initialTransactionId: String?
+    public var initialTransactionId: String?
 
     /// Sets the `TransactionId` of the first chunk.
     @discardableResult
@@ -53,7 +53,7 @@ public final class TopicMessageSubmitTransaction: Transaction {
 
     /// The total number of chunks in the message.
     /// Defaults to 1.
-    public private(set) var chunkTotal: Int = 1
+    public var chunkTotal: Int = 1
 
     /// Sets the total number of chunks in the message.
     @discardableResult
@@ -65,7 +65,7 @@ public final class TopicMessageSubmitTransaction: Transaction {
 
     /// The sequence number (from 1 to total) of the current chunk in the message.
     /// Defaults to 1.
-    public private(set) var chunkNumber: Int = 1
+    public var chunkNumber: Int = 1
 
     /// Sets the sequence number (from 1 to total) of the current chunk in the message.
     @discardableResult
@@ -84,14 +84,13 @@ public final class TopicMessageSubmitTransaction: Transaction {
     }
 
     public override func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: AnyTransactionCodingKeys.self)
-        var data = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .topicMessageSubmit)
+        var container = encoder.container(keyedBy: CodingKeys.self)
 
-        try data.encode(topicId, forKey: .topicId)
-        try data.encodeIfPresent(message.base64EncodedString(), forKey: .message)
-        try data.encodeIfPresent(initialTransactionId, forKey: .initialTransactionId)
-        try data.encode(chunkTotal, forKey: .chunkTotal)
-        try data.encode(chunkNumber, forKey: .chunkNumber)
+        try container.encode(topicId, forKey: .topicId)
+        try container.encodeIfPresent(message.base64EncodedString(), forKey: .message)
+        try container.encodeIfPresent(initialTransactionId, forKey: .initialTransactionId)
+        try container.encode(chunkTotal, forKey: .chunkTotal)
+        try container.encode(chunkNumber, forKey: .chunkNumber)
 
         try super.encode(to: encoder)
     }

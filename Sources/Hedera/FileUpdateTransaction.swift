@@ -10,7 +10,7 @@ public final class FileUpdateTransaction: Transaction {
     public override init() {}
 
     /// The file ID which is being updated in this transaction.
-    public private(set) var fileId: FileId?
+    public var fileId: FileId?
 
     /// Sets the file ID which is being updated in this transaction.
     @discardableResult
@@ -21,7 +21,7 @@ public final class FileUpdateTransaction: Transaction {
     }
 
     /// The memo associated with the file.
-    public private(set) var fileMemo: String = ""
+    public var fileMemo: String = ""
 
     /// Sets the memo associated with the file.
     @discardableResult
@@ -34,7 +34,7 @@ public final class FileUpdateTransaction: Transaction {
     /// All keys at the top level of a key list must sign to create or
     /// modify the file. Any one of the keys at the top level key list
     /// can sign to delete the file.
-    public private(set) var keys: [Key] = []
+    public var keys: [Key] = []
 
     /// Sets the keys for this file.
     ///
@@ -50,7 +50,7 @@ public final class FileUpdateTransaction: Transaction {
     }
 
     /// The bytes that are to be the contents of the file.
-    public private(set) var contents: Data = Data()
+    public var contents: Data = Data()
 
     /// Sets the bytes that are to be the contents of the file.
     @discardableResult
@@ -61,7 +61,7 @@ public final class FileUpdateTransaction: Transaction {
     }
 
     /// The time at which this file should expire.
-    public private(set) var expiresAt: Date?
+    public var expiresAt: Date?
 
     /// Sets the time at which this file should expire.
     @discardableResult
@@ -80,14 +80,13 @@ public final class FileUpdateTransaction: Transaction {
     }
 
     public override func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: AnyTransactionCodingKeys.self)
-        var data = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .fileUpdate)
+        var container = encoder.container(keyedBy: CodingKeys.self)
 
-        try data.encode(fileId, forKey: .fileId)
-        try data.encode(fileMemo, forKey: .fileMemo)
-        try data.encode(keys, forKey: .keys)
-        try data.encode(contents.base64EncodedString(), forKey: .contents)
-        try data.encodeIfPresent(expiresAt?.unixTimestampNanos, forKey: .expiresAt)
+        try container.encode(fileId, forKey: .fileId)
+        try container.encode(fileMemo, forKey: .fileMemo)
+        try container.encode(keys, forKey: .keys)
+        try container.encode(contents.base64EncodedString(), forKey: .contents)
+        try container.encodeIfPresent(expiresAt?.unixTimestampNanos, forKey: .expiresAt)
 
         try super.encode(to: encoder)
     }

@@ -4,12 +4,16 @@
 /// Information about it will continue to exist until it expires.
 ///
 public final class FileDeleteTransaction: Transaction {
-    /// Create a new `FileDeleteTransaction` ready for configuration.
-    public override init() {}
+    /// Create a new `FileDeleteTransaction`.
+    public init(
+        fileId: FileId? = nil
+    ) {
+        self.fileId = fileId
+    }
 
     /// The file to delete. It will be marked as deleted until it expires.
     /// Then it will disappear.
-    public private(set) var fileId: FileId?
+    public var fileId: FileId?
 
     /// Sets the file to delete. It will be marked as deleted until it expires.
     /// Then it will disappear.
@@ -25,10 +29,9 @@ public final class FileDeleteTransaction: Transaction {
     }
 
     public override func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: AnyTransactionCodingKeys.self)
-        var data = container.nestedContainer(keyedBy: CodingKeys.self, forKey: .fileDelete)
+        var container = encoder.container(keyedBy: CodingKeys.self)
 
-        try data.encodeIfPresent(fileId, forKey: .fileId)
+        try container.encodeIfPresent(fileId, forKey: .fileId)
 
         try super.encode(to: encoder)
     }

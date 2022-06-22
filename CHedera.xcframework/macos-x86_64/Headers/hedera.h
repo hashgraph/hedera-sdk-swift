@@ -24,7 +24,6 @@ typedef enum HederaError {
   HEDERA_ERROR_BASIC_PARSE,
   HEDERA_ERROR_KEY_PARSE,
   HEDERA_ERROR_NO_PAYER_ACCOUNT_OR_TRANSACTION_ID,
-  HEDERA_ERROR_MAX_ATTEMPTS_EXCEEDED,
   HEDERA_ERROR_MAX_QUERY_PAYMENT_EXCEEDED,
   HEDERA_ERROR_NODE_ACCOUNT_UNKNOWN,
   HEDERA_ERROR_RESPONSE_STATUS_UNRECOGNIZED,
@@ -57,60 +56,6 @@ typedef struct HederaPublicKey HederaPublicKey;
  */
 typedef struct HederaSigner HederaSigner;
 
-/**
- * The unique identifier for a cryptocurrency account on Hedera.
- */
-typedef struct HederaAccountId {
-  uint64_t shard;
-  uint64_t realm;
-  uint64_t num;
-} HederaAccountId;
-
-/**
- * The unique identifier for a smart contract on Hedera.
- */
-typedef struct HederaContractId {
-  uint64_t shard;
-  uint64_t realm;
-  uint64_t num;
-} HederaContractId;
-
-/**
- * The unique identifier for a file on Hedera.
- */
-typedef struct HederaFileId {
-  uint64_t shard;
-  uint64_t realm;
-  uint64_t num;
-} HederaFileId;
-
-/**
- * The unique identifier for a schedule on Hedera.
- */
-typedef struct HederaScheduleId {
-  uint64_t shard;
-  uint64_t realm;
-  uint64_t num;
-} HederaScheduleId;
-
-/**
- * The unique identifier for a token on Hedera.
- */
-typedef struct HederaTokenId {
-  uint64_t shard;
-  uint64_t realm;
-  uint64_t num;
-} HederaTokenId;
-
-/**
- * The unique identifier for a topic on Hedera.
- */
-typedef struct HederaTopicId {
-  uint64_t shard;
-  uint64_t realm;
-  uint64_t num;
-} HederaTopicId;
-
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
@@ -134,9 +79,21 @@ int32_t hedera_error_grpc_status(void);
 int32_t hedera_error_pre_check_status(void);
 
 /**
- * Parse a Hedera `AccountId` from the passed string.
+ * Parse a Hedera `AccountAddress` from the passed string.
  */
-enum HederaError hedera_account_id_from_string(const char *s, struct HederaAccountId *id);
+enum HederaError hedera_account_address_from_string(const char *s,
+                                                    uint64_t *id_shard,
+                                                    uint64_t *id_realm,
+                                                    uint64_t *id_num,
+                                                    struct HederaPublicKey **id_alias);
+
+/**
+ * Parse a Hedera `AccountAlias` from the passed string.
+ */
+enum HederaError hedera_account_alias_from_string(const char *s,
+                                                  uint64_t *id_shard,
+                                                  uint64_t *id_realm,
+                                                  struct HederaPublicKey **id_alias);
 
 /**
  * Construct a Hedera client pre-configured for testnet access.
@@ -152,7 +109,19 @@ void hedera_client_free(struct HederaClient *client);
  * Sets the account that will, by default, be paying for transactions and queries built with
  * this client.
  */
-void hedera_client_set_payer_account_id(struct HederaClient *client, struct HederaAccountId id);
+void hedera_client_set_payer_account_id(struct HederaClient *client,
+                                        uint64_t id_shard,
+                                        uint64_t id_realm,
+                                        uint64_t id_num);
+
+/**
+ * Gets the account that is, by default, paying for transactions and queries built with
+ * this client.
+ */
+void hedera_client_get_payer_account_id(struct HederaClient *client,
+                                        uint64_t *id_shard,
+                                        uint64_t *id_realm,
+                                        uint64_t *id_num);
 
 /**
  * Adds a signer that will, by default, sign for all transactions and queries built
@@ -164,9 +133,12 @@ void hedera_client_set_payer_account_id(struct HederaClient *client, struct Hede
 void hedera_client_add_default_signer(struct HederaClient *client, struct HederaSigner *signer);
 
 /**
- * Parse a Hedera `ContractId` from the passed string.
+ * Parse a Hedera `EntityId` from the passed string.
  */
-enum HederaError hedera_contract_id_from_string(const char *s, struct HederaContractId *id);
+enum HederaError hedera_entity_id_from_string(const char *s,
+                                              uint64_t *id_shard,
+                                              uint64_t *id_realm,
+                                              uint64_t *id_num);
 
 /**
  * Execute this request against the provided client of the Hedera network.
@@ -175,11 +147,6 @@ enum HederaError hedera_execute(const struct HederaClient *client,
                                 const char *request,
                                 const void *context,
                                 void (*callback)(const void *context, enum HederaError err, const char *response));
-
-/**
- * Parse a Hedera `FileId` from the passed string.
- */
-enum HederaError hedera_file_id_from_string(const char *s, struct HederaFileId *id);
 
 /**
  * Generates a new Ed25519 private key.
@@ -227,24 +194,18 @@ const char *hedera_public_key_to_string(struct HederaPublicKey *key);
 void hedera_public_key_free(struct HederaPublicKey *key);
 
 /**
- * Parse a Hedera `ScheduleId` from the passed string.
- */
-enum HederaError hedera_schedule_id_from_string(const char *s, struct HederaScheduleId *id);
-
-/**
  * Create an opaque signer from a `HederaPrivateKey`.
  */
 struct HederaSigner *hedera_signer_private_key(struct HederaPrivateKey *key);
 
 /**
- * Parse a Hedera `TokenId` from the passed string.
+ * Subscribe with this request against the provided client of the Hedera network.
+ * On successful completion, calls `callback` with `ERROR_OK` and a `NULL` `message`.
  */
-enum HederaError hedera_token_id_from_string(const char *s, struct HederaTokenId *id);
-
-/**
- * Parse a Hedera `TopicId` from the passed string.
- */
-enum HederaError hedera_topic_id_from_string(const char *s, struct HederaTopicId *id);
+enum HederaError hedera_subscribe(const struct HederaClient *client,
+                                  const char *request,
+                                  const void *context,
+                                  void (*callback)(const void *context, enum HederaError err, const char *message));
 
 #ifdef __cplusplus
 } // extern "C"

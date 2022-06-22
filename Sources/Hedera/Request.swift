@@ -2,9 +2,13 @@ import CHedera
 import Foundation
 
 /// A transaction or query that can be executed on the Hedera network.
-public class Request<Response: Decodable>: Encodable {
-    internal init() {}
+public protocol Request: Encodable {
+    associatedtype Response: Decodable
 
+    func execute(_ client: Client) async throws -> Response
+}
+
+extension Request {
     /// Execute this request against the provided client of the Hedera network.
     public func execute(_ client: Client) async throws -> Response {
         // encode self as a JSON request to pass to Rust
@@ -38,9 +42,5 @@ public class Request<Response: Decodable>: Encodable {
         let response = try JSONDecoder().decode(Response.self, from: responseBytes)
 
         return response
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        // nothing to encode at this level
     }
 }
