@@ -1,12 +1,13 @@
 import Hedera
+import SwiftDotenv
 
 @main
 public enum Program {
     public static func main() async throws {
+        let env = try Dotenv.load()
         let client = Client.forTestnet()
 
-        client.setPayerAccountId(AccountId(num: 6189))
-        client.addDefaultSigner(PrivateKey("7f7ac6c8025a15ff1e07ef57c7295601379a4e9a526560790ae85252393868f0")!)
+        client.setOperator(env.operatorAccountId, env.operatorKey)
 
         let newKey = PrivateKey.generateEd25519()
 
@@ -18,9 +19,19 @@ public enum Program {
             .initialBalance(500_000_000)
             .execute(client)
 
-        let receipt = try await response.getSuccessfulReceipt(client)
+        let receipt = try await response.getReceipt(client)
         let newAccountId = receipt.accountId!
 
         print("account address = \(newAccountId)")
+    }
+}
+
+extension Environment {
+    var operatorAccountId: AccountId {
+        AccountId(self["OPERATOR_ACCOUNT_ID"]!.stringValue)!
+    }
+
+    var operatorKey: PrivateKey {
+        PrivateKey(self["OPERATOR_KEY"]!.stringValue)!
     }
 }

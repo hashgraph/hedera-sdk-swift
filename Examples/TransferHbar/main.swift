@@ -1,17 +1,18 @@
 import Foundation
 import Hedera
+import SwiftDotenv
 
 @main
 public enum Program {
     public static func main() async throws {
+        let env = try Dotenv.load()
         let client = Client.forTestnet()
 
-        client.setPayerAccountId("0.0.6189")
-        client.addDefaultSigner(PrivateKey("7f7ac6c8025a15ff1e07ef57c7295601379a4e9a526560790ae85252393868f0")!)
+        client.setOperator(env.operatorAccountId, env.operatorKey)
 
         let transactionResponse = try await TransferTransaction()
-            .hbarTransfer(account: "0.0.1001", amount: 20)
-            .hbarTransfer(account: "0.0.6189", amount: -20)
+            .hbarTransfer("0.0.1001", 20)
+            .hbarTransfer("0.0.6189", -20)
             .execute(client)
 
         // either of these values can be used to lookup transactions in an explorer such as
@@ -20,5 +21,15 @@ public enum Program {
         //  transaction
         print("transaction id: \(transactionResponse.transactionId)")
         print("transaction hash: \(transactionResponse.transactionHash)")
+    }
+}
+
+extension Environment {
+    var operatorAccountId: AccountId {
+        AccountId(self["OPERATOR_ACCOUNT_ID"]!.stringValue)!
+    }
+
+    var operatorKey: PrivateKey {
+        PrivateKey(self["OPERATOR_KEY"]!.stringValue)!
     }
 }

@@ -3,7 +3,7 @@
 /// Once a transaction reaches consensus, then information about whether it succeeded or failed
 /// will be available until the end of the receipt period.
 ///
-public class TransactionReceiptQuery: Query<TransactionReceiptResponse> {
+public class TransactionReceiptQuery: Query<TransactionReceipt> {
     /// The ID of the transaction for which the receipt is being requested.
     // TODO: TransactionId
     public var transactionId: String?
@@ -40,10 +40,22 @@ public class TransactionReceiptQuery: Query<TransactionReceiptResponse> {
         return self
     }
 
+    /// Whether the receipt status should be validated.
+    public var validateStatus: Bool = false
+
+    /// Sets whether the receipt status should be validated.
+    @discardableResult
+    public func validateStatus(_ validateStatus: Bool) -> Self {
+        self.validateStatus = validateStatus
+
+        return self
+    }
+
     private enum CodingKeys: String, CodingKey {
         case transactionId
         case includeChildren
         case includeDuplicates
+        case validateStatus
     }
 
     public override func encode(to encoder: Encoder) throws {
@@ -52,6 +64,7 @@ public class TransactionReceiptQuery: Query<TransactionReceiptResponse> {
         try container.encode(transactionId, forKey: .transactionId)
         try container.encode(includeDuplicates, forKey: .includeDuplicates)
         try container.encode(includeChildren, forKey: .includeChildren)
+        try container.encode(validateStatus, forKey: .validateStatus)
 
         try super.encode(to: encoder)
     }
