@@ -1,8 +1,8 @@
 /// Grants KYC to the account for the given token.
-public class TokenGrantKycTransaction: Transaction {
+public final class TokenGrantKycTransaction: Transaction {
     /// Create a new `TokenGrantKycTransaction`.
     public init(
-        accountId: AccountAddress? = nil,
+        accountId: AccountId? = nil,
         tokenId: TokenId? = nil
     ) {
         self.accountId = accountId
@@ -10,11 +10,11 @@ public class TokenGrantKycTransaction: Transaction {
     }
 
     /// The account to be granted KYC.
-    public var accountId: AccountAddress?
+    public var accountId: AccountId?
 
     /// Sets the account to be granted KYC.
     @discardableResult
-    public func accountId(_ accountId: AccountAddress?) -> Self {
+    public func accountId(_ accountId: AccountId?) -> Self {
         self.accountId = accountId
 
         return self

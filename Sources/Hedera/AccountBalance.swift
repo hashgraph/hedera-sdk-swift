@@ -5,7 +5,5 @@ public final class AccountBalanceResponse: Codable {
 
     /// Current balance of the referenced account.
     // TODO: use Hbar type
-    public let balance: UInt64
-
-    // TODO: tokens
+    public let hbars: UInt64
 }

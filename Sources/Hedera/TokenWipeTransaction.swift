@@ -1,5 +1,5 @@
 /// Wipes the provided amount of tokens from the specified account.
-public class TokenWipeTransaction: Transaction {
+public final class TokenWipeTransaction: Transaction {
     /// Create a new `TokenWipeTransaction`.
     public init(
         tokenId: TokenId? = nil,
@@ -23,11 +23,11 @@ public class TokenWipeTransaction: Transaction {
     }
 
     /// The account to be wiped.
-    public var accountId: AccountAddress?
+    public var accountId: AccountId?
 
     /// Sets the account to be wiped.
     @discardableResult
-    public func accountId(_ accountId: AccountAddress) -> Self {
+    public func accountId(_ accountId: AccountId) -> Self {
         self.accountId = accountId
 
         return self

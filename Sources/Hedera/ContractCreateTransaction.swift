@@ -13,8 +13,8 @@ public final class ContractCreateTransaction: Transaction {
         constructorParameters: Data? = nil,
         contractMemo: String = "",
         maxAutomaticTokenAssociations: UInt32 = 0,
-        autoRenewAccountId: AccountAddress? = nil,
-        stakedAccountId: AccountAddress? = nil,
+        autoRenewAccountId: AccountId? = nil,
+        stakedAccountId: AccountId? = nil,
         stakedNodeId: UInt64? = nil,
         declineStakingReward: Bool = false
     ) {
@@ -135,22 +135,22 @@ public final class ContractCreateTransaction: Transaction {
     }
 
     /// The account to be used at the contract's expiration time to extend the life of the contract.
-    public var autoRenewAccountId: AccountAddress?
+    public var autoRenewAccountId: AccountId?
 
     /// Sets the account to be used at the contract's expiration time to extend the life of the contract.
     @discardableResult
-    public func autoRenewAccountId(_ autoRenewAccountId: AccountAddress) -> Self {
+    public func autoRenewAccountId(_ autoRenewAccountId: AccountId) -> Self {
         self.autoRenewAccountId = autoRenewAccountId
 
         return self
     }
 
     /// The ID of the account to which this contract is staking.
-    public var stakedAccountId: AccountAddress?
+    public var stakedAccountId: AccountId?
 
     /// Sets the ID of the account to which this contract is staking.
     @discardableResult
-    public func stakedAccountId(_ stakedAccountId: AccountAddress) -> Self {
+    public func stakedAccountId(_ stakedAccountId: AccountId) -> Self {
         self.stakedAccountId = stakedAccountId
 
         return self
@@ -182,7 +182,7 @@ public final class ContractCreateTransaction: Transaction {
         case bytecode
         case bytecodeFileId
         case adminKey
-        case gasLimit
+        case gas
         case initialBalance
         case autoRenewPeriod
         case constructorParameters
@@ -200,7 +200,7 @@ public final class ContractCreateTransaction: Transaction {
         try container.encodeIfPresent(bytecode?.base64EncodedString(), forKey: .bytecode)
         try container.encodeIfPresent(bytecodeFileId, forKey: .bytecodeFileId)
         try container.encodeIfPresent(adminKey, forKey: .adminKey)
-        try container.encode(gas, forKey: .gasLimit)
+        try container.encode(gas, forKey: .gas)
         try container.encode(initialBalance, forKey: .initialBalance)
         try container.encodeIfPresent(autoRenewPeriod?.wholeSeconds, forKey: .autoRenewPeriod)
         try container.encodeIfPresent(constructorParameters?.base64EncodedString(), forKey: .constructorParameters)

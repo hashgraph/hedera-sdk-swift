@@ -5,27 +5,27 @@ import Foundation
 /// It will remain in the ledger, marked as deleted, until it expires.
 /// Transfers into it a deleted account will fail.
 ///
-public class AccountDeleteTransaction: Transaction {
+public final class AccountDeleteTransaction: Transaction {
     /// Create a new `AccountDeleteTransaction` ready for configuration.
     public override init() {}
 
     /// The account ID which will receive all remaining hbars.
-    public var transferAccountId: AccountAddress?
+    public var transferAccountId: AccountId?
 
     /// Sets the account ID which will receive all remaining hbars.
     @discardableResult
-    public func transferAccountId(_ transferAccountId: AccountAddress) -> Self {
+    public func transferAccountId(_ transferAccountId: AccountId) -> Self {
         self.transferAccountId = transferAccountId
 
         return self
     }
 
     /// The account ID which should be deleted.
-    public var deleteAccountId: AccountAddress?
+    public var deleteAccountId: AccountId?
 
     /// Sets the account ID which should be deleted.
     @discardableResult
-    public func deleteAccountId(_ deleteAccountId: AccountAddress) -> Self {
+    public func deleteAccountId(_ deleteAccountId: AccountId) -> Self {
         self.deleteAccountId = deleteAccountId
 
         return self

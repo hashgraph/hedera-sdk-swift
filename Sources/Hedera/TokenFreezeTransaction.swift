@@ -1,8 +1,8 @@
 /// Freezes transfers of the specified token for the account.
-public class TokenFreezeTransaction: Transaction {
+public final class TokenFreezeTransaction: Transaction {
     /// Create a new `TokenFreezeTransaction`.
     public init(
-        accountId: AccountAddress? = nil,
+        accountId: AccountId? = nil,
         tokenId: TokenId? = nil
     ) {
         self.accountId = accountId
@@ -10,11 +10,11 @@ public class TokenFreezeTransaction: Transaction {
     }
 
     /// The account to be frozen.
-    public var accountId: AccountAddress?
+    public var accountId: AccountId?
 
     /// Sets the account to be frozen.
     @discardableResult
-    public func accountId(_ accountId: AccountAddress?) -> Self {
+    public func accountId(_ accountId: AccountId?) -> Self {
         self.accountId = accountId
 
         return self
