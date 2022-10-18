@@ -24,7 +24,7 @@ import Foundation
 /// Represents any possible error from a fallible function in the Hedera SDK.
 public struct HError: Error, CustomStringConvertible {
     // https://developer.apple.com/documentation/swift/error#2845903
-    public enum ErrorKind {
+    public enum ErrorKind: Equatable {
         case timedOut
         case grpcStatus(status: Int32)
         case fromProtobuf
@@ -55,7 +55,7 @@ public struct HError: Error, CustomStringConvertible {
         self.description = description
     }
 
-    // swiftlint:disable cyclomatic_complexity function_body_length
+    // swiftlint:disable cyclomatic_complexity
     internal init?(_ error: HederaError) {
         switch error {
         case HEDERA_ERROR_TIMED_OUT:
@@ -116,7 +116,7 @@ public struct HError: Error, CustomStringConvertible {
         }
 
         let descriptionBytes = hedera_error_message()
-        description = String(validatingUTF8: descriptionBytes!)!
+        description = String.init(hString: descriptionBytes!)
     }
     // swiftlint:enable cyclomatic_complexity function_body_length
 }

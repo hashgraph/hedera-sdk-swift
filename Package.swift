@@ -48,18 +48,19 @@ for name in [
 let package = Package(
     name: "Hedera",
     platforms: [
-        .macOS(.v10_15)
-        // .iOS(.v12),
+        .macOS(.v10_15),
+        .iOS(.v13),
     ],
     products: [
         .library(name: "Hedera", targets: ["Hedera"])
     ],
     dependencies: [
-        .package(url: "https://github.com/objecthub/swift-numberkit.git", .upToNextMajor(from: "2.4.1")),
-        .package(url: "https://github.com/thebarndog/swift-dotenv.git", .upToNextMajor(from: "1.0.0")),
+        .package(url: "https://github.com/objecthub/swift-numberkit.git", from: "2.4.1"),
+        .package(url: "https://github.com/thebarndog/swift-dotenv.git", from: "1.0.0"),
     ],
     targets: [
         .binaryTarget(name: "CHedera", path: "CHedera.xcframework"),
         .target(name: "Hedera", dependencies: ["CHedera", .product(name: "NumberKit", package: "swift-numberkit")]),
+        .testTarget(name: "HederaTests", dependencies: ["Hedera"])
     ] + exampleTargets
 )
