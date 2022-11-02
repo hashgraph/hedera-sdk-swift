@@ -42,6 +42,11 @@ typedef enum HederaError {
 typedef struct HederaClient HederaClient;
 
 /**
+ *  `BIP-39` 24-word mnemonic phrase compatible with the Android and iOS mobile wallets.
+ */
+typedef struct HederaMnemonic HederaMnemonic;
+
+/**
  * A private key on the Hedera network.
  */
 typedef struct HederaPrivateKey HederaPrivateKey;
@@ -50,6 +55,69 @@ typedef struct HederaPrivateKey HederaPrivateKey;
  * A public key on the Hedera network.
  */
 typedef struct HederaPublicKey HederaPublicKey;
+
+typedef struct HederaSemanticVersion {
+  /**
+   * Increases with incompatible API changes
+   */
+  uint32_t major;
+  /**
+   * Increases with backwards-compatible new functionality
+   */
+  uint32_t minor;
+  /**
+   * Increases with backwards-compatible bug fixes]
+   */
+  uint32_t patch;
+  /**
+   * A pre-release version MAY be denoted by appending a hyphen and a series of dot separated identifiers (https://semver.org/#spec-item-9);
+   * so given a semver 0.14.0-alpha.1+21AF26D3, this field would contain ‘alpha.1’
+   *
+   * treat `null` as an empty string.
+   *
+   * # Safety
+   *
+   * - If allocated by Hedera, must be freed with `hedera_string_free`,
+   *   notably this means that it must not be freed with `free`.
+   * - If *not* allocated by Hedera, must be freed however it normally would,
+   *   notably this means that it must not be freed with `hedera_string_free`
+   * - This field must be valid for reads (unless it's null)
+   * - If this is allocated by Hedera,
+   *   this will also be valid for writes *if* the field is non-null,
+   *   however, the length of this field must *not* be changed.
+   */
+  char *prerelease;
+  /**
+   * Build metadata MAY be denoted by appending a plus sign and a series of dot separated identifiers
+   * immediately following the patch or pre-release version (https://semver.org/#spec-item-10);
+   * so given a semver 0.14.0-alpha.1+21AF26D3, this field would contain ‘21AF26D3’
+   *
+   * treat `null` as an empty string.
+   *
+   * # Safety
+   *
+   * - If allocated by Hedera, must be freed with `hedera_string_free`,
+   *   notably this means that it must not be freed with `free`.
+   * - If *not* allocated by Hedera, must be freed however it normally would,
+   *   notably this means that it must not be freed with `hedera_string_free`
+   * - This field must be valid for reads (unless it's null)
+   * - If this is allocated by Hedera,
+   *   this will also be valid for writes *if* the field is non-null,
+   *   however, the length of this field must *not* be changed.
+   */
+  char *build;
+} HederaSemanticVersion;
+
+typedef struct HederaNetworkVersionInfo {
+  /**
+   * Version of the protobuf schema in use by the network.
+   */
+  struct HederaSemanticVersion protobuf_version;
+  /**
+   * Version of the Hedera services in use by the network.
+   */
+  struct HederaSemanticVersion services_version;
+} HederaNetworkVersionInfo;
 
 #ifdef __cplusplus
 extern "C" {
@@ -87,6 +155,40 @@ enum HederaError hedera_account_id_from_string(const char *s,
                                                uint64_t *id_realm,
                                                uint64_t *id_num,
                                                struct HederaPublicKey **id_alias);
+
+/**
+ * Parse a Hedera `AccountId` from the passed bytes.
+ */
+enum HederaError hedera_account_id_from_bytes(const uint8_t *bytes,
+                                              size_t bytes_size,
+                                              uint64_t *id_shard,
+                                              uint64_t *id_realm,
+                                              uint64_t *id_num,
+                                              struct HederaPublicKey **id_alias);
+
+/**
+ * Serialize the passed `AccountId` as bytes
+ *
+ * # Safety
+ * - `id_alias` must either be null or point to a valid public key.
+ * - `buf` must be valid for writes.
+ * - `buf` must only be freed with `hedera_bytes_free`, notably this means that it must not be freed with `free`.
+ */
+size_t hedera_account_id_to_bytes(uint64_t id_shard,
+                                  uint64_t id_realm,
+                                  uint64_t id_num,
+                                  const struct HederaPublicKey *id_alias,
+                                  uint8_t **buf);
+
+/**
+ * # Safety
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ * - `s` must only be freed with `hedera_string_free`,
+ *   notably this means it must not be freed with `free`.
+ */
+enum HederaError hedera_account_info_from_bytes(const uint8_t *bytes, size_t bytes_size, char **s);
+
+enum HederaError hedera_account_info_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
 
 /**
  * Free a string returned from a hedera API.
@@ -143,6 +245,16 @@ void hedera_client_set_operator(struct HederaClient *client,
                                 struct HederaPrivateKey *key);
 
 /**
+ * # Safety
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ * - `s` must only be freed with `hedera_string_free`,
+ *   notably this means it must not be freed with `free`.
+ */
+enum HederaError hedera_contract_info_from_bytes(const uint8_t *bytes, size_t bytes_size, char **s);
+
+enum HederaError hedera_contract_info_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
+
+/**
  * Parse a Hedera `EntityId` from the passed string.
  */
 enum HederaError hedera_entity_id_from_string(const char *s,
@@ -151,12 +263,148 @@ enum HederaError hedera_entity_id_from_string(const char *s,
                                               uint64_t *id_num);
 
 /**
+ * Parse a Hedera `FileId` from the passed bytes.
+ *
+ * # Safety
+ * - `file_id_shard`, `file_id_realm`, and `file_id_num` must all be valid for writes.
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ */
+enum HederaError hedera_file_id_from_bytes(const uint8_t *bytes,
+                                           size_t bytes_size,
+                                           uint64_t *file_id_shard,
+                                           uint64_t *file_id_realm,
+                                           uint64_t *file_id_num);
+
+/**
+ * Serialize the passed FileId as bytes
+ *
+ * # Safety
+ * - `buf` must be valid for writes.
+ */
+size_t hedera_file_id_to_bytes(uint64_t file_id_shard,
+                               uint64_t file_id_realm,
+                               uint64_t file_id_num,
+                               uint8_t **buf);
+
+/**
+ * Parse a Hedera `ContractId` from the passed bytes.
+ *
+ * # Safety
+ * - `contract_id_shard`, `contract_id_realm`, and `contract_id_num` must all be valid for writes.
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ */
+enum HederaError hedera_contract_id_from_bytes(const uint8_t *bytes,
+                                               size_t bytes_size,
+                                               uint64_t *contract_id_shard,
+                                               uint64_t *contract_id_realm,
+                                               uint64_t *contract_id_num);
+
+/**
+ * Serialize the passed ContractId as bytes
+ *
+ * # Safety
+ * - `buf` must be valid for writes.
+ */
+size_t hedera_contract_id_to_bytes(uint64_t contract_id_shard,
+                                   uint64_t contract_id_realm,
+                                   uint64_t contract_id_num,
+                                   uint8_t **buf);
+
+/**
+ * Parse a Hedera `TopicId` from the passed bytes.
+ *
+ * # Safety
+ * - `topic_id_shard`, `topic_id_realm`, and `topic_id_num` must all be valid for writes.
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ */
+enum HederaError hedera_topic_id_from_bytes(const uint8_t *bytes,
+                                            size_t bytes_size,
+                                            uint64_t *topic_id_shard,
+                                            uint64_t *topic_id_realm,
+                                            uint64_t *topic_id_num);
+
+/**
+ * Serialize the passed TopicId as bytes
+ *
+ * # Safety
+ * - `buf` must be valid for writes.
+ */
+size_t hedera_topic_id_to_bytes(uint64_t topic_id_shard,
+                                uint64_t topic_id_realm,
+                                uint64_t topic_id_num,
+                                uint8_t **buf);
+
+/**
+ * Parse a Hedera `TokenId` from the passed bytes.
+ *
+ * # Safety
+ * - `token_id_shard`, `token_id_realm`, and `token_id_num` must all be valid for writes.
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ */
+enum HederaError hedera_token_id_from_bytes(const uint8_t *bytes,
+                                            size_t bytes_size,
+                                            uint64_t *token_id_shard,
+                                            uint64_t *token_id_realm,
+                                            uint64_t *token_id_num);
+
+/**
+ * Serialize the passed TokenId as bytes
+ *
+ * # Safety
+ * - `buf` must be valid for writes.
+ */
+size_t hedera_token_id_to_bytes(uint64_t token_id_shard,
+                                uint64_t token_id_realm,
+                                uint64_t token_id_num,
+                                uint8_t **buf);
+
+/**
+ * Parse a Hedera `ScheduleId` from the passed bytes.
+ *
+ * # Safety
+ * - `schedule_id_shard`, `schedule_id_realm`, and `schedule_id_num` must all be valid for writes.
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ */
+enum HederaError hedera_schedule_id_from_bytes(const uint8_t *bytes,
+                                               size_t bytes_size,
+                                               uint64_t *schedule_id_shard,
+                                               uint64_t *schedule_id_realm,
+                                               uint64_t *schedule_id_num);
+
+/**
+ * Serialize the passed ScheduleId as bytes
+ *
+ * # Safety
+ * - `buf` must be valid for writes.
+ */
+size_t hedera_schedule_id_to_bytes(uint64_t schedule_id_shard,
+                                   uint64_t schedule_id_realm,
+                                   uint64_t schedule_id_num,
+                                   uint8_t **buf);
+
+/**
  * Execute this request against the provided client of the Hedera network.
+ *
+ * # Safety
+ * - todo(sr): Missing basically everything
+ * - `callback` must not store `response` after it returns.
  */
 enum HederaError hedera_execute(const struct HederaClient *client,
                                 const char *request,
                                 const void *context,
                                 void (*callback)(const void *context, enum HederaError err, const char *response));
+
+/**
+ * # Safety
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ * - `s` must only be freed with `hedera_string_free`,
+ *   notably this means it must not be freed with `free`.
+ */
+enum HederaError hedera_file_info_from_bytes(const uint8_t *bytes, size_t bytes_size, char **s);
+
+enum HederaError hedera_file_info_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
+
+enum HederaError hedera_key_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
 
 /**
  * Generates a new Ed25519 private key.
@@ -438,6 +686,14 @@ bool hedera_private_key_is_ed25519(struct HederaPrivateKey *key);
 bool hedera_private_key_is_ecdsa(struct HederaPrivateKey *key);
 
 /**
+ * Returns true if calling [`derive`](Self::derive) on `key` would succeed.
+ * - `key` must be a pointer that is valid for reads according to the [*Rust* pointer rules].
+ *
+ * [*Rust* pointer rules]: https://doc.rust-lang.org/std/ptr/index.html#safety
+ */
+bool hedera_private_key_is_derivable(struct HederaPrivateKey *key);
+
+/**
  * Derives a child key based on `index`.
  *
  * # Safety
@@ -469,6 +725,17 @@ enum HederaError hedera_private_key_derive(struct HederaPrivateKey *key,
 enum HederaError hedera_private_key_legacy_derive(struct HederaPrivateKey *key,
                                                   int64_t index,
                                                   struct HederaPrivateKey **derived);
+
+/**
+ * Recover a `PrivateKey` from a mnemonic phrase and a passphrase.
+ *
+ * # Safety
+ * - `mnemonic` must be valid for reads according to the [*Rust* pointer rules].
+ * - `passphrase` must be valid for reads up until and including the first NUL (`'\0'`) byte.
+ * - the retured `PrivateKey` must only be freed via [`hedera_private_key_free`], notably, this means that it *must not* be freed with `free`.
+ */
+struct HederaPrivateKey *hedera_private_key_from_mnemonic(struct HederaMnemonic *mnemonic,
+                                                          const char *passphrase);
 
 /**
  * Releases memory associated with the private key.
@@ -722,6 +989,128 @@ bool hedera_public_key_is_ecdsa(struct HederaPublicKey *key);
 void hedera_public_key_free(struct HederaPublicKey *key);
 
 /**
+ * Parse a `Mnemonic` from a string.
+ *
+ * # Safety
+ * - `s` must be valid for reads up until and including the first NUL (`'\0'`) byte.
+ * - `mnemonic` must be valid for writes according to the [*Rust* pointer rules]
+ * - if this method returns anything other than [`Error::Ok`],
+ *   then the contents of `mnemonic` are undefined and must not be used or inspected.
+ * - `mnemonic` must only be freed via [`hedera_mnemonic_free`].
+ *   Notably this means that it *must not* be freed with `free`.
+ *
+ * # Errors
+ * - [`Error::MnemonicParse`] if the mnemonic has an invalid length.
+ * - [`Error::MnemonicParse`] if the mnemonic uses invalid words.
+ * - [`Error::MnemonicParse`] if the mnemonic has an invalid checksum.
+ *
+ * [*Rust* pointer rules]: https://doc.rust-lang.org/std/ptr/index.html#safety
+ */
+enum HederaError hedera_mnemonic_from_string(const char *s, struct HederaMnemonic **mnemonic);
+
+/**
+ * Generate a new 24 word mnemonic.
+ *
+ * # Safety
+ * This function is safe. However, there are invariants that must be upheld on the result.
+ *
+ * - The returned mnemonic must only be freed via [`hedera_mnemonic_free`].
+ *   Notably this means that it *must not* be freed with `free`.
+ */
+struct HederaMnemonic *hedera_mnemonic_generate_24(void);
+
+/**
+ * Generate a new 12 word mnemonic.
+ *
+ * # Safety
+ * This function is safe. However, there are invariants that must be upheld on the result.
+ *
+ * - The returned mnemonic must only be freed via [`hedera_mnemonic_free`].
+ *   Notably this means that it *must not* be freed with `free`.
+ */
+struct HederaMnemonic *hedera_mnemonic_generate_12(void);
+
+/**
+ * Returns `true` if `mnemonic` is a legacy mnemonic.
+ *
+ * # Safety
+ * - `mnemonic` must be valid for reads according to the [*Rust* pointer rules].
+ *
+ * [*Rust* pointer rules]: https://doc.rust-lang.org/std/ptr/index.html#safety
+ */
+bool hedera_mnemonic_is_legacy(struct HederaMnemonic *mnemonic);
+
+/**
+ * Recover a [`PrivateKey`] from `mnemonic`.
+ *
+ * # Safety
+ * - `mnemonic` must be valid for reads according to the [*Rust* pointer rules].
+ * - `passphrase` must be valid for reads up until and including the first NUL (`'\0'`) byte.
+ * - `private_key` must be valid for writes according to the [*Rust* pointer rules].
+ * - if this method returns anything other than [`Error::Ok`],
+ *   then the contents of `private_key` are undefined and must not be used or inspected.
+ * - `private_key` must only be freed via `hedera_private_key_free`.
+ *   Notably, this means that it *must not* be freed with `free`.
+ *
+ * # Errors
+ * - [`Error::MnemonicEntropy`] if this is a legacy private key, and the passphrase isn't empty.
+ * - [`Error::MnemonicEntropy`] if this is a legacy private key,
+ *   and the `Mnemonic`'s checksum doesn't match up with the computed one.
+ *
+ * [*Rust* pointer rules]: https://doc.rust-lang.org/std/ptr/index.html#safety
+ */
+enum HederaError hedera_mnemonic_to_private_key(struct HederaMnemonic *mnemonic,
+                                                const char *passphrase,
+                                                struct HederaPrivateKey **private_key);
+
+/**
+ * Recover a [`PrivateKey`] from `mnemonic`.
+ *
+ * # Safety
+ * - `mnemonic` must be valid for reads according to the [*Rust* pointer rules].
+ * - `private_key` must be valid for writes according to the [*Rust* pointer rules].
+ * - if this method returns anything other than [`Error::Ok`],
+ *   then the contents of `private_key` are undefined and must not be used or inspected.
+ * - `private_key` must only be freed via `hedera_private_key_free`.
+ *   Notably, this means that it *must not* be freed with `free`.
+ *
+ * # Errors
+ * - [`Error::MnemonicEntropy`] if the computed checksum doesn't match the actual checksum.
+ * - [`Error::MnemonicEntropy`] if this is a v2 legacy mnemonic and doesn't have `24` words.
+ *
+ * [*Rust* pointer rules]: https://doc.rust-lang.org/std/ptr/index.html#safety
+ */
+enum HederaError hedera_mnemonic_to_legacy_private_key(struct HederaMnemonic *mnemonic,
+                                                       struct HederaPrivateKey **private_key);
+
+/**
+ * Format `mnemonic` as a string.
+ *
+ * # Safety
+ * - `mnemonic` must be valid for reads according to the [*Rust* pointer rules].
+ *
+ * [*Rust* pointer rules]: https://doc.rust-lang.org/std/ptr/index.html#safety
+ */
+char *hedera_mnemonic_to_string(struct HederaMnemonic *mnemonic);
+
+/**
+ * Free `mnemonic` and release all resources associated with it.
+ *
+ * # Safety
+ * - `mnemonic` must be valid for reads and writes according to the [*Rust* pointer rules].
+ * - `mnemonic` must not be used at all after this function is called.
+ *
+ * [*Rust* pointer rules]: https://doc.rust-lang.org/std/ptr/index.html#safety
+ */
+void hedera_mnemonic_free(struct HederaMnemonic *mnemonic);
+
+enum HederaError hedera_network_version_info_from_bytes(const uint8_t *bytes,
+                                                        size_t bytes_size,
+                                                        struct HederaNetworkVersionInfo *info);
+
+size_t hedera_network_version_info_to_bytes(struct HederaNetworkVersionInfo info, uint8_t **buf);
+
+/**
  * Parse a Hedera `NftId` from the passed string.
  */
 enum HederaError hedera_nft_id_from_string(const char *s,
@@ -750,6 +1139,35 @@ size_t hedera_nft_id_to_bytes(uint64_t token_id_shard,
                               uint8_t **buf);
 
 /**
+ * # Safety
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ * - `s` must only be freed with `hedera_string_free`,
+ *   notably this means it must not be freed with `free`.
+ */
+enum HederaError hedera_schedule_info_from_bytes(const uint8_t *bytes, size_t bytes_size, char **s);
+
+enum HederaError hedera_schedule_info_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
+
+enum HederaError hedera_semantic_version_from_bytes(const uint8_t *bytes,
+                                                    size_t bytes_size,
+                                                    struct HederaSemanticVersion *semver);
+
+enum HederaError hedera_semantic_version_from_string(const char *s,
+                                                     struct HederaSemanticVersion *semver);
+
+size_t hedera_semantic_version_to_bytes(struct HederaSemanticVersion semver, uint8_t **buf);
+
+/**
+ * # Safety
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ * - `s` must only be freed with `hedera_string_free`,
+ *   notably this means it must not be freed with `free`.
+ */
+enum HederaError hedera_staking_info_from_bytes(const uint8_t *bytes, size_t bytes_size, char **s);
+
+enum HederaError hedera_staking_info_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
+
+/**
  * Subscribe with this request against the provided client of the Hedera network.
  * On successful completion, calls `callback` with `ERROR_OK` and a `NULL` `message`.
  */
@@ -757,6 +1175,32 @@ enum HederaError hedera_subscribe(const struct HederaClient *client,
                                   const char *request,
                                   const void *context,
                                   void (*callback)(const void *context, enum HederaError err, const char *message));
+
+/**
+ * # Safety
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ * - `s` must only be freed with `hedera_string_free`,
+ *   notably this means it must not be freed with `free`.
+ */
+enum HederaError hedera_token_association_from_bytes(const uint8_t *bytes,
+                                                     size_t bytes_size,
+                                                     char **s);
+
+enum HederaError hedera_token_association_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
+
+/**
+ * # Safety
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ * - `s` must only be freed with `hedera_string_free`,
+ *   notably this means it must not be freed with `free`.
+ */
+enum HederaError hedera_transaction_receipt_from_bytes(const uint8_t *bytes,
+                                                       size_t bytes_size,
+                                                       char **s);
+
+enum HederaError hedera_transaction_receipt_to_bytes(const char *s,
+                                                     uint8_t **buf,
+                                                     size_t *buf_size);
 
 #ifdef __cplusplus
 } // extern "C"

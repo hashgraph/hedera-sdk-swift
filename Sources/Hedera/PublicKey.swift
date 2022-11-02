@@ -22,19 +22,21 @@ import CHedera
 import Foundation
 
 // todo: deduplicate these with `PrivateKey.swift`
-private typealias UnsafeFromBytesFunc = @convention(c) (UnsafePointer<UInt8>?, Int, UnsafeMutablePointer<OpaquePointer?>?) -> HederaError
 
-// safety: `hedera_bytes_free` needs to be called so...
-// perf: might as well enable use of the no copy constructor.
-private let unsafeCHederaBytesFree: Data.Deallocator = .custom { (buf, size) in
-    hedera_bytes_free(buf, size)
-}
+private typealias UnsafeFromBytesFunc = @convention(c) (
+    UnsafePointer<UInt8>?, Int, UnsafeMutablePointer<OpaquePointer?>?
+) -> HederaError
 
 /// A public key on the Hedera network.
 public final class PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, Codable {
-    private let ptr: OpaquePointer
+    internal let ptr: OpaquePointer
 
-    internal init(_ ptr: OpaquePointer) {
+    // sadly, we can't avoid a leaky abstraction here.
+    internal static func unsafeFromPtr(_ ptr: OpaquePointer) -> Self {
+        Self.init(ptr)
+    }
+
+    private init(_ ptr: OpaquePointer) {
         self.ptr = ptr
     }
 
@@ -128,7 +130,6 @@ public final class PublicKey: LosslessStringConvertible, ExpressibleByStringLite
         return Self(key!)
     }
 
-
     public required convenience init(from decoder: Decoder) throws {
         self.init(try decoder.singleValueContainer().decode(String.self))!
     }
@@ -137,21 +138,21 @@ public final class PublicKey: LosslessStringConvertible, ExpressibleByStringLite
         var buf: UnsafeMutablePointer<UInt8>?
         let size = hedera_public_key_to_bytes_der(ptr, &buf)
 
-        return Data(bytesNoCopy: buf!, count: size, deallocator: unsafeCHederaBytesFree)
+        return Data(bytesNoCopy: buf!, count: size, deallocator: Data.unsafeCHederaBytesFree)
     }
 
     public func toBytes() -> Data {
         var buf: UnsafeMutablePointer<UInt8>?
         let size = hedera_public_key_to_bytes(ptr, &buf)
 
-        return Data(bytesNoCopy: buf!, count: size, deallocator: unsafeCHederaBytesFree)
+        return Data(bytesNoCopy: buf!, count: size, deallocator: Data.unsafeCHederaBytesFree)
     }
 
     public func toBytesRaw() -> Data {
         var buf: UnsafeMutablePointer<UInt8>?
         let size = hedera_public_key_to_bytes_raw(ptr, &buf)
 
-        return Data(bytesNoCopy: buf!, count: size, deallocator: unsafeCHederaBytesFree)
+        return Data(bytesNoCopy: buf!, count: size, deallocator: Data.unsafeCHederaBytesFree)
     }
 
     public var description: String {

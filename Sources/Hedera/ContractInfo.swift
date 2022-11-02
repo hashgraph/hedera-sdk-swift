@@ -18,6 +18,7 @@
  * ‍
  */
 
+import CHedera
 import Foundation
 
 public final class ContractInfo: Codable {
@@ -58,4 +59,48 @@ public final class ContractInfo: Codable {
 
     /// The maximum number of tokens that a contract can be implicitly associated with.
     public let maxAutomaticTokenAssociations: UInt32
+
+    public let ledgerId: LedgerId
+
+    /// Staking metadata for this contract.
+    public let stakingInfo: StakingInfo
+
+    public static func fromBytes(_ bytes: Data) throws -> Self {
+        let json: String = try bytes.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
+            var ptr: UnsafeMutablePointer<CChar>? = UnsafeMutablePointer(bitPattern: 0)
+            let err = hedera_contract_info_from_bytes(
+                pointer.baseAddress,
+                pointer.count,
+                &ptr
+            )
+
+            if err != HEDERA_ERROR_OK {
+                throw HError(err)!
+            }
+
+            return String(hString: ptr!)
+        }
+
+        return try JSONDecoder().decode(Self.self, from: json.data(using: .utf8)!)
+    }
+
+    private func toBytesInner() throws -> Data {
+        let jsonBytes = try JSONEncoder().encode(self)
+        let json = String(data: jsonBytes, encoding: .utf8)!
+        var buf: UnsafeMutablePointer<UInt8>?
+        var bufSize: Int = 0
+        let err = hedera_contract_info_to_bytes(json, &buf, &bufSize)
+
+        if err != HEDERA_ERROR_OK {
+            throw HError(err)!
+        }
+
+        return Data(bytesNoCopy: buf!, count: bufSize, deallocator: Data.unsafeCHederaBytesFree)
+    }
+
+    public func toBytes() -> Data {
+        // can't have `throws` because that's the wrong function signature.
+        // swiftlint:disable force_try
+        try! toBytesInner()
+    }
 }

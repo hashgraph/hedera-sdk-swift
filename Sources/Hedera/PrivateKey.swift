@@ -21,17 +21,18 @@
 import CHedera
 import Foundation
 
-private typealias UnsafeFromBytesFunc = @convention(c) (UnsafePointer<UInt8>?, Int, UnsafeMutablePointer<OpaquePointer?>?) -> HederaError
-
-// safety: `hedera_bytes_free` needs to be called so...
-// perf: might as well enable use of the no copy constructor.
-private let unsafeCHederaBytesFree: Data.Deallocator = .custom { (buf, size) in
-    hedera_bytes_free(buf, size)
-}
+private typealias UnsafeFromBytesFunc = @convention(c) (
+    UnsafePointer<UInt8>?, Int, UnsafeMutablePointer<OpaquePointer?>?
+) -> HederaError
 
 /// A private key on the Hedera network.
 public final class PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral {
     internal let ptr: OpaquePointer
+
+    // sadly, we can't avoid a leaky abstraction here.
+    internal static func unsafeFromPtr(_ ptr: OpaquePointer) -> Self {
+        Self.init(ptr)
+    }
 
     private init(_ ptr: OpaquePointer) {
         self.ptr = ptr
@@ -49,7 +50,7 @@ public final class PrivateKey: LosslessStringConvertible, ExpressibleByStringLit
 
     /// Gets the ``PublicKey`` which corresponds to this private key.
     public func getPublicKey() -> PublicKey {
-        PublicKey(hedera_private_key_get_public_key(ptr))
+        PublicKey.unsafeFromPtr(hedera_private_key_get_public_key(ptr))
     }
 
     private static func unsafeFromAnyBytes(_ bytes: Data, _ chederaCallback: UnsafeFromBytesFunc) throws -> Self {
@@ -158,21 +159,21 @@ public final class PrivateKey: LosslessStringConvertible, ExpressibleByStringLit
         var buf: UnsafeMutablePointer<UInt8>?
         let size = hedera_private_key_to_bytes_der(ptr, &buf)
 
-        return Data(bytesNoCopy: buf!, count: size, deallocator: unsafeCHederaBytesFree)
+        return Data(bytesNoCopy: buf!, count: size, deallocator: Data.unsafeCHederaBytesFree)
     }
 
     public func toBytes() -> Data {
         var buf: UnsafeMutablePointer<UInt8>?
         let size = hedera_private_key_to_bytes(ptr, &buf)
 
-        return Data(bytesNoCopy: buf!, count: size, deallocator: unsafeCHederaBytesFree)
+        return Data(bytesNoCopy: buf!, count: size, deallocator: Data.unsafeCHederaBytesFree)
     }
 
     public func toBytesRaw() -> Data {
         var buf: UnsafeMutablePointer<UInt8>?
         let size = hedera_private_key_to_bytes_raw(ptr, &buf)
 
-        return Data(bytesNoCopy: buf!, count: size, deallocator: unsafeCHederaBytesFree)
+        return Data(bytesNoCopy: buf!, count: size, deallocator: Data.unsafeCHederaBytesFree)
     }
 
     public var description: String {
@@ -206,6 +207,10 @@ public final class PrivateKey: LosslessStringConvertible, ExpressibleByStringLit
         hedera_private_key_is_ecdsa(ptr)
     }
 
+    public func isDerivable() -> Bool {
+        hedera_private_key_is_derivable(ptr)
+    }
+
     public func derive(_ index: Int32) throws -> Self {
         var derived = OpaquePointer(bitPattern: 0)
         let err = hedera_private_key_derive(ptr, index, &derived)
@@ -226,6 +231,10 @@ public final class PrivateKey: LosslessStringConvertible, ExpressibleByStringLit
         }
 
         return Self(derived!)
+    }
+
+    public func fromMnemonic(_ mnemonic: Mnemonic, _ passphrase: String) -> Self {
+        Self.init(hedera_private_key_from_mnemonic(mnemonic.ptr, passphrase))
     }
 
     deinit {
