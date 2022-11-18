@@ -74,7 +74,7 @@ public class Query<Response: Decodable>: Request {
     ///
     /// Defaults to 120 seconds (or two minutes).
     ///
-    public func paymentTransactionValidDuration(_ validDuration: TimeInterval) -> Self {
+    public func paymentTransactionValidDuration(_ validDuration: Duration) -> Self {
         self.payment.transactionValidDuration = validDuration
 
         return self
@@ -110,9 +110,7 @@ public class Query<Response: Decodable>: Request {
     /// on this query.
     ///
     /// Overrides payer account defined on this query or on the client.
-    ///
-    // TODO: TransactionId
-    public func paymentTransactionId(_ transactionId: String) -> Self {
+    public func paymentTransactionId(_ transactionId: TransactionId) -> Self {
         self.payment.transactionId = transactionId
 
         return self

@@ -56,6 +56,70 @@ typedef struct HederaPrivateKey HederaPrivateKey;
  */
 typedef struct HederaPublicKey HederaPublicKey;
 
+typedef struct HederaAccountId {
+  uint64_t shard;
+  uint64_t realm;
+  uint64_t num;
+  /**
+   * Safety:
+   * - If `alias` is not null, it must:
+   *   - be properly aligned
+   *   - be dereferenceable
+   *   - point to a valid instance of `PublicKey` (any `PublicKey` that `hedera` provides which hasn't been freed yet)
+   */
+  struct HederaPublicKey *alias;
+} HederaAccountId;
+
+typedef struct HederaAccountBalance {
+  struct HederaAccountId id;
+  int64_t hbars;
+} HederaAccountBalance;
+
+typedef struct HederaSigner {
+  /**
+   * Safety:
+   * - Must not be null
+   * - must be properly aligned
+   * - must be dereferencable in the rust sense.
+   */
+  const struct HederaPublicKey *public_key;
+  /**
+   * Safety: It must be safe to send `context` to other threads.
+   * Safety: It must be safe to share `context` between threads.
+   */
+  void *context;
+  /**
+   * Safety:
+   * Must not be null
+   * must be callable with the appropriate arguments
+   */
+  size_t (*sign_func)(void *context, const uint8_t *message, size_t message_size, const uint8_t **signature);
+  /**
+   * Safety:
+   * Must not be null
+   * must be callable with the appropriate arguments
+   */
+  void (*free_signature_func)(void *context, uint8_t *signature, size_t signature_size);
+  /**
+   * Safety:
+   * May be null
+   * must be callable with the appropriate arguments
+   */
+  void (*free_context_func)(void *context);
+} HederaSigner;
+
+typedef struct HederaSigners {
+  /**
+   * may only be null if signers_size is 0.
+   */
+  const struct HederaSigner *signers;
+  size_t signers_size;
+  /**
+   * Free this array of signers (must *not* free the contexts for the original signers)
+   */
+  void (*free)(const struct HederaSigner *signers, size_t signers_size);
+} HederaSigners;
+
 typedef struct HederaSemanticVersion {
   /**
    * Increases with incompatible API changes
@@ -119,6 +183,18 @@ typedef struct HederaNetworkVersionInfo {
   struct HederaSemanticVersion services_version;
 } HederaNetworkVersionInfo;
 
+typedef struct HederaTimestamp {
+  uint64_t secs;
+  uint32_t nanos;
+} HederaTimestamp;
+
+typedef struct HederaTransactionId {
+  struct HederaAccountId account_id;
+  struct HederaTimestamp valid_start;
+  int32_t nonce;
+  bool scheduled;
+} HederaTransactionId;
+
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus
@@ -147,37 +223,47 @@ int32_t hedera_error_grpc_status(void);
  */
 int32_t hedera_error_pre_check_status(void);
 
+int32_t hedera_error_receipt_status_status(void);
+
+/**
+ * Parse a Hedera `AccountBalance` from the passed bytes.
+ */
+enum HederaError hedera_account_balance_from_bytes(const uint8_t *bytes,
+                                                   size_t bytes_size,
+                                                   struct HederaAccountBalance *id);
+
+/**
+ * Serialize the passed `AccountBalance` as bytes
+ *
+ * # Safety
+ * - `id` must uphold the safety requirements of `AccountBalance`.
+ * - `buf` must be valid for writes.
+ * - `buf` must only be freed with `hedera_bytes_free`, notably this means that it must not be freed with `free`.
+ */
+size_t hedera_account_balance_to_bytes(struct HederaAccountBalance id,
+                                       uint8_t **buf);
+
 /**
  * Parse a Hedera `AccountId` from the passed string.
  */
-enum HederaError hedera_account_id_from_string(const char *s,
-                                               uint64_t *id_shard,
-                                               uint64_t *id_realm,
-                                               uint64_t *id_num,
-                                               struct HederaPublicKey **id_alias);
+enum HederaError hedera_account_id_from_string(const char *s, struct HederaAccountId *id);
 
 /**
  * Parse a Hedera `AccountId` from the passed bytes.
  */
 enum HederaError hedera_account_id_from_bytes(const uint8_t *bytes,
                                               size_t bytes_size,
-                                              uint64_t *id_shard,
-                                              uint64_t *id_realm,
-                                              uint64_t *id_num,
-                                              struct HederaPublicKey **id_alias);
+                                              struct HederaAccountId *id);
 
 /**
  * Serialize the passed `AccountId` as bytes
  *
  * # Safety
- * - `id_alias` must either be null or point to a valid public key.
+ * - `id` must uphold the safety requirements of `AccountId`.
  * - `buf` must be valid for writes.
  * - `buf` must only be freed with `hedera_bytes_free`, notably this means that it must not be freed with `free`.
  */
-size_t hedera_account_id_to_bytes(uint64_t id_shard,
-                                  uint64_t id_realm,
-                                  uint64_t id_num,
-                                  const struct HederaPublicKey *id_alias,
+size_t hedera_account_id_to_bytes(struct HederaAccountId id,
                                   uint8_t **buf);
 
 /**
@@ -392,6 +478,7 @@ size_t hedera_schedule_id_to_bytes(uint64_t schedule_id_shard,
 enum HederaError hedera_execute(const struct HederaClient *client,
                                 const char *request,
                                 const void *context,
+                                struct HederaSigners signers,
                                 void (*callback)(const void *context, enum HederaError err, const char *response));
 
 /**
@@ -686,6 +773,20 @@ bool hedera_private_key_is_ed25519(struct HederaPrivateKey *key);
 bool hedera_private_key_is_ecdsa(struct HederaPrivateKey *key);
 
 /**
+ * # Safety
+ * - `key` must be a pointer that is valid for reads according to the [*Rust* pointer rules].
+ * - `message` must be valid for reads of up to `message_size` bytes.
+ * - `buf` must be valid for writes according to [*Rust* pointer rules]
+ * - the length of the returned buffer must not be modified.
+ * - the returned pointer must NOT be freed with `free`.
+ * [*Rust* pointer rules]: https://doc.rust-lang.org/std/ptr/index.html#safety
+ */
+size_t hedera_private_key_sign(struct HederaPrivateKey *key,
+                               const uint8_t *message,
+                               size_t message_size,
+                               uint8_t **buf);
+
+/**
  * Returns true if calling [`derive`](Self::derive) on `key` would succeed.
  * - `key` must be a pointer that is valid for reads according to the [*Rust* pointer rules].
  *
@@ -964,6 +1065,24 @@ char *hedera_public_key_to_string_der(struct HederaPublicKey *key);
 char *hedera_public_key_to_string_raw(struct HederaPublicKey *key);
 
 /**
+ * Verify a `signature` on a `message` with this public key.
+ *
+ * # Safety
+ * - `key` must be a pointer that is valid for reads according to the [*Rust* pointer rules].
+ * - `message` must be valid for reads of up to `message_size` message.
+ * - `signature` must be valid for reads of up to `signature_size` signature.
+ *
+ * # Errors
+ * - [`Error::SignatureVerify`] if the signature algorithm doesn't match this `PublicKey`.
+ * - [`Error::SignatureVerify`] if the signature is invalid for this `PublicKey`.
+ */
+enum HederaError hedera_public_key_verify(struct HederaPublicKey *key,
+                                          const uint8_t *message,
+                                          size_t message_size,
+                                          const uint8_t *signature,
+                                          size_t signature_size);
+
+/**
  * Returns `true` if `key` is an Ed25519 `PublicKey`.
  *
  * # Safety
@@ -1187,6 +1306,20 @@ enum HederaError hedera_token_association_from_bytes(const uint8_t *bytes,
                                                      char **s);
 
 enum HederaError hedera_token_association_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
+
+/**
+ * # Safety
+ * - `s` must be a valid string
+ * - `transaction_id` must be a valid for writes according to [*Rust* pointer rules].
+ */
+enum HederaError hedera_transaction_id_from_string(const char *s,
+                                                   struct HederaTransactionId *transation_id);
+
+enum HederaError hedera_transaction_id_from_bytes(const uint8_t *bytes,
+                                                  size_t bytes_size,
+                                                  struct HederaTransactionId *transation_id);
+
+size_t hedera_transaction_id_to_bytes(struct HederaTransactionId id, uint8_t **buf);
 
 /**
  * # Safety

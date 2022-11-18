@@ -22,7 +22,7 @@ import CHedera
 import Foundation
 
 public class EntityId: LosslessStringConvertible, ExpressibleByIntegerLiteral, Equatable, Codable,
-    ExpressibleByStringLiteral
+    ExpressibleByStringLiteral, Hashable
 {
     /// The shard number (non-negative).
     public let shard: UInt64
@@ -78,6 +78,12 @@ public class EntityId: LosslessStringConvertible, ExpressibleByIntegerLiteral, E
     public static func == (lhs: EntityId, rhs: EntityId) -> Bool {
         lhs.num == rhs.num && lhs.shard == rhs.shard && lhs.realm == rhs.realm
     }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(shard)
+        hasher.combine(realm)
+        hasher.combine(num)
+    }
 }
 
 // fixme(sr): How do DRY?
@@ -89,7 +95,7 @@ public final class FileId: EntityId {
     public static let exchangeRates: FileId = FileId(num: 112)
 
     public static func fromBytes(_ bytes: Data) throws -> Self {
-        try bytes.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
+        try bytes.withUnsafeTypedBytes { pointer in
             var shard: UInt64 = 0
             var realm: UInt64 = 0
             var num: UInt64 = 0
@@ -115,7 +121,7 @@ public final class FileId: EntityId {
 /// The unique identifier for a smart contract on Hedera.
 public final class ContractId: EntityId {
     public static func fromBytes(_ bytes: Data) throws -> Self {
-        try bytes.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
+        try bytes.withUnsafeTypedBytes { pointer in
             var shard: UInt64 = 0
             var realm: UInt64 = 0
             var num: UInt64 = 0
@@ -141,7 +147,7 @@ public final class ContractId: EntityId {
 /// The unique identifier for a topic on Hedera.
 public final class TopicId: EntityId {
     public static func fromBytes(_ bytes: Data) throws -> Self {
-        try bytes.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
+        try bytes.withUnsafeTypedBytes { pointer in
             var shard: UInt64 = 0
             var realm: UInt64 = 0
             var num: UInt64 = 0
@@ -167,7 +173,7 @@ public final class TopicId: EntityId {
 /// The unique identifier for a token on Hedera.
 public final class TokenId: EntityId {
     public static func fromBytes(_ bytes: Data) throws -> Self {
-        try bytes.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
+        try bytes.withUnsafeTypedBytes { pointer in
             var shard: UInt64 = 0
             var realm: UInt64 = 0
             var num: UInt64 = 0
@@ -193,7 +199,7 @@ public final class TokenId: EntityId {
 /// The unique identifier for a schedule on Hedera.
 public final class ScheduleId: EntityId {
     public static func fromBytes(_ bytes: Data) throws -> Self {
-        try bytes.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
+        try bytes.withUnsafeTypedBytes { pointer in
             var shard: UInt64 = 0
             var realm: UInt64 = 0
             var num: UInt64 = 0

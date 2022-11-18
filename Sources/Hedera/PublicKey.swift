@@ -28,7 +28,7 @@ private typealias UnsafeFromBytesFunc = @convention(c) (
 ) -> HederaError
 
 /// A public key on the Hedera network.
-public final class PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, Codable {
+public final class PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, Codable, Equatable, Hashable {
     internal let ptr: OpaquePointer
 
     // sadly, we can't avoid a leaky abstraction here.
@@ -41,18 +41,16 @@ public final class PublicKey: LosslessStringConvertible, ExpressibleByStringLite
     }
 
     private static func unsafeFromAnyBytes(_ bytes: Data, _ chederaCallback: UnsafeFromBytesFunc) throws -> Self {
-        let ptr = try bytes.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
-            var key = OpaquePointer(bitPattern: 0)
-            let err = chederaCallback(pointer.bindMemory(to: UInt8.self).baseAddress, pointer.count, &key)
+        try bytes.withUnsafeTypedBytes { pointer -> Self in
+            var key: OpaquePointer? = nil
+            let err = chederaCallback(pointer.baseAddress, pointer.count, &key)
 
             if err != HEDERA_ERROR_OK {
                 throw HError(err)!
             }
 
-            return key!
+            return Self(key!)
         }
-
-        return Self(ptr)
     }
 
     public static func fromBytes(_ bytes: Data) throws -> Self {
@@ -178,6 +176,20 @@ public final class PublicKey: LosslessStringConvertible, ExpressibleByStringLite
         AccountId.init(shard: shard, realm: realm, alias: self)
     }
 
+    public func verify(_ message: Data, _ signature: Data) throws {
+        try message.withUnsafeTypedBytes { messagePointer in
+            try signature.withUnsafeTypedBytes { signaturePointer in
+                let err = hedera_public_key_verify(
+                    ptr, messagePointer.baseAddress, messagePointer.count, signaturePointer.baseAddress,
+                    signaturePointer.count)
+
+                if err != HEDERA_ERROR_OK {
+                    throw HError(err)!
+                }
+            }
+        }
+    }
+
     public func isEd25519() -> Bool {
         hedera_public_key_is_ed25519(ptr)
     }
@@ -190,6 +202,16 @@ public final class PublicKey: LosslessStringConvertible, ExpressibleByStringLite
         var container = encoder.singleValueContainer()
 
         try container.encode(String(describing: self))
+    }
+
+    public static func == (lhs: PublicKey, rhs: PublicKey) -> Bool {
+        // this will always be true for public keys, DER is a stable format with canonicalization.
+        // ideally we'd do this a different way, but that needs to wait until ffi is gone.
+        lhs.toBytesDer() == rhs.toBytesDer()
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(toBytesDer())
     }
 
     deinit {

@@ -41,8 +41,7 @@ public final class ScheduleInfo: Codable {
 
     /// The transaction id that will be used in the record of the scheduled transaction (if
     /// it executes).
-    // TODO: TransactionId type
-    public let scheduledTransactionId: String
+    public let scheduledTransactionId: TransactionId
 
     /// When set to true, the transaction will be evaluated for execution at `expiration_time`
     /// instead of when all required signatures are received.
@@ -52,19 +51,19 @@ public final class ScheduleInfo: Codable {
     public let scheduleMemo: String
 
     /// The date and time the schedule transaction will expire
-    public let expirationTime: Date?
+    public let expirationTime: Timestamp?
 
     /// The time the schedule transaction was executed.
-    public let executedAt: Date?
+    public let executedAt: Timestamp?
 
     /// The time the schedule transaction was deleted.
-    public let deletedAt: Date?
+    public let deletedAt: Timestamp?
 
     public let ledgerId: LedgerId
 
     public static func fromBytes(_ bytes: Data) throws -> Self {
-        let json: String = try bytes.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
-            var ptr: UnsafeMutablePointer<CChar>? = UnsafeMutablePointer(bitPattern: 0)
+        let json: String = try bytes.withUnsafeTypedBytes { pointer in
+            var ptr: UnsafeMutablePointer<CChar>? = nil
             let err = hedera_schedule_info_from_bytes(
                 pointer.baseAddress,
                 pointer.count,

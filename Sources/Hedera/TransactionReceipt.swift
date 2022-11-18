@@ -24,10 +24,14 @@ import Foundation
 // TODO: exchangeRate
 /// The summary of a transaction's result so far, if the transaction has reached consensus.
 public struct TransactionReceipt: Codable {
-    // TODO: enum Status
+    // fixme(sr): better doc comment.
+    // todo: once `TransactionId`s exist in swift on main, use on of those.
+    /// The ID of the transaction that this is a receipt for.
+    public let transactionId: String?
+
     /// The consensus status of the transaction; is UNKNOWN if consensus has not been reached, or if
     /// the associated transaction did not have a valid payer signature.
-    public let status: String
+    public let status: Status
 
     /// In the receipt for an `AccountCreateTransaction`, the id of the newly created account.
     public let accountId: AccountId?
@@ -61,17 +65,15 @@ public struct TransactionReceipt: Codable {
     ///
     /// For fungible tokens, the current total supply of this token.
     /// For non-fungible tokens, the total number of NFTs issued for a given token id.
-    ///
-    public let newTotalSupply: UInt64
+    public let totalSupply: UInt64
 
     /// In the receipt for a `ScheduleCreateTransaction`, the id of the newly created schedule.
     public let scheduleId: ScheduleId?
 
-    // TODO: TransactionId type
     /// In the receipt of a `ScheduleCreateTransaction` or `ScheduleSignTransaction` that resolves
     /// to `Success`, the `TransactionId` that should be used to query for the receipt or
     /// record of the relevant scheduled transaction.
-    public let scheduledTransactionId: String?
+    public let scheduledTransactionId: TransactionId?
 
     /// In the receipt of a `TokenMintTransaction` for tokens of type `NonFungibleUnique`,
     /// the serial numbers of the newly created NFTs.
@@ -85,7 +87,7 @@ public struct TransactionReceipt: Codable {
     public let children: [TransactionReceipt]
 
     public static func fromBytes(_ bytes: Data) throws -> Self {
-        let json: String = try bytes.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
+        let json: String = try bytes.withUnsafeTypedBytes { pointer in
             var ptr: UnsafeMutablePointer<CChar>? = UnsafeMutablePointer(bitPattern: 0)
             let err = hedera_transaction_receipt_from_bytes(
                 pointer.baseAddress,
@@ -101,6 +103,15 @@ public struct TransactionReceipt: Codable {
         }
 
         return try JSONDecoder().decode(Self.self, from: json.data(using: .utf8)!)
+    }
+
+    @discardableResult
+    public func validateStatus(_ doValidate: Bool) throws -> Self {
+        if doValidate && status != Status.ok {
+            throw HError(kind: .receiptStatus(status: status), description: "")
+        }
+
+        return self
     }
 
     private func toBytesInner() throws -> Data {
