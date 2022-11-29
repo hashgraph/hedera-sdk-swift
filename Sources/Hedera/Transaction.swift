@@ -27,7 +27,19 @@ public class Transaction: Request {
     public typealias Response = TransactionResponse
 
     private enum CodingKeys: String, CodingKey {
+        case maxTransactionFee
         case type = "$type"
+    }
+
+    /// The maximum allowed transaction fee for this transaction.
+    public var maxTransactionFee: Hbar? = 1
+
+    /// Sets the maximum allowed transaction fee for this transaction.
+    @discardableResult
+    public func maxTransactionFee(_ maxTransactionFee: Hbar) -> Self {
+        self.maxTransactionFee = maxTransactionFee
+
+        return self
     }
 
     @discardableResult
@@ -42,13 +54,13 @@ public class Transaction: Request {
         return self
     }
 
-    public func execute(_ client: Client) async throws -> TransactionResponse {
+    public func execute(_ client: Client, _ timeout: TimeInterval? = nil) async throws -> TransactionResponse {
         // encode self as a JSON request to pass to Rust
         let requestBytes = try JSONEncoder().encode(self)
 
         let request = String(data: requestBytes, encoding: .utf8)!
 
-        return try await self.executeEncoded(client, request: request, signers: self.signers)
+        return try await executeEncoded(client, request: request, signers: signers, timeout: timeout)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -58,5 +70,6 @@ public class Transaction: Request {
         let requestName = typeName.prefix(1).lowercased() + typeName.dropFirst().dropLast(11)
 
         try container.encode(requestName, forKey: .type)
+        try container.encode(maxTransactionFee, forKey: .maxTransactionFee)
     }
 }

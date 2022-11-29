@@ -33,7 +33,7 @@ public final class PublicKey: LosslessStringConvertible, ExpressibleByStringLite
 
     // sadly, we can't avoid a leaky abstraction here.
     internal static func unsafeFromPtr(_ ptr: OpaquePointer) -> Self {
-        Self.init(ptr)
+        Self(ptr)
     }
 
     private init(_ ptr: OpaquePointer) {
@@ -42,12 +42,9 @@ public final class PublicKey: LosslessStringConvertible, ExpressibleByStringLite
 
     private static func unsafeFromAnyBytes(_ bytes: Data, _ chederaCallback: UnsafeFromBytesFunc) throws -> Self {
         try bytes.withUnsafeTypedBytes { pointer -> Self in
-            var key: OpaquePointer? = nil
-            let err = chederaCallback(pointer.baseAddress, pointer.count, &key)
+            var key: OpaquePointer?
 
-            if err != HEDERA_ERROR_OK {
-                throw HError(err)!
-            }
+            try HError.throwing(error: chederaCallback(pointer.baseAddress, pointer.count, &key))
 
             return Self(key!)
         }
@@ -69,62 +66,46 @@ public final class PublicKey: LosslessStringConvertible, ExpressibleByStringLite
         try unsafeFromAnyBytes(bytes, hedera_public_key_from_bytes_ed25519)
     }
 
-    public static func fromString(_ description: String) throws -> Self {
-        var key = OpaquePointer(bitPattern: 0)
-        let err = hedera_public_key_from_string(description, &key)
+    private init(parsing description: String) throws {
+        var key: OpaquePointer?
+        try HError.throwing(error: hedera_public_key_from_string(description, &key))
 
-        if err != HEDERA_ERROR_OK {
-            throw HError(err)!
-        }
-
-        return Self(key!)
+        self.ptr = key!
     }
 
-    public init?(_ description: String) {
-        var key = OpaquePointer.init(bitPattern: 0)
-        let err = hedera_public_key_from_string(description, &key)
+    public static func fromString(_ description: String) throws -> Self {
+        try Self(parsing: description)
+    }
 
-        if err != HEDERA_ERROR_OK {
-            return nil
-        }
-
-        ptr = key!
+    public convenience init?(_ description: String) {
+        try? self.init(parsing: description)
     }
 
     public required convenience init(stringLiteral value: StringLiteralType) {
-        self.init(value)!
+        // swiftlint:disable:next force_try
+        try! self.init(parsing: value)
     }
 
     public static func fromStringDer(_ description: String) throws -> Self {
-        var key = OpaquePointer(bitPattern: 0)
-        let err = hedera_public_key_from_string_der(description, &key)
+        var key: OpaquePointer?
 
-        if err != HEDERA_ERROR_OK {
-            throw HError(err)!
-        }
+        try HError.throwing(error: hedera_public_key_from_string_der(description, &key))
 
         return Self(key!)
     }
 
     public static func fromStringEd25519(_ description: String) throws -> Self {
-        var key = OpaquePointer(bitPattern: 0)
-        let err = hedera_public_key_from_string_ed25519(description, &key)
+        var key: OpaquePointer?
 
-        if err != HEDERA_ERROR_OK {
-            throw HError(err)!
-        }
+        try HError.throwing(error: hedera_public_key_from_string_ed25519(description, &key))
 
         return Self(key!)
     }
 
     public static func fromStringEcdsa(_ description: String) throws -> Self {
-        var key = OpaquePointer(bitPattern: 0)
-        let err = hedera_public_key_from_string_ecdsa(description, &key)
+        var key: OpaquePointer?
 
-        if err != HEDERA_ERROR_OK {
-            throw HError(err)!
-        }
-
+        try HError.throwing(error: hedera_public_key_from_string_ecdsa(description, &key))
         return Self(key!)
     }
 
@@ -183,9 +164,7 @@ public final class PublicKey: LosslessStringConvertible, ExpressibleByStringLite
                     ptr, messagePointer.baseAddress, messagePointer.count, signaturePointer.baseAddress,
                     signaturePointer.count)
 
-                if err != HEDERA_ERROR_OK {
-                    throw HError(err)!
-                }
+                try HError.throwing(error: err)
             }
         }
     }
