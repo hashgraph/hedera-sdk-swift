@@ -21,12 +21,11 @@
 import CHedera
 import Foundation
 
-// TODO: KeyList
-// TODO: ThresholdKey
-public enum Key {
+public enum Key: Equatable {
     case single(PublicKey)
     case contractId(ContractId)
     case delegatableContractId(ContractId)
+    case keyList(KeyList)
 }
 
 extension Key: Codable {
@@ -34,6 +33,7 @@ extension Key: Codable {
         case single
         case contractId
         case delegatableContractId
+        case keyList
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -48,6 +48,9 @@ extension Key: Codable {
 
         case .delegatableContractId(let contractId):
             try container.encode(contractId, forKey: .delegatableContractId)
+
+        case .keyList(let keyList):
+            try container.encode(keyList, forKey: .keyList)
         }
     }
 
@@ -60,25 +63,20 @@ extension Key: Codable {
             self = .contractId(contractId)
         } else if let contractId = try container.decodeIfPresent(ContractId.self, forKey: .delegatableContractId) {
             self = .delegatableContractId(contractId)
+        } else if let keyList = try container.decodeIfPresent(KeyList.self, forKey: .keyList) {
+            self = .keyList(keyList)
         } else {
             fatalError("(BUG) unexpected variant for Key")
         }
     }
 
-    private func toBytesInner() throws -> Data {
-        let jsonBytes = try JSONEncoder().encode(self)
-        let json = String(data: jsonBytes, encoding: .utf8)!
-        var buf: UnsafeMutablePointer<UInt8>?
-        var bufSize: Int = 0
-
-        try HError.throwing(error: hedera_key_to_bytes(json, &buf, &bufSize))
-
-        return Data(bytesNoCopy: buf!, count: bufSize, deallocator: Data.unsafeCHederaBytesFree)
-    }
-
     public func toBytes() -> Data {
         // can't have `throws` because that's the wrong function signature.
         // swiftlint:disable force_try
-        try! toBytesInner()
+        try! toJsonBytes()
     }
+}
+
+extension Key: ToJsonBytes {
+    internal static var cToBytes: ToJsonBytesFunc { hedera_key_to_bytes }
 }

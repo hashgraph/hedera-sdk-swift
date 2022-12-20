@@ -145,26 +145,12 @@ public final class AccountAllowanceApproveTransaction: Transaction {
 
         try super.encode(to: encoder)
     }
-}
 
-public struct HbarAllowance: Codable {
-    public let ownerAccountId: AccountId
-    public let spenderAccountId: AccountId
-    public let amount: Hbar
-}
+    internal override func validateChecksums(on ledgerId: LedgerId) throws {
+        try hbarAllowances.validateChecksums(on: ledgerId)
+        try tokenAllowances.validateChecksums(on: ledgerId)
+        try nftAllowances.validateChecksums(on: ledgerId)
 
-public struct TokenAllowance: Codable {
-    public let tokenId: TokenId
-    public let ownerAccountId: AccountId
-    public let spenderAccountId: AccountId
-    public let amount: UInt64
-}
-
-public struct TokenNftAllowance: Codable {
-    public let tokenId: TokenId
-    public let ownerAccountId: AccountId
-    public let spenderAccountId: AccountId
-    public var serials: [UInt64]
-    public let approvedForAll: Bool?
-    public let delegatingSpenderAccountId: AccountId?
+        try super.validateChecksums(on: ledgerId)
+    }
 }

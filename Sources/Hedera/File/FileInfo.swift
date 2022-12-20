@@ -37,35 +37,33 @@ public final class FileInfo: Codable {
     /// True if deleted but not yet expired.
     public let isDeleted: Bool
 
+    /// One of these keys must sign in order to modify or delete the file.
+    public let keys: KeyList
+
     /// Memo associated with the file.
     public let fileMemo: String
 
     public let ledgerId: LedgerId
 
+    /// The auto renew period for this file.
+    public let autoRenewPeriod: Duration?
+
+    /// The account to be used at this file's expiration time to extend the
+    /// life of the file.
+    public let autoRenewAccountId: AccountId?
+
     public static func fromBytes(_ bytes: Data) throws -> Self {
-        let json: String = try bytes.withUnsafeTypedBytes { pointer in
-            var ptr: UnsafeMutablePointer<CChar>?
-            try HError.throwing(error: hedera_file_info_from_bytes(pointer.baseAddress, pointer.count, &ptr))
-            return String(hString: ptr!)
-        }
-
-        return try JSONDecoder().decode(Self.self, from: json.data(using: .utf8)!)
-    }
-
-    private func toBytesInner() throws -> Data {
-        let jsonBytes = try JSONEncoder().encode(self)
-        let json = String(data: jsonBytes, encoding: .utf8)!
-        var buf: UnsafeMutablePointer<UInt8>?
-        var bufSize: Int = 0
-
-        try HError.throwing(error: hedera_file_info_to_bytes(json, &buf, &bufSize))
-
-        return Data(bytesNoCopy: buf!, count: bufSize, deallocator: Data.unsafeCHederaBytesFree)
+        try Self.fromJsonBytes(bytes)
     }
 
     public func toBytes() -> Data {
         // can't have `throws` because that's the wrong function signature.
         // swiftlint:disable force_try
-        try! toBytesInner()
+        try! toJsonBytes()
     }
+}
+
+extension FileInfo: ToFromJsonBytes {
+    internal static var cFromBytes: FromJsonBytesFunc { hedera_file_info_from_bytes }
+    internal static var cToBytes: ToJsonBytesFunc { hedera_file_info_to_bytes }
 }

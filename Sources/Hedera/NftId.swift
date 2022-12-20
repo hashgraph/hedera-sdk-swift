@@ -22,7 +22,7 @@ import CHedera
 import Foundation
 
 /// The unique identifier for a non-fungible token (NFT) instance on Hedera.
-public final class NftId: Codable, LosslessStringConvertible, ExpressibleByStringLiteral, Equatable {
+public final class NftId: Codable, LosslessStringConvertible, ExpressibleByStringLiteral, Equatable, ValidateChecksums {
     /// The (non-fungible) token of which this NFT is an instance.
     public let tokenId: TokenId
 
@@ -87,7 +87,7 @@ public final class NftId: Codable, LosslessStringConvertible, ExpressibleByStrin
         var buf: UnsafeMutablePointer<UInt8>?
         let size = hedera_nft_id_to_bytes(tokenId.shard, tokenId.realm, tokenId.num, serial, &buf)
 
-        return Data(bytesNoCopy: buf!, count: size, deallocator: Data.unsafeCHederaBytesFree)
+        return Data(bytesNoCopy: buf!, count: size, deallocator: .unsafeCHederaBytesFree)
     }
 
     public static func == (lhs: NftId, rhs: NftId) -> Bool {
@@ -96,5 +96,9 @@ public final class NftId: Codable, LosslessStringConvertible, ExpressibleByStrin
 
     public var description: String {
         "\(tokenId)/\(serial)"
+    }
+
+    internal func validateChecksums(on ledgerId: LedgerId) throws {
+        try tokenId.validateChecksums(on: ledgerId)
     }
 }

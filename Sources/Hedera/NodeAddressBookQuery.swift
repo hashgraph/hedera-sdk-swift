@@ -20,7 +20,7 @@
 
 import Foundation
 
-public class NodeAddressBookQuery: MirrorQuery<[NodeAddress]> {
+public class NodeAddressBookQuery: MirrorQuery<NodeAddressBook> {
     private var fileId: FileId
     private var limit: UInt32
 
@@ -45,5 +45,10 @@ public class NodeAddressBookQuery: MirrorQuery<[NodeAddress]> {
     public func setLimit(_ limit: UInt32) -> Self {
         self.limit = limit
         return self
+    }
+
+    internal override func validateChecksums(on ledgerId: LedgerId) throws {
+        try fileId.validateChecksums(on: ledgerId)
+        try super.validateChecksums(on: ledgerId)
     }
 }

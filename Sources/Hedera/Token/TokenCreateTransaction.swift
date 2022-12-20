@@ -43,7 +43,7 @@ public final class TokenCreateTransaction: Transaction {
         tokenSupplyType: TokenSupplyType = .infinite,
         maxSupply: UInt64 = 0,
         feeScheduleKey: Key? = nil,
-        customFees: [CustomFee] = [],
+        customFees: [AnyCustomFee] = [],
         pauseKey: Key? = nil
     ) {
         self.name = name
@@ -282,11 +282,11 @@ public final class TokenCreateTransaction: Transaction {
     }
 
     /// The custom fees to be assessed during a transfer.
-    public var customFees: [CustomFee]
+    public var customFees: [AnyCustomFee]
 
     /// Sets the custom fees to be assessed during a transfer.
     @discardableResult
-    public func customFees(_ customFees: [CustomFee]) -> Self {
+    public func customFees(_ customFees: [AnyCustomFee]) -> Self {
         self.customFees = customFees
 
         return self
@@ -353,5 +353,13 @@ public final class TokenCreateTransaction: Transaction {
         try container.encodeIfPresent(pauseKey, forKey: .pauseKey)
 
         try super.encode(to: encoder)
+    }
+
+    internal override func validateChecksums(on ledgerId: LedgerId) throws {
+        try treasuryAccountId?.validateChecksums(on: ledgerId)
+        try autoRenewAccountId?.validateChecksums(on: ledgerId)
+        try customFees.validateChecksums(on: ledgerId)
+
+        try super.validateChecksums(on: ledgerId)
     }
 }

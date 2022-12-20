@@ -64,10 +64,9 @@ public final class AccountAllowanceDeleteTransaction: Transaction {
 
         try super.encode(to: encoder)
     }
-}
 
-public struct NftRemoveAllowance: Encodable {
-    public let tokenId: TokenId
-    public let ownerAccountId: AccountId
-    public var serials: [UInt64]
+    public override func validateChecksums(on ledgerId: LedgerId) throws {
+        try nftAllowances.validateChecksums(on: ledgerId)
+        try super.validateChecksums(on: ledgerId)
+    }
 }

@@ -34,6 +34,11 @@ typedef enum HederaError {
   HEDERA_ERROR_MNEMONIC_PARSE,
   HEDERA_ERROR_MNEMONIC_ENTROPY,
   HEDERA_ERROR_SIGNATURE_VERIFY,
+  HEDERA_ERROR_BAD_ENTITY_ID,
+  HEDERA_ERROR_CANNOT_TO_STRING_WITH_CHECKSUM,
+  HEDERA_ERROR_CANNOT_PERFORM_TASK_WITHOUT_LEDGER_ID,
+  HEDERA_ERROR_NO_EVM_ADDRESS_PRESENT,
+  HEDERA_ERROR_WRONG_KEY_TYPE,
 } HederaError;
 
 /**
@@ -68,6 +73,14 @@ typedef struct HederaAccountId {
    *   - point to a valid instance of `PublicKey` (any `PublicKey` that `hedera` provides which hasn't been freed yet)
    */
   struct HederaPublicKey *alias;
+  /**
+   * Safety:
+   * - if `evm_address` is not null, it must:
+   * - be properly aligned
+   * - be dereferencable
+   * - point to an array of 20 bytes
+   */
+  uint8_t *evm_address;
 } HederaAccountId;
 
 typedef struct HederaAccountBalance {
@@ -257,11 +270,6 @@ size_t hedera_account_balance_to_bytes(struct HederaAccountBalance id,
                                        uint8_t **buf);
 
 /**
- * Parse a Hedera `AccountId` from the passed string.
- */
-enum HederaError hedera_account_id_from_string(const char *s, struct HederaAccountId *id);
-
-/**
  * Parse a Hedera `AccountId` from the passed bytes.
  */
 enum HederaError hedera_account_id_from_bytes(const uint8_t *bytes,
@@ -280,6 +288,16 @@ size_t hedera_account_id_to_bytes(struct HederaAccountId id,
                                   uint8_t **buf);
 
 /**
+ * Free an array of account IDs.
+ *
+ * # Safety
+ * - `ids` must point to an allocation made by `hedera`.
+ * - `ids` must not already have been freed.
+ * - `ids` must be valid for `size` elements.
+ */
+void hedera_account_id_array_free(struct HederaAccountId *ids, size_t size);
+
+/**
  * # Safety
  * - `bytes` must be valid for reads of up to `bytes_size` bytes.
  * - `s` must only be freed with `hedera_string_free`,
@@ -288,6 +306,20 @@ size_t hedera_account_id_to_bytes(struct HederaAccountId id,
 enum HederaError hedera_account_info_from_bytes(const uint8_t *bytes, size_t bytes_size, char **s);
 
 enum HederaError hedera_account_info_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
+
+/**
+ * # Safety
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ * - `s` must only be freed with `hedera_string_free`,
+ *   notably this means it must not be freed with `free`.
+ */
+enum HederaError hedera_assessed_custom_fee_from_bytes(const uint8_t *bytes,
+                                                       size_t bytes_size,
+                                                       char **s);
+
+enum HederaError hedera_assessed_custom_fee_to_bytes(const char *s,
+                                                     uint8_t **buf,
+                                                     size_t *buf_size);
 
 /**
  * Free a string returned from a hedera API.
@@ -329,11 +361,6 @@ struct HederaClient *hedera_client_for_testnet(void);
 struct HederaClient *hedera_client_for_previewnet(void);
 
 /**
- * Release memory associated with the previously-opened Hedera client.
- */
-void hedera_client_free(struct HederaClient *client);
-
-/**
  * Sets the account that will, by default, be paying for transactions and queries built with
  * this client.
  */
@@ -344,10 +371,33 @@ void hedera_client_set_operator(struct HederaClient *client,
                                 struct HederaPrivateKey *key);
 
 /**
- * Parse a Hedera `ContractId` from the passed string.
+ * Get all the nodes for the `Client`
+ *
+ * For internal use _only_.
+ *
+ * # Safety:
+ * - `Client` must be valid for reads.
+ * - `ids` must be freed by using `hedera_account_id_array_free`, notably this means that it must *not* be freed with `free`.
+ * - the length of `ids` must not be changed.
  */
-enum HederaError hedera_contract_id_from_string(const char *s,
-                                                struct HederaContractId *contract_id);
+size_t hedera_client_get_nodes(struct HederaClient *client,
+                               struct HederaAccountId **ids);
+
+void hedera_client_set_ledger_id(struct HederaClient *client,
+                                 const uint8_t *ledger_id_bytes,
+                                 size_t ledger_id_size);
+
+size_t hedera_client_get_ledger_id(struct HederaClient *client, uint8_t **ledger_id_bytes);
+
+void hedera_client_set_auto_validate_checksums(struct HederaClient *client,
+                                               bool auto_validate_checksums);
+
+bool hedera_client_get_auto_validate_checksums(struct HederaClient *client);
+
+/**
+ * Release memory associated with the previously-opened Hedera client.
+ */
+void hedera_client_free(struct HederaClient *client);
 
 /**
  * Parse a Hedera `ContractId` from the passed bytes.
@@ -361,43 +411,12 @@ enum HederaError hedera_contract_id_from_bytes(const uint8_t *bytes,
                                                struct HederaContractId *contract_id);
 
 /**
- * Create a `ContractId` from a `shard.realm.evm_address` set.
- *
- * # Safety
- * - `contract_id` must be valid for writes.
- * - `address` must be valid for reads up until the first `\0` character.
- */
-enum HederaError hedera_contract_id_from_evm_address(uint64_t shard,
-                                                     uint64_t realm,
-                                                     const char *evm_address,
-                                                     struct HederaContractId *contract_id);
-
-/**
- * create a `ContractId` from a solidity address.
- *
- * # Safety
- * - `contract_id` must be valid for writes.
- * - `address` must be valid for reads up until the first `\0` character.
- */
-enum HederaError hedera_contract_id_from_solidity_address(const char *address,
-                                                          struct HederaContractId *contract_id);
-
-/**
  * Serialize the passed `ContractId` as bytes
  *
  * # Safety
  * - `buf` must be valid for writes.
  */
 size_t hedera_contract_id_to_bytes(struct HederaContractId contract_id, uint8_t **buf);
-
-/**
- * Serialize the passed `ContractId` as a solidity `address`
- *
- * # Safety
- * - `s` must be valid for writes
- */
-enum HederaError hedera_contract_id_to_solidity_address(struct HederaContractId contract_id,
-                                                        char **s);
 
 /**
  * # Safety
@@ -408,14 +427,6 @@ enum HederaError hedera_contract_id_to_solidity_address(struct HederaContractId 
 enum HederaError hedera_contract_info_from_bytes(const uint8_t *bytes, size_t bytes_size, char **s);
 
 enum HederaError hedera_contract_info_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
-
-/**
- * Parse a Hedera `EntityId` from the passed string.
- */
-enum HederaError hedera_entity_id_from_string(const char *s,
-                                              uint64_t *id_shard,
-                                              uint64_t *id_realm,
-                                              uint64_t *id_num);
 
 /**
  * Parse a Hedera `FileId` from the passed bytes.
@@ -431,7 +442,7 @@ enum HederaError hedera_file_id_from_bytes(const uint8_t *bytes,
                                            uint64_t *file_id_num);
 
 /**
- * Serialize the passed FileId as bytes
+ * Serialize the passed `FileId` as bytes
  *
  * # Safety
  * - `buf` must be valid for writes.
@@ -455,7 +466,7 @@ enum HederaError hedera_topic_id_from_bytes(const uint8_t *bytes,
                                             uint64_t *topic_id_num);
 
 /**
- * Serialize the passed TopicId as bytes
+ * Serialize the passed `TopicId` as bytes
  *
  * # Safety
  * - `buf` must be valid for writes.
@@ -826,7 +837,7 @@ bool hedera_private_key_is_ecdsa(struct HederaPrivateKey *key);
  * - `buf` must be valid for writes according to [*Rust* pointer rules]
  * - the length of the returned buffer must not be modified.
  * - the returned pointer must NOT be freed with `free`.
- * [*Rust* pointer rules]: https://doc.rust-lang.org/std/ptr/index.html#safety
+ * [*Rust* pointer rules]: <https://doc.rust-lang.org/std/ptr/index.html#safety>
  */
 size_t hedera_private_key_sign(struct HederaPrivateKey *key,
                                const uint8_t *message,
@@ -1150,6 +1161,20 @@ bool hedera_public_key_is_ed25519(struct HederaPublicKey *key);
 bool hedera_public_key_is_ecdsa(struct HederaPublicKey *key);
 
 /**
+ * Convert this public key into an evm address. The evm address is This is the rightmost 20 bytes of the 32 byte Keccak-256 hash of the ECDSA public key.
+ *
+ * # Safety
+ * - `key` must be a pointer that is valid for reads according to the [*Rust* pointer rules].
+ * - `evm_address` must be valid for writes according to the [*Rust* pointer rules].
+ * - the length of `evm_address` string must not be modified.
+ * - `evm_address` must NOT be freed with `free`.
+ *
+ * [*Rust* pointer rules]: https://doc.rust-lang.org/std/ptr/index.html#safety
+ */
+enum HederaError hedera_public_key_to_evm_address(struct HederaPublicKey *key,
+                                                  char **evm_address);
+
+/**
  * Releases memory associated with the public key.
  */
 void hedera_public_key_free(struct HederaPublicKey *key);
@@ -1296,13 +1321,25 @@ enum HederaError hedera_nft_id_from_bytes(const uint8_t *bytes,
                                           uint64_t *serial);
 
 /**
- * Serialize the passed NftId as bytes
+ * Serialize the passed `NftId` as bytes
  */
 size_t hedera_nft_id_to_bytes(uint64_t token_id_shard,
                               uint64_t token_id_realm,
                               uint64_t token_id_num,
                               uint64_t serial,
                               uint8_t **buf);
+
+/**
+ * # Safety
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ * - `s` must only be freed with `hedera_string_free`,
+ *   notably this means it must not be freed with `free`.
+ */
+enum HederaError hedera_node_address_book_from_bytes(const uint8_t *bytes,
+                                                     size_t bytes_size,
+                                                     char **s);
+
+enum HederaError hedera_node_address_book_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
 
 /**
  * # Safety
@@ -1353,6 +1390,38 @@ enum HederaError hedera_token_association_from_bytes(const uint8_t *bytes,
                                                      char **s);
 
 enum HederaError hedera_token_association_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
+
+/**
+ * # Safety
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ * - `s` must only be freed with `hedera_string_free`,
+ *   notably this means it must not be freed with `free`.
+ */
+enum HederaError hedera_token_info_from_bytes(const uint8_t *bytes, size_t bytes_size, char **s);
+
+enum HederaError hedera_token_info_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
+
+/**
+ * # Safety
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ * - `s` must only be freed with `hedera_string_free`,
+ *   notably this means it must not be freed with `free`.
+ */
+enum HederaError hedera_token_nft_info_from_bytes(const uint8_t *bytes,
+                                                  size_t bytes_size,
+                                                  char **s);
+
+enum HederaError hedera_token_nft_info_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
+
+/**
+ * # Safety
+ * - `bytes` must be valid for reads of up to `bytes_size` bytes.
+ * - `s` must only be freed with `hedera_string_free`,
+ *   notably this means it must not be freed with `free`.
+ */
+enum HederaError hedera_topic_info_from_bytes(const uint8_t *bytes, size_t bytes_size, char **s);
+
+enum HederaError hedera_topic_info_to_bytes(const char *s, uint8_t **buf, size_t *buf_size);
 
 /**
  * # Safety

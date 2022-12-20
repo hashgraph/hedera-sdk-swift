@@ -1,7 +1,9 @@
 import CHedera
 import Foundation
 
-public struct TransactionId: Codable, Equatable, ExpressibleByStringLiteral, LosslessStringConvertible {
+public struct TransactionId: Codable, Equatable, ExpressibleByStringLiteral, LosslessStringConvertible,
+    ValidateChecksums
+{
     /// The Account ID that paid for this transaction.
     public let accountId: AccountId
 
@@ -73,7 +75,7 @@ public struct TransactionId: Codable, Equatable, ExpressibleByStringLiteral, Los
             var buf: UnsafeMutablePointer<UInt8>?
             let size = hedera_transaction_id_to_bytes(hedera, &buf)
 
-            return Data(bytesNoCopy: buf!, count: size, deallocator: Data.unsafeCHederaBytesFree)
+            return Data(bytesNoCopy: buf!, count: size, deallocator: .unsafeCHederaBytesFree)
         }
     }
 
@@ -96,5 +98,9 @@ public struct TransactionId: Codable, Equatable, ExpressibleByStringLiteral, Los
         var container = encoder.singleValueContainer()
 
         try container.encode(String(describing: self))
+    }
+
+    internal func validateChecksums(on ledgerId: LedgerId) throws {
+        try accountId.validateChecksums(on: ledgerId)
     }
 }
