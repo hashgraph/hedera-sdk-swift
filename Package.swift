@@ -34,6 +34,7 @@ let exampleTargets = [
     "TransferHbar",
     "GetAddressBook",
     "GetFileContents",
+    "UpdateStaking",
 ].map { name in
     Target.executableTarget(
         name: "\(name)Example",
