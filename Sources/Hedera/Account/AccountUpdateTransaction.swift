@@ -28,12 +28,65 @@ import Foundation
 /// signed by both the old key (from before the change) and the new key.
 ///
 public final class AccountUpdateTransaction: Transaction {
+    internal init(
+        accountId: AccountId? = nil,
+        key: Key? = nil,
+        receiverSignatureRequired: Bool? = nil,
+        autoRenewPeriod: Duration? = nil,
+        autoRenewAccountId: AccountId? = nil,
+        proxyAccountId: AccountId? = nil,
+        expirationTime: Timestamp? = nil,
+        accountMemo: String? = nil,
+        maxAutomaticTokenAssociations: UInt32? = nil,
+        stakedAccountId: AccountId? = nil,
+        stakedNodeId: UInt64? = nil,
+        declineStakingReward: Bool? = nil
+    ) {
+        self.accountId = accountId
+        self.key = key
+        self.receiverSignatureRequired = receiverSignatureRequired
+        self.autoRenewPeriod = autoRenewPeriod
+        self.autoRenewAccountId = autoRenewAccountId
+        proxyAccountIdInner = proxyAccountId
+        self.expirationTime = expirationTime
+        self.accountMemo = accountMemo
+        self.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
+        self.stakedAccountId = stakedAccountId
+        self.stakedNodeId = stakedNodeId
+        self.declineStakingReward = declineStakingReward
+
+        super.init()
+    }
+
     /// Create a new `AccountCreateTransaction` ready for configuration.
-    public override init() {}
+    public override init() {
+        super.init()
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        accountId = try container.decodeIfPresent(.accountId)
+        key = try container.decodeIfPresent(.key)
+        receiverSignatureRequired = try container.decodeIfPresent(.receiverSignatureRequired)
+        autoRenewPeriod = try container.decodeIfPresent(.autoRenewPeriod)
+        autoRenewAccountId = try container.decodeIfPresent(.autoRenewAccountId)
+        proxyAccountIdInner = try container.decodeIfPresent(.proxyAccountId)
+        expirationTime = try container.decodeIfPresent(.expirationTime)
+        accountMemo = try container.decodeIfPresent(.accountMemo)
+        maxAutomaticTokenAssociations = try container.decodeIfPresent(.maxAutomaticTokenAssociations)
+        stakedAccountId = try container.decodeIfPresent(.stakedAccountId)
+        stakedNodeId = try container.decodeIfPresent(.stakedNodeId)
+        declineStakingReward = try container.decodeIfPresent(.declineStakingReward)
+        receiverSignatureRequired = try container.decodeIfPresent(.receiverSignatureRequired)
+        proxyAccountIdInner = try container.decodeIfPresent(.proxyAccountId)
+
+        try super.init(from: decoder)
+    }
 
     /// The account ID which is being updated in this transaction.
     public var accountId: AccountId? {
-        willSet(_it) {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -48,7 +101,7 @@ public final class AccountUpdateTransaction: Transaction {
 
     /// The new key.
     public var key: Key? {
-        willSet(_it) {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -63,7 +116,7 @@ public final class AccountUpdateTransaction: Transaction {
 
     /// If true, this account's key must sign any transaction depositing into this account.
     public var receiverSignatureRequired: Bool? {
-        willSet(_it) {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -78,7 +131,7 @@ public final class AccountUpdateTransaction: Transaction {
 
     /// The period until the account will be charged to extend its expiration date.
     public var autoRenewPeriod: Duration? {
-        willSet(_it) {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -93,8 +146,8 @@ public final class AccountUpdateTransaction: Transaction {
 
     /// The account to be used at this account's expiration time to extend the
     /// life of the account.  If `nil`, this account pays for its own auto renewal fee.
-    public var autoRenewAccountId: AccountId? = nil {
-        willSet(_it) {
+    public var autoRenewAccountId: AccountId? {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -108,6 +161,13 @@ public final class AccountUpdateTransaction: Transaction {
         return self
     }
 
+    // this is the official recommendation for deprecation while not getting warnings internally.
+    private var proxyAccountIdInner: AccountId? {
+        willSet {
+            ensureNotFrozen()
+        }
+    }
+
     /// The ID of the account to which this account is proxy staked.
     ///
     /// If `proxy_account_id` is `None`, or is an invalid account, or is an account
@@ -119,9 +179,8 @@ public final class AccountUpdateTransaction: Transaction {
     /// will behave as if `proxy_account_id` was `None`.
     @available(*, deprecated)
     public var proxyAccountId: AccountId? {
-        willSet(_it) {
-            ensureNotFrozen()
-        }
+        get { proxyAccountIdInner }
+        set(value) { proxyAccountIdInner = value }
     }
 
     ///  Set the proxy account ID for this account
@@ -134,7 +193,7 @@ public final class AccountUpdateTransaction: Transaction {
 
     /// The new expiration time to extend to (ignored if equal to or before the current one).
     public var expirationTime: Timestamp? {
-        willSet(_it) {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -149,7 +208,7 @@ public final class AccountUpdateTransaction: Transaction {
 
     /// The memo associated with the account.
     public var accountMemo: String? {
-        willSet(_it) {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -164,7 +223,7 @@ public final class AccountUpdateTransaction: Transaction {
 
     /// The maximum number of tokens that an Account can be implicitly associated with.
     public var maxAutomaticTokenAssociations: UInt32? {
-        willSet(_it) {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -180,7 +239,7 @@ public final class AccountUpdateTransaction: Transaction {
     /// ID of the account to which this account is staking.
     /// This is mutually exclusive with `stakedNodeId`.
     public var stakedAccountId: AccountId? {
-        willSet(_it) {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -197,7 +256,7 @@ public final class AccountUpdateTransaction: Transaction {
     /// ID of the node this account is staked to.
     /// This is mutually exclusive with `staked_account_id`.
     public var stakedNodeId: UInt64? {
-        willSet(_it) {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -213,7 +272,7 @@ public final class AccountUpdateTransaction: Transaction {
 
     /// If true, the account declines receiving a staking reward. The default value is false.
     public var declineStakingReward: Bool? {
-        willSet(_it) {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -237,11 +296,14 @@ public final class AccountUpdateTransaction: Transaction {
         case stakedNodeId
         case declineStakingReward
         case autoRenewAccountId
+        case receiverSignatureRequired
+        case proxyAccountId
     }
 
     public override func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
+        try container.encodeIfPresent(accountId, forKey: .accountId)
         try container.encodeIfPresent(key, forKey: .key)
         try container.encodeIfPresent(accountMemo, forKey: .accountMemo)
         try container.encodeIfPresent(autoRenewPeriod, forKey: .autoRenewPeriod)
@@ -251,6 +313,8 @@ public final class AccountUpdateTransaction: Transaction {
         try container.encodeIfPresent(stakedNodeId, forKey: .stakedNodeId)
         try container.encodeIfPresent(declineStakingReward, forKey: .declineStakingReward)
         try container.encodeIfPresent(autoRenewAccountId, forKey: .autoRenewAccountId)
+        try container.encodeIfPresent(receiverSignatureRequired, forKey: .receiverSignatureRequired)
+        try container.encodeIfPresent(proxyAccountIdInner, forKey: .proxyAccountId)
 
         try super.encode(to: encoder)
     }
@@ -259,6 +323,7 @@ public final class AccountUpdateTransaction: Transaction {
         try accountId?.validateChecksums(on: ledgerId)
         try stakedAccountId?.validateChecksums(on: ledgerId)
         try autoRenewAccountId?.validateChecksums(on: ledgerId)
+        try proxyAccountIdInner?.validateChecksums(on: ledgerId)
         try super.validateChecksums(on: ledgerId)
     }
 }

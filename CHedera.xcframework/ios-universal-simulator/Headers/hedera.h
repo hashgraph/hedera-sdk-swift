@@ -62,6 +62,8 @@ typedef struct HederaPrivateKey HederaPrivateKey;
  */
 typedef struct HederaPublicKey HederaPublicKey;
 
+typedef struct HederaTransactionSources HederaTransactionSources;
+
 typedef struct HederaAccountId {
   uint64_t shard;
   uint64_t realm;
@@ -84,9 +86,19 @@ typedef struct HederaAccountId {
   uint8_t *evm_address;
 } HederaAccountId;
 
+typedef struct HederaTokenBalance {
+  uint64_t id_shard;
+  uint64_t id_realm;
+  uint64_t id_num;
+  uint64_t amount;
+  uint32_t decimals;
+} HederaTokenBalance;
+
 typedef struct HederaAccountBalance {
   struct HederaAccountId id;
   int64_t hbars;
+  const struct HederaTokenBalance *token_balances;
+  size_t token_balances_len;
 } HederaAccountBalance;
 
 typedef struct HederaContractId {
@@ -269,6 +281,17 @@ enum HederaError hedera_account_balance_from_bytes(const uint8_t *bytes,
  */
 size_t hedera_account_balance_to_bytes(struct HederaAccountBalance id,
                                        uint8_t **buf);
+
+/**
+ * Free an array of `TokenBalance`s.
+ *
+ * # Safety
+ * - `token_balances` must point to an allocation made by `hedera`.
+ * - `token_balances` must not already have been freed.
+ * - `token_balances` must be valid for `size` elements.
+ */
+void hedera_account_balance_token_balances_free(struct HederaTokenBalance *token_balances,
+                                                size_t size);
 
 /**
  * Parse a Hedera `AccountId` from the passed bytes.
@@ -750,6 +773,26 @@ enum HederaError hedera_private_key_from_string_ecdsa(const char *s, struct Hede
 enum HederaError hedera_private_key_from_pem(const char *pem, struct HederaPrivateKey **key);
 
 /**
+ * Parse a Hedera private key from the passed pem encoded string with the given password.
+ *
+ * # Safety
+ * - `pem` must be a valid string
+ * - `password` must be a valid string
+ * - `key` must be a valid for writes according to [*Rust* pointer rules].
+ *   The inner pointer need not point to a valid `PrivateKey`, however.
+ *
+ * # Errors
+ * - [`Error::KeyParse`] if `pem` is not valid PEM.
+ * - [`Error::KeyParse`] if the type label (`BEGIN XYZ`) is not `ENCRYPTED PRIVATE KEY`.
+ * - [`Error::KeyParse`] if decrypting the private key fails.
+ *
+ * [*Rust* pointer rules]: https://doc.rust-lang.org/std/ptr/index.html#safety
+ */
+enum HederaError hedera_private_key_from_pem_with_password(const char *pem,
+                                                           const char *password,
+                                                           struct HederaPrivateKey **key);
+
+/**
  * Return `key`, serialized as der encoded bytes.
  *
  * Note: the returned `buf` must be freed via `hedera_bytes_free` in order to prevent a memory leak.
@@ -1202,6 +1245,9 @@ bool hedera_public_key_is_ecdsa(struct HederaPublicKey *key);
 enum HederaError hedera_public_key_to_evm_address(struct HederaPublicKey *key,
                                                   char **evm_address);
 
+enum HederaError hedera_public_key_verify_sources(struct HederaPublicKey *key,
+                                                  struct HederaTransactionSources *sources);
+
 /**
  * Releases memory associated with the public key.
  */
@@ -1461,6 +1507,73 @@ enum HederaError hedera_transaction_to_bytes(const char *transaction,
                                              struct HederaSigners signers,
                                              uint8_t **buf,
                                              size_t *buf_size);
+
+enum HederaError hedera_transaction_from_bytes(const uint8_t *bytes,
+                                               size_t bytes_size,
+                                               const struct HederaTransactionSources **sources_out,
+                                               char **transaction_out);
+
+/**
+ * Execute this request against the provided client of the Hedera network.
+ *
+ * # Safety
+ * - todo(sr): Missing basically everything
+ * - `callback` must not store `response` after it returns.
+ */
+enum HederaError hedera_transaction_execute(const struct HederaClient *client,
+                                            const char *request,
+                                            const void *context,
+                                            struct HederaSigners signers,
+                                            bool has_timeout,
+                                            double timeout,
+                                            const struct HederaTransactionSources *sources,
+                                            void (*callback)(const void *context, enum HederaError err, const char *response));
+
+/**
+ * Execute this request against the provided client of the Hedera network.
+ *
+ * # Safety
+ * - todo(sr): Missing basically everything
+ * - `callback` must not store `response` after it returns.
+ */
+enum HederaError hedera_transaction_execute_all(const struct HederaClient *client,
+                                                const char *request,
+                                                const void *context,
+                                                struct HederaSigners signers,
+                                                bool has_timeout,
+                                                double timeout,
+                                                const struct HederaTransactionSources *sources,
+                                                void (*callback)(const void *context, enum HederaError err, const char *response));
+
+enum HederaError hedera_transaction_make_sources(const char *transaction,
+                                                 struct HederaSigners signers,
+                                                 const struct HederaTransactionSources **out);
+
+/**
+ * Signs `sources` with the given `signers`
+ *
+ * # Safety
+ * - `sources` must not be null.
+ * - `signers` must follow the associated safety requirements.
+ */
+const struct HederaTransactionSources *hedera_transaction_sources_sign(const struct HederaTransactionSources *sources,
+                                                                       struct HederaSigners signers);
+
+/**
+ * Signs `sources` with the given `signer`
+ *
+ * # Safety
+ * - `sources` must not be null.
+ * - `signer` must follow the associated safety requirements.
+ */
+const struct HederaTransactionSources *hedera_transaction_sources_sign_single(const struct HederaTransactionSources *sources,
+                                                                              struct HederaSigner signer);
+
+/**
+ * # Safety
+ * - `sources` must be non-null and point to a `HederaTransactionSources` allocated by the Hedera SDK.
+ */
+void hedera_transaction_sources_free(const struct HederaTransactionSources *sources);
 
 /**
  * # Safety

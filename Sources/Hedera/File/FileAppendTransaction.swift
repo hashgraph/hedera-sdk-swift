@@ -21,13 +21,23 @@
 import Foundation
 
 /// Append the given contents to the end of the specified file.
-public final class FileAppendTransaction: Transaction {
+public final class FileAppendTransaction: ChunkedTransaction {
     /// Create a new `FileAppendTransaction` ready for configuration.
-    public override init() {}
+    public override init() {
+        super.init()
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        fileId = try container.decodeIfPresent(.fileId)
+
+        try super.init(from: decoder)
+    }
 
     /// The file to which the bytes will be appended.
     public var fileId: FileId? {
-        willSet(_it) {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -41,9 +51,11 @@ public final class FileAppendTransaction: Transaction {
     }
 
     /// The bytes that will be appended to the end of the specified file.
-    public var contents: Data = Data() {
-        willSet(_it) {
+    public var contents: Data {
+        get { data }
+        set(contents) {
             ensureNotFrozen()
+            data = contents
         }
     }
 
@@ -55,16 +67,22 @@ public final class FileAppendTransaction: Transaction {
         return self
     }
 
+    /// Sets `self.contents` to the UTF-8 encoded bytes of `contents`.
+    @discardableResult
+    public func contents(_ contents: String) -> Self {
+        self.contents = contents.data(using: .utf8)!
+
+        return self
+    }
+
     private enum CodingKeys: String, CodingKey {
         case fileId
-        case contents
     }
 
     public override func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encodeIfPresent(fileId, forKey: .fileId)
-        try container.encode(contents.base64EncodedString(), forKey: .contents)
 
         try super.encode(to: encoder)
     }

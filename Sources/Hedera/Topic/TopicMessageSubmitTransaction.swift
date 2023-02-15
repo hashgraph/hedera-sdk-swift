@@ -29,14 +29,31 @@ import Foundation
 ///
 /// On success, the resulting `TransactionReceipt` contains the topic's updated `topicSequenceNumber` and
 /// `topicRunningHash`.
-///
-public final class TopicMessageSubmitTransaction: Transaction {
+public final class TopicMessageSubmitTransaction: ChunkedTransaction {
+    internal init(
+        topicId: TopicId? = nil,
+        message: Data = Data()
+    ) {
+        self.topicId = topicId
+        super.init(data: message)
+    }
+
     /// Create a new `TopicMessageSubmitTransaction` ready for configuration.
-    public override init() {}
+    public override init() {
+        super.init()
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        topicId = try container.decodeIfPresent(.topicId)
+
+        try super.init(from: decoder)
+    }
 
     /// The topic ID to submit this message to.
     public var topicId: TopicId? {
-        willSet(_it) {
+        willSet {
             ensureNotFrozen()
         }
     }
@@ -50,10 +67,12 @@ public final class TopicMessageSubmitTransaction: Transaction {
     }
 
     /// Message to be submitted.
-    /// Max size of the Transaction (including signatures) is 6KiB.
-    public var message: Data = Data() {
-        willSet(_it) {
+    /// Max size of the Transaction (including signatures) is 6KiB before chunking.
+    public var message: Data {
+        get { data }
+        set(message) {
             ensureNotFrozen()
+            data = message
         }
     }
 
@@ -65,71 +84,14 @@ public final class TopicMessageSubmitTransaction: Transaction {
         return self
     }
 
-    /// The `TransactionId` of the first chunk.
-    ///
-    /// Should get copied to every subsequent chunk in a fragmented message.
-    public var initialTransactionId: TransactionId? {
-        willSet(_it) {
-            ensureNotFrozen()
-        }
-    }
-
-    /// Sets the `TransactionId` of the first chunk.
-    @discardableResult
-    public func initialTransactionId(_ initialTransactionId: TransactionId) -> Self {
-        self.initialTransactionId = initialTransactionId
-
-        return self
-    }
-
-    /// The total number of chunks in the message.
-    /// Defaults to 1.
-    public var chunkTotal: Int = 1 {
-        willSet(_it) {
-            ensureNotFrozen()
-        }
-    }
-
-    /// Sets the total number of chunks in the message.
-    @discardableResult
-    public func chunkTotal(_ chunkTotal: Int) -> Self {
-        self.chunkTotal = chunkTotal
-
-        return self
-    }
-
-    /// The sequence number (from 1 to total) of the current chunk in the message.
-    /// Defaults to 1.
-    public var chunkNumber: Int = 1 {
-        willSet(_it) {
-            ensureNotFrozen()
-        }
-    }
-
-    /// Sets the sequence number (from 1 to total) of the current chunk in the message.
-    @discardableResult
-    public func chunkNumber(_ chunkNumber: Int) -> Self {
-        self.chunkNumber = chunkNumber
-
-        return self
-    }
-
     private enum CodingKeys: String, CodingKey {
         case topicId
-        case message
-        case initialTransactionId
-        case chunkTotal
-        case chunkNumber
     }
 
     public override func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
         try container.encode(topicId, forKey: .topicId)
-        try container.encodeIfPresent(message.base64EncodedString(), forKey: .message)
-        try container.encodeIfPresent(initialTransactionId, forKey: .initialTransactionId)
-        try container.encode(chunkTotal, forKey: .chunkTotal)
-        try container.encode(chunkNumber, forKey: .chunkNumber)
 
         try super.encode(to: encoder)
     }
