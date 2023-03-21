@@ -18,13 +18,35 @@
  * ‍
  */
 
-import CHedera
 import Foundation
+import HederaProtobufs
 
 // TODO: keys
 
 /// Response from `FileInfoQuery`.
 public final class FileInfo: Codable {
+    internal init(
+        fileId: FileId,
+        size: UInt64,
+        expirationTime: Timestamp?,
+        isDeleted: Bool,
+        keys: KeyList,
+        fileMemo: String,
+        ledgerId: LedgerId,
+        autoRenewPeriod: Duration?,
+        autoRenewAccountId: AccountId?
+    ) {
+        self.fileId = fileId
+        self.size = size
+        self.expirationTime = expirationTime
+        self.isDeleted = isDeleted
+        self.keys = keys
+        self.fileMemo = fileMemo
+        self.ledgerId = ledgerId
+        self.autoRenewPeriod = autoRenewPeriod
+        self.autoRenewAccountId = autoRenewAccountId
+    }
+
     /// The file ID of the file for which information is requested.
     public let fileId: FileId
 
@@ -32,7 +54,7 @@ public final class FileInfo: Codable {
     public let size: UInt64
 
     /// Current time which this account is set to expire.
-    public let expirationTime: Duration?
+    public let expirationTime: Timestamp?
 
     /// True if deleted but not yet expired.
     public let isDeleted: Bool
@@ -46,24 +68,56 @@ public final class FileInfo: Codable {
     public let ledgerId: LedgerId
 
     /// The auto renew period for this file.
+    ///
+    /// > Warning: This not supported on any hedera network at this time.
     public let autoRenewPeriod: Duration?
 
     /// The account to be used at this file's expiration time to extend the
     /// life of the file.
+    ///
+    /// > Warning: This not supported on any hedera network at this time.
     public let autoRenewAccountId: AccountId?
 
     public static func fromBytes(_ bytes: Data) throws -> Self {
-        try Self.fromJsonBytes(bytes)
+        try Self(protobufBytes: bytes)
     }
 
     public func toBytes() -> Data {
-        // can't have `throws` because that's the wrong function signature.
-        // swiftlint:disable force_try
-        try! toJsonBytes()
+        toProtobufBytes()
     }
 }
 
-extension FileInfo: ToFromJsonBytes {
-    internal static var cFromBytes: FromJsonBytesFunc { hedera_file_info_from_bytes }
-    internal static var cToBytes: ToJsonBytesFunc { hedera_file_info_to_bytes }
+extension FileInfo: TryProtobufCodable {
+    internal typealias Protobuf = Proto_FileGetInfoResponse.FileInfo
+
+    internal convenience init(protobuf proto: Protobuf) throws {
+        let expirationTime = proto.hasExpirationTime ? proto.expirationTime : nil
+        self.init(
+            fileId: .fromProtobuf(proto.fileID),
+            size: UInt64(proto.size),
+            expirationTime: .fromProtobuf(expirationTime),
+            isDeleted: proto.deleted,
+            keys: try .fromProtobuf(proto.keys),
+            fileMemo: proto.memo,
+            ledgerId: LedgerId(proto.ledgerID),
+            autoRenewPeriod: nil,
+            autoRenewAccountId: nil
+        )
+    }
+
+    internal func toProtobuf() -> Protobuf {
+        .with { proto in
+            proto.fileID = fileId.toProtobuf()
+            proto.size = Int64(bitPattern: size)
+
+            if let expirationTime = expirationTime?.toProtobuf() {
+                proto.expirationTime = expirationTime
+            }
+
+            proto.deleted = isDeleted
+            proto.memo = fileMemo
+            proto.keys = keys.toProtobuf()
+            proto.ledgerID = ledgerId.bytes
+        }
+    }
 }

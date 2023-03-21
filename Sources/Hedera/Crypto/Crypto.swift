@@ -18,12 +18,15 @@
  * ‍
  */
 
-extension UInt64 {
-    internal init<S: StringProtocol>(parsing description: S) throws {
-        guard let value = Self(description) else {
-            throw HError(kind: .basicParse, description: "Invalid numeric string `\(description)`")
-        }
+// used as a namespace
+internal enum Crypto {}
 
-        self = value
+extension Crypto {
+    internal enum Hmac {
+        case sha2(Crypto.Sha2)
+        case sha3(Crypto.Sha3)
     }
+}
+
+extension Crypto.Hmac {
 }

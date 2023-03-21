@@ -18,8 +18,8 @@
  * ‍
  */
 
-import CHedera
 import Foundation
+import HederaProtobufs
 
 public protocol EntityId: LosslessStringConvertible, ExpressibleByIntegerLiteral, Codable,
     ExpressibleByStringLiteral, Hashable
@@ -63,7 +63,7 @@ where
 
     func toString() -> String
 
-    func toStringWithChecksum(_ client: Client) -> String
+    func toStringWithChecksum(_ client: Client) throws -> String
 
     func validateChecksum(_ client: Client) throws
 
@@ -125,7 +125,7 @@ extension EntityId {
         self.description
     }
 
-    internal func generateChecksum(for ledgerId: LedgerId) -> Checksum {
+    internal func makeChecksum(ledger ledgerId: LedgerId) -> Checksum {
         Checksum.generate(for: self, on: ledgerId)
     }
 
@@ -156,18 +156,21 @@ internal struct EntityIdHelper<E: EntityId> {
 
     // note: this *expicitly* ignores the current checksum.
     internal func toStringWithChecksum(_ client: Client) -> String {
-        let checksum = id.generateChecksum(for: client.ledgerId!)
+        let checksum = id.makeChecksum(ledger: client.ledgerId!)
         return "\(description)-\(checksum)"
     }
 
     internal func validateChecksum(on ledgerId: LedgerId) throws {
-        if let checksum = id.checksum {
-            let expected = id.generateChecksum(for: ledgerId)
-            if checksum != expected {
-                throw HError.badEntityId(
-                    shard: id.shard, realm: id.realm, num: id.num, presentChecksum: checksum, expectedChecksum: expected
-                )
-            }
+        guard let checksum = id.checksum else {
+            return
+        }
+
+        let expected = id.makeChecksum(ledger: ledgerId)
+
+        guard checksum == expected else {
+            throw HError.badEntityId(
+                shard: id.shard, realm: id.realm, num: id.num, presentChecksum: checksum, expectedChecksum: expected
+            )
         }
     }
 
@@ -248,26 +251,34 @@ public struct FileId: EntityId, ValidateChecksums {
     public static let exchangeRates: FileId = 112
 
     public static func fromBytes(_ bytes: Data) throws -> Self {
-        try bytes.withUnsafeTypedBytes { pointer in
-            var shard: UInt64 = 0
-            var realm: UInt64 = 0
-            var num: UInt64 = 0
-
-            try HError.throwing(
-                error: hedera_file_id_from_bytes(pointer.baseAddress, pointer.count, &shard, &realm, &num))
-
-            return Self(shard: shard, realm: realm, num: num)
-        }
+        try Self(protobufBytes: bytes)
     }
 
     public func toBytes() -> Data {
-        var buf: UnsafeMutablePointer<UInt8>?
-        let size = hedera_file_id_to_bytes(shard, realm, num, &buf)
-
-        return Data(bytesNoCopy: buf!, count: size, deallocator: .unsafeCHederaBytesFree)
+        toProtobufBytes()
     }
 
     internal func validateChecksums(on ledgerId: LedgerId) throws {
         try helper.validateChecksum(on: ledgerId)
+    }
+}
+
+extension FileId: ProtobufCodable {
+    internal typealias Protobuf = HederaProtobufs.Proto_FileID
+
+    internal init(protobuf proto: Protobuf) {
+        self.init(
+            shard: UInt64(proto.shardNum),
+            realm: UInt64(proto.realmNum),
+            num: UInt64(proto.fileNum)
+        )
+    }
+
+    internal func toProtobuf() -> Protobuf {
+        .with { proto in
+            proto.shardNum = Int64(shard)
+            proto.realmNum = Int64(realm)
+            proto.fileNum = Int64(num)
+        }
     }
 }

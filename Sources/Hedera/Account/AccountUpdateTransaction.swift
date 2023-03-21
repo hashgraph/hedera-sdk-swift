@@ -146,6 +146,8 @@ public final class AccountUpdateTransaction: Transaction {
 
     /// The account to be used at this account's expiration time to extend the
     /// life of the account.  If `nil`, this account pays for its own auto renewal fee.
+    ///
+    /// > Warning: This not supported on any hedera network at this time.
     public var autoRenewAccountId: AccountId? {
         willSet {
             ensureNotFrozen()
@@ -154,6 +156,8 @@ public final class AccountUpdateTransaction: Transaction {
 
     /// Sets the account to be used at this account's expiration time to extend the
     /// life of the account.  If `nil`, this account pays for its own auto renewal fee.
+    ///
+    /// > Warning: This not supported on any hedera network at this time.
     @discardableResult
     public func autoRenewAccountId(_ autoRenewAccountId: AccountId) -> Self {
         self.autoRenewAccountId = autoRenewAccountId
@@ -254,7 +258,7 @@ public final class AccountUpdateTransaction: Transaction {
     }
 
     /// ID of the node this account is staked to.
-    /// This is mutually exclusive with `staked_account_id`.
+    /// This is mutually exclusive with `stakedAccountId`.
     public var stakedNodeId: UInt64? {
         willSet {
             ensureNotFrozen()
@@ -262,7 +266,7 @@ public final class AccountUpdateTransaction: Transaction {
     }
 
     /// Sets the ID of the node this account is staked to.
-    /// This is mutually exclusive with `staked_account_id`.
+    /// This is mutually exclusive with `stakedAccountId`.
     @discardableResult
     public func stakedNodeId(_ stakedNodeId: UInt64) -> Self {
         self.stakedNodeId = stakedNodeId

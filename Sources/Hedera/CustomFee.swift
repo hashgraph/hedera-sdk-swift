@@ -1,4 +1,25 @@
+/*
+  * ‌
+  * Hedera Swift SDK
+  * ​
+  * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+  * ​
+  * Licensed under the Apache License, Version 2.0 (the "License");
+  * you may not use this file except in compliance with the License.
+  * You may obtain a copy of the License at
+  *
+  *      http://www.apache.org/licenses/LICENSE-2.0
+  *
+  * Unless required by applicable law or agreed to in writing, software
+  * distributed under the License is distributed on an "AS IS" BASIS,
+  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  * ‍
+  */
+
 import Foundation
+import HederaProtobufs
 import NumberKit
 
 // swiftlint:disable file_length
@@ -41,6 +62,14 @@ public enum AnyCustomFee {
     case fixed(FixedFee)
     case fractional(FractionalFee)
     case royalty(RoyaltyFee)
+
+    public static func fromBytes(_ bytes: Data) throws -> Self {
+        try Self(protobufBytes: bytes)
+    }
+
+    public func toBytes() -> Data {
+        self.toProtobufBytes()
+    }
 }
 
 extension AnyCustomFee: Codable {
@@ -147,6 +176,67 @@ extension AnyCustomFee: ValidateChecksums {
     }
 }
 
+extension AnyCustomFee: TryProtobufCodable {
+    internal typealias Protobuf = Proto_CustomFee
+
+    internal init(protobuf proto: Protobuf) throws {
+        let feeCollectorAccountIdProto = proto.hasFeeCollectorAccountID ? proto.feeCollectorAccountID : nil
+        let feeCollectorAccountId: AccountId? = try .fromProtobuf(feeCollectorAccountIdProto)
+        let allCollectorsAreExempt = proto.allCollectorsAreExempt
+
+        guard let fee = proto.fee else {
+            throw HError.fromProtobuf("`CustomFee` kind was unexpectedly nil")
+        }
+
+        switch fee {
+        case .fixedFee(let fixed):
+            self = .fixed(
+                FixedFee(
+                    fromFee: fixed,
+                    feeCollectorAccountId: feeCollectorAccountId,
+                    allCollectorsAreExempt: allCollectorsAreExempt
+                )
+            )
+        case .fractionalFee(let fractional):
+            self = .fractional(
+                FractionalFee(
+                    fromFee: fractional,
+                    feeCollectorAccountId: feeCollectorAccountId,
+                    allCollectorsAreExempt: allCollectorsAreExempt
+                )
+            )
+        case .royaltyFee(let royalty):
+            self = .royalty(
+                RoyaltyFee(
+                    fromFee: royalty,
+                    feeCollectorAccountId: feeCollectorAccountId,
+                    allCollectorsAreExempt: allCollectorsAreExempt
+                )
+            )
+        }
+
+    }
+
+    internal func toProtobuf() -> Protobuf {
+        .with { proto in
+            switch self {
+            case .fixed(let fee):
+                proto.fee = .fixedFee(fee.toFeeProtobuf())
+            case .fractional(let fee):
+                proto.fee = .fractionalFee(fee.toFeeProtobuf())
+            case .royalty(let fee):
+                proto.fee = .royaltyFee(fee.toFeeProtobuf())
+            }
+
+            if let feeCollectorAccountId = feeCollectorAccountId {
+                proto.feeCollectorAccountID = feeCollectorAccountId.toProtobuf()
+            }
+
+            proto.allCollectorsAreExempt = allCollectorsAreExempt
+        }
+    }
+}
+
 /// A fixed number of units (hbar or token) to assess as a fee during a `TransferTransaction` that transfers
 /// units of the token to which this fixed fee is attached.
 public struct FixedFee: CustomFee, Codable, ValidateChecksums {
@@ -165,6 +255,21 @@ public struct FixedFee: CustomFee, Codable, ValidateChecksums {
         self.denominatingTokenId = denominatingTokenId
         self.feeCollectorAccountId = feeCollectorAccountId
         self.allCollectorsAreExempt = allCollectorsAreExempt
+    }
+
+    fileprivate init(
+        fromFee proto: Proto_FixedFee,
+        feeCollectorAccountId: AccountId?,
+        allCollectorsAreExempt: Bool
+    ) {
+        let denominatingTokenId = proto.hasDenominatingTokenID ? proto.denominatingTokenID : nil
+
+        self.init(
+            amount: UInt64(proto.amount),
+            denominatingTokenId: .fromProtobuf(denominatingTokenId),
+            feeCollectorAccountId: feeCollectorAccountId,
+            allCollectorsAreExempt: allCollectorsAreExempt
+        )
     }
 
     /// The number of units to assess as a fee.
@@ -198,6 +303,15 @@ public struct FixedFee: CustomFee, Codable, ValidateChecksums {
         try denominatingTokenId?.validateChecksums(on: ledgerId)
         try feeCollectorAccountId?.validateChecksums(on: ledgerId)
     }
+
+    fileprivate func toFeeProtobuf() -> Proto_FixedFee {
+        .with { proto in
+            proto.amount = Int64(amount)
+            if let denominatingTokenId = denominatingTokenId {
+                proto.denominatingTokenID = denominatingTokenId.toProtobuf()
+            }
+        }
+    }
 }
 
 /// A fraction of the transferred units of a token to assess as a fee.
@@ -217,7 +331,7 @@ public struct FractionalFee: CustomFee, Codable, ValidateChecksums {
         amount: Rational<UInt64> = "1/1",
         minimumAmount: UInt64 = 0,
         maximumAmount: UInt64 = 0,
-        netOfTransfers: Bool = false,
+        assessmentMethod: FeeAssessmentMethod = .exclusive,
         feeCollectorAccountId: AccountId? = nil,
         allCollectorsAreExempt: Bool = false
     ) {
@@ -225,7 +339,21 @@ public struct FractionalFee: CustomFee, Codable, ValidateChecksums {
         self.numerator = amount.numerator
         self.minimumAmount = minimumAmount
         self.maximumAmount = maximumAmount
-        self.netOfTransfers = netOfTransfers
+        self.assessmentMethod = assessmentMethod
+        self.feeCollectorAccountId = feeCollectorAccountId
+        self.allCollectorsAreExempt = allCollectorsAreExempt
+    }
+
+    fileprivate init(
+        fromFee proto: Proto_FractionalFee,
+        feeCollectorAccountId: AccountId?,
+        allCollectorsAreExempt: Bool
+    ) {
+        denominator = UInt64(proto.fractionalAmount.denominator)
+        numerator = UInt64(proto.fractionalAmount.numerator)
+        minimumAmount = UInt64(proto.minimumAmount)
+        maximumAmount = UInt64(proto.maximumAmount)
+        assessmentMethod = .init(netOfTransfers: proto.netOfTransfers)
         self.feeCollectorAccountId = feeCollectorAccountId
         self.allCollectorsAreExempt = allCollectorsAreExempt
     }
@@ -305,23 +433,56 @@ public struct FractionalFee: CustomFee, Codable, ValidateChecksums {
 
     /// Whether the fee assessment should be in addition to the transfer amount or not.
     ///
-    /// If true, assesses the fee to the sender, so the receiver gets the full amount from the token
+    /// If `exclusive`, assesses the fee to the sender, so the receiver gets the full amount from the token
     /// transfer list, and the sender is charged an additional fee.
     ///
-    /// If false, the receiver does NOT get the full amount, but only what is left over after
+    /// If `inclusive`, the receiver does NOT get the full amount, but only what is left over after
     /// paying the fractional fee.
-    public var netOfTransfers: Bool
+    public var assessmentMethod: FeeAssessmentMethod
 
     /// Sets whether the fee assessment should be in addition to the transfer amount or not.
     @discardableResult
-    public mutating func netOfTransfers(_ netOfTransfers: Bool) -> Self {
-        self.netOfTransfers = netOfTransfers
+    public mutating func assessmentMethod(_ assessmentMethod: FeeAssessmentMethod) -> Self {
+        self.assessmentMethod = assessmentMethod
 
         return self
     }
 
     internal func validateChecksums(on ledgerId: LedgerId) throws {
         try feeCollectorAccountId?.validateChecksums(on: ledgerId)
+    }
+
+    internal func toFeeProtobuf() -> Proto_FractionalFee {
+        .with { proto in
+            proto.fractionalAmount = amount.toProtobuf()
+            proto.minimumAmount = Int64(minimumAmount)
+            proto.maximumAmount = Int64(maximumAmount)
+            proto.netOfTransfers = assessmentMethod == .exclusive
+        }
+    }
+}
+
+extension FractionalFee {
+    /// Enum for the fee assessment method.
+    ///
+    /// The terminology here (exclusive vs inclusive) is borrowed from tax assessment.
+    public enum FeeAssessmentMethod: Codable, Equatable, Hashable {
+        /// - Returns: `inclusive` if `false`, `exclusive` if `true`.
+        public init(netOfTransfers: Bool) {
+            self = netOfTransfers ? .exclusive : .inclusive
+        }
+
+        /// The recipient recieves the transfer amount, minus the fee.
+        ///
+        /// If Alice is paying Bob, and an `inclusive` fractional fee is collected to be sent to Charlie,
+        /// the amount Alice declares she will pay in the transfer transaction *includes* the fee amount.
+        case inclusive
+
+        /// The recipient recieves the whole transfer amount, and an extra fee is charged to the sender.
+        ///
+        /// If Alice is paying Bob, and an `exclusive` fractional fee is collected to be sent to Charlie,
+        /// the amount Alice declares she will pay in the transfer transaction *does not include* the fee amount.
+        case exclusive
     }
 }
 
@@ -342,8 +503,11 @@ public struct RoyaltyFee: CustomFee, Codable {
         allCollectorsAreExempt: Bool = false
     ) {
         self.init(
-            numerator: exchangeValue.numerator, denominator: exchangeValue.denominator, fallbackFee: fallbackFee,
-            feeCollectorAccountId: feeCollectorAccountId, allCollectorsAreExempt: allCollectorsAreExempt
+            numerator: exchangeValue.numerator,
+            denominator: exchangeValue.denominator,
+            fallbackFee: fallbackFee,
+            feeCollectorAccountId: feeCollectorAccountId,
+            allCollectorsAreExempt: allCollectorsAreExempt
         )
     }
 
@@ -360,6 +524,23 @@ public struct RoyaltyFee: CustomFee, Codable {
         self.fallbackFee = fallbackFee
         self.feeCollectorAccountId = feeCollectorAccountId
         self.allCollectorsAreExempt = allCollectorsAreExempt
+    }
+
+    fileprivate init(
+        fromFee proto: Proto_RoyaltyFee,
+        feeCollectorAccountId: AccountId?,
+        allCollectorsAreExempt: Bool
+    ) {
+        let fallbackFee = proto.hasFallbackFee ? proto.fallbackFee : nil
+        self.init(
+            numerator: UInt64(proto.exchangeValueFraction.numerator),
+            denominator: UInt64(proto.exchangeValueFraction.denominator),
+            fallbackFee: fallbackFee.map { protoFee in
+                FixedFee(fromFee: protoFee, feeCollectorAccountId: nil, allCollectorsAreExempt: false)
+            },
+            feeCollectorAccountId: feeCollectorAccountId,
+            allCollectorsAreExempt: allCollectorsAreExempt
+        )
     }
 
     /// The fraction of fungible value exchanged for an NFT to collect as royalty.
@@ -429,5 +610,14 @@ public struct RoyaltyFee: CustomFee, Codable {
     internal func validateChecksums(on ledgerId: LedgerId) throws {
         try fallbackFee?.validateChecksums(on: ledgerId)
         try feeCollectorAccountId?.validateChecksums(on: ledgerId)
+    }
+
+    internal func toFeeProtobuf() -> Proto_RoyaltyFee {
+        .with { proto in
+            proto.exchangeValueFraction = self.exchangeValue.toProtobuf()
+            if let fallbackFee = self.fallbackFee {
+                proto.fallbackFee = fallbackFee.toFeeProtobuf()
+            }
+        }
     }
 }

@@ -20,6 +20,7 @@
 
 import CHedera
 import Foundation
+import HederaProtobufs
 
 /// Hedera follows semantic versioning for both the HAPI protobufs and
 /// the Services software.
@@ -53,67 +54,55 @@ public struct SemanticVersion: Codable, ExpressibleByStringLiteral, LosslessStri
     }
 
     // internal API, do NOT expose.
-    private static func fromString(_ description: String) throws -> Self {
-        var csemver = HederaSemanticVersion()
+    // internal API, do NOT expose.
+    private init<S: StringProtocol>(parsing description: S) throws {
+        let parts = description.split(separator: ".", maxSplits: 2)
 
-        try HError.throwing(error: hedera_semantic_version_from_string(description, &csemver))
+        guard parts.count == 3 else {
+            throw HError.basicParse("expected major.minor.patch for semver")
+        }
 
-        return Self(unsafeFromCHedera: csemver)
+        let patchStr: S.SubSequence
+        let pre: S.SubSequence?
+        let buildStr: S.SubSequence?
+
+        do {
+            // while it seems like this is a weird order,
+            // it actually makes more sense than `pre` first,
+            // because `pre` is in the middle of the string.
+            var tmp = parts[2]
+            (tmp, buildStr) = tmp.splitOnce(on: "+") ?? (tmp, nil)
+
+            (patchStr, pre) = tmp.splitOnce(on: "-") ?? (tmp, nil)
+        }
+
+        let major = try parseVersion(parts[0], section: "major")
+        let minor = try parseVersion(parts[1], section: "minor")
+        let patch = try parseVersion(patchStr, section: "patch")
+
+        let prerelease = try pre.map { String(try parsePrerelease($0)) } ?? ""
+        let build = try buildStr.map { String(try parseBuild($0)) } ?? ""
+
+        self.init(major: major, minor: minor, patch: patch, prerelease: prerelease, build: build)
     }
 
     public init(stringLiteral value: StringLiteralType) {
-        self.init(value)!
+        // If you're using a string literal this will either *always* fail or *never* fail, so, force try makes sense.
+        // swiftlint:disable:next force_try
+        try! self.init(parsing: value)
     }
 
     // semver parsing is shockingly hard. So the FFI really does carry its weight.
     public init?(_ description: String) {
-        let res = try? Self.fromString(description)
-
-        if res == nil {
-            return nil
-        }
-
-        self = res!
-    }
-
-    internal init(unsafeFromCHedera hedera: HederaSemanticVersion) {
-        major = hedera.major
-        minor = hedera.minor
-        patch = hedera.patch
-        prerelease = hedera.prerelease == nil ? "" : String(hString: hedera.prerelease!)
-        build = hedera.build == nil ? "" : String(hString: hedera.build!)
-    }
-
-    internal func unsafeWithCHedera<Result>(_ body: (HederaSemanticVersion) throws -> Result) rethrows -> Result {
-        try prerelease.withCString { (prerelease) in
-            try build.withCString { (build) in
-                let mutPrerelease = UnsafeMutablePointer(mutating: prerelease)
-                let mutBuild = UnsafeMutablePointer(mutating: build)
-                let csemver = HederaSemanticVersion(
-                    major: major, minor: minor, patch: patch, prerelease: mutPrerelease, build: mutBuild)
-
-                return try body(csemver)
-            }
-        }
+        try? self.init(parsing: description)
     }
 
     public static func fromBytes(_ bytes: Data) throws -> Self {
-        try bytes.withUnsafeTypedBytes { pointer in
-            var semver = HederaSemanticVersion()
-
-            try HError.throwing(error: hedera_semantic_version_from_bytes(pointer.baseAddress, pointer.count, &semver))
-
-            return Self(unsafeFromCHedera: semver)
-        }
+        try Self(protobufBytes: bytes)
     }
 
     public func toBytes() -> Data {
-        unsafeWithCHedera { info in
-            var buf: UnsafeMutablePointer<UInt8>?
-            let size = hedera_semantic_version_to_bytes(info, &buf)
-
-            return Data(bytesNoCopy: buf!, count: size, deallocator: .unsafeCHederaBytesFree)
-        }
+        toProtobufBytes()
     }
 
     public var description: String {
@@ -125,4 +114,100 @@ public struct SemanticVersion: Codable, ExpressibleByStringLiteral, LosslessStri
     public func toString() -> String {
         description
     }
+}
+
+extension SemanticVersion: ProtobufCodable {
+    internal typealias Protobuf = Proto_SemanticVersion
+
+    internal init(protobuf proto: Protobuf) {
+        self.init(
+            major: UInt32(proto.major),
+            minor: UInt32(proto.minor),
+            patch: UInt32(proto.patch),
+            prerelease: proto.pre,
+            build: proto.build
+        )
+    }
+
+    internal func toProtobuf() -> Protobuf {
+        .with { proto in
+            proto.major = Int32(major)
+            proto.minor = Int32(minor)
+            proto.patch = Int32(patch)
+            proto.pre = prerelease
+            proto.build = build
+        }
+    }
+}
+
+extension Character {
+    fileprivate var isASCIIAlphamumeric: Bool {
+        isASCII && (isLetter || isNumber)
+    }
+
+    fileprivate var isASCIIDigit: Bool {
+        isASCII && isNumber
+    }
+
+    fileprivate var isValidIdent: Bool {
+        isASCIIAlphamumeric || self == "-"
+    }
+}
+
+extension StringProtocol {
+    fileprivate var isNumericWithLeadingZero: Bool {
+        guard let rest = stripPrefix("0") else {
+            return false
+        }
+
+        return !rest.isEmpty && rest.allSatisfy { $0.isASCIIDigit }
+    }
+}
+
+private func parseVersion<S: StringProtocol>(_ string: S, section: String) throws -> UInt32 {
+    if string.isNumericWithLeadingZero {
+        throw HError.basicParse("semver section `\(section)` starts with leading 0: `\(string)`")
+    }
+
+    return try UInt32(parsing: string)
+}
+
+private func parsePrerelease<S: StringProtocol>(_ string: S) throws -> S {
+    if string.isEmpty {
+        throw HError.basicParse("semver with empty prerelease")
+    }
+
+    for identifier in string.split(separator: ".") {
+        if identifier.isEmpty {
+            throw HError.basicParse("semver with empty -pre identifier")
+        }
+
+        if !(identifier.allSatisfy { $0.isValidIdent }) {
+            throw HError.basicParse("semver with invalid identifier for the -pre section: `\(identifier)`")
+        }
+
+        if identifier.isNumericWithLeadingZero {
+            throw HError.basicParse("numeric pre-release identifier has leading zero: `\(identifier)`")
+        }
+    }
+
+    return string
+}
+
+private func parseBuild<S: StringProtocol>(_ string: S) throws -> S {
+    if string.isEmpty {
+        throw HError.basicParse("semver with empty build")
+    }
+
+    for identifier in string.split(separator: ".") {
+        if identifier.isEmpty {
+            throw HError.basicParse("semver with empty build section identifier")
+        }
+
+        if !(identifier.allSatisfy { $0.isValidIdent }) {
+            throw HError.basicParse("semver with invalid identifier for the build section: `\(identifier)`")
+        }
+    }
+
+    return string
 }

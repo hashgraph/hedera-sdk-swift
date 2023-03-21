@@ -1,5 +1,6 @@
 import CHedera
 import Foundation
+import HederaProtobufs
 
 public struct TransactionId: Codable, Equatable, ExpressibleByStringLiteral, LosslessStringConvertible,
     ValidateChecksums
@@ -29,21 +30,46 @@ public struct TransactionId: Codable, Equatable, ExpressibleByStringLiteral, Los
         scheduled = hedera.scheduled
     }
 
-    internal func unsafeWithCHedera<Result>(_ body: (HederaTransactionId) throws -> Result) rethrows -> Result {
-        try accountId.unsafeWithCHedera { hederaAccountId in
-            try body(
-                HederaTransactionId(
-                    account_id: hederaAccountId, valid_start: validStart.toCHederaTimestamp(), nonce: nonce ?? 0,
-                    scheduled: scheduled))
+    private init<S: StringProtocol>(parsing description: S) throws {
+        let expected = "expecting <accountId>@<validStart>[?scheduled][/<nonce>]"
+
+        // parse route:
+        // splitOnce('@') -> ("<accountId>", "<validStart>[?scheduled][/<nonce>]")
+        // rsplitOnce('/') -> Either ("<validStart>[?scheduled]", "<nonce>") or ("<validStart>[?scheduled]")
+        // .stripSuffix("?scheduled") -> ("<validStart>") and the suffix was either removed or not.
+        // (except it's better ux to do a `splitOnce('?')`... Except it doesn't matter that much)
+        guard let (accountIdStr, rest) = description.splitOnce(on: "@") else {
+            throw HError(kind: .basicParse, description: expected)
         }
-    }
 
-    private init(parsing description: String) throws {
-        var id = HederaTransactionId()
+        let accountId = try AccountId(parsing: accountIdStr)
 
-        try HError.throwing(error: hedera_transaction_id_from_string(description, &id))
+        let (rest2, nonceStr) = rest.rsplitOnce(on: "/") ?? (rest, nil)
 
-        self.init(unsafeFromCHedera: id)
+        let nonce = try nonceStr.map(Int32.init(parsing:))
+
+        let validStartStr: S.SubSequence
+        let scheduled: Bool
+
+        switch rest2.stripSuffix("?scheduled") {
+        case .some(let value):
+            validStartStr = value
+            scheduled = true
+        case nil:
+            validStartStr = rest2
+            scheduled = false
+        }
+
+        guard let (validStartSeconds, validStartNanos) = validStartStr.splitOnce(on: ".") else {
+            throw HError(kind: .basicParse, description: expected)
+        }
+
+        let validStart = Timestamp(
+            seconds: try UInt64(parsing: validStartSeconds),
+            subSecondNanos: try UInt32(parsing: validStartNanos)
+        )
+
+        self.init(accountId: accountId, validStart: validStart, scheduled: scheduled, nonce: nonce)
     }
 
     public static func fromString(_ description: String) throws -> Self {
@@ -61,22 +87,11 @@ public struct TransactionId: Codable, Equatable, ExpressibleByStringLiteral, Los
     }
 
     public static func fromBytes(_ bytes: Data) throws -> Self {
-        try bytes.withUnsafeTypedBytes { pointer in
-            var id = HederaTransactionId()
-
-            try HError.throwing(error: hedera_transaction_id_from_bytes(pointer.baseAddress, pointer.count, &id))
-
-            return Self(unsafeFromCHedera: id)
-        }
+        try Self(protobufBytes: bytes)
     }
 
     public func toBytes() -> Data {
-        unsafeWithCHedera { hedera in
-            var buf: UnsafeMutablePointer<UInt8>?
-            let size = hedera_transaction_id_to_bytes(hedera, &buf)
-
-            return Data(bytesNoCopy: buf!, count: size, deallocator: .unsafeCHederaBytesFree)
-        }
+        self.toProtobufBytes()
     }
 
     public var description: String {
@@ -103,15 +118,26 @@ public struct TransactionId: Codable, Equatable, ExpressibleByStringLiteral, Los
     internal func validateChecksums(on ledgerId: LedgerId) throws {
         try accountId.validateChecksums(on: ledgerId)
     }
+}
 
-    //     public var foo: Bar {
-    //     // `ensureNotFrozen` is a bikesheddable, need to find a balance between "this will die" and "name that's short enough"
-    //     // for instance:
-    //     // precondition(!frozen, "`foo` cannot be set while `\(String(describing: type(of: self)))` is frozen")
-    //     // gives wonderful information, but is also really long
-    //     // whereas:
-    //     // ensureNotFrozen(fieldName: "foo")
-    //     // is a decent chunk shorter and should be able to give all the same info.
-    //     willSet { ensureNotFrozen() }
-    // }
+extension TransactionId: TryProtobufCodable {
+    internal typealias Protobuf = Proto_TransactionID
+
+    internal init(protobuf proto: Protobuf) throws {
+        self.init(
+            accountId: try .fromProtobuf(proto.accountID),
+            validStart: .fromProtobuf(proto.transactionValidStart),
+            scheduled: proto.scheduled,
+            nonce: proto.nonce != 0 ? proto.nonce : nil
+        )
+    }
+
+    internal func toProtobuf() -> Protobuf {
+        .with { proto in
+            proto.accountID = accountId.toProtobuf()
+            proto.transactionValidStart = validStart.toProtobuf()
+            proto.scheduled = scheduled
+            proto.nonce = nonce ?? 0
+        }
+    }
 }

@@ -20,6 +20,7 @@
 
 import CHedera
 import Foundation
+import HederaProtobufs
 
 /// The unique identifier for a cryptocurrency account on Hedera.
 public struct AccountId: EntityId, ValidateChecksums {
@@ -75,7 +76,7 @@ public struct AccountId: EntityId, ValidateChecksums {
                         kind: .basicParse, description: "checksum not supported with `<shard>.<realm>.<alias>`")
                 }
 
-                // might have `evmAddress`
+                // might have `alias`
                 self.init(
                     shard: shard,
                     realm: realm,
@@ -83,7 +84,6 @@ public struct AccountId: EntityId, ValidateChecksums {
                 )
             }
 
-        // check for `evmAddress` eventually
         case .other(let description):
             let evmAddress = try EvmAddress(parsing: description)
             self.init(evmAddress: evmAddress)
@@ -122,28 +122,10 @@ public struct AccountId: EntityId, ValidateChecksums {
         return helper.description
     }
 
-    public static func fromBytes(_ bytes: Data) throws -> Self {
-        try bytes.withUnsafeTypedBytes { pointer in
-            var id = HederaAccountId()
-
-            try HError.throwing(error: hedera_account_id_from_bytes(pointer.baseAddress, pointer.count, &id))
-
-            return Self(unsafeFromCHedera: id)
+    public func toStringWithChecksum(_ client: Client) throws -> String {
+        guard alias == nil, evmAddress == nil else {
+            throw HError.cannotCreateChecksum
         }
-    }
-
-    public func toBytes() -> Data {
-        self.unsafeWithCHedera { (hedera) in
-            var buf: UnsafeMutablePointer<UInt8>?
-            let size = hedera_account_id_to_bytes(hedera, &buf)
-
-            return Data(bytesNoCopy: buf!, count: size, deallocator: .unsafeCHederaBytesFree)
-        }
-    }
-
-    public func toStringWithChecksum(_ client: Client) -> String {
-        precondition(alias == nil, "cannot create a checksum for an `AccountId` with an alias")
-        precondition(evmAddress == nil, "cannot create a checksum for an `AccountId` with an evmAddress")
 
         return helper.toStringWithChecksum(client)
     }
@@ -167,7 +149,51 @@ public struct AccountId: EntityId, ValidateChecksums {
         Self(evmAddress: evmAddress)
     }
 
-    // todo: public func `toEvmAddress`/`getEvmAddress`
+    public static func fromBytes(_ bytes: Data) throws -> Self {
+        try Self(protobufBytes: bytes)
+    }
+
+    public func toBytes() -> Data {
+        toProtobufBytes()
+    }
 }
 
-// TODO: to evm address
+extension AccountId: TryProtobufCodable {
+    internal typealias Protobuf = Proto_AccountID
+
+    internal init(protobuf proto: Protobuf) throws {
+        let shard = UInt64(proto.shardNum)
+        let realm = UInt64(proto.realmNum)
+
+        switch proto.account {
+        case .accountNum(let num):
+            self.init(shard: shard, realm: realm, num: UInt64(num))
+        // thanks swift.
+        case .alias(let data):
+            switch try? EvmAddress.fromBytes(data) {
+            case .some(let evmAddress): self.init(evmAddress: evmAddress)
+            case nil: self.init(shard: shard, realm: realm, alias: try PublicKey(protobufBytes: data))
+            }
+
+        case nil: throw HError.fromProtobuf("Unexpected missing `account`")
+        }
+    }
+
+    internal func toProtobuf() -> Protobuf {
+        .with { proto in
+            if let evmAddress = evmAddress {
+                proto.alias = evmAddress.data
+                return
+            }
+
+            proto.shardNum = Int64(shard)
+            proto.realmNum = Int64(realm)
+
+            if let alias = alias {
+                proto.alias = alias.toProtobufBytes()
+            } else {
+                proto.accountNum = Int64(num)
+            }
+        }
+    }
+}
