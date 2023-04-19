@@ -18,7 +18,6 @@
  * ‍
  */
 
-import CHedera
 import Foundation
 import GRPC
 import HederaProtobufs
@@ -42,12 +41,6 @@ public class Transaction: ValidateChecksums {
 
     private final var `operator`: Operator?
 
-    internal final var nodeAccountIds: [AccountId]? {
-        willSet {
-            ensureNotFrozen(fieldName: "nodeAccountIds")
-        }
-    }
-
     internal var defaultMaxTransactionFee: Hbar {
         2
     }
@@ -60,6 +53,19 @@ public class Transaction: ValidateChecksums {
         -> Proto_TransactionResponse
     {
         fatalError("Method `Transaction.transactionExecute` must be overridden by `\(type(of: self))`")
+    }
+
+    public final var nodeAccountIds: [AccountId]? {
+        willSet {
+            ensureNotFrozen(fieldName: "nodeAccountIds")
+        }
+    }
+
+    @discardableResult
+    public func nodeAccountIds(_ nodeAccountIds: [AccountId]) -> Self {
+        self.nodeAccountIds = nodeAccountIds
+
+        return self
     }
 
     /// Explicit transaction ID for this transaction.
@@ -131,14 +137,20 @@ public class Transaction: ValidateChecksums {
 
     @discardableResult
     public final func sign(_ privateKey: PrivateKey) -> Self {
-        self.signWith(privateKey.publicKey) { privateKey.sign($0) }
+        self.signWithSigner(.privateKey(privateKey))
+
+        return self
     }
 
     @discardableResult
     public final func signWith(_ publicKey: PublicKey, _ signer: @escaping (Data) -> (Data)) -> Self {
-        self.signers.append(Signer(publicKey, signer))
+        self.signWithSigner(Signer(publicKey, signer))
 
         return self
+    }
+
+    internal final func signWithSigner(_ signer: Signer) {
+        self.signers.append(signer)
     }
 
     @discardableResult
@@ -189,6 +201,10 @@ public class Transaction: ValidateChecksums {
 
     public func execute(_ client: Client, _ timeout: TimeInterval? = nil) async throws -> Response {
         try freezeWith(client)
+
+        if let sources = sources {
+            return try await SourceTransaction(inner: self, sources: sources).execute(client, timeout: timeout)
+        }
 
         return try await executeAny(client, self, timeout)
     }
@@ -281,7 +297,6 @@ public class Transaction: ValidateChecksums {
     }
 
     internal final func ensureNotFrozen(fieldName: String? = nil) {
-
         if let fieldName = fieldName {
             precondition(!isFrozen, "\(fieldName) cannot be set while `\(type(of: self))` is frozen")
         } else {
@@ -442,7 +457,7 @@ extension Transaction: Execute {
         return self.makeRequestInner(chunkInfo: .single(transactionId: transactionId, nodeAccountId: nodeAccountId))
     }
 
-    internal func execute(_ channel: GRPCChannel, _ request: GrpcRequest) async throws -> GrpcResponse {
+    internal func execute(_ channel: any GRPCChannel, _ request: GrpcRequest) async throws -> GrpcResponse {
         try await transactionExecute(channel, request)
     }
 }

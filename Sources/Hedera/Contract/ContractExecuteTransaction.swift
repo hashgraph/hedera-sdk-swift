@@ -120,7 +120,7 @@ public final class ContractExecuteTransaction: Transaction {
     /// Sets the function name to call.
     ///
     /// The function will be called with no parameters.
-    /// Use ``function(_:_)`` to call a function with parameters.
+    /// Use ``function(_:_:)`` to call a function with parameters.
     ///
     /// - Parameter name: The name of the function to call.
     ///
@@ -175,7 +175,7 @@ extension ContractExecuteTransaction: ToProtobuf {
     }
 }
 
-extension ContractExecuteTransaction: ToSchedulableTransactionData {
+extension ContractExecuteTransaction {
     internal func toSchedulableTransactionData() -> Proto_SchedulableTransactionBody.OneOf_Data {
         .contractCall(toProtobuf())
     }

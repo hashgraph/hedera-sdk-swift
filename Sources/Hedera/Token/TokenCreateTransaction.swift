@@ -467,8 +467,10 @@ extension TokenCreateTransaction: ToProtobuf {
     }
 }
 
-extension TokenCreateTransaction: ToSchedulableTransactionData {
+extension TokenCreateTransaction {
     internal func toSchedulableTransactionData() -> Proto_SchedulableTransactionBody.OneOf_Data {
         .tokenCreation(toProtobuf())
     }
 }
+
+// swiftlint:enable file_length type_body_length
