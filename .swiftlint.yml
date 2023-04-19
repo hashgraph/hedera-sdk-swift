@@ -1,26 +1,35 @@
 included:
   - Examples/
-  - Sources/
+  - Sources/Hedera/
+  - Tests/
 
 excluded:
   - .build/
+  - Sources/Hedera/Status.swift
 
 disabled_rules:
   # TODO: re-enable once the project is deemed complete
   - todo
+  # swift-format disagrees, swift-format has its own style lints.
+  - opening_brace
+  - trailing_comma
+  # coverered by swift-format.
+  - line_length
+  # not a very useful lint honestly.
+  - cyclomatic_complexity
 
 opt_in_rules:
-  - anyobject_protocol
+  # deprecated & will be removed
+  # - anyobject_protocol
   - anonymous_argument_in_multiline_closure
   - array_init
   - attributes
   - balanced_xctest_lifecycle
-  - capture_variable
   - closure_body_length
   - closure_end_indentation
   - closure_spacing
   - collection_alignment
-  - conditional_returns_on_newline
+  # - conditional_returns_on_newline
   - contains_over_filter_count
   - contains_over_filter_is_empty
   - contains_over_first_not_nil
@@ -38,6 +47,11 @@ opt_in_rules:
   - expiring_todo
   - explicit_acl
   - explicit_top_level_acl
-  - extension_access_modifier
+  # this conflicts with `explicit_acl` by making the ACL redundant
+  # - extension_access_modifier
   - fallthrough
   - fatal_error_message
+
+analyzer_rules:
+  - capture_variable
+
