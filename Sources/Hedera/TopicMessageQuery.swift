@@ -82,36 +82,140 @@ public final class TopicMessageQuery: ValidateChecksums, MirrorQuery {
     }
 }
 
-extension TopicMessageQuery: ToProtobuf {
-    internal typealias Protobuf = Com_Hedera_Mirror_Api_Proto_ConsensusTopicQuery
+extension TopicMessageQuery {
+    internal typealias GrpcItem = Com_Hedera_Mirror_Api_Proto_ConsensusTopicResponse
 
-    internal func toProtobuf() -> Protobuf {
-        .with { proto in
-            topicId?.toProtobufInto(&proto.topicID)
-            startTime?.toProtobufInto(&proto.consensusStartTime)
-            endTime?.toProtobufInto(&proto.consensusEndTime)
-            proto.limit = limit
+    internal struct Context: MirrorRequestContext {
+        internal init(startTime: Timestamp? = nil) {
+            self.startTime = startTime
         }
+
+        internal init() {
+            self.init(startTime: nil)
+        }
+
+        let startTime: Timestamp?
+
+        mutating func update(item: GrpcItem) {
+            let newStartTime = item.hasConsensusTimestamp ? Timestamp(protobuf: item.consensusTimestamp) : nil
+            self = Self(startTime: newStartTime ?? startTime)
+        }
+    }
+
+    private static func mapStream<S>(_ stream: S) -> ItemStream where S: AsyncSequence, GrpcItem == S.Element {
+        var incompleteMessages: [TransactionId: IncompleteMessage] = [:]
+        return stream.compactMap { item throws -> Item? in
+            guard item.hasConsensusTimestamp else {
+                throw HError.fromProtobuf("unexpected missing `TopicMessage.consensusTimestamp`")
+            }
+
+            let header = ProtoTopicMessageHeader(
+                consensusTimestamp: .init(protobuf: item.consensusTimestamp),
+                sequenceNumber: item.sequenceNumber,
+                runningHash: item.runningHash,
+                runningHashVersion: item.runningHashVersion,
+                message: item.message
+            )
+
+            guard item.hasChunkInfo, item.chunkInfo.total > 1 else {
+                return Item(single: header)
+            }
+
+            // note: there's a potential DOS if someone sets other fields but no initial transaction ID.
+            guard item.chunkInfo.hasInitialTransactionID else {
+                throw HError.fromProtobuf("unexpected missing `chunkInfo.initialTransactionid`")
+            }
+
+            let messageChunk = ProtoTopicMessageChunk(
+                header: header,
+                initialTransactionId: try .init(protobuf: item.chunkInfo.initialTransactionID),
+                number: item.chunkInfo.number,
+                total: item.chunkInfo.total
+            )
+
+            let transactionId = messageChunk.initialTransactionId
+
+            var entry = incompleteMessages[transactionId, default: .partial(expiry: .now + .minutes(15), messages: [])]
+
+            entry.handleExpiry()
+
+            guard case .partial(let expiry, var messages) = entry else {
+                return nil
+            }
+
+            // If we have a duplicate `number`, we'll just ignore it (this is unspecified behavior)
+            if !messages.contains(where: { $0.number == messageChunk.number }) {
+                messages.append(messageChunk)
+            }
+
+            // Find the smallest `total` so that we aren't susceptable to stuff like total changing (and getting bigger)
+            // later on there's a check that ensures that they all have the same total.
+            let total = messages.lazy.map { $0.total }.min()!
+
+            if messages.count < total {
+                incompleteMessages[transactionId] = .partial(expiry: expiry, messages: messages)
+                return nil
+            }
+
+            incompleteMessages[transactionId] = .complete
+
+            messages.sort(by: { $0.number < $1.number })
+
+            return .init(chunks: messages)
+        }.eraseToAnyAsyncSequence()
     }
 }
 
 extension TopicMessageQuery: MirrorRequest {
-    internal typealias GrpcItem = TopicMessage.Protobuf
-
     internal static func collect<S>(_ stream: S) async throws -> Response
-    where S: AsyncSequence, Item.Protobuf == S.Element {
+    where S: AsyncSequence, GrpcItem == S.Element {
         var items: [Item] = []
-        for try await proto in stream {
-            items.append(try Item.fromProtobuf(proto))
+
+        for try await item in Self.mapStream(stream) {
+            items.append(item)
         }
 
         return items
     }
 
-    internal func connect(channel: any GRPCChannel) -> ConnectStream {
-        let request = self.toProtobuf()
+    internal static func makeItemStream<S>(_ stream: S) -> ItemStream where S: AsyncSequence, GrpcItem == S.Element {
+        Self.mapStream(stream)
+    }
+
+    internal func connect(context: Context, channel: any GRPCChannel) -> ConnectStream {
+        let request = Com_Hedera_Mirror_Api_Proto_ConsensusTopicQuery.with { proto in
+            topicId?.toProtobufInto(&proto.topicID)
+
+            let startTime = context.startTime?.adding(nanos: 1) ?? self.startTime
+
+            startTime?.toProtobufInto(&proto.consensusStartTime)
+            endTime?.toProtobufInto(&proto.consensusEndTime)
+            proto.limit = limit
+        }
 
         return HederaProtobufs.Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClient(channel: channel)
             .subscribeTopic(request)
     }
 }
+
+enum IncompleteMessage {
+    case partial(expiry: Timestamp, messages: [ProtoTopicMessageChunk])
+    case expired
+    case complete
+
+    mutating func handleExpiry() {
+        if case .partial(let expiry, _) = self, expiry < .now {
+            self = .expired
+        }
+    }
+}
+
+//private struct MessagesMapSequence<S>: AsyncSequence where S: AsyncSequence, S.Element == TopicMessageQuery.GrpcItem {
+//    typealias Element = TopicMessageQuery.Item
+//    let inner: S
+//
+//    struct AsyncIterator {
+//        let map: [TransactionId: ]
+//        let inner: S.AsyncIterator
+//    }
+//}

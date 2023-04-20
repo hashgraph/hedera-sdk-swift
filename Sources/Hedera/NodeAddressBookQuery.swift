@@ -80,19 +80,30 @@ extension NodeAddressBookQuery: ToProtobuf {
 extension NodeAddressBookQuery: MirrorRequest {
     internal typealias GrpcItem = NodeAddress.Protobuf
 
-    internal func connect(channel: GRPCChannel) -> GRPCAsyncResponseStream<GrpcItem> {
+    internal struct Context: MirrorRequestContext {
+        internal mutating func update(item: GrpcItem) {
+            // do nothing
+        }
+    }
+
+    internal func connect(context: Context, channel: GRPCChannel) -> GRPCAsyncResponseStream<GrpcItem> {
         let request = self.toProtobuf()
 
         return HederaProtobufs.Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClient(channel: channel).getNodes(request)
     }
 
     internal static func collect<S>(_ stream: S) async throws -> Response
-    where S: AsyncSequence, Item.Protobuf == S.Element {
+    where S: AsyncSequence, GrpcItem == S.Element {
         var items: [Item] = []
         for try await proto in stream {
             items.append(try Item.fromProtobuf(proto))
         }
 
         return Response(nodeAddresses: items)
+    }
+
+    internal static func makeItemStream<S>(_ stream: S) -> ItemStream
+    where S: AsyncSequence, NodeAddress.Protobuf == S.Element {
+        stream.map(Item.fromProtobuf).eraseToAnyAsyncSequence()
     }
 }

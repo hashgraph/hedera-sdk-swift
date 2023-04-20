@@ -1,63 +1,114 @@
 import Foundation
 import HederaProtobufs
 
-// fixme: chunking
+/// Metadata for an individual chunk of a `TopicMessage`.
+public struct TopicMessageChunk {
+    /// The consensus timestamp for this chunk.
+    public let consensusTimestamp: Timestamp
+
+    /// How large the content of this specific chunk was.
+    public let contentSize: Int
+
+    /// The new running hash of the topic that recieved the message.
+    public let runningHash: Data
+
+    /// Sequence number for this chunk.
+    public let sequenceNumber: UInt64
+}
+
+extension TopicMessageChunk {
+    internal init(header: ProtoTopicMessageHeader) {
+        self.init(
+            consensusTimestamp: header.consensusTimestamp,
+            contentSize: header.message.count,
+            runningHash: header.runningHash,
+            sequenceNumber: header.sequenceNumber
+        )
+    }
+}
+
 /// Topic message records.
 public struct TopicMessage {
     /// The consensus timestamp of the message.
+    ///
+    /// If there are multiple chunks, this is taken from the *last* chunk.
     public let consensusTimestamp: Timestamp
 
     /// The content of the message.
     public let contents: Data
 
     /// The new running hash of the topic that received the message.
+    ///
+    /// If there are multiple chunks, this is taken from the *last* chunk.
     public let runningHash: Data
 
     /// Version of the SHA-384 digest used to update the running hash.
+    ///
+    /// If there are multiple chunks, this is taken from the *last* chunk.
     public let runningHashVersion: UInt64
 
     /// The sequence number of the message relative to all other messages
     /// for the same topic.
+    ///
+    /// If there are multiple chunks, this is taken from the *last* chunk.
     public let sequenceNumber: UInt64
 
-    /// The `TransactionId` of the first chunk, gets copied to every subsequent chunk in
-    /// a fragmented message.
-    public let initialTransactionId: TransactionId?
+    /// The transaction ID of the first chunk.
+    ///
+    /// This is shared between every subseqent chunk in a chunked message.
+    public let transaction: TransactionId?
 
-    /// The sequence number (from 1 to total) of the current chunk in the message.
-    public let chunkNumber: UInt32
-
-    /// The total number of chunks in the message.
-    public let chunkTotal: UInt32
+    /// The chunks that make up this message.
+    public let chunks: [TopicMessageChunk]?
 }
 
-extension TopicMessage: TryFromProtobuf {
-    internal typealias Protobuf = Com_Hedera_Mirror_Api_Proto_ConsensusTopicResponse
-
-    internal init(protobuf proto: Protobuf) throws {
-        let initialTransactionId: TransactionId?
-        let chunkNumber: UInt32
-        let chunkTotal: UInt32
-
-        if proto.hasChunkInfo {
-            initialTransactionId = try .fromProtobuf(proto.chunkInfo.initialTransactionID)
-            chunkNumber = UInt32(proto.chunkInfo.number)
-            chunkTotal = UInt32(proto.chunkInfo.total)
-        } else {
-            initialTransactionId = nil
-            chunkNumber = 1
-            chunkTotal = 1
-        }
-
+extension TopicMessage {
+    internal init(single message: ProtoTopicMessageHeader) {
         self.init(
-            consensusTimestamp: .fromProtobuf(proto.consensusTimestamp),
-            contents: proto.message,
-            runningHash: proto.runningHash,
-            runningHashVersion: proto.runningHashVersion,
-            sequenceNumber: proto.sequenceNumber,
-            initialTransactionId: initialTransactionId,
-            chunkNumber: chunkNumber,
-            chunkTotal: chunkTotal
+            consensusTimestamp: message.consensusTimestamp,
+            contents: message.message,
+            runningHash: message.runningHash,
+            runningHashVersion: message.runningHashVersion,
+            sequenceNumber: message.sequenceNumber,
+            transaction: nil,
+            chunks: nil
         )
     }
+
+    internal init(chunks: [ProtoTopicMessageChunk]) {
+        precondition(chunks.count >= 1, "chunks must not be empty")
+
+        // todo: log stuff (see rust)
+
+        let contents = chunks.reduce(into: Data()) { $0.append($1.header.message) }
+
+        let last = chunks.last!
+
+        let chunks = chunks.map { TopicMessageChunk(header: $0.header) }
+
+        self.init(
+            consensusTimestamp: last.header.consensusTimestamp,
+            contents: contents,
+            runningHash: last.header.runningHash,
+            runningHashVersion: last.header.runningHashVersion,
+            sequenceNumber: last.header.sequenceNumber,
+            transaction: last.initialTransactionId,
+            chunks: chunks
+        )
+    }
+}
+
+internal struct ProtoTopicMessageHeader {
+    internal let consensusTimestamp: Timestamp
+    internal let sequenceNumber: UInt64
+    internal let runningHash: Data
+    internal let runningHashVersion: UInt64
+    internal let message: Data
+}
+
+internal struct ProtoTopicMessageChunk {
+    internal let header: ProtoTopicMessageHeader
+    internal let initialTransactionId: TransactionId
+    internal let number: Int32
+    internal let total: Int32
 }
