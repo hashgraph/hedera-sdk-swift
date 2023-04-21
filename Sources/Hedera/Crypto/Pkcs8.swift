@@ -126,7 +126,7 @@ extension Pkcs8.Version: DERImplicitlyTaggable {
         .integer
     }
 
-    init(derEncoded: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
+    internal init(derEncoded: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         let raw = try Int(derEncoded: derEncoded, withIdentifier: identifier)
 
         guard let value = Self(rawValue: raw) else {
@@ -137,7 +137,7 @@ extension Pkcs8.Version: DERImplicitlyTaggable {
         self = value
     }
 
-    func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier)
+    internal func serialize(into coder: inout DER.Serializer, withIdentifier identifier: ASN1Identifier)
         throws
     {
         try coder.serialize(self.rawValue)

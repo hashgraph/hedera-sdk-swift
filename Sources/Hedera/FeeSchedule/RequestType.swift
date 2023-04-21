@@ -25,6 +25,7 @@ import HederaProtobufs
 
 /// The functionality provided by Hedera.
 public enum RequestType {
+    // fixme: maybe we want to make this `nil` instead?
     /// UNSPECIFIED - Need to keep first value as unspecified because first element is ignored and not parsed (0 is ignored by parser)
     case none
 

@@ -175,7 +175,7 @@ extension ASN1ObjectIdentifier {
 }
 
 extension Pkcs5.Pbkdf2Prf: DERImplicitlyTaggable {
-    static var defaultIdentifier: SwiftASN1.ASN1Identifier {
+    internal static var defaultIdentifier: SwiftASN1.ASN1Identifier {
         .sequence
     }
 

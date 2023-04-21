@@ -41,14 +41,11 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         }
 
         fileprivate var kind: PublicKey.Kind {
-            // swiftlint:disable force_try
             switch self {
             case .ecdsa(let key, let compressed):
                 return .ecdsa(try! .init(rawRepresentation: key, format: compressed ? .compressed : .uncompressed))
             case .ed25519(let key): return .ed25519(try! .init(rawRepresentation: key))
             }
-
-            // swiftlint:enable force_try
         }
     }
 
@@ -205,7 +202,6 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
     }
 
     public init(stringLiteral value: StringLiteralType) {
-        // swiftlint:disable:next force_try
         try! self.init(parsing: value)
     }
 
@@ -229,7 +225,6 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
 
         var serializer = DER.Serializer()
 
-        // swiftlint:disable:next force_try
         try! serializer.serialize(spki)
         return Data(serializer.serializedBytes)
 
@@ -354,7 +349,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
             precondition(outputLen == output.count)
         }
 
-        // fixme(important): sec1 uncompressed point
+        // note(important): sec1 uncompressed point
         let hash = Crypto.Sha3.keccak256(output[1...])
 
         return try! EvmAddress(Data(hash.dropFirst(12)))

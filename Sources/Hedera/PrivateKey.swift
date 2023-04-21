@@ -36,7 +36,7 @@ internal struct Keccak256Digest: Crypto.SecpDigest {
     fileprivate let inner: Data
     internal static let byteCount: Int = 32
 
-    func withUnsafeBytes<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R {
+    internal func withUnsafeBytes<R>(_ body: (UnsafeRawBufferPointer) throws -> R) rethrows -> R {
         try inner.withUnsafeBytes(body)
     }
 }
@@ -423,17 +423,17 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         case .ed25519(let key):
             var seed = key.rawRepresentation
 
-            let i1: Int32
+            let idx1: Int32
             switch index {
-            case 0x00ff_ffff_ffff: i1 = 0xff
-            case 0...: i1 = 0
-            default: i1 = -1
+            case 0x00ff_ffff_ffff: idx1 = 0xff
+            case 0...: idx1 = 0
+            default: idx1 = -1
             }
 
-            let i2 = UInt8(truncatingIfNeeded: index)
+            let idx2 = UInt8(truncatingIfNeeded: index)
 
-            seed.append(i1.bigEndianBytes)
-            seed.append(Data([i2, i2, i2, i2]))
+            seed.append(idx1.bigEndianBytes)
+            seed.append(Data([idx2, idx2, idx2, idx2]))
 
             let salt = Data([0xff])
 

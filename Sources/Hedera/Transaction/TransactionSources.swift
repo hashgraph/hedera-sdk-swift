@@ -177,6 +177,8 @@ extension TransactionSources {
             }
         }
 
+        // it won't fit on the same line.
+        // swiftlint:disable closure_parameter_position
         let transactionInfo = try signedTransactions.map {
             signedTx -> (transactionId: TransactionId, nodeAccountId: AccountId) in
             let transactionBody: Proto_TransactionBody
@@ -191,6 +193,8 @@ extension TransactionSources {
 
             return (transactionId: transactionId, nodeAccountId: nodeAccountId)
         }
+
+        // swiftlint:enable closure_parameter_position
 
         let chunks: [Range<Int>]
         let transactionIds: [TransactionId]

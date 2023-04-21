@@ -17,6 +17,19 @@ disabled_rules:
   - line_length
   # not a very useful lint honestly.
   - cyclomatic_complexity
+  # it's basically exclusively used for `unreachable`
+  - force_try
+  # This triggers a lot because of functions that simply cannot be smaller.
+  - function_body_length
+  # see above.
+  - closure_body_length
+  # And this triggers a lot because of the above two.
+  - type_body_length
+  # likewise here
+  - file_length
+  # Identifier names should make sense, 
+  # and renaming stuff isn't always the right decision.
+  - identifier_name
 
 opt_in_rules:
   # deprecated & will be removed
@@ -51,6 +64,7 @@ opt_in_rules:
   # - extension_access_modifier
   - fallthrough
   - fatal_error_message
+  # - missing_docs
 
 analyzer_rules:
   - capture_variable

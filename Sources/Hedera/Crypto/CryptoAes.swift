@@ -102,12 +102,9 @@ extension Crypto.Aes {
 
                     case kCCBufferTooSmall:
                         throw Crypto.AesError.bufferTooSmall(available: output.count, needed: dataOutMoved)
-                    case kCCAlignmentError:
-                        throw Crypto.AesError.alignment
-                    case kCCDecodeError:
-                        throw Crypto.AesError.decode
-                    default:
-                        throw Crypto.AesError.other(status)
+                    case kCCAlignmentError: throw Crypto.AesError.alignment
+                    case kCCDecodeError: throw Crypto.AesError.decode
+                    default: throw Crypto.AesError.other(status)
                     }
                 }
             }
