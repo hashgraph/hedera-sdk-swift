@@ -20,6 +20,7 @@
 
 import Foundation
 
+/// Flow for verifying signatures via account info.
 public enum AccountInfoFlow {}
 
 extension AccountInfoFlow {
@@ -37,6 +38,7 @@ extension AccountInfoFlow {
         }
     }
 
+    /// Verify the `signature` for `message` via the given account's public key.
     public static func verifySignature(_ client: Client, _ accountId: AccountId, _ message: Data, _ signature: Data)
         async throws
     {
@@ -45,6 +47,7 @@ extension AccountInfoFlow {
         return try key.verify(message, signature)
     }
 
+    /// Verify the given account's public key has signed the given transaction.
     public static func verifyTransactionSignature(_ client: Client, _ accountId: AccountId, _ transaction: Transaction)
         async throws
     {

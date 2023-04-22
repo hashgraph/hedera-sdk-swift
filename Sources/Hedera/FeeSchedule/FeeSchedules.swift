@@ -27,6 +27,8 @@ import HederaProtobufs
 ///
 /// [Hedera documentation]: https://docs.hedera.com/guides/docs/hedera-api/basic-types/currentandnextfeeschedule
 public struct FeeSchedules {
+    // missing_docs on memberwise init -> fine.
+    // swiftlint:disable:next missing_docs
     public init(current: FeeSchedule? = nil, next: FeeSchedule? = nil) {
         self.current = current
         self.next = next
@@ -38,10 +40,16 @@ public struct FeeSchedules {
     /// The next fee schedule.
     public var next: FeeSchedule?
 
+    /// Decode `Self` from protobuf-encoded `bytes`.
+    ///
+    /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
+    ///           decoding the bytes fails to produce a valid protobuf, or
+    ///            decoding the protobuf fails.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert `self` to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

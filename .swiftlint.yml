@@ -64,7 +64,7 @@ opt_in_rules:
   # - extension_access_modifier
   - fallthrough
   - fatal_error_message
-  # - missing_docs
+  - missing_docs
 
 analyzer_rules:
   - capture_variable

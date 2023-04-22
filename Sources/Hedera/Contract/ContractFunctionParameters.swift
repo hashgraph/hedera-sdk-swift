@@ -157,9 +157,11 @@ private struct Argument {
 }
 
 // swiftlint:disable:next type_body_length
+/// Builder for encoding parameters for a Solidity contract constructor/function call.
 public final class ContractFunctionParameters {
     private var args: [Argument]
 
+    /// Create a new contract function parameters builder.
     public init() {
         args = []
     }
@@ -1280,7 +1282,7 @@ public final class ContractFunctionParameters {
         var staticArgs = Data()
         var dynamicArgs = Data()
 
-        let selector = funcName.map { ContractFunctionSelector($0) }
+        let selector = funcName.map(ContractFunctionSelector.init)
 
         for arg in args {
             selector?.addParamType(arg.typeName)
@@ -1297,7 +1299,7 @@ public final class ContractFunctionParameters {
         }
 
         if let selector = selector {
-            staticArgs.insert(contentsOf: selector.finish(), at: 0)
+            staticArgs.insert(contentsOf: selector.finish(), at: staticArgs.startIndex)
         }
 
         return staticArgs + dynamicArgs
@@ -1309,7 +1311,7 @@ private func decodeAddress<S: StringProtocol>(from description: S) throws -> Evm
 
     guard let bytes = Data(hexEncoded: description) else {
         // todo: better error message
-        throw HError(kind: .basicParse, description: "invalid evm address")
+        throw HError.basicParse("invalid evm address")
     }
 
     return try EvmAddress(bytes)

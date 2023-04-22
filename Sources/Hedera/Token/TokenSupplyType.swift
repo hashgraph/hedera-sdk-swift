@@ -23,9 +23,12 @@ import SwiftProtobuf
 
 /// Possible token supply types.
 /// Can be used to restrict supply to a set maximum.
-/// Defaults to `infinite`.
+///
+/// Defaults to ``infinite``.
 public enum TokenSupplyType {
+    /// Indicates the token has a maximum supply of `UInt64.max`.
     case infinite
+    /// Indicates the token has a configurable maximum supply, provided on token creation.
     case finite
 }
 

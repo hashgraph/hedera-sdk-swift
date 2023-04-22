@@ -20,8 +20,12 @@
 
 import Foundation
 
+/// Data for an ethereum transaction.
 public enum EthereumData {
+    /// Data for a legacy ethereum transaction.
     case legacy(Legacy)
+
+    /// Data for an Eip 1559 ethereum transaction.
     case eip1559(Eip1559)
 
     internal init(rlpBytes bytes: Data) throws {
@@ -65,37 +69,8 @@ public enum EthereumData {
 
 // swiftlint:disable identifier_name
 extension EthereumData {
+    /// Data for a legacy ethereum transaction.
     public struct Legacy {
-        internal init(
-            nonce: Data,
-            gasPrice: Data,
-            gasLimit: Data,
-            to: Data,
-            value: Data,
-            callData: Data,
-            v: Data,
-            r: Data,
-            s: Data
-        ) {
-            self.nonce = nonce
-            self.gasPrice = gasPrice
-            self.gasLimit = gasLimit
-            self.to = to
-            self.value = value
-            self.callData = callData
-            self.v = v
-            self.r = r
-            self.s = s
-        }
-
-        internal init(rlpBytes: Data) throws {
-            do {
-                try self.init(rlp: AnyRlp(raw: rlpBytes))
-            } catch {
-                throw HError.basicParse(String(describing: error))
-            }
-        }
-
         /// Transaction's nonce.
         public var nonce: Data
 
@@ -111,70 +86,21 @@ extension EthereumData {
         /// The transaction value.
         public var value: Data
 
-        /// The V value of the signature.
-        public var v: Data
-
         /// The raw call data.
         public var callData: Data
+
+        /// The V value of the signature.
+        public var v: Data
 
         /// The R value of the signature.
         public var r: Data
 
         /// The S value of the signature.
         public var s: Data
-
-        public static func fromBytes(_ bytes: Data) throws -> Self {
-            try Self(rlpBytes: bytes)
-        }
-
-        public func toBytes() -> Data {
-            var encoder = Rlp.Encoder()
-            encoder.append(self)
-            return encoder.output
-        }
     }
 
+    /// Data for an Eip 1559 ethereum transaction.
     public struct Eip1559 {
-        internal init(
-            chainId: Data,
-            nonce: Data,
-            maxPriorityGas: Data,
-            maxGas: Data,
-            gasLimit: Data,
-            to: Data,
-            value: Data,
-            callData: Data,
-            accessList: [Data],
-            recoveryId: Data,
-            r: Data,
-            s: Data
-        ) {
-            self.chainId = chainId
-            self.nonce = nonce
-            self.maxPriorityGas = maxPriorityGas
-            self.maxGas = maxGas
-            self.gasLimit = gasLimit
-            self.to = to
-            self.value = value
-            self.callData = callData
-            self.accessList = accessList
-            self.recoveryId = recoveryId
-            self.r = r
-            self.s = s
-        }
-
-        internal init(rlpBytes: Data) throws {
-            guard rlpBytes.first == 2 else {
-                throw HError.basicParse("Expected eip1559 transaction data to start with 0x02")
-            }
-
-            do {
-                try self.init(rlp: AnyRlp(raw: rlpBytes[1...]))
-            } catch {
-                throw HError.basicParse(String(describing: error))
-            }
-        }
-
         /// ID of the chain.
         public var chainId: Data
 
@@ -212,16 +138,6 @@ extension EthereumData {
 
         /// The S value of the signature.
         public var s: Data
-
-        public static func fromBytes(_ bytes: Data) throws -> Self {
-            try Self(rlpBytes: bytes)
-        }
-
-        public func toBytes() -> Data {
-            var encoder = Rlp.Encoder(buffer: Data([0x02]))
-            encoder.append(self)
-            return encoder.output
-        }
     }
 }
 // swiftlint:enable identifier_name
@@ -252,6 +168,28 @@ extension EthereumData.Legacy: RlpDecodable, RlpEncodable {
 
     internal func encode(to encoder: inout Rlp.Encoder) {
         encoder.append([nonce, gasPrice, gasLimit, to, value, callData, v, r, s])
+    }
+}
+
+extension EthereumData.Legacy {
+    internal init(rlpBytes: Data) throws {
+        do {
+            try self.init(rlp: AnyRlp(raw: rlpBytes))
+        } catch {
+            throw HError.basicParse(String(describing: error))
+        }
+    }
+
+    /// Deserialize legacy ethereum data from RLP encoded bytes.
+    public static func fromBytes(_ bytes: Data) throws -> Self {
+        try Self(rlpBytes: bytes)
+    }
+
+    /// Encode this legacy ethereum data to RLP encoded bytes.
+    public func toBytes() -> Data {
+        var encoder = Rlp.Encoder()
+        encoder.append(self)
+        return encoder.output
     }
 }
 
@@ -299,5 +237,31 @@ extension EthereumData.Eip1559: RlpDecodable, RlpEncodable {
         encoder.append(s)
 
         encoder.endList()
+    }
+}
+
+extension EthereumData.Eip1559 {
+    internal init(rlpBytes: Data) throws {
+        guard rlpBytes.first == 2 else {
+            throw HError.basicParse("Expected eip1559 transaction data to start with 0x02")
+        }
+
+        do {
+            try self.init(rlp: AnyRlp(raw: rlpBytes[1...]))
+        } catch {
+            throw HError.basicParse(String(describing: error))
+        }
+    }
+
+    /// Deserialize eip1559 ethereum data from RLP encoded bytes.
+    public static func fromBytes(_ bytes: Data) throws -> Self {
+        try Self(rlpBytes: bytes)
+    }
+
+    /// Encode this eip1559 ethereum data to RLP encoded bytes.
+    public func toBytes() -> Data {
+        var encoder = Rlp.Encoder(buffer: Data([0x02]))
+        encoder.append(self)
+        return encoder.output
     }
 }

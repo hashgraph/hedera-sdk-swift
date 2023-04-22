@@ -24,6 +24,8 @@ import HederaProtobufs
 /// The total fees charged for a transaction, consisting of 3 parts:
 /// The node fee, the network fee, and the service fee.
 public struct FeeData {
+    // missing_docs on memberwise init -> fine.
+    // swiftlint:disable:next missing_docs
     public init(node: FeeComponents, network: FeeComponents, service: FeeComponents, kind: FeeDataType) {
         self.node = node
         self.network = network
@@ -44,10 +46,16 @@ public struct FeeData {
     /// correlating to the same hedera functionality.
     public var kind: FeeDataType
 
+    /// Decode `Self` from protobuf-encoded `bytes`.
+    ///
+    /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
+    ///           decoding the bytes fails to produce a valid protobuf, or
+    ///            decoding the protobuf fails.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert `self` to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

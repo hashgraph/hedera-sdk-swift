@@ -21,13 +21,18 @@
 import Foundation
 import HederaProtobufs
 
-/// The current and next exchange rates between Hbar and USD-cents.
+/// The current and next exchange rates between ``Hbar`` and USD-cents.
 public struct ExchangeRates {
     /// The current exchange rate between Hbar and USD-cents.
     public let currentRate: ExchangeRate
     /// The next exchange rate between Hbar and USD-cents.
     public let nextRate: ExchangeRate
 
+    /// Decode `Self` from protobuf-encoded `bytes`.
+    ///
+    /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
+    ///           decoding the bytes fails to produce a valid protobuf, or
+    ///            decoding the protobuf fails.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
@@ -44,6 +49,7 @@ extension ExchangeRates: FromProtobuf {
     }
 }
 
+/// Denotes a conversion between Hbars and cents (USD).
 public struct ExchangeRate {
     /// Denotes Hbar equivalent to cents (USD).
     public let hbars: UInt32

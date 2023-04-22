@@ -22,8 +22,8 @@ import Foundation
 import Hedera
 
 @main
-public enum Program {
-    public static func main() async throws {
+internal enum Program {
+    internal static func main() async throws {
         // Generate a Ed25519 key
         // This is the current recommended default for Hedera
 

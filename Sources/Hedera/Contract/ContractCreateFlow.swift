@@ -39,6 +39,7 @@ public final class ContractCreateFlow {
         case nodeId(UInt64)
     }
 
+    /// Create a new `ContractCreateFlow` with default values.
     public init() {
         self.bytecode = Data()
         self.nodeAccountIds = nil
@@ -363,7 +364,7 @@ public final class ContractCreateFlow {
 
     /// Sets the client to use for freezing the generated *``ContractCreateTransaction``*.
     ///
-    /// By default freezing will use the client provided to ``execute``.
+    /// By default freezing will use the client provided to ``execute(_:_:)``.
     ///
     /// >Note: This *only* affects the ``ContractCreateTransaction`` currently, that is not guaranteed to always be the case.
     ///

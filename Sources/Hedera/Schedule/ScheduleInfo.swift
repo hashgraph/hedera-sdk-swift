@@ -61,6 +61,7 @@ public struct ScheduleInfo {
     /// The time the schedule transaction was deleted.
     public let deletedAt: Timestamp?
 
+    /// Ledger ID for the network the response was returned from.
     public let ledgerId: LedgerId
 
     /// Returns the transaction associated with this schedule
@@ -121,10 +122,16 @@ public struct ScheduleInfo {
         }
     }
 
+    /// Decode `Self` from protobuf-encoded `bytes`.
+    ///
+    /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
+    ///           decoding the bytes fails to produce a valid protobuf, or
+    ///            decoding the protobuf fails.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert `self` to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

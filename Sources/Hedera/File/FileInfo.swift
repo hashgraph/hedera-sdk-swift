@@ -65,6 +65,7 @@ public final class FileInfo {
     /// Memo associated with the file.
     public let fileMemo: String
 
+    /// Ledger ID for the network the response was returned from.
     public let ledgerId: LedgerId
 
     /// The auto renew period for this file.
@@ -78,10 +79,16 @@ public final class FileInfo {
     /// > Warning: This not supported on any hedera network at this time.
     public let autoRenewAccountId: AccountId?
 
+    /// Decode `Self` from protobuf-encoded `bytes`.
+    ///
+    /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
+    ///           decoding the bytes fails to produce a valid protobuf, or
+    ///            decoding the protobuf fails.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert `self` to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

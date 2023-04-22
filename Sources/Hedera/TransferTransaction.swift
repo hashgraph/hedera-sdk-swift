@@ -93,14 +93,14 @@ public final class TransferTransaction: Transaction {
 
     /// Add a non-approved hbar transfer to the transaction.
     @discardableResult
-    public func hbarTransfer(_ accountId: AccountId, _ amount: Int64) -> Self {
-        doHbarTransfer(accountId, amount, false)
+    public func hbarTransfer(_ accountId: AccountId, _ amount: Hbar) -> Self {
+        doHbarTransfer(accountId, amount.toTinybars(), false)
     }
 
     /// Add an approved hbar transfer to the transaction.
     @discardableResult
-    public func approvedHbarTransfer(_ accountId: AccountId, _ amount: Int64) -> Self {
-        doHbarTransfer(accountId, amount, true)
+    public func approvedHbarTransfer(_ accountId: AccountId, _ amount: Hbar) -> Self {
+        doHbarTransfer(accountId, amount.toTinybars(), true)
     }
 
     /// Add a non-approved token transfer to the transaction.
