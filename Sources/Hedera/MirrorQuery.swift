@@ -23,19 +23,31 @@ import Foundation
 import GRPC
 import HederaProtobufs
 
+internal protocol MirrorRequestContext {
+    associatedtype GrpcItem
+    /// Initialize the context with default values.
+    init()
+
+    mutating func update(item: GrpcItem)
+}
+
 internal protocol MirrorRequest {
-    associatedtype Item: TryFromProtobuf
+    associatedtype GrpcItem: Sendable
+    associatedtype Item
     associatedtype Response
+    associatedtype Context: MirrorRequestContext & Sendable where Context.GrpcItem == GrpcItem
 
-    func connect(channel: GRPCChannel) -> ConnectStream
-
-    static func collect<S: AsyncSequence>(_ stream: S) async throws -> Response where S.Element == Item.Protobuf
+    func connect(context: Context, channel: any GRPCChannel) -> ConnectStream
 
     func shouldRetry(forStatus status: GRPCStatus.Code) -> Bool
+
+    static func makeItemStream<S: AsyncSequence>(_ stream: S) -> ItemStream where S.Element == GrpcItem
+
+    static func collect<S: AsyncSequence>(_ stream: S) async throws -> Response where S.Element == GrpcItem
 }
 
 extension MirrorRequest {
-    internal typealias ConnectStream = GRPCAsyncResponseStream<Item.Protobuf>
+    internal typealias ConnectStream = GRPCAsyncResponseStream<GrpcItem>
     internal typealias ItemStream = AnyAsyncSequence<Item>
 
     internal func shouldRetry(forStatus status: GRPCStatus.Code) -> Bool {
@@ -80,7 +92,7 @@ extension MirrorQuery where Self: MirrorRequest & ValidateChecksums {
         //     try validateChecksums(on: client)
         // }
 
-        return mirrorSubscribe(client.mirrorChannel, self, timeout).map(Item.fromProtobuf).eraseToAnyAsyncSequence()
+        return Self.makeItemStream(mirrorSubscribe(client.mirrorChannel, self, timeout))
     }
 
     /// Execute this mirror query and collect all the items.
@@ -109,6 +121,7 @@ private struct MirrorQuerySubscribeIterator<R: MirrorRequest>: AsyncIteratorProt
         self.state = .start
         self.backoff = LegacyExponentialBackoff(maxElapsedTime: .limited(timeout))
         self.backoffInfinity = LegacyExponentialBackoff(maxElapsedTime: .unlimited)
+        self.context = .init()
     }
 
     private let request: R
@@ -116,6 +129,7 @@ private struct MirrorQuerySubscribeIterator<R: MirrorRequest>: AsyncIteratorProt
     private var state: State
     private var backoff: LegacyExponentialBackoff
     private var backoffInfinity: LegacyExponentialBackoff
+    private var context: R.Context
 
     enum State {
         case start
@@ -134,14 +148,13 @@ private struct MirrorQuerySubscribeIterator<R: MirrorRequest>: AsyncIteratorProt
     // else: yield error, enter `.finished`
     // on nil: enter `.finished`, yield `nil`
     // `.finished` -> return `nil`
-    mutating func next() async throws -> R.Item.Protobuf? {
+    mutating func next() async throws -> R.GrpcItem? {
         while true {
             try Task.checkCancellation()
             switch state {
-
             case .start:
                 state = .running(
-                    stream: request.connect(channel: channel).makeAsyncIterator()
+                    stream: request.connect(context: context, channel: channel).makeAsyncIterator()
                 )
 
                 backoff.reset()
@@ -153,6 +166,8 @@ private struct MirrorQuerySubscribeIterator<R: MirrorRequest>: AsyncIteratorProt
                         state = .finished
                         return nil
                     }
+
+                    context.update(item: result)
 
                     return result
                 } catch let error as GRPCStatus {
@@ -192,12 +207,12 @@ private struct MirrorQuerySubscribeIterator<R: MirrorRequest>: AsyncIteratorProt
         }
     }
 
-    typealias Element = R.Item.Protobuf
+    fileprivate typealias Element = R.GrpcItem
 }
 
 private struct MirrorSubscribeStream<R: MirrorRequest>: AsyncSequence {
     typealias AsyncIterator = MirrorQuerySubscribeIterator<R>
-    typealias Element = R.Item.Protobuf
+    typealias Element = R.GrpcItem
 
     let request: R
     let channel: GRPCChannel
@@ -213,7 +228,7 @@ private struct MirrorSubscribeStream<R: MirrorRequest>: AsyncSequence {
 }
 
 private func mirrorSubscribe<R: MirrorRequest>(_ channel: GRPCChannel, _ request: R, _ timeout: TimeInterval)
-    -> AnyAsyncSequence<R.Item.Protobuf>
+    -> AnyAsyncSequence<R.GrpcItem>
 {
     MirrorSubscribeStream(request: request, channel: channel, timeout: timeout).eraseToAnyAsyncSequence()
 }

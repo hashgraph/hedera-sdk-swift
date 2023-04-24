@@ -1,7 +1,7 @@
 import Foundation
 import HederaProtobufs
 
-public struct TransactionId: Sendable, Equatable, ExpressibleByStringLiteral, LosslessStringConvertible,
+public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringLiteral, LosslessStringConvertible,
     ValidateChecksums
 {
     /// The Account ID that paid for this transaction.
