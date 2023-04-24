@@ -43,12 +43,16 @@ public protocol CustomFee {
 }
 
 extension CustomFee {
+    /// Sets the account to recieve the custom fee.
+    @discardableResult
     public mutating func feeCollectorAccountId(_ feeCollectorAccountId: AccountId) -> Self {
         self.feeCollectorAccountId = feeCollectorAccountId
 
         return self
     }
 
+    /// Set to `true` if all collectors should be exempt from fees, or to false otherwise.
+    @discardableResult
     public mutating func allCollectorsAreExempt(_ allCollectorsAreExempt: Bool) -> Self {
         self.allCollectorsAreExempt = true
 
@@ -59,16 +63,25 @@ extension CustomFee {
 /// A transfer fee to assess during a `TransferTransaction` that transfers units of
 /// the token to which the fee is attached.
 public enum AnyCustomFee {
+    /// A fee that costs a fixed number of hbar/tokens.
     case fixed(FixedFee)
+    /// A fee that costs a fraction of the transferred amount.
     case fractional(FractionalFee)
+    /// A fee that charges a royalty for NFT transfers.
     case royalty(RoyaltyFee)
 
+    /// Decode `Self` from protobuf-encoded `bytes`.
+    ///
+    /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
+    ///           decoding the bytes fails to produce a valid protobuf, or
+    ///            decoding the protobuf fails.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert `self` to protobuf encoded data.
     public func toBytes() -> Data {
-        self.toProtobufBytes()
+        toProtobufBytes()
     }
 }
 
@@ -279,7 +292,6 @@ public struct FixedFee: CustomFee, ValidateChecksums {
 /// than the given `maximumAmount`.
 ///
 /// The denomination is always in units of the token to which this fractional fee is attached.
-///
 public struct FractionalFee: CustomFee, ValidateChecksums {
     public var feeCollectorAccountId: AccountId?
 

@@ -42,8 +42,10 @@ public struct TransactionResponse {
     /// This can be used to lookup the transaction in an explorer.
     public let transactionHash: TransactionHash
 
+    /// Whether the receipt/record status should be validated.
     public var validateStatus: Bool = true
 
+    /// Whether the receipt/record status should be validated.
     @discardableResult
     public mutating func validateStatus(_ validateStatus: Bool) -> Self {
         self.validateStatus = validateStatus
@@ -51,13 +53,16 @@ public struct TransactionResponse {
         return self
     }
 
-    /// Get the receipt of this transaction.
+    /// Queries the receipt for the associated transaction.
+    ///
     /// Will wait for consensus.
-    /// Will return a `receiptStatus` error for a failing receipt.
+    ///
+    /// - Throws: an error of type ``HError``.
     public func getReceipt(_ client: Client, _ timeout: TimeInterval? = nil) async throws -> TransactionReceipt {
         try await getReceiptQuery().execute(client, timeout)
     }
 
+    /// Returns a query that when executed, returns the receipt for the associated transaction.
     public func getReceiptQuery() -> TransactionReceiptQuery {
         TransactionReceiptQuery()
             .transactionId(transactionId)
@@ -65,10 +70,16 @@ public struct TransactionResponse {
             .validateStatus(validateStatus)
     }
 
+    /// Get the record for the associated transaction.
+    ///
+    /// Will wait for consensus.
+    ///
+    /// - Throws: an error of type ``HError``.
     public func getRecord(_ client: Client, _ timeout: TimeInterval? = nil) async throws -> TransactionRecord {
         try await getRecordQuery().execute(client, timeout)
     }
 
+    /// Returns a query that when executed, returns the record for the associated transaction.
     public func getRecordQuery() -> TransactionRecordQuery {
         TransactionRecordQuery()
             .transactionId(transactionId)

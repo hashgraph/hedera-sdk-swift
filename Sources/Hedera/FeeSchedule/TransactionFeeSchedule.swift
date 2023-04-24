@@ -27,6 +27,8 @@ import HederaProtobufs
 ///
 /// [Hedera documentation]: https://docs.hedera.com/guides/docs/hedera-api/basic-types/transactionfeeschedule
 public struct TransactionFeeSchedule {
+    // missing_docs on memberwise init -> fine.
+    // swiftlint:disable:next missing_docs
     public init(requestType: RequestType, feeData: FeeData? = nil, fees: [FeeData]) {
         self.requestType = requestType
         self.feeData = feeData
@@ -44,10 +46,16 @@ public struct TransactionFeeSchedule {
     /// Supports subtype definition.
     public var fees: [FeeData]
 
+    /// Decode `Self` from protobuf-encoded `bytes`.
+    ///
+    /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
+    ///           decoding the bytes fails to produce a valid protobuf, or
+    ///            decoding the protobuf fails.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert `self` to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

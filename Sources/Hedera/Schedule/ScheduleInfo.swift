@@ -43,7 +43,7 @@ public struct ScheduleInfo {
     /// it executes).
     public let scheduledTransactionId: TransactionId
 
-    private let scheduledTransaction: Proto_SchedulableTransactionBody
+    private let scheduledTransactionBody: Proto_SchedulableTransactionBody
 
     /// When set to true, the transaction will be evaluated for execution at `expiration_time`
     /// instead of when all required signatures are received.
@@ -61,70 +61,77 @@ public struct ScheduleInfo {
     /// The time the schedule transaction was deleted.
     public let deletedAt: Timestamp?
 
+    /// Ledger ID for the network the response was returned from.
     public let ledgerId: LedgerId
 
     /// Returns the transaction associated with this schedule
     ///
-    /// This function may or may not be O(1)
+    /// >Note: This may or may not be O(1)
     ///
-    /// This function may or may not throw
-    ///
-    /// This function name is not final.
-    public func getScheduledTransaction() throws -> Transaction {
-        let transactionBody = Proto_TransactionBody.with { proto in
-            switch scheduledTransaction.data {
-            case .contractCall(let data): proto.data = .contractCall(data)
-            case .contractCreateInstance(let data): proto.data = .contractCreateInstance(data)
-            case .contractUpdateInstance(let data): proto.data = .contractUpdateInstance(data)
-            case .contractDeleteInstance(let data): proto.data = .contractDeleteInstance(data)
-            case .cryptoApproveAllowance(let data): proto.data = .cryptoApproveAllowance(data)
-            case .cryptoDeleteAllowance(let data): proto.data = .cryptoDeleteAllowance(data)
-            case .cryptoCreateAccount(let data): proto.data = .cryptoCreateAccount(data)
-            case .cryptoDelete(let data): proto.data = .cryptoDelete(data)
-            case .cryptoTransfer(let data): proto.data = .cryptoTransfer(data)
-            case .cryptoUpdateAccount(let data): proto.data = .cryptoUpdateAccount(data)
-            case .fileAppend(let data): proto.data = .fileAppend(data)
-            case .fileCreate(let data): proto.data = .fileCreate(data)
-            case .fileDelete(let data): proto.data = .fileDelete(data)
-            case .fileUpdate(let data): proto.data = .fileUpdate(data)
-            case .systemDelete(let data): proto.data = .systemDelete(data)
-            case .systemUndelete(let data): proto.data = .systemUndelete(data)
-            case .freeze(let data): proto.data = .freeze(data)
-            case .consensusCreateTopic(let data): proto.data = .consensusCreateTopic(data)
-            case .consensusUpdateTopic(let data): proto.data = .consensusUpdateTopic(data)
-            case .consensusDeleteTopic(let data): proto.data = .consensusDeleteTopic(data)
-            case .consensusSubmitMessage(let data): proto.data = .consensusSubmitMessage(data)
-            case .tokenCreation(let data): proto.data = .tokenCreation(data)
-            case .tokenFreeze(let data): proto.data = .tokenFreeze(data)
-            case .tokenUnfreeze(let data): proto.data = .tokenUnfreeze(data)
-            case .tokenGrantKyc(let data): proto.data = .tokenGrantKyc(data)
-            case .tokenRevokeKyc(let data): proto.data = .tokenRevokeKyc(data)
-            case .tokenDeletion(let data): proto.data = .tokenDeletion(data)
-            case .tokenUpdate(let data): proto.data = .tokenUpdate(data)
-            case .tokenMint(let data): proto.data = .tokenMint(data)
-            case .tokenBurn(let data): proto.data = .tokenBurn(data)
-            case .tokenWipe(let data): proto.data = .tokenWipe(data)
-            case .tokenAssociate(let data): proto.data = .tokenAssociate(data)
-            case .tokenDissociate(let data): proto.data = .tokenDissociate(data)
-            case .tokenFeeScheduleUpdate(let data): proto.data = .tokenFeeScheduleUpdate(data)
-            case .tokenPause(let data): proto.data = .tokenPause(data)
-            case .tokenUnpause(let data): proto.data = .tokenUnpause(data)
-            case .scheduleDelete(let data): proto.data = .scheduleDelete(data)
-            case .utilPrng(let data): proto.data = .utilPrng(data)
-            case nil: break
+    /// This may or may not throw in the future.
+    public var scheduledTransaction: Transaction {
+        get throws {
+            let transactionBody = Proto_TransactionBody.with { proto in
+                switch scheduledTransactionBody.data {
+                case .contractCall(let data): proto.data = .contractCall(data)
+                case .contractCreateInstance(let data): proto.data = .contractCreateInstance(data)
+                case .contractUpdateInstance(let data): proto.data = .contractUpdateInstance(data)
+                case .contractDeleteInstance(let data): proto.data = .contractDeleteInstance(data)
+                case .cryptoApproveAllowance(let data): proto.data = .cryptoApproveAllowance(data)
+                case .cryptoDeleteAllowance(let data): proto.data = .cryptoDeleteAllowance(data)
+                case .cryptoCreateAccount(let data): proto.data = .cryptoCreateAccount(data)
+                case .cryptoDelete(let data): proto.data = .cryptoDelete(data)
+                case .cryptoTransfer(let data): proto.data = .cryptoTransfer(data)
+                case .cryptoUpdateAccount(let data): proto.data = .cryptoUpdateAccount(data)
+                case .fileAppend(let data): proto.data = .fileAppend(data)
+                case .fileCreate(let data): proto.data = .fileCreate(data)
+                case .fileDelete(let data): proto.data = .fileDelete(data)
+                case .fileUpdate(let data): proto.data = .fileUpdate(data)
+                case .systemDelete(let data): proto.data = .systemDelete(data)
+                case .systemUndelete(let data): proto.data = .systemUndelete(data)
+                case .freeze(let data): proto.data = .freeze(data)
+                case .consensusCreateTopic(let data): proto.data = .consensusCreateTopic(data)
+                case .consensusUpdateTopic(let data): proto.data = .consensusUpdateTopic(data)
+                case .consensusDeleteTopic(let data): proto.data = .consensusDeleteTopic(data)
+                case .consensusSubmitMessage(let data): proto.data = .consensusSubmitMessage(data)
+                case .tokenCreation(let data): proto.data = .tokenCreation(data)
+                case .tokenFreeze(let data): proto.data = .tokenFreeze(data)
+                case .tokenUnfreeze(let data): proto.data = .tokenUnfreeze(data)
+                case .tokenGrantKyc(let data): proto.data = .tokenGrantKyc(data)
+                case .tokenRevokeKyc(let data): proto.data = .tokenRevokeKyc(data)
+                case .tokenDeletion(let data): proto.data = .tokenDeletion(data)
+                case .tokenUpdate(let data): proto.data = .tokenUpdate(data)
+                case .tokenMint(let data): proto.data = .tokenMint(data)
+                case .tokenBurn(let data): proto.data = .tokenBurn(data)
+                case .tokenWipe(let data): proto.data = .tokenWipe(data)
+                case .tokenAssociate(let data): proto.data = .tokenAssociate(data)
+                case .tokenDissociate(let data): proto.data = .tokenDissociate(data)
+                case .tokenFeeScheduleUpdate(let data): proto.data = .tokenFeeScheduleUpdate(data)
+                case .tokenPause(let data): proto.data = .tokenPause(data)
+                case .tokenUnpause(let data): proto.data = .tokenUnpause(data)
+                case .scheduleDelete(let data): proto.data = .scheduleDelete(data)
+                case .utilPrng(let data): proto.data = .utilPrng(data)
+                case nil: break
+                }
+
+                proto.memo = scheduledTransactionBody.memo
+                proto.transactionFee = scheduledTransactionBody.transactionFee
             }
 
-            proto.memo = scheduledTransaction.memo
-            proto.transactionFee = scheduledTransaction.transactionFee
+            return try AnyTransaction.fromProtobuf(transactionBody, [transactionBody.data!]).transaction
         }
-
-        return try AnyTransaction.fromProtobuf(transactionBody, [transactionBody.data!]).transaction
     }
 
+    /// Decode `Self` from protobuf-encoded `bytes`.
+    ///
+    /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
+    ///           decoding the bytes fails to produce a valid protobuf, or
+    ///            decoding the protobuf fails.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert `self` to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }
@@ -156,7 +163,7 @@ extension ScheduleInfo: TryProtobufCodable {
             signatories: try .fromProtobuf(proto.signers),
             adminKey: proto.hasAdminKey ? try .fromProtobuf(proto.adminKey) : nil,
             scheduledTransactionId: try .fromProtobuf(proto.scheduledTransactionID),
-            scheduledTransaction: proto.scheduledTransactionBody,
+            scheduledTransactionBody: proto.scheduledTransactionBody,
             waitForExpiry: proto.waitForExpiry,
             memo: proto.memo,
             expirationTime: proto.hasExpirationTime ? .fromProtobuf(proto.expirationTime) : nil,
@@ -201,7 +208,7 @@ extension ScheduleInfo: TryProtobufCodable {
                 proto.deletionTime = deletedAt.toProtobuf()
             }
 
-            proto.scheduledTransactionBody = scheduledTransaction
+            proto.scheduledTransactionBody = scheduledTransactionBody
         }
     }
 }

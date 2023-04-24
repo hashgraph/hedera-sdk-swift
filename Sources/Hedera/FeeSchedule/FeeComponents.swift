@@ -23,6 +23,8 @@ import HederaProtobufs
 
 /// The different components used for fee calculation.
 public struct FeeComponents {
+    // missing_docs on memberwise init -> fine.
+    // swiftlint:disable:next missing_docs
     public init(
         min: UInt64,
         max: UInt64,
@@ -84,10 +86,16 @@ public struct FeeComponents {
     /// The price per byte of bandwidth spent for data retrieved from disk for a response.
     public var responseDiskByte: UInt64
 
+    /// Decode `Self` from protobuf-encoded `bytes`.
+    ///
+    /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
+    ///           decoding the bytes fails to produce a valid protobuf, or
+    ///            decoding the protobuf fails.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert `self` to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

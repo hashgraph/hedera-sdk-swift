@@ -90,7 +90,7 @@ internal final class HbarTests: XCTestCase {
     internal func testTo() {
         let twentyTwoKilobars: Hbar = 22_000
 
-        XCTAssertEqual(twentyTwoKilobars.getValue(), 22_000)
+        XCTAssertEqual(twentyTwoKilobars.value, 22_000)
         XCTAssertEqual(twentyTwoKilobars.to(.tinybar), 2_200_000_000_000)
         XCTAssertEqual(twentyTwoKilobars.to(.microbar), 22_000_000_000)
         XCTAssertEqual(twentyTwoKilobars.to(.millibar), 22_000_000)

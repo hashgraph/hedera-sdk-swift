@@ -21,21 +21,63 @@
 import Foundation
 
 /// Common units of hbar.
+///
 /// For the most part they follow SI prefix conventions.
+///
+/// ## Hbar
+/// Hbar is the native currency used by the Hedera network.
+///
+/// The base unit of ``Hbar`` is the ``hbar``, the following units are all expressed with values in terms of `hbar`:
+///
+/// | Name     | Unit         | Symbol | Value      |
+/// | -------- | ------------ | ------ | ---------- |
+/// | Tinybar  | ``tinybar``  | tℏ     | `1e-8`     |
+/// | Microbar | ``microbar`` | µℏ     | `0.000001` |
+/// | Millibar | ``millibar`` | mℏ     | `0.001`    |
+/// | Hbar     | ``hbar``     | ℏ      | `1`        |
+/// | Kilobar  | ``kilobar``  | kℏ     | `1000`     |
+/// | Megabar  | ``megabar``  | Mℏ     | `1000000`  |
+/// | Gigabar  | ``gigabar``  | Gℏ     | `1e9`      |
 public enum HbarUnit: UInt64, LosslessStringConvertible, ExpressibleByStringLiteral {
+    /// The Tinybar unit of Hbar.
+    ///
+    /// >Note: Used natively by the Hedera network.
+    ///
+    /// >Tip: There is a list of conversions in the type definition.
     case tinybar = 1
+
+    /// The Microbar unit of Hbar.
+    ///
+    /// >Tip: There is a list of conversions in the type definition.
     case microbar = 100
+
+    /// The Millibar unit of Hbar.
+    ///
+    /// >Tip: There is a list of conversions in the type definition.
     case millibar = 100_000
+
+    /// The base unit of Hbar.
+    ///
+    /// >Tip: There is a list of conversions in the type definition.
     case hbar = 100_000_000
+
+    /// The Killobar unit of Hbar.
+    ///
+    /// >Tip: There is a list of conversions in the type definition.
     case kilobar = 100_000_000_000
+
+    /// The Megabar unit of Hbar.
+    ///
+    /// >Tip: There is a list of conversions in the type definition.
     case megabar = 100_000_000_000_000
+
+    /// The Gigabar unit of Hbar.
+    ///
+    /// >Tip: There is a list of conversions in the type definition.
     case gigabar = 100_000_000_000_000_000
 
-    public func getSymbol() -> String {
-        description
-    }
-
-    public var description: String {
+    /// The symbol associated with this unit of Hbar.
+    public var symbol: String {
         switch self {
         case .tinybar:
             return "tℏ"
@@ -54,8 +96,12 @@ public enum HbarUnit: UInt64, LosslessStringConvertible, ExpressibleByStringLite
         }
     }
 
+    public var description: String {
+        symbol
+    }
+
     public init(stringLiteral value: StringLiteralType) {
-        self.init(value)!
+        try! self.init(parsing: value)
     }
 
     fileprivate init<S: StringProtocol>(parsing description: S) throws {
@@ -83,8 +129,9 @@ public enum HbarUnit: UInt64, LosslessStringConvertible, ExpressibleByStringLite
         try? self.init(parsing: description)
     }
 
+    /// The value of this unit in ``tinybar``.
     public func tinybar() -> UInt64 {
-        self.rawValue
+        rawValue
     }
 }
 
@@ -103,16 +150,14 @@ public struct Hbar: LosslessStringConvertible, ExpressibleByIntegerLiteral,
     /// Create a new Hbar of the specified, possibly fractional value.
     public init(_ amount: Decimal, _ unit: HbarUnit = .hbar) throws {
         guard amount.isFinite else {
-            throw HError(kind: .basicParse, description: "amount must be a finite decimal number")
+            throw HError.basicParse("amount must be a finite decimal number")
         }
 
         let tinybars = amount * Decimal(unit.rawValue)
 
         guard tinybars.isZero || (tinybars.isNormal && tinybars.exponent >= 0) else {
-            throw HError(
-                kind: .basicParse,
-                description:
-                    "amount and unit combination results in a fractional value for tinybar, ensure tinybar value is a whole number"
+            throw HError.basicParse(
+                "amount and unit combination results in a fractional value for tinybar, ensure tinybar value is a whole number"
             )
         }
 
@@ -166,22 +211,33 @@ public struct Hbar: LosslessStringConvertible, ExpressibleByIntegerLiteral,
         self.tinybars = tinybars
     }
 
-    private let tinybars: Int64
+    /// The value of `self` in ``HbarUnit/tinybar``.
+    public let tinybars: Int64
 
-    public func getValue() -> Decimal {
-        to(.hbar)
+    /// The value of `self` in ``HbarUnit/hbar``.
+    public var value: Decimal {
+        value(in: .hbar)
     }
 
-    public func negated() -> Self {
-        Self(tinybars: -tinybars)
-    }
-
-    /// Convert this hbar value to a different unit.
-    public func to(_ unit: HbarUnit) -> Decimal {
+    /// Convert to a decimal value in the given `unit`.
+    ///
+    /// - Parameter `unit`: The unit to convert to.
+    internal func value(in unit: HbarUnit) -> Decimal {
         Decimal(tinybars) / Decimal(unit.rawValue)
     }
 
-    /// Convert this hbar value to Tinybars.
+    /// Convert to a decimal value in the given `unit`.
+    ///
+    /// - Parameter `unit`: The unit to convert to.
+    public func to(_ unit: HbarUnit) -> Decimal {
+        value(in: unit)
+    }
+
+    /// Convert this hbar value to ``HbarUnit/tinybar``.
+    ///
+    /// >Tip: While this function does work and is supported, ``tinybars`` is available and is preferred.
+    ///
+    /// - Returns: ``tinybars``
     public func toTinybars() -> Int64 {
         tinybars
     }
@@ -200,6 +256,35 @@ public struct Hbar: LosslessStringConvertible, ExpressibleByIntegerLiteral,
 extension Hbar: Equatable, Comparable {
     @inlinable
     public static func < (lhs: Hbar, rhs: Hbar) -> Bool {
-        lhs.toTinybars() < rhs.toTinybars()
+        lhs.tinybars < rhs.tinybars
+    }
+}
+
+extension Hbar: AdditiveArithmetic {
+    public static func + (lhs: Self, rhs: Self) -> Self {
+        Self(tinybars: lhs.tinybars + rhs.tinybars)
+    }
+
+    public static func - (lhs: Self, rhs: Self) -> Self {
+        Self(tinybars: lhs.tinybars - rhs.tinybars)
+    }
+
+    /// Replaces this value with its additive inverse.
+    public mutating func negate() {
+        self = -self
+    }
+
+    /// Returns the additive inverse the specified vaue.
+    ///
+    /// - Returns: The additive inverse of this value.
+    public static prefix func - (operand: Self) -> Self {
+        0 - operand
+    }
+
+    /// Returns the additive inverse of `self`.
+    ///
+    /// Returns: The additive inverse of this value.
+    public func negated() -> Self {
+        -self
     }
 }

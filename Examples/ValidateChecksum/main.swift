@@ -23,8 +23,8 @@ import Hedera
 import SwiftDotenv
 
 @main
-public enum Program {
-    public static func main() async throws {
+internal enum Program {
+    internal static func main() async throws {
         let env = try Dotenv.load()
         let client = try Client.forName(env.networkName)
 
@@ -117,7 +117,10 @@ public enum Program {
 }
 
 extension Environment {
-    public var networkName: String {
+    /// The name of the hedera network this example should be ran against.
+    ///
+    /// Testnet by default.
+    internal var networkName: String {
         self["HEDERA_NETWORK"]?.stringValue ?? "testnet"
     }
 }

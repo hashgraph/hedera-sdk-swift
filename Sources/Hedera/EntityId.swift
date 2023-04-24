@@ -39,14 +39,27 @@ where
     /// The checksum for this entity ID with respect to *some* ledger ID.
     var checksum: Checksum? { get }
 
-    /// Create an entity ID from the given entity number.
+    /// Create an entity ID in the default shard and realm with the given entity number.
     ///
     /// - Parameters:
     ///   - num: the number for the new entity ID.
     init(num: UInt64)
 
+    /// Creates an entity ID from the given shard, realm, and entity numbers.
+    ///
+    /// - Parameters:
+    ///   - shard: the shard that the realm is contained in.
+    ///   - realm: the realm that the entity number is contained in.
+    ///   - num: the entity ID in the given shard and realm.
     init(shard: UInt64, realm: UInt64, num: UInt64)
 
+    /// Creates an entity ID from the given shard, realm, and entity numbers, and with the given checksum.
+    ///
+    /// - Parameters:
+    ///   - shard: the shard that the realm is contained in.
+    ///   - realm: the realm that the entity number is contained in.
+    ///   - num: the entity ID in the given shard and realm.
+    ///   - checksum: a 5 character checksum to help ensure a user-entered entity ID is correct.
     init(shard: UInt64, realm: UInt64, num: UInt64, checksum: Checksum?)
 
     /// Parse an entity ID from a string.
@@ -61,6 +74,7 @@ where
     /// Convert this entity ID to bytes.
     func toBytes() -> Data
 
+    /// Convert this entity ID to a string.
     func toString() -> String
 
     func toStringWithChecksum(_ client: Client) throws -> String
@@ -79,54 +93,77 @@ extension EntityId {
 
     internal var helper: Helper { Helper(self) }
 
+    // swiftlint:disable:next missing_docs
     public init(integerLiteral value: IntegerLiteralType) {
         self.init(num: value)
     }
 
+    // inherited docs.
+    // swiftlint:disable:next missing_docs
     public init(num: UInt64) {
         self.init(shard: 0, realm: 0, num: num)
     }
 
+    // inherited docs.
+    // swiftlint:disable:next missing_docs
     public init<S: StringProtocol>(parsing description: S) throws {
         self = try PartialEntityId(parsing: description).intoNum()
     }
 
+    // inherited docs.
+    // swiftlint:disable:next missing_docs
     public init?(_ description: String) {
         try? self.init(parsing: description)
     }
 
+    // inherited docs.
+    // swiftlint:disable:next missing_docs
     public init(stringLiteral value: StringLiteralType) {
         // Force try here because this is a logic error.
         // swiftlint:disable:next force_try
         try! self.init(parsing: value)
     }
 
+    // inherited docs.
+    // swiftlint:disable:next missing_docs
     public static func fromString<S: StringProtocol>(_ description: S) throws -> Self {
         try Self(parsing: description)
     }
 
+    // inherited docs.
+    // swiftlint:disable:next missing_docs
     public var description: String { helper.description }
 
+    // inherited docs.
+    // swiftlint:disable:next missing_docs
     public static func fromSolidityAddress<S: StringProtocol>(_ description: S) throws -> Self {
         try SolidityAddress(parsing: description).toEntityId()
     }
 
+    // inherited docs.
+    // swiftlint:disable:next missing_docs
     public func toString() -> String {
-        self.description
+        String(describing: self)
     }
 
     internal func makeChecksum(ledger ledgerId: LedgerId) -> Checksum {
         Checksum.generate(for: self, on: ledgerId)
     }
 
+    // inherited docs.
+    // swiftlint:disable:next missing_docs
     public func toStringWithChecksum(_ client: Client) -> String {
         helper.toStringWithChecksum(client)
     }
 
+    // inherited docs.
+    // swiftlint:disable:next missing_docs
     public func validateChecksum(_ client: Client) throws {
         try helper.validateChecksum(on: client)
     }
 
+    // inherited docs.
+    // swiftlint:disable:next missing_docs
     public func toSolidityAddress() throws -> String {
         try String(describing: SolidityAddress(self))
     }

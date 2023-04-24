@@ -27,6 +27,8 @@ import HederaProtobufs
 ///
 /// [Hedera documentation]: https://docs.hedera.com/guides/docs/hedera-api/basic-types/feeschedule
 public struct FeeSchedule {
+    // missing_docs on memberwise init -> fine.
+    // swiftlint:disable:next missing_docs
     public init(transactionFeeSchedules: [TransactionFeeSchedule] = [], expirationTime: Timestamp) {
         self.transactionFeeSchedules = transactionFeeSchedules
         self.expirationTime = expirationTime
@@ -38,10 +40,16 @@ public struct FeeSchedule {
     /// The time this fee schedule will expire at.
     public var expirationTime: Timestamp
 
+    /// Decode `Self` from protobuf-encoded `bytes`.
+    ///
+    /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
+    ///           decoding the bytes fails to produce a valid protobuf, or
+    ///            decoding the protobuf fails.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert `self` to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

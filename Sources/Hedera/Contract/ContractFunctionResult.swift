@@ -99,22 +99,31 @@ public struct ContractFunctionResult {
         getFixedBytesAt(slot: slot, size: UInt(MemoryLayout<T>.size)).flatMap(T.init(bigEndianBytes:))
     }
 
+    /// Returns the raw bytes that were returned by the contract function.
+    ///
+    /// >Tip: While this function does work and is supported, ``bytes is available and is preferred.
+    ///
+    /// - Returns: ``bytes``.
     public func asBytes() -> Data {
         bytes
     }
 
+    /// Get the value at `index` as a solidity `u8`.
     public func getUInt8(_ index: UInt) -> UInt8? {
         getAt(slot: index)
     }
 
+    /// Get the value at `index` as a solidity `i8`.
     public func getInt8(_ index: UInt) -> Int8? {
         getAt(slot: index)
     }
 
+    /// Get the value at `index` as a solidity `bool`.
     public func getBool(_ index: UInt) -> Bool? {
         getUInt8(index).map { $0 != 0 }
     }
 
+    /// Get the value at `index` as a solidity `u32`.
     public func getUInt32(_ index: UInt) -> UInt32? {
         getAt(slot: index)
     }
@@ -134,26 +143,34 @@ public struct ContractFunctionResult {
         getUInt32At(offset: offset).map(UInt.init)
     }
 
+    /// Get the value at `index` as a solidity `i32`.
     public func getInt32(_ index: UInt) -> Int32? {
         self.getAt(slot: index)
     }
 
+    /// Get the value at `index` as a solidity `u64`.
     public func getUInt64(_ index: UInt) -> UInt64? {
         self.getAt(slot: index)
     }
 
+    /// Get the value at `index` as a solidity `i64`.
     public func getInt64(_ index: UInt) -> Int64? {
         self.getAt(slot: index)
     }
 
+    /// Get the value at `index` as solidity `bytes32`.
+    ///
+    /// This is the native word size for the solidity ABI.
     public func getBytes32(_ index: UInt) -> Data? {
         self.getFixedBytesAt(slot: index, size: 32).map(Data.init(_:))
     }
 
+    /// Get the value at `index` as a solidity `address` and then hex-encode the result.
     public func getAddress(_ index: UInt) -> String? {
         self.getFixedBytesAt(slot: index, size: 20)?.hexStringEncoded()
     }
 
+    /// Get the value at `index` as solidity `bytes`.
     public func getBytes(_ index: UInt) -> Data? {
         guard let offset = getUIntAt(slot: index) else { return nil }
         guard let len = getUIntAt(offset: offset) else { return nil }
@@ -161,10 +178,16 @@ public struct ContractFunctionResult {
         return bytes.safeSubdata(in: Int(offset + slotSize)..<Int(offset + len + slotSize))
     }
 
+    /// Get the value at `index` as a solidity `string`.
+    ///
+    /// Theoretically, all strings here should be utf8, but this function does _lossy_ conversion.
     public func getString(_ index: UInt) -> String? {
         getBytes(index).map { String(decoding: $0, as: UTF8.self) }
     }
 
+    /// Get the value at `index` as a solidity `string[]`.
+    ///
+    /// Theoretically, all strings here should be utf8, but this function does _lossy_ conversion.
     public func getStringArray(_ index: UInt) -> [String]? {
         guard let offset = getUIntAt(slot: index) else { return nil }
         guard let count = getUIntAt(offset: offset) else { return nil }
@@ -184,10 +207,16 @@ public struct ContractFunctionResult {
         return array
     }
 
+    /// Get the value at `index` as a solidity `i256` (`int`).
+    ///
+    /// This is the native unsigned integer size for the solidity ABI.
     public func getInt256(_ index: UInt) -> BigInt? {
         self.getBytes32(index).map { BigInt(signedBEBytes: $0) }
     }
 
+    /// Get the value at `index` as a solidity `u256` (`uint`).
+    ///
+    /// This is the native unsigned integer size for the solidity ABI.
     public func getUInt256(_ index: UInt) -> BigInt? {
         self.getBytes32(index).map { BigInt(unsignedBEBytes: $0) }
     }

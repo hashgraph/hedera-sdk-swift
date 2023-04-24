@@ -29,6 +29,7 @@ public struct TokenAssociation {
     /// The account involved in the association.
     public let accountId: AccountId
 
+    /// Convert self to protobuf encoded bytes.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

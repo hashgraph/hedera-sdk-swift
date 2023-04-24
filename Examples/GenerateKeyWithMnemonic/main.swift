@@ -22,8 +22,8 @@ import Foundation
 import Hedera
 
 @main
-public enum Program {
-    public static func main() async throws {
+internal enum Program {
+    internal static func main() async throws {
         do {
             let mnemonic = Mnemonic.generate24()
             let privateKey = try mnemonic.toPrivateKey()

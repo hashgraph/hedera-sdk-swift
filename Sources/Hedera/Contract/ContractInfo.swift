@@ -21,6 +21,7 @@
 import Foundation
 import HederaProtobufs
 
+/// Information about a smart contract instance.
 public final class ContractInfo {
     internal init(
         contractId: ContractId,
@@ -92,15 +93,22 @@ public final class ContractInfo {
     /// The maximum number of tokens that a contract can be implicitly associated with.
     public let maxAutomaticTokenAssociations: UInt32
 
+    /// Ledger ID for the network the response was returned from.
     public let ledgerId: LedgerId
 
     /// Staking metadata for this contract.
     public let stakingInfo: StakingInfo
 
+    /// Decode `Self` from protobuf-encoded `bytes`.
+    ///
+    /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
+    ///           decoding the bytes fails to produce a valid protobuf, or
+    ///            decoding the protobuf fails.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert `self` to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

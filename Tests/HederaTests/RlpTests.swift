@@ -8,9 +8,10 @@ import XCTest
 // adapted from https://github.com/ethereum/tests/blob/d25a79ae508daeb60bee0bf819ac7e884fc494d7/RLPTests/rlptest.json
 // which is licensed under the MIT license.
 private struct Test {
-    fileprivate init(_ a: Input, _ b: Output) {
-        self.a = a
-        self.b = b
+
+    fileprivate init(_ left: Input, _ right: Output) {
+        self.left = left
+        self.right = right
     }
 
     fileprivate enum Input: ExpressibleByArrayLiteral, ExpressibleByStringLiteral, Equatable {
@@ -32,9 +33,8 @@ private struct Test {
             data = Data(hexEncoded: value.stripPrefix("0x") ?? value[...])!
         }
     }
-
-    fileprivate let a: Input
-    fileprivate let b: Output
+    fileprivate let left: Input
+    fileprivate let right: Output
 }
 
 extension Test.Input: RlpDecodable, RlpEncodable {
@@ -46,7 +46,7 @@ extension Test.Input: RlpDecodable, RlpEncodable {
         }
     }
 
-    func encode(to encoder: inout Rlp.Encoder) {
+    fileprivate func encode(to encoder: inout Rlp.Encoder) {
         switch self {
         case .value(let value):
             encoder.append(value.data(using: .utf8)!)
@@ -167,13 +167,13 @@ public final class RlpTests: XCTestCase {
     }
 
     private func encodeTest(_ test: Test) {
-        XCTAssertEqual(test.a.rlpEncoded().hexStringEncoded(), test.b.data.hexStringEncoded())
+        XCTAssertEqual(test.left.rlpEncoded().hexStringEncoded(), test.right.data.hexStringEncoded())
     }
 
     private func decodeTest(_ test: Test) throws {
-        let decoded = try Self.decode(test.b.data)
+        let decoded = try Self.decode(test.right.data)
 
-        XCTAssertEqual(decoded, test.a)
+        XCTAssertEqual(decoded, test.left)
     }
 
     internal func testEncodeEmptyString() {

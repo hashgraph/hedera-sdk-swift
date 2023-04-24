@@ -20,11 +20,14 @@
 
 import Foundation
 
+/// Flow for executing ethereum transactions.
 public final class EthereumFlow {
     private static let maxEthereumDataSize: Int = 5120
 
+    /// The raw Ethereum transaction (RLP encoded type 0, 1, and 2).
     public var ethereumData: EthereumData?
 
+    /// Sets the raw Ethereum transaction data (RLP encoded type 0, 1, and 2).
     @discardableResult
     public func ethereumData(_ data: Data) throws -> Self {
         ethereumData = try .init(rlpBytes: data)
@@ -32,8 +35,10 @@ public final class EthereumFlow {
         return self
     }
 
+    /// The maximum amount that the payer of the hedera transaction is willing to pay to complete the transaction.
     public var maxGasAllowance: Hbar?
 
+    /// Sets the maximum amount that the payer of the ethereum transaction is willing to pay to complete the transaction.
     @discardableResult
     public func maxGasAllowance(_ maxGasAllowance: Hbar) -> Self {
         self.maxGasAllowance = maxGasAllowance
@@ -41,6 +46,7 @@ public final class EthereumFlow {
         return self
     }
 
+    /// Generates the required transactions and executes them all.
     public func execute(_ client: Client, _ timeoutPerTansaction: TimeInterval? = nil) async throws
         -> TransactionResponse
     {

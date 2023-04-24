@@ -29,9 +29,16 @@ import SwiftProtobuf
 ///
 /// Only `fungibleCommon` and `nonFungibleUnique` are supported right now. More
 /// may be added in the future.
-///
 public enum TokenType {
+    /// Tokens are interchangeable value with one another, where any quantity of them has the same value as
+    /// another equal quantity if they are in the same class.  Share a single set of properties, not
+    /// distinct from one another. Simply represented as a balance or quantity to a given Hedera
+    /// account.
     case fungibleCommon
+
+    /// Tokens are unique,
+    /// not interchangeable with other tokens of the same type as they typically have different values.
+    /// Individually traced and can carry unique properties (e.g. serial number).
     case nonFungibleUnique
 }
 

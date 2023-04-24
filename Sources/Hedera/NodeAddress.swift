@@ -84,6 +84,8 @@ extension SocketAddressV4: TryProtobufCodable {
     }
 }
 
+/// The data about a node, including its service endpoints and the Hedera account to be paid for
+/// services provided by the node (that is, queries answered and transactions submitted.).
 public struct NodeAddress {
     /// A non-sequential, unique, static identifier for the node
     public var nodeId: UInt64

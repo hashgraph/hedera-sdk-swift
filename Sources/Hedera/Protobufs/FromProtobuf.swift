@@ -14,7 +14,14 @@ extension TryFromProtobuf {
     }
 
     internal init(protobufBytes bytes: Data) throws where Protobuf: SwiftProtobuf.Message {
-        try self.init(protobuf: try Protobuf(contiguousBytes: bytes))
+        let protobuf: Protobuf
+        do {
+            protobuf = try Protobuf(contiguousBytes: bytes)
+        } catch {
+            throw HError.fromProtobuf("error decoding protobuf bytes: \(error)")
+        }
+
+        try self.init(protobuf: protobuf)
     }
 }
 
