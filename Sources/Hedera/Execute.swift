@@ -39,6 +39,9 @@ internal protocol Execute {
     /// ID for the account paying for this transaction, if explicitly specified.
     var operatorAccountId: AccountId? { get }
 
+    /// Whether or not the transaction ID should be refreshed if a ``Status/transactionExpired`` occurs.
+    var regenerateTransactionId: Bool? { get }
+
     /// Check whether to retry for a given pre-check status.
     func shouldRetryPrecheck(forStatus status: Status) -> Bool
 
@@ -148,7 +151,9 @@ internal func executeAny<E: Execute & ValidateChecksums>(_ client: Client, _ exe
                 // try the next node in our allowed list, immediately
                 lastError = executable.makeErrorPrecheck(precheckStatus, transactionId)
 
-            case .transactionExpired where explicitTransactionId == nil:
+            case .transactionExpired
+            where explicitTransactionId == nil
+                && (executable.regenerateTransactionId ?? client.defaultRegenerateTransactionId):
                 // the transaction that was generated has since expired
                 // re-generate the transaction ID and try again, immediately
                 lastError = executable.makeErrorPrecheck(precheckStatus, transactionId)

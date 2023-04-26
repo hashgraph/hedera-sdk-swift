@@ -68,13 +68,6 @@ public class Transaction: ValidateChecksums {
         return self
     }
 
-    /// Explicit transaction ID for this transaction.
-    public final var transactionId: TransactionId? {
-        willSet {
-            ensureNotFrozen(fieldName: "transactionId")
-        }
-    }
-
     /// The maximum allowed transaction fee for this transaction.
     public final var maxTransactionFee: Hbar? {
         willSet {
@@ -116,10 +109,38 @@ public class Transaction: ValidateChecksums {
         return self
     }
 
+    /// Explicit transaction ID for this transaction.
+    public final var transactionId: TransactionId? {
+        willSet {
+            ensureNotFrozen(fieldName: "transactionId")
+        }
+    }
+
     /// Sets the explicit transaction ID for this transaction.
     @discardableResult
     public final func transactionId(_ transactionId: TransactionId) -> Self {
         self.transactionId = transactionId
+
+        return self
+    }
+
+    /// Whether or not the transaction ID should be refreshed if a ``Status/transactionExpired`` occurs.
+    ///
+    /// By default, the value on ``Client`` will be used.
+    ///
+    /// >Note: Some operations forcibly disable transaction ID regeneration, such as setting the transaction ID explicitly.
+    public final var regenerateTransactionId: Bool? {
+        willSet {
+            ensureNotFrozen(fieldName: "regenerateTransactionId")
+        }
+    }
+
+    /// Sets whether or not the transaction ID should be refreshed if a ``Status/transactionExpired`` occurs.
+    ///
+    /// Various operations such as setting the transaction ID exlicitly can forcibly disable transaction ID regeneration.
+    @discardableResult
+    public final func regenerateTransactionId(_ regenerateTransactionId: Bool) -> Self {
+        self.regenerateTransactionId = regenerateTransactionId
 
         return self
     }
@@ -143,7 +164,7 @@ public class Transaction: ValidateChecksums {
     }
 
     @discardableResult
-    public final func signWith(_ publicKey: PublicKey, _ signer: @escaping (Data) -> (Data)) -> Self {
+    public final func signWith(_ publicKey: PublicKey, _ signer: @Sendable @escaping (Data) -> (Data)) -> Self {
         self.signWithSigner(Signer(publicKey, signer))
 
         return self
@@ -159,6 +180,8 @@ public class Transaction: ValidateChecksums {
         try freezeWith(client)
 
         signWithSigner(`operator`.signer)
+
+        return self
     }
 
     internal final func signWithSigner(_ signer: Signer) {
@@ -407,9 +430,9 @@ extension Transaction {
 
         if let `operator` = self.operator {
             // todo: avoid the `.map(xyz).collect()`
-            let operatorSignature = `operator`.signer.sign(bodyBytes)
+            let operatorSignature = `operator`.signer(bodyBytes)
 
-            signatures.append(SignaturePair((`operator`.signer.publicKey, operatorSignature)))
+            signatures.append(SignaturePair(operatorSignature))
         }
 
         for signer in self.signers where signatures.allSatisfy({ $0.publicKey != signer.publicKey }) {

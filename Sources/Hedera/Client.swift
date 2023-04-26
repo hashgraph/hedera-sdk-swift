@@ -50,6 +50,7 @@ public final class Client: Sendable {
     internal let network: Network
     private let operatorInner: NIOLockedValueBox<Operator?>
     private let autoValidateChecksumsInner: AtomicBool
+    private let regenerateTransactionIdInner: AtomicBool
     private let maxTransactionFeeInner: AtomicInt64
 
     private init(
@@ -65,6 +66,7 @@ public final class Client: Sendable {
         self.operatorInner = .init(nil)
         self.ledgerIdInner = .init(ledgerId)
         self.autoValidateChecksumsInner = .init(false)
+        self.regenerateTransactionIdInner = .init(true)
         self.maxTransactionFeeInner = .init(0)
     }
 
@@ -152,7 +154,7 @@ public final class Client: Sendable {
     /// this client.
     @discardableResult
     public func setOperator(_ accountId: AccountId, _ privateKey: PrivateKey) -> Self {
-        operatorInner.withLockedValue { $0 = .init(accountId: accountId, signer: privateKey) }
+        operatorInner.withLockedValue { $0 = .init(accountId: accountId, signer: .privateKey(privateKey)) }
 
         return self
     }
@@ -223,6 +225,26 @@ public final class Client: Sendable {
 
     public func isAutoValidateChecksumsEnabled() -> Bool {
         autoValidateChecksums
+    }
+
+    /// Whether or not the transaction ID should be refreshed if a ``Status/transactionExpired`` occurs.
+    ///
+    /// By default, this is true.
+    ///
+    /// >Note: Some operations forcibly disable transaction ID regeneration, such as setting the transaction ID explicitly.
+    public var defaultRegenerateTransactionId: Bool {
+        get { self.regenerateTransactionIdInner.inner.load(ordering: .relaxed) }
+        set(value) { self.regenerateTransactionIdInner.inner.store(value, ordering: .relaxed) }
+    }
+
+    /// Sets whether or not the transaction ID should be refreshed if a ``Status/transactionExpired`` occurs.
+    ///
+    /// Various operations such as setting the transaction ID exlicitly can forcibly disable transaction ID regeneration.
+    @discardableResult
+    public func setDefaultRegenerateTransactionId(_ defaultRegenerateTransactionId: Bool) -> Self {
+        self.defaultRegenerateTransactionId = defaultRegenerateTransactionId
+
+        return self
     }
 
     internal func generateTransactionId() -> TransactionId? {

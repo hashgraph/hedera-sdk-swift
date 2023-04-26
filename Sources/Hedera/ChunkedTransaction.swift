@@ -187,6 +187,10 @@ extension ChunkedTransaction.FirstChunkView: Execute {
         self.transaction.operatorAccountId
     }
 
+    internal var regenerateTransactionId: Bool? {
+        self.transaction.regenerateTransactionId
+    }
+
     internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
         GrpcRequest, Context
     ) {
@@ -232,6 +236,10 @@ extension ChunkedTransaction.ChunkView: Execute {
 
     internal var operatorAccountId: AccountId? {
         self.transaction.operatorAccountId
+    }
+
+    internal var regenerateTransactionId: Bool? {
+        self.transaction.regenerateTransactionId
     }
 
     internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (

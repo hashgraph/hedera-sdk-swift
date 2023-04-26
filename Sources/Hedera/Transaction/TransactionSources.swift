@@ -412,6 +412,10 @@ extension SourceTransactionExecuteView: Execute {
         true
     }
 
+    internal var regenerateTransactionId: Bool? {
+        false
+    }
+
     internal var operatorAccountId: AccountId? {
         nil
     }
