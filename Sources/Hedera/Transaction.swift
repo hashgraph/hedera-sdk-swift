@@ -146,16 +146,16 @@ public class Transaction: ValidateChecksums {
     }
 
     /// Adds a signature directly to `self`.
-     ///
-     /// Only use this as a last resort.
-     ///
-     /// This forcibly disables transaction ID regeneration.
-     @discardableResult
-     public final func addSignature(_ publicKey: PublicKey, _ signature: Data) -> Self {
-         self.addSignatureSigner(Signer(publicKey) { _ in signature });
+    ///
+    /// Only use this as a last resort.
+    ///
+    /// This forcibly disables transaction ID regeneration.
+    @discardableResult
+    public final func addSignature(_ publicKey: PublicKey, _ signature: Data) -> Self {
+        self.addSignatureSigner(Signer(publicKey) { _ in signature })
 
-         return self
-     }
+        return self
+    }
 
     internal func addSignatureSigner(_ signer: Signer) {
         precondition(isFrozen)
@@ -166,6 +166,64 @@ public class Transaction: ValidateChecksums {
         let sources = try! makeSources()
 
         self.sources = sources.signWithSigners([signer])
+    }
+
+    public final func schedule() -> ScheduleCreateTransaction {
+        self.ensureNotFrozen()
+
+        precondition(
+            nodeAccountIds?.isEmpty ?? true,
+            "The underlying transaction for a scheduled transaction cannot have node account IDs set")
+
+        let transaction = ScheduleCreateTransaction()
+
+        if let transactionId = transactionId {
+            transaction.transactionId(transactionId)
+        }
+
+        transaction.scheduledTransaction(self)
+
+        return transaction
+    }
+
+    /// Get the hash for this transaction.
+    ///
+    /// >Note: Calling this function _disables_ transaction ID regeneration.
+    public func getTransactionHash() throws -> TransactionHash {
+        // todo: error not frozen
+        precondition(
+            isFrozen,
+            "Transaction must be frozen before calling `getTransactionHash`"
+        )
+
+        let sources = try self.makeSources()
+
+        self.sources = sources
+
+        return TransactionHash(hashing: sources.transactions.first!.signedTransactionBytes)
+    }
+
+    /// Get the hashes for this transaction.
+    ///
+    /// >Note: Calling this function _disables_ transaction ID regeneration.
+    public func getTransactionHashPerNode() throws -> [AccountId: TransactionHash] {
+        // todo: error not frozen
+        precondition(
+            isFrozen,
+            "Transaction must be frozen before calling `getTransactionHashPerNode`"
+        )
+
+        let sources = try self.makeSources()
+
+        self.sources = sources
+
+        let chunk = sources.chunks.first!
+
+        return Dictionary(
+            zip(chunk.nodeIds, chunk.transactions).lazy.map {
+                ($0.0, TransactionHash(hashing: $0.1.signedTransactionBytes))
+            },
+            uniquingKeysWith: { (first, _) in first })
     }
 
     @discardableResult
