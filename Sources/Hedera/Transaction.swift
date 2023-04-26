@@ -149,7 +149,23 @@ public class Transaction: ValidateChecksums {
         return self
     }
 
+    /// Sign tthis transaction with the operator on the provided client.
+    @discardableResult
+    public final func signWithOperator(_ client: Client) throws -> Self {
+        guard let `operator` = client.operator else {
+            fatalError("todo: error here (Client had no operator)")
+        }
+
+        try freezeWith(client)
+
+        signWithSigner(`operator`.signer)
+    }
+
     internal final func signWithSigner(_ signer: Signer) {
+        guard !signers.contains(where: { $0.publicKey == signer.publicKey }) else {
+            return
+        }
+
         self.signers.append(signer)
     }
 
