@@ -198,7 +198,7 @@ extension TopicMessageQuery: MirrorRequest {
     }
 }
 
-enum IncompleteMessage {
+private enum IncompleteMessage {
     case partial(expiry: Timestamp, messages: [ProtoTopicMessageChunk])
     case expired
     case complete

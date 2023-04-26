@@ -55,6 +55,10 @@ extension PingQuery: Execute {
 
     internal var explicitTransactionId: TransactionId? { nil }
 
+    internal var operatorAccountId: AccountId? {
+        nil
+    }
+
     internal var requiresTransactionId: Bool { false }
 
     internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (Proto_Query, ()) {

@@ -445,6 +445,10 @@ extension Transaction: Execute {
 
     internal var requiresTransactionId: Bool { true }
 
+    internal var operatorAccountId: AccountId? {
+        self.operator?.accountId
+    }
+
     internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
         GrpcRequest, TransactionHash
     ) {
