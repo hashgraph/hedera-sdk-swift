@@ -145,6 +145,18 @@ public class Transaction: ValidateChecksums {
         return self
     }
 
+    /// Adds a signature directly to `self`.
+     ///
+     /// Only use this as a last resort.
+     ///
+     /// This forcibly disables transaction ID regeneration.
+     @discardableResult
+     public final func addSignature(_ publicKey: PublicKey, _ signature: Data) -> Self {
+         self.addSignatureSigner(Signer(publicKey) { _ in signature });
+
+         return self
+     }
+
     internal func addSignatureSigner(_ signer: Signer) {
         precondition(isFrozen)
 
