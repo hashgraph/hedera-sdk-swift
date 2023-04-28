@@ -93,7 +93,7 @@ public final class TopicCreateTransaction: Transaction {
     /// The initial lifetime of the topic and the amount of time to attempt to
     /// extend the topic's lifetime by automatically at the topic's expiration time, if
     /// the `autoRenewAccountId` is configured.
-    public var autoRenewPeriod: Duration? {
+    public var autoRenewPeriod: Duration? = .days(90) {
         willSet {
             ensureNotFrozen()
         }
