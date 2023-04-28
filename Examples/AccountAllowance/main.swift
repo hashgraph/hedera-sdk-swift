@@ -86,7 +86,7 @@ private func transfer(_ client: Client, _ accounts: Accounts, _ value: Hbar) asy
     // `approved{Hbar,Token}Transfer()` means that the transfer has been approved by an allowance
     // The allowance spender must be pay the fee for the transaction.
     // use `transactionId()` to set the account ID that will pay the fee for the transaction.
-    let _ = try await TransferTransaction()
+    _ = try await TransferTransaction()
         .approvedHbarTransfer(alice.id, -value)
         .hbarTransfer(charlie.id, value)
         .transactionId(.generateFrom(bob.id))
@@ -106,7 +106,7 @@ private func demonstrateAllowances(_ client: Client, _ accounts: Accounts) async
 
     print("Approving an allowance of \(firstAllowanceValue) with owner \(alice.name) and spender \(bob.name)")
 
-    let _ = try await AccountAllowanceApproveTransaction()
+    _ = try await AccountAllowanceApproveTransaction()
         .approveHbarAllowance(alice.id, bob.id, firstAllowanceValue)
         .freezeWith(client)
         .sign(alice.key)
@@ -149,7 +149,7 @@ private func demonstrateAllowances(_ client: Client, _ accounts: Accounts) async
         "Adjusting \(bob.name)'s allowance to \(secondAllowanceValue)."
     )
 
-    let _ = try await AccountAllowanceApproveTransaction()
+    _ = try await AccountAllowanceApproveTransaction()
         .approveHbarAllowance(alice.id, bob.id, secondAllowanceValue)
         .freezeWith(client)
         .sign(alice.key)
@@ -170,7 +170,7 @@ private func demonstrateAllowances(_ client: Client, _ accounts: Accounts) async
 
     print("Deleting \(bob.name)'s allowance")
 
-    let _ = try await AccountAllowanceApproveTransaction()
+    _ = try await AccountAllowanceApproveTransaction()
         .approveHbarAllowance(alice.id, bob.id, .zero)
         .freezeWith(client)
         .sign(alice.key)
@@ -186,7 +186,7 @@ private func cleanUp(
     print("Cleaning up...")
 
     for account in accounts {
-        let _ = try await AccountDeleteTransaction()
+        _ = try await AccountDeleteTransaction()
             .accountId(account.id)
             .transferAccountId(operatorId)
             .freezeWith(client)

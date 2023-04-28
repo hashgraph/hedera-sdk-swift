@@ -210,12 +210,12 @@ enum IncompleteMessage {
     }
 }
 
-//private struct MessagesMapSequence<S>: AsyncSequence where S: AsyncSequence, S.Element == TopicMessageQuery.GrpcItem {
+// private struct MessagesMapSequence<S>: AsyncSequence where S: AsyncSequence, S.Element == TopicMessageQuery.GrpcItem {
 //    typealias Element = TopicMessageQuery.Item
 //    let inner: S
-//
+
 //    struct AsyncIterator {
 //        let map: [TransactionId: ]
 //        let inner: S.AsyncIterator
 //    }
-//}
+// }

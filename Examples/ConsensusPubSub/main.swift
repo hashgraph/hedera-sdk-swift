@@ -29,7 +29,6 @@ internal enum Program {
 
         client.setOperator(env.operatorAccountId, env.operatorKey)
 
-
         let topicId = try await TopicCreateTransaction()
             .topicMemo("sdk::swift::ConsensusPubSub")
             .execute(client)

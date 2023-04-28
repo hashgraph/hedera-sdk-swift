@@ -74,7 +74,7 @@ internal enum Program {
         // aliasKey AccountId.
 
         print("Transferring some Hbar to the new account")
-        let _ = try await TransferTransaction()
+        _ = try await TransferTransaction()
             .hbarTransfer(env.operatorAccountId, -10)
             .hbarTransfer(aliasAccountId, 10)
             .execute(client)
