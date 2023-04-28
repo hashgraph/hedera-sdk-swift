@@ -68,13 +68,6 @@ public class Transaction: ValidateChecksums {
         return self
     }
 
-    /// Explicit transaction ID for this transaction.
-    public final var transactionId: TransactionId? {
-        willSet {
-            ensureNotFrozen(fieldName: "transactionId")
-        }
-    }
-
     /// The maximum allowed transaction fee for this transaction.
     public final var maxTransactionFee: Hbar? {
         willSet {
@@ -116,10 +109,50 @@ public class Transaction: ValidateChecksums {
         return self
     }
 
+    /// Explicit transaction ID for this transaction.
+    public final var transactionId: TransactionId? {
+        willSet {
+            ensureNotFrozen(fieldName: "transactionId")
+        }
+    }
+
     /// Sets the explicit transaction ID for this transaction.
     @discardableResult
     public final func transactionId(_ transactionId: TransactionId) -> Self {
         self.transactionId = transactionId
+
+        return self
+    }
+
+    /// Whether or not the transaction ID should be refreshed if a ``Status/transactionExpired`` occurs.
+    ///
+    /// By default, the value on ``Client`` will be used.
+    ///
+    /// >Note: Some operations forcibly disable transaction ID regeneration, such as setting the transaction ID explicitly.
+    public final var regenerateTransactionId: Bool? {
+        willSet {
+            ensureNotFrozen(fieldName: "regenerateTransactionId")
+        }
+    }
+
+    /// Sets whether or not the transaction ID should be refreshed if a ``Status/transactionExpired`` occurs.
+    ///
+    /// Various operations such as setting the transaction ID exlicitly can forcibly disable transaction ID regeneration.
+    @discardableResult
+    public final func regenerateTransactionId(_ regenerateTransactionId: Bool) -> Self {
+        self.regenerateTransactionId = regenerateTransactionId
+
+        return self
+    }
+
+    /// Adds a signature directly to `self`.
+    ///
+    /// Only use this as a last resort.
+    ///
+    /// This forcibly disables transaction ID regeneration.
+    @discardableResult
+    public final func addSignature(_ publicKey: PublicKey, _ signature: Data) -> Self {
+        self.addSignatureSigner(Signer(publicKey) { _ in signature })
 
         return self
     }
@@ -135,6 +168,64 @@ public class Transaction: ValidateChecksums {
         self.sources = sources.signWithSigners([signer])
     }
 
+    public final func schedule() -> ScheduleCreateTransaction {
+        self.ensureNotFrozen()
+
+        precondition(
+            nodeAccountIds?.isEmpty ?? true,
+            "The underlying transaction for a scheduled transaction cannot have node account IDs set")
+
+        let transaction = ScheduleCreateTransaction()
+
+        if let transactionId = transactionId {
+            transaction.transactionId(transactionId)
+        }
+
+        transaction.scheduledTransaction(self)
+
+        return transaction
+    }
+
+    /// Get the hash for this transaction.
+    ///
+    /// >Note: Calling this function _disables_ transaction ID regeneration.
+    public func getTransactionHash() throws -> TransactionHash {
+        // todo: error not frozen
+        precondition(
+            isFrozen,
+            "Transaction must be frozen before calling `getTransactionHash`"
+        )
+
+        let sources = try self.makeSources()
+
+        self.sources = sources
+
+        return TransactionHash(hashing: sources.transactions.first!.signedTransactionBytes)
+    }
+
+    /// Get the hashes for this transaction.
+    ///
+    /// >Note: Calling this function _disables_ transaction ID regeneration.
+    public func getTransactionHashPerNode() throws -> [AccountId: TransactionHash] {
+        // todo: error not frozen
+        precondition(
+            isFrozen,
+            "Transaction must be frozen before calling `getTransactionHashPerNode`"
+        )
+
+        let sources = try self.makeSources()
+
+        self.sources = sources
+
+        let chunk = sources.chunks.first!
+
+        return Dictionary(
+            zip(chunk.nodeIds, chunk.transactions).lazy.map {
+                ($0.0, TransactionHash(hashing: $0.1.signedTransactionBytes))
+            },
+            uniquingKeysWith: { (first, _) in first })
+    }
+
     @discardableResult
     public final func sign(_ privateKey: PrivateKey) -> Self {
         self.signWithSigner(.privateKey(privateKey))
@@ -143,13 +234,31 @@ public class Transaction: ValidateChecksums {
     }
 
     @discardableResult
-    public final func signWith(_ publicKey: PublicKey, _ signer: @escaping (Data) -> (Data)) -> Self {
+    public final func signWith(_ publicKey: PublicKey, _ signer: @Sendable @escaping (Data) -> (Data)) -> Self {
         self.signWithSigner(Signer(publicKey, signer))
 
         return self
     }
 
+    /// Sign tthis transaction with the operator on the provided client.
+    @discardableResult
+    public final func signWithOperator(_ client: Client) throws -> Self {
+        guard let `operator` = client.operator else {
+            fatalError("todo: error here (Client had no operator)")
+        }
+
+        try freezeWith(client)
+
+        signWithSigner(`operator`.signer)
+
+        return self
+    }
+
     internal final func signWithSigner(_ signer: Signer) {
+        guard !signers.contains(where: { $0.publicKey == signer.publicKey }) else {
+            return
+        }
+
         self.signers.append(signer)
     }
 
@@ -391,9 +500,9 @@ extension Transaction {
 
         if let `operator` = self.operator {
             // todo: avoid the `.map(xyz).collect()`
-            let operatorSignature = `operator`.signer.sign(bodyBytes)
+            let operatorSignature = `operator`.signer(bodyBytes)
 
-            signatures.append(SignaturePair((`operator`.signer.publicKey, operatorSignature)))
+            signatures.append(SignaturePair(operatorSignature))
         }
 
         for signer in self.signers where signatures.allSatisfy({ $0.publicKey != signer.publicKey }) {
@@ -444,6 +553,10 @@ extension Transaction: Execute {
     }
 
     internal var requiresTransactionId: Bool { true }
+
+    internal var operatorAccountId: AccountId? {
+        self.operator?.accountId
+    }
 
     internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
         GrpcRequest, TransactionHash

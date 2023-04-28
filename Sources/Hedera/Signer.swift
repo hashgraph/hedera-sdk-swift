@@ -1,13 +1,13 @@
 import Foundation
 
-internal final class Signer {
-    internal init(_ publicKey: PublicKey, _ signFunc: @escaping (Data) -> Data) {
+internal final class Signer: Sendable {
+    internal init(_ publicKey: PublicKey, _ signFunc: @Sendable @escaping (Data) -> Data) {
         self.publicKey = publicKey
         self.signFunc = signFunc
     }
 
     internal let publicKey: PublicKey
-    fileprivate let signFunc: (Data) -> Data
+    fileprivate let signFunc: @Sendable (Data) -> Data
 
     internal static func privateKey(_ key: PrivateKey) -> Self {
         Self(key.publicKey, key.sign(_:))

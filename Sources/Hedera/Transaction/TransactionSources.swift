@@ -412,6 +412,14 @@ extension SourceTransactionExecuteView: Execute {
         true
     }
 
+    internal var regenerateTransactionId: Bool? {
+        false
+    }
+
+    internal var operatorAccountId: AccountId? {
+        nil
+    }
+
     internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
         GrpcRequest, Context
     ) {

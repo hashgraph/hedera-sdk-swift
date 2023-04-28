@@ -198,6 +198,14 @@ extension Query: Execute {
         self.requiresPayment
     }
 
+    internal var operatorAccountId: AccountId? {
+        self.payment.operatorAccountId
+    }
+
+    internal var regenerateTransactionId: Bool? {
+        self.payment.regenerateTransactionId
+    }
+
     internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (Proto_Query, ()) {
         let request = toQueryProtobufWith(
             try .with { proto in

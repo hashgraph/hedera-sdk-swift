@@ -374,6 +374,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         return false
     }
 
+    @Sendable
     public func sign(_ message: Data) -> Data {
         switch kind {
         case .ecdsa(let key):

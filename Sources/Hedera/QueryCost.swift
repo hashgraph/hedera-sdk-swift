@@ -49,6 +49,14 @@ extension QueryCost: Execute {
 
     internal var explicitTransactionId: TransactionId? { nil }
 
+    internal var operatorAccountId: AccountId? {
+        nil
+    }
+
+    internal var regenerateTransactionId: Bool? {
+        false
+    }
+
     internal var requiresTransactionId: Bool { false }
 
     internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (Proto_Query, ()) {
