@@ -97,6 +97,8 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
 
     fileprivate enum Kind {
         case ed25519(CryptoKit.Curve25519.Signing.PrivateKey)
+        // todo use `secp256k1_bindings` directly, the key follows the requirements of `Sendable`
+        // and the processing can be done more efficiently.
         case ecdsa(secp256k1.Signing.PrivateKey)
     }
 

@@ -23,6 +23,10 @@
 import PackageDescription
 
 let exampleTargets = [
+    "AccountAlias",
+    "AccountAllowance",
+    "ConsensusPubSubChunked",
+    "ConsensusPubSubWithSubmitKey",
     "CreateAccount",
     "CreateFile",
     "CreateTopic",

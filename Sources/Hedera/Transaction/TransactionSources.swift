@@ -419,7 +419,13 @@ extension SourceTransactionExecuteView: Execute {
 
         let index = self.indicesByNodeId[nodeAccountId]!
 
-        return (self.chunk.transactions[index], self.chunk.transactionHashes[index])
+        let transactions = self.chunk.transactions
+        let transaction = transactions[transactions.index(transactions.startIndex, offsetBy: index)]
+
+        let transactionHashes = self.chunk.transactionHashes
+        let transactionHash = transactionHashes[transactionHashes.index(transactionHashes.startIndex, offsetBy: index)]
+
+        return (transaction, transactionHash)
     }
 
     internal func execute(_ channel: GRPCChannel, _ request: GrpcRequest) async throws -> GrpcResponse {
