@@ -29,12 +29,9 @@ internal enum Program {
 
         client.setOperator(env.operatorAccountId, env.operatorKey)
 
-        // generate a submit key to use with the topic.
-        let submitKey = PrivateKey.generateEd25519()
 
         let topicId = try await TopicCreateTransaction()
-            .topicMemo("sdk::swift::ConsensusPubSubWithSubmitKey")
-            .submitKey(.single(submitKey.publicKey))
+            .topicMemo("sdk::swift::ConsensusPubSub")
             .execute(client)
             .getReceipt(client)
             .topicId!
@@ -46,22 +43,20 @@ internal enum Program {
         try await Task.sleep(nanoseconds: 1_000_000_000 * 10)
 
         _ = Task {
-            print("sending 5 messages")
+            print("Sending messages indefinitely")
 
-            for i in 0..<5 {
-                let v = Int64.random(in: .min...Int64.max)
-                let message = "random message: \(v)"
+            for i in 0... {
+                let message = "Hello HCS: \(i)"
 
                 print("publishing message \(i): `\(message)`")
 
                 _ = try await TopicMessageSubmitTransaction()
                     .topicId(topicId)
                     .message(message.data(using: .utf8)!)
-                    .sign(submitKey)
                     .execute(client)
                     .getReceipt(client)
 
-                try await Task.sleep(nanoseconds: 1_000_000_000 * 2)
+                try await Task.sleep(nanoseconds: 1_000_000 * 1500)
             }
 
             print("Finished sending the message, press ctrl+c to exit once it's recieved")
@@ -72,7 +67,7 @@ internal enum Program {
             .subscribe(client)
 
         // note: There's only going to be a single message recieved.
-        for try await message in stream.prefix(5) {
+        for try await message in stream {
             print(
                 "(seq: `\(message.sequenceNumber)`, contents: `\(String(data: message.contents, encoding: .utf8)!)` reached consensus at \(message.consensusTimestamp)"
             )
