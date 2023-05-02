@@ -19,6 +19,7 @@
  */
 
 import Foundation
+import CryptoKit
 
 private func hexVal(_ char: UInt8) -> UInt8? {
     // this would be a very clean function if swift had a way of doing ascii-charcter literals, but it can't.
@@ -83,12 +84,6 @@ extension Data {
 }
 
 extension Data {
-    internal func withUnsafeTypedBytes<R>(_ body: (UnsafeBufferPointer<UInt8>) throws -> R) rethrows -> R {
-        try self.withUnsafeBytes { pointer in
-            try body(pointer.bindMemory(to: UInt8.self))
-        }
-    }
-
     internal mutating func withUnsafeMutableTypedBytes<R>(_ body: (UnsafeMutableBufferPointer<UInt8>) throws -> R)
         rethrows -> R
     {

@@ -19,30 +19,11 @@
  */
 
 import Foundation
-import Hedera
-import SwiftDotenv
 
-@main
-internal enum Program {
-    internal static func main() async throws {
-        let env = try Dotenv.load()
-        let client = try Client.forName(env.networkName)
-
-        print("Getting address book for \(env.networkName)")
-
-        let results = try await NodeAddressBookQuery()
-            .fileId(FileId.addressBook)
-            .execute(client)
-
-        print(results)
-    }
-}
-
-extension Environment {
-    /// The name of the hedera network this example should be ran against.
-    ///
-    /// Testnet by default.
-    internal var networkName: String {
-        self["HEDERA_NETWORK"]?.stringValue ?? "testnet"
+extension ContiguousBytes {
+    internal func withUnsafeTypedBytes<R>(_ body: (UnsafeBufferPointer<UInt8>) throws -> R) rethrows -> R {
+        try withUnsafeBytes { pointer in
+            try body(pointer.bindMemory(to: UInt8.self))
+        }
     }
 }

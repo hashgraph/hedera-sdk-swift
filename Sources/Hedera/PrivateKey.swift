@@ -24,7 +24,15 @@ import Foundation
 import SwiftASN1
 import secp256k1
 
-internal struct Keccak256Digest: Crypto.SecpDigest {
+internal struct Keccak256Digest: Crypto.SecpDigest, CryptoKit.Digest {
+    var description: String {
+        "Keccak256 Digest"
+    }
+
+    func makeIterator() -> Data.Iterator {
+        inner.makeIterator()
+    }
+
     internal init?(_ bytes: Data) {
         guard bytes.count == Self.byteCount else {
             return nil
@@ -193,7 +201,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
     public var publicKey: PublicKey {
         switch kind {
         case .ed25519(let key): return .ed25519(key.publicKey)
-        case .ecdsa(let key): return .ecdsa(key.publicKey)
+        case .ecdsa(let key): return .ecdsa(Secp256k1PublicKey(rawRepresentation: key.publicKey.rawRepresentation)!)
 
         }
     }
@@ -377,10 +385,10 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         toBytesRaw().hexStringEncoded()
     }
 
-    /// Creates an ``AccountId`` with the given `shard`, `realm`, and ``Self/publicKey`` as an alias.
+    /// Creates an ``AccountId`` with the given `shard`, `realm`, and ``publicKey`` as an alias.
     ///
     /// # Examples
-    /// ```
+    /// ```swift
     /// let key: PrivateKey = "3030020100300706052b8104000a042204208776c6b831a1b61ac10dac0304a2843de4716f54b1919bb91a2685d0fe3f3048".parse().unwrap();
     ///
     /// let accountId = key.toAccountId(shard: 0, realm: 0)

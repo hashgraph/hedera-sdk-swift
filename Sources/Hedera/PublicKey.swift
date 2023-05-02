@@ -23,7 +23,91 @@ import Foundation
 import HederaProtobufs
 import SwiftASN1
 import secp256k1
-import secp256k1_bindings
+
+private struct Secp256k1EcdsaSignature {
+    internal init?<B: ContiguousBytes>(rawRepresentation data: B) {
+        var sig = secp256k1_ecdsa_signature()
+
+        let success = data.withUnsafeTypedBytes { buffer in
+            guard let baseAddress = buffer.baseAddress, buffer.count == 64 else {
+                return false
+            }
+
+            return secp256k1_ecdsa_signature_parse_compact(secp256k1.Context.raw, &sig, baseAddress) == 1
+        }
+
+        guard success else {
+            return nil
+        }
+
+        inner = sig
+    }
+
+    let inner: secp256k1_ecdsa_signature
+}
+
+internal struct Secp256k1PublicKey: Sendable {
+    internal init?<B: ContiguousBytes>(rawRepresentation data: B) {
+        var pubkey = secp256k1_pubkey()
+
+        let result = data.withUnsafeTypedBytes { pointer in
+            guard let baseAddress = pointer.baseAddress else {
+                return false
+            }
+
+            return secp256k1_ec_pubkey_parse(secp256k1.Context.raw, &pubkey, baseAddress, pointer.count) == 1
+        }
+
+        guard result else {
+            return nil
+        }
+
+        inner = pubkey
+    }
+
+    let inner: secp256k1_pubkey
+
+    private func serialize(compressed: Bool) -> Data {
+        let flags = UInt32(compressed ? SECP256K1_EC_COMPRESSED : SECP256K1_EC_UNCOMPRESSED)
+        let count = compressed ? 33 : 65
+
+        return withUnsafePointer(to: inner) { key in
+            var repr = Data(count: count)
+
+            repr.withUnsafeMutableTypedBytes { buffer in
+                var outputLen = buffer.count
+                let result = secp256k1_ec_pubkey_serialize(
+                    secp256k1.Context.raw, buffer.baseAddress!, &outputLen, key, flags)
+                assert(outputLen == count)
+                assert(result == 1)
+            }
+
+            return repr
+        }
+    }
+
+    internal var rawRepresentation: Data {
+        serialize(compressed: false)
+    }
+
+    internal var compactRepresentation: Data {
+        serialize(compressed: true)
+    }
+
+    fileprivate func isValidSignature<D: CryptoKit.Digest>(_ signature: Secp256k1EcdsaSignature, for digest: D) -> Bool {
+        assert(D.byteCount == 32)
+
+        return withUnsafePointer(to: inner) { pubkey in
+            withUnsafePointer(to: signature.inner) { signature in
+                digest.withUnsafeTypedBytes { buffer in
+                    assert(buffer.count == D.byteCount)
+
+                    return secp256k1_ecdsa_verify(secp256k1.Context.raw, signature, buffer.baseAddress!, pubkey) == 1
+                }
+            }
+        }
+    }
+}
 
 /// A public key on the Hedera network.
 public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, Equatable, Hashable {
@@ -31,19 +115,19 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
     // The idea being that we initialize the key whenever we need it, which is absolutely not free, but it is `Sendable`.
     fileprivate enum Repr {
         case ed25519(Data)
-        case ecdsa(Data, compressed: Bool)
+        case ecdsa(Secp256k1PublicKey)
 
         fileprivate init(kind: PublicKey.Kind) {
             switch kind {
-            case .ecdsa(let key): self = .ecdsa(key.rawRepresentation, compressed: key.format == .compressed)
+            case .ecdsa(let key): self = .ecdsa(key)
             case .ed25519(let key): self = .ed25519(key.rawRepresentation)
             }
         }
 
         fileprivate var kind: PublicKey.Kind {
             switch self {
-            case .ecdsa(let key, let compressed):
-                return .ecdsa(try! .init(rawRepresentation: key, format: compressed ? .compressed : .uncompressed))
+            case .ecdsa(let key):
+                return .ecdsa(key)
             case .ed25519(let key): return .ed25519(try! .init(rawRepresentation: key))
             }
         }
@@ -51,7 +135,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
 
     fileprivate enum Kind {
         case ed25519(CryptoKit.Curve25519.Signing.PublicKey)
-        case ecdsa(secp256k1.Signing.PublicKey)
+        case ecdsa(Secp256k1PublicKey)
     }
 
     private init(_ kind: Kind) {
@@ -62,6 +146,18 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
 
     private var kind: Kind {
         guts.kind
+    }
+
+    private var algorithm: Pkcs5.AlgorithmIdentifier {
+        let oid: ASN1ObjectIdentifier
+
+        // todo: `self.kind`
+        switch self.kind {
+        case .ed25519: oid = .NamedCurves.ed25519
+        case .ecdsa: oid = .NamedCurves.secp256k1
+        }
+
+        return .init(oid: oid)
     }
 
     private static func decodeBytes<S: StringProtocol>(_ description: S) throws -> Data {
@@ -77,7 +173,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         Self(.ed25519(key))
     }
 
-    internal static func ecdsa(_ key: secp256k1.Signing.PublicKey) -> Self {
+    internal static func ecdsa(_ key: Secp256k1PublicKey) -> Self {
         Self(.ecdsa(key))
     }
 
@@ -107,18 +203,6 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         }
     }
 
-    private var algorithm: Pkcs5.AlgorithmIdentifier {
-        let oid: ASN1ObjectIdentifier
-
-        // todo: `self.kind`
-        switch self.kind {
-        case .ed25519: oid = .NamedCurves.ed25519
-        case .ecdsa: oid = .NamedCurves.secp256k1
-        }
-
-        return .init(oid: oid)
-    }
-
     /// Parse a Ed25519 `PublicKey` from a sequence of bytes.
     public static func fromBytesEd25519(_ bytes: Data) throws -> Self {
         try Self(ed25519Bytes: bytes)
@@ -130,12 +214,11 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
             return
         }
 
-        do {
-            self.init(.ecdsa(try .init(rawRepresentation: bytes, format: .compressed)))
-        } catch {
-            throw HError.keyParse(String(describing: error))
+        guard let publicKey = Secp256k1PublicKey(rawRepresentation: bytes) else {
+            throw HError.keyParse("Invalid Ecdsa public key")
         }
 
+        self.init(.ecdsa(publicKey))
     }
 
     /// Parse a ECDSA(secp256k1) `PublicKey` from a sequence of bytes.
@@ -255,7 +338,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
     /// Return this `PublicKey`, serialized as bytes.
     public func toBytesRaw() -> Data {
         switch kind {
-        case .ecdsa(let key): return key.rawRepresentation
+        case .ecdsa(let key): return key.compactRepresentation
         case .ed25519(let key): return key.rawRepresentation
         }
     }
@@ -282,7 +365,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
     ///
     /// ## Examples
     ///
-    /// ```
+    /// ```swift
     /// let key: PublicKey = "302d300706052b8104000a03220002703a9370b0443be6ae7c507b0aec81a55e94e4a863b9655360bd65358caa6588"
     ///
     /// let accountId = key.toAccountId(shard: 0, realm: 0)
@@ -301,17 +384,14 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
             }
 
         case .ecdsa(let key):
-            let isValid: Bool
-            do {
-                isValid = try key.ecdsa.isValidSignature(
-                    .init(compactRepresentation: signature), for: Keccak256Digest(Crypto.Sha3.keccak256(message))!)
-            } catch {
-                throw HError(kind: .signatureVerify, description: "invalid signature")
+            guard let signature = Secp256k1EcdsaSignature(rawRepresentation: signature) else {
+                throw HError.signatureVerify
             }
 
-            guard isValid
-            else {
-                throw HError(kind: .signatureVerify, description: "invalid signature")
+            let isValid: Bool = key.isValidSignature(signature, for: Keccak256Digest(Crypto.Sha3.keccak256(message))!)
+
+            guard isValid else {
+                throw HError.signatureVerify
             }
         }
     }
@@ -352,41 +432,10 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
             return nil
         }
 
-        // when the bindings aren't enough :/
-        var pubkey = secp256k1_pubkey()
-
-        key.rawRepresentation.withUnsafeTypedBytes { bytes in
-            let result = secp256k1_bindings.secp256k1_ec_pubkey_parse(
-                secp256k1.Context.raw,
-                &pubkey,
-                bytes.baseAddress!,
-                bytes.count
-            )
-
-            precondition(result == 1)
-        }
-
-        var output = Data(repeating: 0, count: 65)
-
-        output.withUnsafeMutableTypedBytes { output in
-            var outputLen = output.count
-
-            let result = secp256k1_ec_pubkey_serialize(
-                secp256k1.Context.raw, output.baseAddress!,
-                &outputLen,
-                &pubkey,
-                secp256k1.Format.uncompressed.rawValue
-            )
-
-            precondition(result == 1)
-            precondition(outputLen == output.count)
-        }
-
         // note(important): sec1 uncompressed point
-        let hash = Crypto.Sha3.keccak256(output[1...])
+        let hash = Crypto.Sha3.keccak256(key.rawRepresentation.dropFirst())
 
         return try! EvmAddress(Data(hash.dropFirst(12)))
-
     }
 
     internal func verifyTransactionSources(_ sources: TransactionSources) throws {

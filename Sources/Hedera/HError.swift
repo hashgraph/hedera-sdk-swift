@@ -102,6 +102,8 @@ public struct HError: Error, CustomStringConvertible {
             "client must be configured with a payer account or requests must be given an explicit transaction id"
     )
 
+    internal static let signatureVerify: Self = Self(kind: .signatureVerify, description: "invalid signature")
+
     internal static func maxQueryPaymentExceeded(queryCost: Hbar, maxQueryPayment: Hbar) -> Self {
         let kind = ErrorKind.maxQueryPaymentExceeded(queryCost: queryCost, maxQueryPayment: maxQueryPayment)
 
