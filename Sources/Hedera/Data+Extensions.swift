@@ -20,6 +20,7 @@
 
 import Foundation
 import CryptoKit
+import CommonCrypto
 
 private func hexVal(_ char: UInt8) -> UInt8? {
     // this would be a very clean function if swift had a way of doing ascii-charcter literals, but it can't.
@@ -94,8 +95,16 @@ extension Data {
 }
 
 extension Data {
+    /// Generates Cryptographically secure random data.
     internal static func randomData(withLength length: Int) -> Self {
-        Self((0..<length).map { _ in UInt8.random(in: 0...0xff) })
+        var data = Self(count: length)
+
+        data.withUnsafeMutableBytes { buf in
+            let res = CommonCrypto.CCRandomGenerateBytes(buf.baseAddress, buf.count)
+            precondition(res == kCCSuccess)
+        }
+
+        return data
     }
 }
 
