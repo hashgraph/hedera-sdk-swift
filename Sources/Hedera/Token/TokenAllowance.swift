@@ -1,9 +1,16 @@
 import HederaProtobufs
 
 public struct TokenAllowance: ValidateChecksums {
+    /// The token that the allowance pertains to.
     public let tokenId: TokenId
+
+    /// The account ID of the token owner (ie. the grantor of the allowance).
     public let ownerAccountId: AccountId
+
+    /// The account ID of the spender of the token allowance.
     public let spenderAccountId: AccountId
+
+    /// The amount of the spender's token allowance.
     public let amount: UInt64
 
     internal func validateChecksums(on ledgerId: LedgerId) throws {

@@ -210,18 +210,22 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         return .init(oid: oid)
     }
 
+    /// Parse a `PrivateKey` from a sequence of bytes.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(bytes: bytes)
     }
 
+    /// Parse a Ed25519 `PrivateKey` from a sequence of bytes.
     public static func fromBytesEd25519(_ bytes: Data) throws -> Self {
         try Self(ed25519Bytes: bytes)
     }
 
+    /// Parse a ECDSA(secp256k1) `PrivateKey` from a sequence of bytes.
     public static func fromBytesEcdsa(_ bytes: Data) throws -> Self {
         try Self(ecdsaBytes: bytes)
     }
 
+    /// Parse a PrivateKey from a sequence of der encoded bytes.
     public static func fromBytesDer(_ bytes: Data) throws -> Self {
         let info: Pkcs8.PrivateKeyInfo
         let inner: ASN1OctetString
@@ -260,14 +264,23 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         try! self.init(parsing: value)
     }
 
+    /// Parse a `PrivateKey` from a der encoded string.
+    ///
+    /// Optionally strips a `0x` prefix.
     public static func fromStringDer<S: StringProtocol>(_ description: S) throws -> Self {
         try fromBytesDer(decodeBytes(description))
     }
 
+    /// Parse a Ed25519 `PrivateKey` from a string containing the raw key material.
+    ///
+    /// Optionally strips a `0x` prefix.
     public static func fromStringEd25519(_ description: String) throws -> Self {
         try fromBytesEd25519(decodeBytes(description))
     }
 
+    /// Parse a ECDSA(secp256k1) `PrivateKey` from a string containing the raw key material.
+    ///
+    /// Optionally strips a `0x` prefix.
     public static func fromStringEcdsa(_ description: String) throws -> Self {
         try fromBytesEcdsa(decodeBytes(description))
     }
@@ -305,6 +318,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
 
     }
 
+    /// Return this `PrivateKey`, serialized as der encoded bytes.
     public func toBytesDer() -> Data {
         let rawBytes = Array(toBytesRaw())
         let inner: [UInt8]
@@ -326,6 +340,10 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         return Data(serializer.serializedBytes)
     }
 
+    /// Return this `PrivateKey`, serialized as bytes.
+    ///
+    /// If this is an ed25519 private key, this is equivalent to ``toBytesRaw()``
+    /// If this is an ecdsa private key, this is equivalent to ``toBytesDer()``.
     public func toBytes() -> Data {
         switch kind {
         case .ed25519: return toBytesRaw()
@@ -333,6 +351,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         }
     }
 
+    /// Return this `PrivateKey`, serialized as bytes.
     public func toBytesRaw() -> Data {
         switch kind {
         case .ecdsa(let ecdsa): return ecdsa.rawRepresentation
@@ -348,18 +367,30 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         String(describing: self)
     }
 
+    /// DER encodes self, then hex encodes the result.
     public func toStringDer() -> String {
         toBytesDer().hexStringEncoded()
     }
 
+    /// Returns the raw bytes of `self` after hex encoding.
     public func toStringRaw() -> String {
         toBytesRaw().hexStringEncoded()
     }
 
+    /// Creates an ``AccountId`` with the given `shard`, `realm`, and ``Self/publicKey`` as an alias.
+    ///
+    /// # Examples
+    /// ```
+    /// let key: PrivateKey = "3030020100300706052b8104000a042204208776c6b831a1b61ac10dac0304a2843de4716f54b1919bb91a2685d0fe3f3048".parse().unwrap();
+    ///
+    /// let accountId = key.toAccountId(shard: 0, realm: 0)
+    /// precondition(String(describing: accountId) == "0.0.302d300706052b8104000a03220002703a9370b0443be6ae7c507b0aec81a55e94e4a863b9655360bd65358caa6588")
+    /// ```
     public func toAccountId(shard: UInt64, realm: UInt64) -> AccountId {
         publicKey.toAccountId(shard: shard, realm: realm)
     }
 
+    /// Returns true if this is an ed25519 private key.
     public func isEd25519() -> Bool {
         if case .ed25519 = kind {
             return true
@@ -368,6 +399,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         return false
     }
 
+    /// Returns if this is an ecdsa private key.
     public func isEcdsa() -> Bool {
         if case .ecdsa = kind {
             return true
@@ -376,6 +408,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         return false
     }
 
+    /// Signs the given `message`.
     @Sendable
     public func sign(_ message: Data) -> Data {
         switch kind {
@@ -386,10 +419,14 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         }
     }
 
+    /// Returns true if `derive` would succeed.
     public func isDerivable() -> Bool {
         isEd25519() && chainCode != nil
     }
 
+    /// Derive a new key from this key.
+    ///
+    /// >Note: This is only supported for ed25519 private keys currently.
     public func derive(_ index: Int32) throws -> Self {
         let hardenedMask: UInt32 = 1 << 31
         let index = UInt32(bitPattern: index)
@@ -403,7 +440,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         case .ed25519(let key):
             let index = index | hardenedMask
 
-            var hmac = CryptoKit.HMAC<CryptoKit.SHA512>(key: .init(data: chainCode.data))
+            var hmac = HMAC<SHA512>(key: .init(data: chainCode.data))
 
             hmac.update(data: [0])
             hmac.update(data: key.rawRepresentation)

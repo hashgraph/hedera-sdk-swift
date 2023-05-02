@@ -34,22 +34,29 @@ public struct TokenId: EntityId, ValidateChecksums {
         self.init(shard: shard, realm: realm, num: num, checksum: nil)
     }
 
+    /// A non-negative number identifying the shard containing this token.
     public let shard: UInt64
+
+    /// A non-negative number identifying the realm within the shard containing this token.
     public let realm: UInt64
 
-    /// The token number.
+    /// A non-negative number identifying the entity within the realm containing this token.
     public let num: UInt64
 
+    /// A checksum if the token ID was read from a user inputted string which inclueded a checksum.
     public let checksum: Checksum?
 
+    /// Create a token ID from protobuf encoded bytes.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert self to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }
 
+    /// Create an NFT ID with the given serial number.
     public func nft(_ serial: UInt64) -> NftId {
         NftId(tokenId: self, serial: serial)
     }

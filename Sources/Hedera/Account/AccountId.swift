@@ -23,13 +23,31 @@ import HederaProtobufs
 
 /// The unique identifier for a cryptocurrency account on Hedera.
 public struct AccountId: Sendable, EntityId, ValidateChecksums {
+    /// The shard number.
     public let shard: UInt64
+
+    /// The realm number.
     public let realm: UInt64
+
+    /// The account number.
     public let num: UInt64
+
+    /// The checksum for this account ID with respect to *some* ledger ID.
     public let checksum: Checksum?
+
+    /// An alias for num if the account was created from a public key directly.
     public let alias: PublicKey?
+
+    /// The last 20 bytes of the keccak-256 hash of a ECDSA(secp256k1) public key.
     public let evmAddress: EvmAddress?
 
+    /// Creates an account ID from the given shard, realm, and account numbers, and with the given checksum.
+    ///
+    /// - Parameters:
+    ///   - shard: the shard that the realm is contained in.
+    ///   - realm: the realm that the account number is contained in.
+    ///   - num: the account ID in the given shard and realm.
+    ///   - checksum: a 5 character checksum to help ensure a user-entered account ID is correct.
     public init(shard: UInt64 = 0, realm: UInt64 = 0, num: UInt64, checksum: Checksum?) {
         self.shard = shard
         self.realm = realm
@@ -48,10 +66,17 @@ public struct AccountId: Sendable, EntityId, ValidateChecksums {
         evmAddress = nil
     }
 
+    /// Creates an account ID from the given shard, realm, and account numbers.
+    ///
+    /// - Parameters:
+    ///   - shard: the shard that the realm is contained in.
+    ///   - realm: the realm that the account number is contained in.
+    ///   - num: the account ID in the given shard and realm.
     public init(shard: UInt64 = 0, realm: UInt64 = 0, num: UInt64) {
         self.init(shard: shard, realm: realm, num: num, checksum: nil)
     }
 
+    /// Create an account ID with an evm address.
     public init(evmAddress: EvmAddress) {
         shard = 0
         realm = 0
@@ -69,19 +94,19 @@ public struct AccountId: Sendable, EntityId, ValidateChecksums {
         case .long(let shard, let realm, let last, let checksum):
             if let num = UInt64(last) {
                 self.init(shard: shard, realm: realm, num: num, checksum: checksum)
-            } else {
-                guard checksum == nil else {
-                    throw HError(
-                        kind: .basicParse, description: "checksum not supported with `<shard>.<realm>.<alias>`")
-                }
-
-                // might have `alias`
-                self.init(
-                    shard: shard,
-                    realm: realm,
-                    alias: try PublicKey.fromString(String(last))
-                )
+                return
             }
+
+            guard checksum == nil else {
+                throw HError.basicParse("checksum not supported with `<shard>.<realm>.<alias>`")
+            }
+
+            // might have `alias`
+            self.init(
+                shard: shard,
+                realm: realm,
+                alias: try PublicKey.fromString(String(last))
+            )
 
         case .other(let description):
             let evmAddress = try EvmAddress(parsing: description)
@@ -97,6 +122,7 @@ public struct AccountId: Sendable, EntityId, ValidateChecksums {
         return helper.description
     }
 
+    /// Convert self to a string with a valid checksum.
     public func toStringWithChecksum(_ client: Client) throws -> String {
         guard alias == nil, evmAddress == nil else {
             throw HError.cannotCreateChecksum
@@ -105,6 +131,9 @@ public struct AccountId: Sendable, EntityId, ValidateChecksums {
         return helper.toStringWithChecksum(client)
     }
 
+    /// Validates that the checksum associated with this account id is correct.
+    ///
+    /// If there is no checksum, then it's automatically correct.
     public func validateChecksum(_ client: Client) throws {
         try validateChecksums(on: client.ledgerId!)
     }
@@ -124,10 +153,12 @@ public struct AccountId: Sendable, EntityId, ValidateChecksums {
         Self(evmAddress: evmAddress)
     }
 
+    /// Create an account ID from protobuf encoded bytes.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert self to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

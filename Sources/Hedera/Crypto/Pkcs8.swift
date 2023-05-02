@@ -117,7 +117,7 @@ internal enum Pkcs8 {
     /// ```
     internal struct EncryptedPrivateKeyInfo {
         internal let encryptionAlgorithm: Pkcs5.EncryptionScheme
-        internal let encryptedData: ASN1OctetString
+        internal let encryptedData: EncryptedData
     }
 }
 
@@ -228,7 +228,7 @@ extension Pkcs8.EncryptedPrivateKeyInfo: DERImplicitlyTaggable {
     internal init(derEncoded: ASN1Node, withIdentifier identifier: ASN1Identifier) throws {
         self = try DER.sequence(derEncoded, identifier: identifier) { nodes in
             let encryptionAlgorithm = try Pkcs5.EncryptionScheme(derEncoded: &nodes)
-            let encryptedData = try ASN1OctetString(derEncoded: &nodes)
+            let encryptedData = try Pkcs8.EncryptedData(derEncoded: &nodes)
 
             return Self(encryptionAlgorithm: encryptionAlgorithm, encryptedData: encryptedData)
         }

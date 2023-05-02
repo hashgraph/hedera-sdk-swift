@@ -140,6 +140,7 @@ extension HError {
         /// The checksum that should've been present on the entity ID.
         public let expectedChecksum: Checksum
 
+        /// A textual representation of this error.
         public var description: String {
             "entity ID \(shard).\(realm).\(num)-\(presentChecksum) was incorrect"
         }

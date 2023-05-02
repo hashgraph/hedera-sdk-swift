@@ -38,7 +38,7 @@ private let rawTxType2: Data = Data(
         + "e422a296bf5d9f1ca49b2d96d82b79eb112d66"
 )!
 
-public final class EthereumDataTests: XCTestCase {
+internal final class EthereumDataTests: XCTestCase {
     internal func testLegacyFromBytes() throws {
         let data = try EthereumData(rlpBytes: rawTxType0)
 

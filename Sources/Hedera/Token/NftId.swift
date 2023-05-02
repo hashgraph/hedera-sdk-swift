@@ -37,9 +37,8 @@ public struct NftId: LosslessStringConvertible, ExpressibleByStringLiteral, Equa
 
     private init<S: StringProtocol>(parsing description: S) throws {
         guard let (tokenId, serial) = description.rsplitOnce(on: "/") ?? description.rsplitOnce(on: "@") else {
-            throw HError(
-                kind: .basicParse,
-                description: "unexpected NftId format - expected [tokenId]/[serial] or [tokenId]@[serial]"
+            throw HError.basicParse(
+                "unexpected NftId format - expected [tokenId]/[serial] or [tokenId]@[serial]"
             )
         }
 
@@ -68,10 +67,12 @@ public struct NftId: LosslessStringConvertible, ExpressibleByStringLiteral, Equa
         try tokenId.validateChecksums(on: ledgerId)
     }
 
+    /// Create an NFT ID from protobuf encoded bytes.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert self to protobuf encoded data.
     public func toBytes() -> Data {
         self.toProtobufBytes()
     }

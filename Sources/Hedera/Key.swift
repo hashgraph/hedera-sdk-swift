@@ -27,6 +27,7 @@ public enum Key: Equatable {
     case delegatableContractId(ContractId)
     case keyList(KeyList)
 
+    /// Return self as protobuf encoded bytes.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

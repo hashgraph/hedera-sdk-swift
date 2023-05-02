@@ -395,7 +395,7 @@ public final class ContractCreateFlow {
     /// - Returns: `self`
     @discardableResult
     public func signWith(_ publicKey: PublicKey, _ signer: @Sendable @escaping (Data) -> (Data)) -> Self {
-        self.contractCreateData.signer = .init(publicKey, signer)
+        self.contractCreateData.signer = .arbitrary(publicKey, signer)
 
         return self
     }

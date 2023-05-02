@@ -20,23 +20,30 @@
 
 import Foundation
 
+/// The ID of a Hedera Ledger.
 public struct LedgerId: LosslessStringConvertible, ExpressibleByStringLiteral, Equatable,
     CustomStringConvertible
 {
+    /// The ledger ID for mainnet.
     public static let mainnet = LedgerId(Data([0]))
 
+    /// The ledger ID for testnet.
     public static let testnet = LedgerId(Data([1]))
 
+    /// The ledger ID for previewnet.
     public static let previewnet = LedgerId(Data([2]))
 
+    /// Create a ledger ID from the given bytes.
     public static func fromBytes(_ bytes: Data) -> Self {
         Self(bytes)
     }
 
+    /// Decode a ledger ID from a string.
     public static func fromString(_ description: String) -> Self? {
         Self(description)
     }
 
+    /// Create a ledger ID from the given bytes.
     public init(_ bytes: Data) {
         self.bytes = bytes
     }
@@ -45,6 +52,7 @@ public struct LedgerId: LosslessStringConvertible, ExpressibleByStringLiteral, E
         self.init(value)!
     }
 
+    /// Decode a ledger ID from the given string.
     public init?(_ description: String) {
         switch description {
         case "mainnet":
@@ -67,14 +75,23 @@ public struct LedgerId: LosslessStringConvertible, ExpressibleByStringLiteral, E
 
     internal let bytes: Data
 
+    /// Returns if self is mainnet.
+    ///
+    /// - Returns: `true` if `self == .mainnet`
     public func isMainnet() -> Bool {
         self == .mainnet
     }
 
+    /// Returns if self is testnet.
+    ///
+    /// - Returns: `true` if `self == .testnet`
     public func isTestnet() -> Bool {
         self == .testnet
     }
 
+    /// Returns if self is previewnet.
+    ///
+    /// - Returns: `true` if `self == .previewnet`
     public func isPreviewnet() -> Bool {
         self == .previewnet
     }
@@ -99,8 +116,9 @@ public struct LedgerId: LosslessStringConvertible, ExpressibleByStringLiteral, E
         return bytes.hexStringEncoded()
     }
 
+    /// Returns a textual representation of this ledger ID.
     public func toString() -> String {
-        description
+        String(describing: self)
     }
 }
 

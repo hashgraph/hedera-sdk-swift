@@ -16,6 +16,7 @@ public struct ContractLogInfo: Equatable {
     /// The log's data payload.
     public let data: Data
 
+    /// Decode a contract log info from protobuf encoded bytes.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }

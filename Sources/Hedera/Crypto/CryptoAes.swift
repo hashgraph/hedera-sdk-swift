@@ -53,7 +53,7 @@ extension Crypto.Aes {
         message: Data,
         outputCapacity: Int
     ) throws -> Data {
-        var output = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: message.count)
+        var output = UnsafeMutableBufferPointer<UInt8>.allocate(capacity: outputCapacity)
         output.initialize(repeating: 0)
 
         defer {

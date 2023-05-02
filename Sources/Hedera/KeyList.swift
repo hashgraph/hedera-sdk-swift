@@ -1,9 +1,13 @@
 import HederaProtobufs
 
+/// A list of keys with an optional threshold.
 public struct KeyList: ExpressibleByArrayLiteral, Equatable {
-    public typealias ArrayLiteralElement = Key
-
+    /// The list of keys.
     public var keys: [Key]
+
+    /// The minimum number of keys that must sign.
+    ///
+    /// If `nil` all keys must sign and this is a keylist (not a threshold key).
     public var threshold: Int?
 
     public init(arrayLiteral elements: Key...) {
@@ -17,9 +21,6 @@ public struct KeyList: ExpressibleByArrayLiteral, Equatable {
 }
 
 extension KeyList: Collection, RandomAccessCollection {
-    public typealias Index = Array<Key>.Index
-    public typealias Element = Key
-
     public subscript(_ position: Int) -> Key {
         get {
             self.keys[position]

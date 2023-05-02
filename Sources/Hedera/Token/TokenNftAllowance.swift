@@ -2,11 +2,23 @@ import HederaProtobufs
 import SwiftProtobuf
 
 public struct TokenNftAllowance: ValidateChecksums {
+    /// The token ID that this allowance is for.
     public let tokenId: TokenId
+
+    /// The account that owns the NFTs.
     public let ownerAccountId: AccountId
+
+    /// The account that can spend the NFTs.
     public let spenderAccountId: AccountId
+
+    /// The list of serials that the spender is permitted to transfer.
     public var serials: [UInt64]
+
+    /// If true, the spender has access to all of the owner's current and future NFTs with the associated token ID.
     public let approvedForAll: Bool?
+
+    /// The account ID of the spender who is granted approved for all allowance and granting
+    /// approval on an NFT serial to another spender.
     public let delegatingSpenderAccountId: AccountId?
 
     internal func validateChecksums(on ledgerId: LedgerId) throws {
@@ -48,8 +60,13 @@ extension TokenNftAllowance: TryProtobufCodable {
 }
 
 public struct NftRemoveAllowance: ValidateChecksums {
+    /// token that the allowance pertains to
     public let tokenId: TokenId
+
+    /// The account ID that owns token.
     public let ownerAccountId: AccountId
+
+    /// The list of serial numbers to remove allowances from.
     public var serials: [UInt64]
 
     internal func validateChecksums(on ledgerId: LedgerId) throws {

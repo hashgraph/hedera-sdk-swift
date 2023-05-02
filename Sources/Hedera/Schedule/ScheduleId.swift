@@ -34,18 +34,24 @@ public struct ScheduleId: EntityId, ValidateChecksums {
         self.init(shard: shard, realm: realm, num: num, checksum: nil)
     }
 
+    /// A non-negative number identifying the shard containing this scheduled transaction.
     public let shard: UInt64
+
+    /// A non-negative number identifying the realm within the shard containing this scheduled transaction.
     public let realm: UInt64
 
-    /// The token number.
+    /// A non-negative number identifying the entity within the realm containing this scheduled transaction.
     public let num: UInt64
 
+    /// A checksum if the schedule ID was read from a user inputted string which included a checksum
     public let checksum: Checksum?
 
+    /// Create a schedule ID from protobuf encoded bytes.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert self to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

@@ -91,7 +91,6 @@ public struct SemanticVersion: ExpressibleByStringLiteral, LosslessStringConvert
         try! self.init(parsing: value)
     }
 
-    // semver parsing is shockingly hard. So the FFI really does carry its weight.
     public init?(_ description: String) {
         try? self.init(parsing: description)
     }
@@ -100,6 +99,7 @@ public struct SemanticVersion: ExpressibleByStringLiteral, LosslessStringConvert
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert self to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }

@@ -20,6 +20,7 @@
 
 import Foundation
 
+/// A string of 5 lowercase letters used as the checksum in an entity ID.
 public struct Checksum: Sendable, LosslessStringConvertible, Hashable {
     internal let data: String
 
@@ -33,7 +34,7 @@ public struct Checksum: Sendable, LosslessStringConvertible, Hashable {
 
     internal init<S: StringProtocol>(parsing description: S) throws {
         guard let tmp = Self(description) else {
-            throw HError(kind: .basicParse, description: "Invalid checksum string \(description)")
+            throw HError.basicParse("Invalid checksum string \(description)")
         }
 
         self = tmp
@@ -69,15 +70,15 @@ public struct Checksum: Sendable, LosslessStringConvertible, Hashable {
         // 3 digits in base 26
         let p3 = 26 * 26 * 26
         // 5 digits in base 26
-        let p5 = 26 * 26 * 26 * 26 * 26
+        let p5: Int64 = 26 * 26 * 26 * 26 * 26
 
         // min prime greater than a million. Used for the final permutation.
-        let m = 1_000_003
+        let m: Int64 = 1_000_003
 
         // Sum s of digit values weights them by powers of W. Should be coprime to P5.
         let w = 31
         // W to the 6th power
-        let w6 = w * w * w * w * w * w
+        let w6 = Int64(w * w * w * w * w * w)
 
         // don't need the six 0 bytes.
         let h = ledgerId.bytes
@@ -104,7 +105,8 @@ public struct Checksum: Sendable, LosslessStringConvertible, Hashable {
         s1 = s1 % 11
 
         // instead of six 0 bytes, we compute this in two steps
-        var sh = h.reduce(0) { (result, value) in (w * result + Int(value)) % p5 }
+        // note: this has to be an `Int64` because the next step can in theory produce `(p5-1)*w6` which is more than 2^31-1
+        var sh = h.reduce(0) { (result, value) in (Int64(w) * result + Int64(value)) % p5 }
         // `(w * result + Int(0)) % p5` applied 6 times...
         // `(w * result + Int(0)) % p5 = (w * result) % p5` because 0 is the additive identity
         // then expanding out the full expression:
@@ -117,13 +119,17 @@ public struct Checksum: Sendable, LosslessStringConvertible, Hashable {
         // var c = ((((((entityIdString.count % 5) * 11 + s0) * 11 + s1) * p3 + s + sh) % p5) * m) % p5
         // but `((x % y) * z) % y = ((x * z) % y) % y = (x * z) % y`
         // checksum as a single number
-        var c = (((((d.count % 5) * 11 + s0) * 11 + s1) * p3 + s + sh) * m) % p5
+        var c = Int64(d.count) % 5
+        c = c * 11 + Int64(s0)
+        c = c * 11 + Int64(s1)
+        c = c * Int64(p3) + Int64(s) + sh
+        c = (c * m) % p5
 
         var output: [UInt8] = [0, 0, 0, 0, 0]
 
         for i in (0..<5).reversed() {
-            let asciiLowercaseA = 0x61
-            output[i] = UInt8(asciiLowercaseA + c % 26)
+            let asciiLowercaseA: UInt8 = 0x61
+            output[i] = asciiLowercaseA + UInt8(c % 26)
             c /= 26
         }
 

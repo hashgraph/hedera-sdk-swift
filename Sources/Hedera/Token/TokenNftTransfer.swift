@@ -2,6 +2,7 @@
 
 import HederaProtobufs
 
+/// Represents a transfer of an NFT from one account to another.
 public struct TokenNftTransfer: Equatable {
     /// The ID of the NFT's token.
     public let tokenId: TokenId

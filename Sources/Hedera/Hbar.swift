@@ -135,16 +135,17 @@ public enum HbarUnit: UInt64, LosslessStringConvertible, ExpressibleByStringLite
     }
 }
 
+/// A quantity of hbar.
 public struct Hbar: LosslessStringConvertible, ExpressibleByIntegerLiteral,
     ExpressibleByStringLiteral, ExpressibleByFloatLiteral, Sendable
 {
     /// A constant value of zero hbars.
     public static let zero: Hbar = 0
 
-    /// A constant value of the maximum number of hbars.
+    /// The maximum allowable amount of hbar `50 Gℏ`.
     public static let max: Hbar = 50_000_000_000
 
-    /// A constant value of the minimum number of hbars.
+    /// The minimum allowable amount of hbar `-50 Gℏ`.
     public static let min: Hbar = -50_000_000_000
 
     /// Create a new Hbar of the specified, possibly fractional value.
@@ -189,7 +190,7 @@ public struct Hbar: LosslessStringConvertible, ExpressibleByIntegerLiteral,
         let unit = try rawUnit.map { try HbarUnit(parsing: $0) } ?? .hbar
 
         guard let amount = Decimal(string: String(rawAmount)) else {
-            throw HError(kind: .basicParse, description: "amount not parsable as a decimal")
+            throw HError.basicParse("amount not parsable as a decimal")
         }
 
         try self.init(amount, unit)
@@ -199,6 +200,7 @@ public struct Hbar: LosslessStringConvertible, ExpressibleByIntegerLiteral,
         try? self.init(parsing: description)
     }
 
+    /// Create a new Hbar of the specified, possibly fractional value.
     public static func from(_ amount: Decimal, _ unit: HbarUnit = .hbar) throws -> Self {
         try Self(amount, unit)
     }

@@ -73,10 +73,20 @@ public final class TopicMessageQuery: ValidateChecksums, MirrorQuery {
         try topicId?.validateChecksums(on: ledgerId)
     }
 
+    /// Subscribe to this query with the provided Client.
+    ///
+    /// - Parameters:
+    ///   - client: A Hedera Client.
+    ///   - timeout: an optional connection timeout.
     public func subscribe(_ client: Client, _ timeout: TimeInterval? = nil) -> AnyAsyncSequence<TopicMessage> {
         subscribeInner(client, timeout)
     }
 
+    /// Execute this query with the provided Client.
+    ///
+    /// - Parameters:
+    ///   - client: A Hedera Client.
+    ///   - timeout: an optional connection timeout.
     public func execute(_ client: Client, _ timeout: TimeInterval? = nil) async throws -> [TopicMessage] {
         try await executeInner(client, timeout)
     }
@@ -94,9 +104,9 @@ extension TopicMessageQuery {
             self.init(startTime: nil)
         }
 
-        let startTime: Timestamp?
+        internal let startTime: Timestamp?
 
-        mutating func update(item: GrpcItem) {
+        internal mutating func update(item: GrpcItem) {
             let newStartTime = item.hasConsensusTimestamp ? Timestamp(protobuf: item.consensusTimestamp) : nil
             self = Self(startTime: newStartTime ?? startTime)
         }

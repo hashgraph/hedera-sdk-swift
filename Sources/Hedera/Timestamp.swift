@@ -7,7 +7,7 @@ private let timeZoneUTC: TimeZone = TimeZone(abbreviation: "UTC")!
 
 private let unixEpoch: Date = Calendar.current.date(from: DateComponents(timeZone: timeZoneUTC, year: 1970))!
 
-/// UNIX timestamp with nanosecond precision
+/// UNIX timestamp with nanosecond precision.
 public struct Timestamp: Sendable, Equatable, Hashable, CustomStringConvertible, Comparable {
     public static func < (lhs: Timestamp, rhs: Timestamp) -> Bool {
         lhs.seconds < rhs.seconds || (lhs.seconds == rhs.seconds && lhs.subSecondNanos < rhs.subSecondNanos)
@@ -34,6 +34,7 @@ public struct Timestamp: Sendable, Equatable, Hashable, CustomStringConvertible,
         Self(fromUnixTimestampNanos: unixTimestampNanos - nanos)
     }
 
+    /// Returns a Timestamp initialized to the current date and time as of the time of access.
     public static var now: Self {
         Self(from: Date())
     }

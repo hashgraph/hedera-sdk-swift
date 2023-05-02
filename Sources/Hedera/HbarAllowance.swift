@@ -1,8 +1,13 @@
 import HederaProtobufs
 
 public struct HbarAllowance: ValidateChecksums {
+    /// The account that owns the Hbar associated with this allowance.
     public let ownerAccountId: AccountId
+
+    /// The account that can spend the Hbar associated with this allowance.
     public let spenderAccountId: AccountId
+
+    /// The amount of Hbar this allowance is worth.
     public let amount: Hbar
 
     internal func validateChecksums(on ledgerId: LedgerId) throws {

@@ -20,6 +20,9 @@
 
 import Foundation
 
+/// The client-generated SHA-384 hash of a transaction that was submitted.
+///
+/// This can be used to lookup the transaction in an explorer.
 public struct TransactionHash: CustomStringConvertible {
     internal init(hashing data: Data) {
         self.data = Crypto.Sha2.sha384(data)

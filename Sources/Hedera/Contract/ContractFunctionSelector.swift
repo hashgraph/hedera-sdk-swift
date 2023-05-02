@@ -270,8 +270,6 @@ private enum ContractFunctionSelectorState {
 }
 
 private struct KeccakHasher {
-    // it's easier to just have *one* ffi call.
-    // when `nil` the hasher enters a poisoned state.
     private var buffer: Data? = Data()
 
     mutating func update(_ data: Data) {

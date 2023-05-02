@@ -21,19 +21,22 @@
 import Foundation
 import HederaProtobufs
 
+/// Protocol for various entity ID types.
+///
+/// >Note: This protocol is semantically sealed and *must not* be implemented by consumer types.
 public protocol EntityId: LosslessStringConvertible, ExpressibleByIntegerLiteral,
     ExpressibleByStringLiteral, Hashable
 where
     Self.IntegerLiteralType == UInt64,
     Self.StringLiteralType == String
 {
-    /// The shard number (non-negative).
+    /// The shard number.
     var shard: UInt64 { get }
 
-    /// The realm number (non-negative).
+    /// The realm number.
     var realm: UInt64 { get }
 
-    /// The entity (account, file, contract, token, topic, or schedule) number (non-negative).
+    /// The entity (account, file, contract, token, topic, or schedule) number.
     var num: UInt64 { get }
 
     /// The checksum for this entity ID with respect to *some* ledger ID.
@@ -219,8 +222,7 @@ internal enum PartialEntityId<S: StringProtocol> {
         case .some((let shard, let rest)):
             // `shard.realm.num` format
             guard let (realm, rest) = rest.splitOnce(on: ".") else {
-                throw HError(
-                    kind: .basicParse, description: "expected `<shard>.<realm>.<num>` or `<num>`, got, \(description)")
+                throw HError.basicParse("expected `<shard>.<realm>.<num>` or `<num>`, got, \(description)")
             }
 
             let (last, checksum) = try rest.splitOnce(on: "-").map { ($0, try Checksum(parsing: $1)) } ?? (rest, nil)
@@ -244,8 +246,7 @@ internal enum PartialEntityId<S: StringProtocol> {
         case .long(let shard, let realm, last: let num, let checksum):
             return E(shard: shard, realm: realm, num: try UInt64(parsing: num), checksum: checksum)
         case .other(let description):
-            throw HError(
-                kind: .basicParse, description: "expected `<shard>.<realm>.<num>` or `<num>`, got, \(description)")
+            throw HError.basicParse("expected `<shard>.<realm>.<num>` or `<num>`, got, \(description)")
         }
     }
 }
@@ -265,18 +266,32 @@ public struct FileId: EntityId, ValidateChecksums {
         self.init(shard: shard, realm: realm, num: num, checksum: nil)
     }
 
+    /// The shard number.
     public let shard: UInt64
+
+    /// The realm number.
     public let realm: UInt64
 
     /// The file number.
     public let num: UInt64
 
+    /// A checksum if the file ID was read from a user inputted string which inclueded a checksum.
     public let checksum: Checksum?
 
+    /// Address of the public node address book for the current network.
+    ///
+    /// See: ``NodeAddressBook``.
     public static let addressBook: FileId = 102
+
+    /// Address of the current fee schedule for the network.
     public static let feeSchedule: FileId = 111
+
+    /// Address of the current exchange rate of HBAR to USD.
+    ///
+    /// See: ``ExchangeRates``.
     public static let exchangeRates: FileId = 112
 
+    /// Create a file ID from protobuf encoded bytes.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }

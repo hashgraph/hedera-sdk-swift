@@ -20,6 +20,7 @@
 
 import Foundation
 
+/// An address as implemented in the Ethereum Virtual Machine.
 public struct EvmAddress:
     CustomStringConvertible, LosslessStringConvertible, ExpressibleByStringLiteral, Hashable
 {
@@ -27,7 +28,7 @@ public struct EvmAddress:
 
     internal init(_ data: Data) throws {
         guard data.count == 20 else {
-            throw HError(kind: .basicParse, description: "expected evm address to have 20 bytes, it had \(data.count)")
+            throw HError.basicParse("expected evm address to have 20 bytes, it had \(data.count)")
         }
 
         self.data = data
@@ -35,17 +36,26 @@ public struct EvmAddress:
 
     internal init<S: StringProtocol>(parsing description: S) throws {
         guard let description = description.stripPrefix("0x") else {
-            throw HError(kind: .basicParse, description: "expected evm address to have `0x` prefix")
+            throw HError.basicParse("expected evm address to have `0x` prefix")
         }
 
         guard let bytes = Data(hexEncoded: description) else {
             // todo: better error message
-            throw HError(kind: .basicParse, description: "invalid evm address")
+            throw HError.basicParse("invalid evm address")
         }
 
         try self.init(bytes)
     }
 
+    /// Creates an EVM address from a string representation.
+    ///
+    /// - Parameters:
+    ///    - description: A textual representation of an evm address.
+    ///
+    /// This will succeed if and only if:
+    /// 1. `description` has a `0x` prefix.
+    /// 2. `description` is a valid hex string.
+    /// 3. the bytes decoded from `description` are exactly 20 bytes long.
     public init?(_ description: String) {
         try? self.init(parsing: description)
     }
@@ -55,10 +65,12 @@ public struct EvmAddress:
         try! self.init(parsing: value)
     }
 
+    /// Parse an evm address from a string.
     public static func fromString(_ description: String) throws -> Self {
         try Self(parsing: description)
     }
 
+    /// Parse an evm address from bytes.
     public static func fromBytes(_ data: Data) throws -> Self {
         try Self(data)
     }
@@ -67,10 +79,12 @@ public struct EvmAddress:
         "0x\(data.hexStringEncoded())"
     }
 
+    /// Returns a textual representation of this evm address.
     public func toString() -> String {
-        description
+        String(describing: self)
     }
 
+    /// Returns a byte representation of this evm address.
     public func toBytes() -> Data {
         data
     }

@@ -21,6 +21,7 @@
 import GRPC
 import HederaProtobufs
 
+/// Random Number Generator Transaction.
 public final class PrngTransaction: Transaction {
     public override init() {
         super.init()

@@ -3,18 +3,59 @@ import HederaProtobufs
 
 /// The unique identifier for a smart contract on Hedera.
 public struct ContractId: EntityId {
-    public let shard: UInt64
-    public let realm: UInt64
-    public let num: UInt64
-    public let evmAddress: Data?
-    public let checksum: Checksum?
+    private enum Last: Equatable, Hashable {
+        case evmAddress(Data)
+        case num(UInt64, Checksum?)
+    }
 
+    /// The shard number.
+    public let shard: UInt64
+
+    /// The realm number.
+    public let realm: UInt64
+    private let last: Last
+
+    /// The contract number.
+    public var num: UInt64 {
+        if case .num(let num, _) = last {
+            return num
+        }
+
+        return 0
+    }
+
+    /// EVM address identifying the entity within the realm containing this contract instance.
+    ///
+    /// >Note: Exactly one of EvmAddress and num must exist.
+    public var evmAddress: Data? {
+        if case .evmAddress(let evmAddress) = last {
+            return evmAddress
+        }
+
+        return nil
+    }
+
+    /// A checksum if the contract ID was read from a user inputted string which included a checksum.
+    public var checksum: Checksum? {
+        if case .num(_, let checksum) = last {
+            return checksum
+        }
+
+        return nil
+
+    }
+
+    /// Creates an Contract ID from the given shard, realm, and entity numbers, and with the given checksum.
+    ///
+    /// - Parameters:
+    ///   - shard: the shard that the realm is contained in.
+    ///   - realm: the realm that the contract number is contained in.
+    ///   - num: the contract ID in the given shard and realm.
+    ///   - checksum: a 5 character checksum to help ensure a user-entered contract ID is correct.
     public init(shard: UInt64 = 0, realm: UInt64 = 0, num: UInt64, checksum: Checksum?) {
         self.shard = shard
         self.realm = realm
-        self.num = num
-        evmAddress = nil
-        self.checksum = checksum
+        self.last = .num(num, checksum)
     }
 
     public init(shard: UInt64 = 0, realm: UInt64 = 0, num: UInt64) {
@@ -25,9 +66,7 @@ public struct ContractId: EntityId {
         assert(evmAddress.count == 20)
         self.shard = shard
         self.realm = realm
-        num = 0
-        self.evmAddress = evmAddress
-        self.checksum = nil
+        self.last = .evmAddress(evmAddress)
     }
 
     public init<S: StringProtocol>(parsing description: S) throws {
@@ -43,10 +82,8 @@ public struct ContractId: EntityId {
 
             // might have `evmAddress`
             guard let evmAddress = Data(hexEncoded: last.stripPrefix("0x") ?? last) else {
-                throw HError(
-                    kind: .basicParse,
-                    description:
-                        "expected `<shard>.<realm>.<num>` or `<shard>.<realm>.<evmAddress>`, got, \(description)")
+                throw HError.basicParse(
+                    "expected `<shard>.<realm>.<num>` or `<shard>.<realm>.<evmAddress>`, got, \(description)")
             }
 
             guard evmAddress.count == 20 else {
@@ -54,16 +91,14 @@ public struct ContractId: EntityId {
             }
 
             guard checksum == nil else {
-                throw HError(
-                    kind: .basicParse, description: "checksum not supported with `<shard>.<realm>.<evmAddress>`")
+                throw HError.basicParse("checksum not supported with `<shard>.<realm>.<evmAddress>`")
             }
 
             self.init(shard: shard, realm: realm, evmAddress: evmAddress)
 
         case .other(let description):
-            throw HError(
-                kind: .basicParse,
-                description: "expected `<shard>.<realm>.<num>` or `<shard>.<realm>.<evmAddress>`, got, \(description)")
+            throw HError.basicParse(
+                "expected `<shard>.<realm>.<num>` or `<shard>.<realm>.<evmAddress>`, got, \(description)")
         }
     }
 
@@ -111,10 +146,12 @@ public struct ContractId: EntityId {
         try helper.validateChecksum(on: ledgerId)
     }
 
+    /// Create a contract ID from protobuf encoded bytes.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert self to protobuf encoded data.
     public func toBytes() -> Data {
         toProtobufBytes()
     }
@@ -142,10 +179,9 @@ extension ContractId: TryProtobufCodable {
         .with { proto in
             proto.shardNum = Int64(shard)
             proto.realmNum = Int64(realm)
-            if let evmAddress = evmAddress {
-                proto.evmAddress = evmAddress
-            } else {
-                proto.contractNum = Int64(num)
+            switch last {
+            case .evmAddress(let evmAddress): proto.evmAddress = evmAddress
+            case .num(let num, _): proto.contractNum = Int64(num)
             }
         }
     }

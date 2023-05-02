@@ -145,12 +145,14 @@ public class Query<Response>: ValidateChecksums {
         return self
     }
 
+    /// Fetch the cost of this query.
     public final func getCost(_ client: Client) async throws -> Hbar {
         try await QueryCost(query: self).execute(client)
     }
 
     // TODO: paymentSigner
 
+    /// Execute this query against the provided client of the Hedera network.
     public final func execute(_ client: Client, _ timeout: TimeInterval? = nil) async throws -> Response {
         if self.requiresPayment {
             // hack: this is a TransactionRecordQuery, which means we need to run the receipt first.

@@ -22,21 +22,22 @@ import Foundation
 import HederaProtobufs
 import Network
 
+/// An IP-v4 IP address and a port.
 public struct SocketAddressV4: LosslessStringConvertible {
     // name is is to match the other SDKs.
     // swiftlint:disable:next identifier_name
-    public var ip: IPv4Address
-    public var port: UInt16
+    /// The IP address associated with this socket address.
+    public let ip: IPv4Address
+    /// The port on the IP address associated with this socket address.
+    public let port: UInt16
 
     fileprivate init(ipBytes: Data, port: Int32) throws {
         guard let ipAddress = IPv4Address(ipBytes) else {
-            throw HError(kind: .basicParse, description: "expected 4 byte ip address, got `\(ipBytes.count)` bytes")
+            throw HError.basicParse("expected 4 byte ip address, got `\(ipBytes.count)` bytes")
         }
 
         guard let port = UInt16(exactly: port) else {
-            throw HError(
-                kind: .basicParse,
-                description: "expected 16 bit non-negative port number, but the port was actually `\(port)`")
+            throw HError.basicParse("expected 16 bit non-negative port number, but the port was actually `\(port)`")
         }
 
         self.ip = ipAddress
@@ -45,15 +46,15 @@ public struct SocketAddressV4: LosslessStringConvertible {
 
     fileprivate init<S: StringProtocol>(parsing description: S) throws {
         guard let (ipAddress, port) = description.splitOnce(on: ":") else {
-            throw HError(kind: .basicParse, description: "expected ip:port")
+            throw HError.basicParse("expected ip:port")
         }
 
         guard let ipAddress = IPv4Address(String(ipAddress)) else {
-            throw HError(kind: .basicParse, description: "expected `ip` to be a valid IP")
+            throw HError.basicParse("expected `ip` to be a valid IP")
         }
 
         guard let port = UInt16(port) else {
-            throw HError(kind: .basicParse, description: "expected 16 bit port number")
+            throw HError.basicParse("expected 16 bit port number")
         }
 
         self.ip = ipAddress

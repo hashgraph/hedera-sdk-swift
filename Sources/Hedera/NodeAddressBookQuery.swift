@@ -23,40 +23,48 @@ import Foundation
 import GRPC
 import HederaProtobufs
 
+/// Query for an address book and return its nodes. The nodes are returned in ascending order by node ID.
 public final class NodeAddressBookQuery: ValidateChecksums, MirrorQuery {
     public typealias Item = NodeAddress
     public typealias Response = NodeAddressBook
 
-    private var fileId: FileId
-    private var limit: UInt32
+    /// The file ID of the address book file on the network.
+    public var fileId: FileId
+
+    /// The configured limit of node addresses to receive.
+    public var limit: UInt32
 
     public init(_ fileId: FileId = FileId.addressBook, _ limit: UInt32 = 0) {
         self.fileId = fileId
         self.limit = limit
     }
 
-    public func getFileId() -> FileId {
-        fileId
-    }
-
-    public func setFileId(_ fileId: FileId) -> Self {
+    /// Sets the file ID of the address book file on the network.
+    public func fileId(_ fileId: FileId) -> Self {
         self.fileId = fileId
         return self
     }
 
-    public func getLimit() -> UInt32 {
-        limit
-    }
-
-    public func setLimit(_ limit: UInt32) -> Self {
+    /// Sets the configured limit of node addresses to receive.
+    public func limit(_ limit: UInt32) -> Self {
         self.limit = limit
         return self
     }
 
+    /// Subscribe to this query with the provided Client.
+    ///
+    /// - Parameters:
+    ///   - client: A Hedera Client.
+    ///   - timeout: an optional connection timeout.
     public func subscribe(_ client: Client, _ timeout: TimeInterval? = nil) -> AnyAsyncSequence<NodeAddress> {
         subscribeInner(client, timeout)
     }
 
+    /// Execute this query with the provided Client.
+    ///
+    /// - Parameters:
+    ///   - client: A Hedera Client.
+    ///   - timeout: an optional connection timeout.
     public func execute(_ client: Client, _ timeout: TimeInterval? = nil) async throws -> NodeAddressBook {
         try await executeInner(client, timeout)
     }

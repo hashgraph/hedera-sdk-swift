@@ -50,6 +50,7 @@ public struct Mnemonic: Equatable {
         return false
     }
 
+    /// The words this mnemonic is made of.
     public var words: [String] {
         switch kind {
         case .v1(let data):
@@ -106,10 +107,12 @@ public struct Mnemonic: Equatable {
         return mnemonic
     }
 
+    /// Generate a new 12 word mnemonic.
     public static func generate12() -> Self {
         Self(kind: .v2v3(.generate12()))
     }
 
+    /// Generate a new 24 word mnemonic.
     public static func generate24() -> Self {
         Self(kind: .v2v3(.generate24()))
     }

@@ -15,6 +15,7 @@ public struct AssessedCustomFee: Equatable {
     /// A list of all accounts that were charged this fee.
     public let payerAccountIdList: [AccountId]
 
+    /// Create an assessed custom fee from protobuf encoded bytes.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }

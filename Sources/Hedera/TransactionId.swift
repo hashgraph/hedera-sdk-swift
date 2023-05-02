@@ -1,6 +1,12 @@
 import Foundation
 import HederaProtobufs
 
+/// The client-generated ID for a transaction.
+///
+/// This is used for retrieving receipts and records for a transaction,
+/// for appending to a file right after creating it,
+/// for instantiating a smart contract with bytecode in a file just created,
+/// and internally by the network for detecting when duplicate transactions are submitted.
 public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringLiteral, LosslessStringConvertible,
     ValidateChecksums
 {
@@ -12,7 +18,11 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
     /// When a transaction is submitted there is additionally a validDuration (defaults to 120s)
     /// and together they define a time window that a transaction may be processed in.
     public let validStart: Timestamp
+
+    /// `true` if the transaction is `scheduled`.
     public let scheduled: Bool
+
+    /// Nonce for this transaction.
     public let nonce: Int32?
 
     internal init(accountId: AccountId, validStart: Timestamp, scheduled: Bool, nonce: Int32? = nil) {
@@ -40,7 +50,7 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
         // .stripSuffix("?scheduled") -> ("<validStart>") and the suffix was either removed or not.
         // (except it's better ux to do a `splitOnce('?')`... Except it doesn't matter that much)
         guard let (accountIdStr, rest) = description.splitOnce(on: "@") else {
-            throw HError(kind: .basicParse, description: expected)
+            throw HError.basicParse(expected)
         }
 
         let accountId = try AccountId(parsing: accountIdStr)
@@ -62,7 +72,7 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
         }
 
         guard let (validStartSeconds, validStartNanos) = validStartStr.splitOnce(on: ".") else {
-            throw HError(kind: .basicParse, description: expected)
+            throw HError.basicParse(expected)
         }
 
         let validStart = Timestamp(
@@ -82,15 +92,16 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
         try! self.init(parsing: value)
     }
 
-    // txid parsing is shockingly hard. So the FFI really does carry its weight.
     public init?(_ description: String) {
         try? self.init(parsing: description)
     }
 
+    /// Create a transaction ID from protobuf encoded bytes.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(protobufBytes: bytes)
     }
 
+    /// Convert self to protobuf encoded data.
     public func toBytes() -> Data {
         self.toProtobufBytes()
     }
@@ -102,6 +113,7 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
             "\(accountId)@\(validStart.seconds).\(validStart.subSecondNanos)\(scheduled)\(nonce)"
     }
 
+    /// Returns the textual representation of self.
     public func toString() -> String {
         String(describing: self)
     }

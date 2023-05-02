@@ -89,6 +89,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         }
     }
 
+    /// Parse a `PublicKey` from a sequence of bytes.
     public static func fromBytes(_ bytes: Data) throws -> Self {
         try Self(bytes: bytes)
     }
@@ -118,6 +119,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         return .init(oid: oid)
     }
 
+    /// Parse a Ed25519 `PublicKey` from a sequence of bytes.
     public static func fromBytesEd25519(_ bytes: Data) throws -> Self {
         try Self(ed25519Bytes: bytes)
     }
@@ -136,6 +138,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
 
     }
 
+    /// Parse a ECDSA(secp256k1) `PublicKey` from a sequence of bytes.
     public static func fromBytesEcdsa(_ bytes: Data) throws -> Self {
         try Self(ecdsaBytes: bytes)
     }
@@ -171,6 +174,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         }
     }
 
+    /// Parse a `PublicKey` from a sequence of der encoded bytes.
     public static func fromBytesDer(_ bytes: Data) throws -> Self {
         try Self(derBytes: bytes)
     }
@@ -205,18 +209,28 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         try! self.init(parsing: value)
     }
 
+    /// Decodes `self` from a der encoded `String`.
+    ///
+    /// Optionally strips a `0x` prefix.
     public static func fromStringDer(_ description: String) throws -> Self {
         try fromBytesDer(decodeBytes(description))
     }
 
+    /// Parse a Ed25519 `PublicKey` from a string containing the raw key material.
+    ///
+    /// Optionally strips a `0x` prefix.
     public static func fromStringEd25519(_ description: String) throws -> Self {
         try fromBytesEd25519(decodeBytes(description))
     }
 
+    /// Parse a ECDSA(secp256k1) `PublicKey` from a string containing the raw key material.
+    ///
+    /// Optionally strips a `0x` prefix.
     public static func fromStringEcdsa(_ description: String) throws -> Self {
         try fromBytesEcdsa(decodeBytes(description))
     }
 
+    /// Return this `PublicKey`, serialized as der-encoded bytes.
     public func toBytesDer() -> Data {
         let spki = Pkcs8.SubjectPublicKeyInfo(
             algorithm: algorithm,
@@ -230,6 +244,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
 
     }
 
+    /// Return this `PublicKey`, serialized as bytes.
     public func toBytes() -> Data {
         switch kind {
         case .ed25519: return toBytesRaw()
@@ -237,6 +252,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         }
     }
 
+    /// Return this `PublicKey`, serialized as bytes.
     public func toBytesRaw() -> Data {
         switch kind {
         case .ecdsa(let key): return key.rawRepresentation
@@ -252,18 +268,31 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         String(describing: self)
     }
 
+    /// DER encodes self, then hex encodes the result.
     public func toStringDer() -> String {
         toBytesDer().hexStringEncoded()
     }
 
+    /// Returns the raw bytes of `self` after hex encoding.
     public func toStringRaw() -> String {
         toBytesRaw().hexStringEncoded()
     }
 
+    /// Creates an `AccountId` with the given `shard`, `realm`, and `self` as an alias.
+    ///
+    /// ## Examples
+    ///
+    /// ```
+    /// let key: PublicKey = "302d300706052b8104000a03220002703a9370b0443be6ae7c507b0aec81a55e94e4a863b9655360bd65358caa6588"
+    ///
+    /// let accountId = key.toAccountId(shard: 0, realm: 0)
+    /// precondition(String(describing: accountId) == "0.0.302d300706052b8104000a03220002703a9370b0443be6ae7c507b0aec81a55e94e4a863b9655360bd65358caa6588")
+    /// ```
     public func toAccountId(shard: UInt64, realm: UInt64) -> AccountId {
         AccountId(shard: shard, realm: realm, alias: self)
     }
 
+    /// Verify a signature for a message with this public key.
     public func verify(_ message: Data, _ signature: Data) throws {
         switch self.kind {
         case .ed25519(let key):
@@ -287,6 +316,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         }
     }
 
+    /// Returns if this is an ed25519 public key.
     public func isEd25519() -> Bool {
         if case .ed25519 = kind {
             return true
@@ -295,6 +325,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         return false
     }
 
+    /// Returns if this is an ecdsa public key.
     public func isEcdsa() -> Bool {
         if case .ecdsa = kind {
             return true
@@ -305,7 +336,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
 
     public static func == (lhs: PublicKey, rhs: PublicKey) -> Bool {
         // this will always be true for public keys, DER is a stable format with canonicalization.
-        // ideally we'd do this a different way, but that needs to wait until ffi is gone.
+        // ideally we'd do this a different way.
         lhs.toBytesDer() == rhs.toBytesDer()
     }
 
@@ -313,7 +344,9 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         hasher.combine(toBytesDer())
     }
 
-    /// Convert this public key into an evm address. The EVM address is This is the rightmost 20 bytes of the 32 byte Keccak-256 hash of the ECDSA public key.
+    /// Convert this public key into an evm address.
+    ///
+    /// The EVM address is the rightmost 20 bytes of the 32 byte Keccak-256 hash of an ECDSA public key.
     public func toEvmAddress() -> EvmAddress? {
         guard case .ecdsa(let key) = self.kind else {
             return nil
@@ -434,12 +467,9 @@ extension PublicKey: TryProtobufCodable {
 
     internal func toProtobuf() -> Protobuf {
         .with { proto in
-            if self.isEd25519() {
-                proto.ed25519 = toBytesRaw()
-            } else if self.isEcdsa() {
-                proto.ecdsaSecp256K1 = toBytesRaw()
-            } else {
-                fatalError("BUG: Unexpected PublicKey kind")
+            switch self.kind {
+            case .ed25519: proto.ed25519 = toBytesRaw()
+            case .ecdsa: proto.ecdsaSecp256K1 = toBytesRaw()
             }
         }
     }

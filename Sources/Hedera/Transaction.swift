@@ -55,12 +55,16 @@ public class Transaction: ValidateChecksums {
         fatalError("Method `Transaction.transactionExecute` must be overridden by `\(type(of: self))`")
     }
 
+    /// The account IDs of the nodes that this transaction may be submitted to.
+    ///
+    /// `nil` means any node configured on the client.
     public final var nodeAccountIds: [AccountId]? {
         willSet {
             ensureNotFrozen(fieldName: "nodeAccountIds")
         }
     }
 
+    /// Sets the account IDs of the nodes that this transaction may be submitted to.
     @discardableResult
     public func nodeAccountIds(_ nodeAccountIds: [AccountId]) -> Self {
         self.nodeAccountIds = nodeAccountIds
@@ -83,12 +87,14 @@ public class Transaction: ValidateChecksums {
         return self
     }
 
+    /// Returns the duration that this transaction is valid for, once finalized and signed.
     public final var transactionValidDuration: Duration? {
         willSet {
             ensureNotFrozen(fieldName: "transactionValidDuration")
         }
     }
 
+    /// Sets the duration that this transaction is valid for, once finalized and signed.
     @discardableResult
     public final func transactionValidDuration(_ transactionValidDuration: Duration) -> Self {
         self.transactionValidDuration = transactionValidDuration
@@ -96,12 +102,18 @@ public class Transaction: ValidateChecksums {
         return self
     }
 
+    /// A note / description that should be recorded in the transaction record.
+    ///
+    /// Maximum length of 100 characters.
     public final var transactionMemo: String = "" {
         willSet {
             ensureNotFrozen(fieldName: "transactionMemo")
         }
     }
 
+    /// Sets a note / description that should be recorded in the transaction record.
+    ///
+    /// Maximum length of 100 characters.
     @discardableResult
     public final func transactionMemo(_ transactionMemo: String) -> Self {
         self.transactionMemo = transactionMemo
@@ -152,7 +164,7 @@ public class Transaction: ValidateChecksums {
     /// This forcibly disables transaction ID regeneration.
     @discardableResult
     public final func addSignature(_ publicKey: PublicKey, _ signature: Data) -> Self {
-        self.addSignatureSigner(Signer(publicKey) { _ in signature })
+        self.addSignatureSigner(.arbitrary(publicKey) { _ in signature })
 
         return self
     }
@@ -220,12 +232,13 @@ public class Transaction: ValidateChecksums {
         let chunk = sources.chunks.first!
 
         return Dictionary(
-            zip(chunk.nodeIds, chunk.transactions).lazy.map {
-                ($0.0, TransactionHash(hashing: $0.1.signedTransactionBytes))
+            zip(chunk.nodeIds, chunk.transactions).lazy.map { (pair) in
+                (pair.0, TransactionHash(hashing: pair.1.signedTransactionBytes))
             },
             uniquingKeysWith: { (first, _) in first })
     }
 
+    /// Signs this transaction with the given private key.
     @discardableResult
     public final func sign(_ privateKey: PrivateKey) -> Self {
         self.signWithSigner(.privateKey(privateKey))
@@ -233,14 +246,15 @@ public class Transaction: ValidateChecksums {
         return self
     }
 
+    /// Signs this transaction with the given signer.
     @discardableResult
     public final func signWith(_ publicKey: PublicKey, _ signer: @Sendable @escaping (Data) -> (Data)) -> Self {
-        self.signWithSigner(Signer(publicKey, signer))
+        self.signWithSigner(.arbitrary(publicKey, signer))
 
         return self
     }
 
-    /// Sign tthis transaction with the operator on the provided client.
+    /// Sign this transaction with the operator on the provided client.
     @discardableResult
     public final func signWithOperator(_ client: Client) throws -> Self {
         guard let `operator` = client.operator else {
@@ -262,11 +276,15 @@ public class Transaction: ValidateChecksums {
         self.signers.append(signer)
     }
 
+    /// Freeze this transaction.
+    ///
+    /// Equivalent to ``freezeWith(_:)`` with `nil`.
     @discardableResult
     public final func freeze() throws -> Self {
         try freezeWith(nil)
     }
 
+    /// Freeze this transaction with the given client.
     @discardableResult
     public final func freezeWith(_ client: Client?) throws -> Self {
         if isFrozen {
@@ -318,6 +336,7 @@ public class Transaction: ValidateChecksums {
         return try await executeAny(client, self, timeout)
     }
 
+    /// Create a Transaction from protobuf encoded bytes.
     public static func fromBytes(_ bytes: Data) throws -> Transaction {
         let list: [Proto_Transaction]
         do {
@@ -385,6 +404,7 @@ public class Transaction: ValidateChecksums {
         return transaction
     }
 
+    /// Return this transaction as protobuf encoded bytes.
     public final func toBytes() throws -> Data {
         precondition(isFrozen, "Transaction must be frozen to call `toBytes`")
 

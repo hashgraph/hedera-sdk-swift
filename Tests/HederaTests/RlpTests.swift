@@ -161,7 +161,7 @@ private enum RlpTestCases: Hashable {
     // "bigint": Test(_, ""),
 }
 
-public final class RlpTests: XCTestCase {
+internal final class RlpTests: XCTestCase {
     private static func decode(_ input: Data) throws -> Test.Input {
         return try .init(rlp: AnyRlp(raw: input))
     }
