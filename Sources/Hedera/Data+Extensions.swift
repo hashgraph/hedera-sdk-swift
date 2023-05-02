@@ -18,9 +18,9 @@
  * ‍
  */
 
-import Foundation
-import CryptoKit
 import CommonCrypto
+import CryptoKit
+import Foundation
 
 private func hexVal(_ char: UInt8) -> UInt8? {
     // this would be a very clean function if swift had a way of doing ascii-charcter literals, but it can't.

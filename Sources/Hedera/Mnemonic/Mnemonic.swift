@@ -60,6 +60,7 @@ public struct Mnemonic: Equatable {
         }
     }
 
+    /// Parse a mnemonic from a string.
     public static func fromString(_ description: String) throws -> Self {
         try Self(parsing: description)
     }
@@ -68,6 +69,9 @@ public struct Mnemonic: Equatable {
         self = try .fromWords(words: description.split(separator: " ").map(String.init))
     }
 
+    /// Parse a mnemonic from the given list of words.
+    ///
+    /// - Throws: `HError(kind: .mnemonicParse)` if the mnemonic is invalid.
     public static func fromWords(words: [String]) throws -> Self {
         if words.count == 22 {
             return Self(kind: .v1(MnemonicV1Data(words: words)))
@@ -117,6 +121,9 @@ public struct Mnemonic: Equatable {
         Self(kind: .v2v3(.generate24()))
     }
 
+    /// Derive a private key from this mnemonic.
+    ///
+    /// This uses a legacy implementation and is not recommended for new mnemonics.
     public func toLegacyPrivateKey() throws -> PrivateKey {
         let entropy: Foundation.Data
         switch kind {
@@ -129,6 +136,7 @@ public struct Mnemonic: Equatable {
         return try .fromBytes(entropy)
     }
 
+    /// Derives a private key from this mnemonic.
     public func toPrivateKey(passphrase: String = "") throws -> PrivateKey {
         switch kind {
         case .v1 where !passphrase.isEmpty:
@@ -137,14 +145,15 @@ public struct Mnemonic: Equatable {
             let entropy = try mnemonic.toEntropy()
             // failure here is `unreachable`
             // swiftlint:disable:next force_try
-            return try! PrivateKey.fromBytes(entropy)
+            return try! .fromBytes(entropy)
 
         // known unfixable bug: `PrivateKey.fromMnemonic` can be called with a legacy private key.
         case .v2v3:
-            return PrivateKey.fromMnemonic(self, "")
+            return .fromMnemonic(self, "")
         }
     }
 
+    /// Returns a textual representation of this mnemonic.
     public func toString() -> String {
         String(describing: self)
     }

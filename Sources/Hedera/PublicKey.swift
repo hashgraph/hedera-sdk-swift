@@ -65,7 +65,7 @@ internal struct Secp256k1PublicKey: Sendable {
         inner = pubkey
     }
 
-    let inner: secp256k1_pubkey
+    private let inner: secp256k1_pubkey
 
     private func serialize(compressed: Bool) -> Data {
         let flags = UInt32(compressed ? SECP256K1_EC_COMPRESSED : SECP256K1_EC_UNCOMPRESSED)
@@ -94,7 +94,8 @@ internal struct Secp256k1PublicKey: Sendable {
         serialize(compressed: true)
     }
 
-    fileprivate func isValidSignature<D: CryptoKit.Digest>(_ signature: Secp256k1EcdsaSignature, for digest: D) -> Bool {
+    fileprivate func isValidSignature<D: CryptoKit.Digest>(_ signature: Secp256k1EcdsaSignature, for digest: D) -> Bool
+    {
         assert(D.byteCount == 32)
 
         return withUnsafePointer(to: inner) { pubkey in
