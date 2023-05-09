@@ -47,6 +47,7 @@ let exampleTargets = [
     "ValidateChecksum",
     "UpdateAccountPublicKey",
     "Prng",
+    "Schedule",
     "ScheduledTransfer",
 ].map { name in
     Target.executableTarget(
