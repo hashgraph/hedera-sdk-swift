@@ -10,6 +10,11 @@ public class ChunkedTransaction: Transaction {
         super.init()
     }
 
+    internal init(chunkSize: Int = ChunkedTransaction.defaultChunkSize) {
+        self.chunkSize = chunkSize
+        super.init()
+    }
+
     internal init(data: Data) {
         self.data = data
         super.init()

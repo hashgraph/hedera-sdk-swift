@@ -161,6 +161,10 @@ public final class FileCreateTransaction: Transaction {
 
         return .fileCreate(toProtobuf())
     }
+
+    internal override var defaultMaxTransactionFee: Hbar {
+        5
+    }
 }
 
 extension FileCreateTransaction: ToProtobuf {

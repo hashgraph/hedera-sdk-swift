@@ -26,7 +26,7 @@ import HederaProtobufs
 public final class FileAppendTransaction: ChunkedTransaction {
     /// Create a new `FileAppendTransaction` ready for configuration.
     public override init() {
-        super.init()
+        super.init(chunkSize: 4096)
     }
 
     internal init(protobuf proto: Proto_TransactionBody, _ data: [Proto_FileAppendTransactionBody]) throws {
@@ -106,6 +106,10 @@ public final class FileAppendTransaction: ChunkedTransaction {
                 proto.contents = self.messageChunk(chunkInfo)
             }
         )
+    }
+
+    internal override var defaultMaxTransactionFee: Hbar {
+        5
     }
 }
 
