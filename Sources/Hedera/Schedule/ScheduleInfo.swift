@@ -116,6 +116,7 @@ public struct ScheduleInfo {
 
                 proto.memo = scheduledTransactionBody.memo
                 proto.transactionFee = scheduledTransactionBody.transactionFee
+                proto.transactionID = scheduledTransactionId.toProtobuf()
             }
 
             return try AnyTransaction.fromProtobuf(transactionBody, [transactionBody.data!]).transaction
