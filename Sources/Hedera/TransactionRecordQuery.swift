@@ -24,6 +24,8 @@ import HederaProtobufs
 /// Get the record of a transaction, given its transaction ID.
 ///
 public final class TransactionRecordQuery: Query<TransactionRecord> {
+    public override init() {}
+
     /// The ID of the transaction for which the record is being requested.
     public var transactionId: TransactionId?
 

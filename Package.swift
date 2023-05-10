@@ -50,6 +50,7 @@ let exampleTargets = [
     "Schedule",
     "ScheduleIdenticalTransaction",
     "ScheduleMultiSigTransaction",
+    "ScheduledTransactionMultiSigThreshold",
     "ScheduledTransfer",
     "Staking",
     "StakingWithUpdate",
