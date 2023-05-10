@@ -154,7 +154,7 @@ internal enum Program {
             .scheduleId(scheduleId)
             .execute(client)
 
-        print("Info on the scheduled transaction, executed_at should no longer be null:")
+        print("Info on the scheduled transaction, executedAt should no longer be null:")
         print("\(postTransactionInfo)")
 
         // Clean up

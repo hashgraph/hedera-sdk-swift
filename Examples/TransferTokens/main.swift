@@ -133,7 +133,7 @@ internal enum Program {
         print("Wiped balance of \(tokenId) from account \(accountId1)")
 
         _ = try await TokenDeleteTransaction().tokenId(tokenId).execute(client).getReceipt(client)
-        print("Deleted token", tokenId)
+        print("Deleted token \(tokenId)")
 
         try await deleteAccount(client, operatorAccountId: operatorAccountId, accountNumber: 1, privateKey1, accountId1)
         try await deleteAccount(client, operatorAccountId: operatorAccountId, accountNumber: 2, privateKey2, accountId2)

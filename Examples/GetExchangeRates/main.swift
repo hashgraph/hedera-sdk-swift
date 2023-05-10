@@ -37,15 +37,15 @@ internal enum Program {
 
         let rates = try ExchangeRates.fromBytes(response.contents)
 
-        print("Current numerator:", rates.currentRate.cents)
-        print("Current denominator:", rates.currentRate.hbars)
-        print("Current expiration time:", rates.currentRate.expirationTime)
-        print("Current Exchange Rate:", rates.currentRate.exchangeRateInCents)
+        print("Current numerator: \(rates.currentRate.cents)")
+        print("Current denominator: \(rates.currentRate.hbars)")
+        print("Current expiration time: \(rates.currentRate.expirationTime)")
+        print("Current Exchange Rate: \(rates.currentRate.exchangeRateInCents)")
 
-        print("Next numerator:", rates.nextRate.cents)
-        print("Next denominator:", rates.nextRate.hbars)
-        print("Next expiration time:", rates.nextRate.expirationTime)
-        print("Next Exchange Rate:", rates.nextRate.exchangeRateInCents)
+        print("Next numerator: \(rates.nextRate.cents)")
+        print("Next denominator: \(rates.nextRate.hbars)")
+        print("Next expiration time: \(rates.nextRate.expirationTime)")
+        print("Next Exchange Rate: \(rates.nextRate.exchangeRateInCents)")
     }
 }
 
