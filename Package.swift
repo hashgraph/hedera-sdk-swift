@@ -50,6 +50,7 @@ let exampleTargets = [
     "Schedule",
     "ScheduledTransfer",
     "Staking",
+    "StakingWithUpdate",
 ].map { name in
     Target.executableTarget(
         name: "\(name)Example",
