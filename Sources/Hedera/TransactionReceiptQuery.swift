@@ -27,6 +27,8 @@ import HederaProtobufs
 /// will be available until the end of the receipt period.
 ///
 public final class TransactionReceiptQuery: Query<TransactionReceipt> {
+    public override init() {}
+
     /// The ID of the transaction for which the receipt is being requested.
     public var transactionId: TransactionId?
 

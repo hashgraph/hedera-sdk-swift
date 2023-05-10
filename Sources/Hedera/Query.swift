@@ -26,7 +26,8 @@ import HederaProtobufs
 public class Query<Response>: ValidateChecksums {
     public typealias Response = Response
 
-    internal init() {}
+    internal init() {
+    }
 
     private final var payment: PaymentTransaction = PaymentTransaction()
 

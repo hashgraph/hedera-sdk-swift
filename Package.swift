@@ -48,6 +48,7 @@ let exampleTargets = [
     "UpdateAccountPublicKey",
     "Prng",
     "Schedule",
+    "ScheduleIdenticalTransaction",
     "ScheduleMultiSigTransaction",
     "ScheduledTransfer",
     "Staking",
