@@ -49,6 +49,7 @@ let exampleTargets = [
     "Prng",
     "Schedule",
     "ScheduledTransfer",
+    "Staking",
 ].map { name in
     Target.executableTarget(
         name: "\(name)Example",
