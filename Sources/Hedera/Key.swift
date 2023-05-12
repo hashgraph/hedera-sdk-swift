@@ -21,12 +21,17 @@
 import Foundation
 import HederaProtobufs
 
+/// Any method that can be used to authorize an operation on Hedera.
 public enum Key: Equatable {
     case single(PublicKey)
     case contractId(ContractId)
-    case delegatableContractId(ContractId)
+
+    /// A delegatable contract ID.
+    case delegateContractId(DelegateContractId)
+
     case keyList(KeyList)
 
+    /// Convert this key to protobuf encoded bytes.
     public func toBytes() -> Data {
         toProtobufBytes()
     }
@@ -56,7 +61,7 @@ extension Key: TryProtobufCodable {
         case .ecdsaSecp256K1(let ecdsaBytes):
             self = .single(try .fromBytesEcdsa(ecdsaBytes))
         case .delegatableContractID(let contractId):
-            self = .delegatableContractId(try .fromProtobuf(contractId))
+            self = .delegateContractId(try .fromProtobuf(contractId))
         }
     }
 
@@ -71,7 +76,7 @@ extension Key: TryProtobufCodable {
                 key = single.isEd25519() ? .ed25519(bytes) : .ecdsaSecp256K1(bytes)
             case .contractId(let contractId):
                 key = .contractID(contractId.toProtobuf())
-            case .delegatableContractId(let delegatableContractId):
+            case .delegateContractId(let delegatableContractId):
                 key = .delegatableContractID(delegatableContractId.toProtobuf())
             case .keyList(let keyList):
                 key = keyList.toProtobufKey()
