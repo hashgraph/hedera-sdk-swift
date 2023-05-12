@@ -47,10 +47,21 @@ let exampleTargets = [
     "ValidateChecksum",
     "UpdateAccountPublicKey",
     "Prng",
+    "Schedule",
+    "ScheduleIdenticalTransaction",
+    "ScheduleMultiSigTransaction",
+    "ScheduledTransactionMultiSigThreshold",
+    "ScheduledTransfer",
+    "Staking",
+    "StakingWithUpdate",
 ].map { name in
     Target.executableTarget(
         name: "\(name)Example",
-        dependencies: ["Hedera", .product(name: "SwiftDotenv", package: "swift-dotenv")],
+        dependencies: [
+            "Hedera",
+            "HederaExampleUtilities",
+            .product(name: "SwiftDotenv", package: "swift-dotenv"),
+        ],
         path: "Examples/\(name)",
         swiftSettings: [.unsafeFlags(["-parse-as-library"])]
     )
@@ -85,7 +96,13 @@ let package = Package(
             dependencies: [
                 .product(name: "SwiftProtobuf", package: "swift-protobuf"),
                 .product(name: "GRPC", package: "grpc-swift"),
-            ]),
+            ]
+        ),
+        // weird name, but whatever, internal targets
+        .target(
+            name: "HederaExampleUtilities",
+            dependencies: ["Hedera"]
+        ),
         .target(
             name: "Hedera",
             dependencies: [

@@ -81,6 +81,10 @@ public final class AccountUpdateTransaction: Transaction {
         try super.init(protobuf: proto)
     }
 
+    internal override var defaultMaxTransactionFee: Hbar {
+        20
+    }
+
     /// The account ID which is being updated in this transaction.
     public var accountId: AccountId? {
         willSet {
@@ -254,12 +258,28 @@ public final class AccountUpdateTransaction: Transaction {
         return self
     }
 
+    @discardableResult
+    public func clearStakedAccountId() -> Self {
+        stakedAccountId = 0
+        stakedNodeId = nil
+
+        return self
+    }
+
     /// ID of the node this account is staked to.
     /// This is mutually exclusive with `stakedAccountId`.
     public var stakedNodeId: UInt64? {
         willSet {
             ensureNotFrozen()
         }
+    }
+
+    @discardableResult
+    public func clearStakedNodeId() -> Self {
+        stakedNodeId = .max
+        stakedAccountId = nil
+
+        return self
     }
 
     /// Sets the ID of the node this account is staked to.
@@ -338,7 +358,7 @@ extension AccountUpdateTransaction: ToProtobuf {
             }
 
             if let stakedNodeId = stakedNodeId {
-                proto.stakedNodeID = Int64(stakedNodeId)
+                proto.stakedNodeID = Int64(bitPattern: stakedNodeId)
             }
         }
     }

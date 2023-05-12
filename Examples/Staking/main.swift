@@ -18,6 +18,7 @@
  * ‍
  */
 
+import Foundation
 import Hedera
 import SwiftDotenv
 
@@ -31,21 +32,41 @@ internal enum Program {
         // by this account and be signed by this key
         client.setOperator(env.operatorAccountId, env.operatorKey)
 
-        let response = try await FileContentsQuery()
-            .fileId(env.exchangeRatesFile)
+        // Create Alice account
+        let newKey = PrivateKey.generateEd25519()
+
+        print("private key: \(newKey)")
+        print("public key: \(newKey.publicKey)")
+
+        // Create an account and stake to an acount ID
+        // In this case we're staking to account ID 3 which happens to be
+        // the account ID of node 0, we're only doing this as an example.
+        // If you really want to stake to node 0, you should use
+        // `.setStakedNodeId()` instead
+        let newAccountId = try await AccountCreateTransaction()
+            .key(.single(newKey.publicKey))
+            .initialBalance(Hbar(10))
+            .stakedAccountId("0.0.3")
+            .execute(client)
+            .getReceipt(client)
+            .accountId!
+
+        print("new account ID: \(newAccountId)")
+
+        // Show the required key used to sign the account update transaction to
+        // stake the accounts hbar i.e. the fee payer key and key to authorize
+        // changes to the account should be different
+        print("key required to update staking information: \(newKey.publicKey)")
+
+        print("fee payer aka operator key: \(env.operatorKey.publicKey)")
+
+        // Query the account info, it should show the staked account ID
+        // to be 0.0.3 just like what we set it to
+        let info = try await AccountInfoQuery()
+            .accountId(newAccountId)
             .execute(client)
 
-        let rates = try ExchangeRates.fromBytes(response.contents)
-
-        print("Current numerator: \(rates.currentRate.cents)")
-        print("Current denominator: \(rates.currentRate.hbars)")
-        print("Current expiration time: \(rates.currentRate.expirationTime)")
-        print("Current Exchange Rate: \(rates.currentRate.exchangeRateInCents)")
-
-        print("Next numerator: \(rates.nextRate.cents)")
-        print("Next denominator: \(rates.nextRate.hbars)")
-        print("Next expiration time: \(rates.nextRate.expirationTime)")
-        print("Next Exchange Rate: \(rates.nextRate.exchangeRateInCents)")
+        print("staking info: \(String(describing: info.staking))")
     }
 }
 
@@ -65,12 +86,5 @@ extension Environment {
     /// Testnet by default.
     internal var networkName: String {
         self["HEDERA_NETWORK"]?.stringValue ?? "testnet"
-    }
-
-    /// The file ID for the exchange rates file.
-    ///
-    /// By default this is `FileId.exchangeRates`.
-    public var exchangeRatesFile: FileId {
-        try! (self["HEDERA_EXCHANGE_RATES_FILE"]?.stringValue).map(FileId.fromString) ?? FileId.exchangeRates
     }
 }

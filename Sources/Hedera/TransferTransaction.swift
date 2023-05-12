@@ -72,6 +72,12 @@ public final class TransferTransaction: Transaction {
         }
     }
 
+    public var hbarTransfers: [AccountId: Hbar] {
+        Dictionary(
+            transfers.lazy.map { ($0.accountId, .fromTinybars($0.amount)) },
+            uniquingKeysWith: { (first, second) in first })
+    }
+
     private var tokenTransfers: [TransferTransaction.TokenTransfer] = [] {
         willSet {
             ensureNotFrozen(fieldName: "tokenTransfers")

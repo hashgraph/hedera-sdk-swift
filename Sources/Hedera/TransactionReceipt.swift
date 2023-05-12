@@ -156,10 +156,10 @@ public struct TransactionReceipt {
         )
     }
 
-    ///
+    /// Validate the receipt status and throw an error if it isn't successful.
     @discardableResult
     public func validateStatus(_ doValidate: Bool) throws -> Self {
-        if doValidate && status != .ok {
+        if doValidate && status != .success {
             throw HError(
                 kind: .receiptStatus(status: status, transactionId: transactionId),
                 description:

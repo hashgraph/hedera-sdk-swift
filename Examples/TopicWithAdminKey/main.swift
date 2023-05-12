@@ -48,7 +48,7 @@ internal enum Program {
             .freezeWith(client)
 
         for key in initialAdminKeys.dropFirst(1) {
-            print("Signing ConsensusTopicCreateTransaction with key", key)
+            print("Signing ConsensusTopicCreateTransaction with key \(key)")
             transaction.sign(key)
         }
 
@@ -76,12 +76,12 @@ internal enum Program {
         // Sign with the initial adminKey. 2 of the 3 keys already part of the topic's adminKey.
         // Note that this time we're using a different subset of keys ([0, 1], rather than [1, 2])
         for key in initialAdminKeys.dropLast(1) {
-            print("Signing ConsensusTopicUpdateTransaction with initial admin key", key)
+            print("Signing ConsensusTopicUpdateTransaction with initial admin key \(key)")
             transaction.sign(key)
         }
 
         for key in newAdminKeys.dropFirst(1) {
-            print("Signing ConsensusTopicUpdateTransaction with new admin key", key)
+            print("Signing ConsensusTopicUpdateTransaction with new admin key \(key)")
             transaction.sign(key)
         }
 
