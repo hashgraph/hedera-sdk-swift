@@ -329,10 +329,8 @@ extension Proto_SmartContractServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    @available(*, deprecated)
-    extension Proto_SmartContractServiceClient: @unchecked Sendable {}
-#endif  // compiler(>=5.6)
+@available(*, deprecated)
+extension Proto_SmartContractServiceClient: @unchecked Sendable {}
 
 @available(*, deprecated, renamed: "Proto_SmartContractServiceNIOClient")
 public final class Proto_SmartContractServiceClient: Proto_SmartContractServiceClientProtocol {
@@ -388,397 +386,394 @@ public struct Proto_SmartContractServiceNIOClient: Proto_SmartContractServiceCli
     }
 }
 
-#if compiler(>=5.6)
-    ///*
-    /// Transactions and queries for the file service.
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public protocol Proto_SmartContractServiceAsyncClientProtocol: GRPCClient {
-        static var serviceDescriptor: GRPCServiceDescriptor { get }
-        var interceptors: Proto_SmartContractServiceClientInterceptorFactoryProtocol? { get }
+///*
+/// Transactions and queries for the file service.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public protocol Proto_SmartContractServiceAsyncClientProtocol: GRPCClient {
+    static var serviceDescriptor: GRPCServiceDescriptor { get }
+    var interceptors: Proto_SmartContractServiceClientInterceptorFactoryProtocol? { get }
 
-        func makeCreateContractCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeCreateContractCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeUpdateContractCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeUpdateContractCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeContractCallMethodCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeContractCallMethodCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeGetContractInfoCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetContractInfoCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeContractCallLocalMethodCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeContractCallLocalMethodCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeContractGetBytecodeCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeContractGetBytecodeCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeGetBySolidityIDCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetBySolidityIDCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeGetTxRecordByContractIDCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetTxRecordByContractIDCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeDeleteContractCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeDeleteContractCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeSystemDeleteCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeSystemDeleteCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeSystemUndeleteCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeSystemUndeleteCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeCallEthereumCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeCallEthereumCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_SmartContractServiceAsyncClientProtocol {
+    public static var serviceDescriptor: GRPCServiceDescriptor {
+        return Proto_SmartContractServiceClientMetadata.serviceDescriptor
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_SmartContractServiceAsyncClientProtocol {
-        public static var serviceDescriptor: GRPCServiceDescriptor {
-            return Proto_SmartContractServiceClientMetadata.serviceDescriptor
-        }
-
-        public var interceptors: Proto_SmartContractServiceClientInterceptorFactoryProtocol? {
-            return nil
-        }
-
-        public func makeCreateContractCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.createContract.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecreateContractInterceptors() ?? []
-            )
-        }
-
-        public func makeUpdateContractCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.updateContract.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeupdateContractInterceptors() ?? []
-            )
-        }
-
-        public func makeContractCallMethodCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.contractCallMethod.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecontractCallMethodInterceptors() ?? []
-            )
-        }
-
-        public func makeGetContractInfoCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.getContractInfo.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetContractInfoInterceptors() ?? []
-            )
-        }
-
-        public func makeContractCallLocalMethodCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.contractCallLocalMethod.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecontractCallLocalMethodInterceptors() ?? []
-            )
-        }
-
-        public func makeContractGetBytecodeCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.contractGetBytecode.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeContractGetBytecodeInterceptors() ?? []
-            )
-        }
-
-        public func makeGetBySolidityIDCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.getBySolidityID.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetBySolidityIDInterceptors() ?? []
-            )
-        }
-
-        public func makeGetTxRecordByContractIDCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.getTxRecordByContractID.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetTxRecordByContractIDInterceptors() ?? []
-            )
-        }
-
-        public func makeDeleteContractCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.deleteContract.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makedeleteContractInterceptors() ?? []
-            )
-        }
-
-        public func makeSystemDeleteCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.systemDelete.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makesystemDeleteInterceptors() ?? []
-            )
-        }
-
-        public func makeSystemUndeleteCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.systemUndelete.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makesystemUndeleteInterceptors() ?? []
-            )
-        }
-
-        public func makeCallEthereumCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.callEthereum.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecallEthereumInterceptors() ?? []
-            )
-        }
+    public var interceptors: Proto_SmartContractServiceClientInterceptorFactoryProtocol? {
+        return nil
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_SmartContractServiceAsyncClientProtocol {
-        public func createContract(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.createContract.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecreateContractInterceptors() ?? []
-            )
-        }
-
-        public func updateContract(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.updateContract.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeupdateContractInterceptors() ?? []
-            )
-        }
-
-        public func contractCallMethod(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.contractCallMethod.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecontractCallMethodInterceptors() ?? []
-            )
-        }
-
-        public func getContractInfo(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.getContractInfo.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetContractInfoInterceptors() ?? []
-            )
-        }
-
-        public func contractCallLocalMethod(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.contractCallLocalMethod.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecontractCallLocalMethodInterceptors() ?? []
-            )
-        }
-
-        public func contractGetBytecode(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.contractGetBytecode.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeContractGetBytecodeInterceptors() ?? []
-            )
-        }
-
-        public func getBySolidityID(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.getBySolidityID.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetBySolidityIDInterceptors() ?? []
-            )
-        }
-
-        public func getTxRecordByContractID(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.getTxRecordByContractID.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetTxRecordByContractIDInterceptors() ?? []
-            )
-        }
-
-        public func deleteContract(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.deleteContract.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makedeleteContractInterceptors() ?? []
-            )
-        }
-
-        public func systemDelete(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.systemDelete.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makesystemDeleteInterceptors() ?? []
-            )
-        }
-
-        public func systemUndelete(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.systemUndelete.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makesystemUndeleteInterceptors() ?? []
-            )
-        }
-
-        public func callEthereum(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_SmartContractServiceClientMetadata.Methods.callEthereum.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecallEthereumInterceptors() ?? []
-            )
-        }
+    public func makeCreateContractCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.createContract.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecreateContractInterceptors() ?? []
+        )
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public struct Proto_SmartContractServiceAsyncClient: Proto_SmartContractServiceAsyncClientProtocol {
-        public var channel: GRPCChannel
-        public var defaultCallOptions: CallOptions
-        public var interceptors: Proto_SmartContractServiceClientInterceptorFactoryProtocol?
-
-        public init(
-            channel: GRPCChannel,
-            defaultCallOptions: CallOptions = CallOptions(),
-            interceptors: Proto_SmartContractServiceClientInterceptorFactoryProtocol? = nil
-        ) {
-            self.channel = channel
-            self.defaultCallOptions = defaultCallOptions
-            self.interceptors = interceptors
-        }
+    public func makeUpdateContractCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.updateContract.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeupdateContractInterceptors() ?? []
+        )
     }
 
-#endif  // compiler(>=5.6)
+    public func makeContractCallMethodCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.contractCallMethod.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecontractCallMethodInterceptors() ?? []
+        )
+    }
 
-public protocol Proto_SmartContractServiceClientInterceptorFactoryProtocol: GRPCSendable {
+    public func makeGetContractInfoCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.getContractInfo.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetContractInfoInterceptors() ?? []
+        )
+    }
+
+    public func makeContractCallLocalMethodCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.contractCallLocalMethod.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecontractCallLocalMethodInterceptors() ?? []
+        )
+    }
+
+    public func makeContractGetBytecodeCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.contractGetBytecode.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeContractGetBytecodeInterceptors() ?? []
+        )
+    }
+
+    public func makeGetBySolidityIDCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.getBySolidityID.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetBySolidityIDInterceptors() ?? []
+        )
+    }
+
+    public func makeGetTxRecordByContractIDCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.getTxRecordByContractID.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetTxRecordByContractIDInterceptors() ?? []
+        )
+    }
+
+    public func makeDeleteContractCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.deleteContract.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makedeleteContractInterceptors() ?? []
+        )
+    }
+
+    public func makeSystemDeleteCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.systemDelete.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makesystemDeleteInterceptors() ?? []
+        )
+    }
+
+    public func makeSystemUndeleteCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.systemUndelete.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makesystemUndeleteInterceptors() ?? []
+        )
+    }
+
+    public func makeCallEthereumCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.callEthereum.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecallEthereumInterceptors() ?? []
+        )
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_SmartContractServiceAsyncClientProtocol {
+    public func createContract(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.createContract.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecreateContractInterceptors() ?? []
+        )
+    }
+
+    public func updateContract(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.updateContract.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeupdateContractInterceptors() ?? []
+        )
+    }
+
+    public func contractCallMethod(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.contractCallMethod.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecontractCallMethodInterceptors() ?? []
+        )
+    }
+
+    public func getContractInfo(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.getContractInfo.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetContractInfoInterceptors() ?? []
+        )
+    }
+
+    public func contractCallLocalMethod(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.contractCallLocalMethod.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecontractCallLocalMethodInterceptors() ?? []
+        )
+    }
+
+    public func contractGetBytecode(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.contractGetBytecode.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeContractGetBytecodeInterceptors() ?? []
+        )
+    }
+
+    public func getBySolidityID(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.getBySolidityID.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetBySolidityIDInterceptors() ?? []
+        )
+    }
+
+    public func getTxRecordByContractID(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.getTxRecordByContractID.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetTxRecordByContractIDInterceptors() ?? []
+        )
+    }
+
+    public func deleteContract(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.deleteContract.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makedeleteContractInterceptors() ?? []
+        )
+    }
+
+    public func systemDelete(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.systemDelete.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makesystemDeleteInterceptors() ?? []
+        )
+    }
+
+    public func systemUndelete(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.systemUndelete.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makesystemUndeleteInterceptors() ?? []
+        )
+    }
+
+    public func callEthereum(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_SmartContractServiceClientMetadata.Methods.callEthereum.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecallEthereumInterceptors() ?? []
+        )
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public struct Proto_SmartContractServiceAsyncClient: Proto_SmartContractServiceAsyncClientProtocol {
+    public var channel: GRPCChannel
+    public var defaultCallOptions: CallOptions
+    public var interceptors: Proto_SmartContractServiceClientInterceptorFactoryProtocol?
+
+    public init(
+        channel: GRPCChannel,
+        defaultCallOptions: CallOptions = CallOptions(),
+        interceptors: Proto_SmartContractServiceClientInterceptorFactoryProtocol? = nil
+    ) {
+        self.channel = channel
+        self.defaultCallOptions = defaultCallOptions
+        self.interceptors = interceptors
+    }
+}
+
+public protocol Proto_SmartContractServiceClientInterceptorFactoryProtocol: Sendable {
 
     /// - Returns: Interceptors to use when invoking 'createContract'.
     func makecreateContractInterceptors() -> [ClientInterceptor<Proto_Transaction, Proto_TransactionResponse>]

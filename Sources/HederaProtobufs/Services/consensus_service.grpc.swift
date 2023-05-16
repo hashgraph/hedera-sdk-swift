@@ -222,10 +222,8 @@ extension Proto_ConsensusServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    @available(*, deprecated)
-    extension Proto_ConsensusServiceClient: @unchecked Sendable {}
-#endif  // compiler(>=5.6)
+@available(*, deprecated)
+extension Proto_ConsensusServiceClient: @unchecked Sendable {}
 
 @available(*, deprecated, renamed: "Proto_ConsensusServiceNIOClient")
 public final class Proto_ConsensusServiceClient: Proto_ConsensusServiceClientProtocol {
@@ -281,235 +279,232 @@ public struct Proto_ConsensusServiceNIOClient: Proto_ConsensusServiceClientProto
     }
 }
 
-#if compiler(>=5.6)
-    ///*
-    /// The Consensus Service provides the ability for Hedera Hashgraph to provide aBFT consensus as to
-    /// the order and validity of messages submitted to a *topic*, as well as a *consensus timestamp* for
-    /// those messages.
-    ///
-    /// Automatic renewal can be configured via an autoRenewAccount.
-    /// Any time an autoRenewAccount is added to a topic, that createTopic/updateTopic transaction must
-    /// be signed by the autoRenewAccount.
-    ///
-    /// The autoRenewPeriod on an account must currently be set a value in createTopic between
-    /// MIN_AUTORENEW_PERIOD (6999999 seconds) and MAX_AUTORENEW_PERIOD (8000001 seconds). During
-    /// creation this sets the initial expirationTime of the topic (see more below).
-    ///
-    /// If no adminKey is on a topic, there may not be an autoRenewAccount on the topic, deleteTopic is
-    /// not allowed, and the only change allowed via an updateTopic is to extend the expirationTime.
-    ///
-    /// If an adminKey is on a topic, every updateTopic and deleteTopic transaction must be signed by the
-    /// adminKey, except for updateTopics which only extend the topic's expirationTime (no adminKey
-    /// authorization required).
-    ///
-    /// If an updateTopic modifies the adminKey of a topic, the transaction signatures on the updateTopic
-    /// must fulfill both the pre-update and post-update adminKey signature requirements.
-    ///
-    /// Mirrornet ConsensusService may be used to subscribe to changes on the topic, including changes to
-    /// the topic definition and the consensus ordering and timestamp of submitted messages.
-    ///
-    /// Until autoRenew functionality is supported by HAPI, the topic will not expire, the
-    /// autoRenewAccount will not be charged, and the topic will not automatically be deleted.
-    ///
-    /// Once autoRenew functionality is supported by HAPI:
-    ///
-    /// 1. Once the expirationTime is encountered, if an autoRenewAccount is configured on the topic, the
-    /// account will be charged automatically at the expirationTime, to extend the expirationTime of the
-    /// topic up to the topic's autoRenewPeriod (or as much extension as the account's balance will
-    /// supply).
-    ///
-    /// 2. If the topic expires and is not automatically renewed, the topic will enter the EXPIRED state.
-    /// All transactions on the topic will fail with TOPIC_EXPIRED, except an updateTopic() call that
-    /// modifies only the expirationTime.  getTopicInfo() will succeed. This state will be available for
-    /// a AUTORENEW_GRACE_PERIOD grace period (7 days).
-    ///
-    /// 3. After the grace period, if the topic's expirationTime is not extended, the topic will be
-    /// automatically deleted and no transactions or queries on the topic will succeed after that point.
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public protocol Proto_ConsensusServiceAsyncClientProtocol: GRPCClient {
-        static var serviceDescriptor: GRPCServiceDescriptor { get }
-        var interceptors: Proto_ConsensusServiceClientInterceptorFactoryProtocol? { get }
+///*
+/// The Consensus Service provides the ability for Hedera Hashgraph to provide aBFT consensus as to
+/// the order and validity of messages submitted to a *topic*, as well as a *consensus timestamp* for
+/// those messages.
+///
+/// Automatic renewal can be configured via an autoRenewAccount.
+/// Any time an autoRenewAccount is added to a topic, that createTopic/updateTopic transaction must
+/// be signed by the autoRenewAccount.
+///
+/// The autoRenewPeriod on an account must currently be set a value in createTopic between
+/// MIN_AUTORENEW_PERIOD (6999999 seconds) and MAX_AUTORENEW_PERIOD (8000001 seconds). During
+/// creation this sets the initial expirationTime of the topic (see more below).
+///
+/// If no adminKey is on a topic, there may not be an autoRenewAccount on the topic, deleteTopic is
+/// not allowed, and the only change allowed via an updateTopic is to extend the expirationTime.
+///
+/// If an adminKey is on a topic, every updateTopic and deleteTopic transaction must be signed by the
+/// adminKey, except for updateTopics which only extend the topic's expirationTime (no adminKey
+/// authorization required).
+///
+/// If an updateTopic modifies the adminKey of a topic, the transaction signatures on the updateTopic
+/// must fulfill both the pre-update and post-update adminKey signature requirements.
+///
+/// Mirrornet ConsensusService may be used to subscribe to changes on the topic, including changes to
+/// the topic definition and the consensus ordering and timestamp of submitted messages.
+///
+/// Until autoRenew functionality is supported by HAPI, the topic will not expire, the
+/// autoRenewAccount will not be charged, and the topic will not automatically be deleted.
+///
+/// Once autoRenew functionality is supported by HAPI:
+///
+/// 1. Once the expirationTime is encountered, if an autoRenewAccount is configured on the topic, the
+/// account will be charged automatically at the expirationTime, to extend the expirationTime of the
+/// topic up to the topic's autoRenewPeriod (or as much extension as the account's balance will
+/// supply).
+///
+/// 2. If the topic expires and is not automatically renewed, the topic will enter the EXPIRED state.
+/// All transactions on the topic will fail with TOPIC_EXPIRED, except an updateTopic() call that
+/// modifies only the expirationTime.  getTopicInfo() will succeed. This state will be available for
+/// a AUTORENEW_GRACE_PERIOD grace period (7 days).
+///
+/// 3. After the grace period, if the topic's expirationTime is not extended, the topic will be
+/// automatically deleted and no transactions or queries on the topic will succeed after that point.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public protocol Proto_ConsensusServiceAsyncClientProtocol: GRPCClient {
+    static var serviceDescriptor: GRPCServiceDescriptor { get }
+    var interceptors: Proto_ConsensusServiceClientInterceptorFactoryProtocol? { get }
 
-        func makeCreateTopicCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeCreateTopicCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeUpdateTopicCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeUpdateTopicCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeDeleteTopicCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeDeleteTopicCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeGetTopicInfoCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetTopicInfoCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeSubmitMessageCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeSubmitMessageCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_ConsensusServiceAsyncClientProtocol {
+    public static var serviceDescriptor: GRPCServiceDescriptor {
+        return Proto_ConsensusServiceClientMetadata.serviceDescriptor
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_ConsensusServiceAsyncClientProtocol {
-        public static var serviceDescriptor: GRPCServiceDescriptor {
-            return Proto_ConsensusServiceClientMetadata.serviceDescriptor
-        }
-
-        public var interceptors: Proto_ConsensusServiceClientInterceptorFactoryProtocol? {
-            return nil
-        }
-
-        public func makeCreateTopicCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_ConsensusServiceClientMetadata.Methods.createTopic.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecreateTopicInterceptors() ?? []
-            )
-        }
-
-        public func makeUpdateTopicCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_ConsensusServiceClientMetadata.Methods.updateTopic.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeupdateTopicInterceptors() ?? []
-            )
-        }
-
-        public func makeDeleteTopicCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_ConsensusServiceClientMetadata.Methods.deleteTopic.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makedeleteTopicInterceptors() ?? []
-            )
-        }
-
-        public func makeGetTopicInfoCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_ConsensusServiceClientMetadata.Methods.getTopicInfo.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetTopicInfoInterceptors() ?? []
-            )
-        }
-
-        public func makeSubmitMessageCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_ConsensusServiceClientMetadata.Methods.submitMessage.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makesubmitMessageInterceptors() ?? []
-            )
-        }
+    public var interceptors: Proto_ConsensusServiceClientInterceptorFactoryProtocol? {
+        return nil
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_ConsensusServiceAsyncClientProtocol {
-        public func createTopic(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_ConsensusServiceClientMetadata.Methods.createTopic.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecreateTopicInterceptors() ?? []
-            )
-        }
-
-        public func updateTopic(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_ConsensusServiceClientMetadata.Methods.updateTopic.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeupdateTopicInterceptors() ?? []
-            )
-        }
-
-        public func deleteTopic(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_ConsensusServiceClientMetadata.Methods.deleteTopic.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makedeleteTopicInterceptors() ?? []
-            )
-        }
-
-        public func getTopicInfo(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_ConsensusServiceClientMetadata.Methods.getTopicInfo.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetTopicInfoInterceptors() ?? []
-            )
-        }
-
-        public func submitMessage(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_ConsensusServiceClientMetadata.Methods.submitMessage.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makesubmitMessageInterceptors() ?? []
-            )
-        }
+    public func makeCreateTopicCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_ConsensusServiceClientMetadata.Methods.createTopic.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecreateTopicInterceptors() ?? []
+        )
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public struct Proto_ConsensusServiceAsyncClient: Proto_ConsensusServiceAsyncClientProtocol {
-        public var channel: GRPCChannel
-        public var defaultCallOptions: CallOptions
-        public var interceptors: Proto_ConsensusServiceClientInterceptorFactoryProtocol?
-
-        public init(
-            channel: GRPCChannel,
-            defaultCallOptions: CallOptions = CallOptions(),
-            interceptors: Proto_ConsensusServiceClientInterceptorFactoryProtocol? = nil
-        ) {
-            self.channel = channel
-            self.defaultCallOptions = defaultCallOptions
-            self.interceptors = interceptors
-        }
+    public func makeUpdateTopicCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_ConsensusServiceClientMetadata.Methods.updateTopic.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeupdateTopicInterceptors() ?? []
+        )
     }
 
-#endif  // compiler(>=5.6)
+    public func makeDeleteTopicCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_ConsensusServiceClientMetadata.Methods.deleteTopic.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makedeleteTopicInterceptors() ?? []
+        )
+    }
 
-public protocol Proto_ConsensusServiceClientInterceptorFactoryProtocol: GRPCSendable {
+    public func makeGetTopicInfoCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_ConsensusServiceClientMetadata.Methods.getTopicInfo.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetTopicInfoInterceptors() ?? []
+        )
+    }
+
+    public func makeSubmitMessageCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_ConsensusServiceClientMetadata.Methods.submitMessage.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makesubmitMessageInterceptors() ?? []
+        )
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_ConsensusServiceAsyncClientProtocol {
+    public func createTopic(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_ConsensusServiceClientMetadata.Methods.createTopic.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecreateTopicInterceptors() ?? []
+        )
+    }
+
+    public func updateTopic(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_ConsensusServiceClientMetadata.Methods.updateTopic.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeupdateTopicInterceptors() ?? []
+        )
+    }
+
+    public func deleteTopic(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_ConsensusServiceClientMetadata.Methods.deleteTopic.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makedeleteTopicInterceptors() ?? []
+        )
+    }
+
+    public func getTopicInfo(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_ConsensusServiceClientMetadata.Methods.getTopicInfo.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetTopicInfoInterceptors() ?? []
+        )
+    }
+
+    public func submitMessage(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_ConsensusServiceClientMetadata.Methods.submitMessage.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makesubmitMessageInterceptors() ?? []
+        )
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public struct Proto_ConsensusServiceAsyncClient: Proto_ConsensusServiceAsyncClientProtocol {
+    public var channel: GRPCChannel
+    public var defaultCallOptions: CallOptions
+    public var interceptors: Proto_ConsensusServiceClientInterceptorFactoryProtocol?
+
+    public init(
+        channel: GRPCChannel,
+        defaultCallOptions: CallOptions = CallOptions(),
+        interceptors: Proto_ConsensusServiceClientInterceptorFactoryProtocol? = nil
+    ) {
+        self.channel = channel
+        self.defaultCallOptions = defaultCallOptions
+        self.interceptors = interceptors
+    }
+}
+
+public protocol Proto_ConsensusServiceClientInterceptorFactoryProtocol: Sendable {
 
     /// - Returns: Interceptors to use when invoking 'createTopic'.
     func makecreateTopicInterceptors() -> [ClientInterceptor<Proto_Transaction, Proto_TransactionResponse>]

@@ -70,10 +70,8 @@ extension Com_Hedera_Mirror_Api_Proto_NetworkServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    @available(*, deprecated)
-    extension Com_Hedera_Mirror_Api_Proto_NetworkServiceClient: @unchecked Sendable {}
-#endif  // compiler(>=5.6)
+@available(*, deprecated)
+extension Com_Hedera_Mirror_Api_Proto_NetworkServiceClient: @unchecked Sendable {}
 
 @available(*, deprecated, renamed: "Com_Hedera_Mirror_Api_Proto_NetworkServiceNIOClient")
 public final class Com_Hedera_Mirror_Api_Proto_NetworkServiceClient:
@@ -133,80 +131,77 @@ public struct Com_Hedera_Mirror_Api_Proto_NetworkServiceNIOClient:
     }
 }
 
-#if compiler(>=5.6)
-    ///*
-    /// Provides cross network APIs like address book queries
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public protocol Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClientProtocol: GRPCClient {
-        static var serviceDescriptor: GRPCServiceDescriptor { get }
-        var interceptors: Com_Hedera_Mirror_Api_Proto_NetworkServiceClientInterceptorFactoryProtocol? { get }
+///*
+/// Provides cross network APIs like address book queries
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public protocol Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClientProtocol: GRPCClient {
+    static var serviceDescriptor: GRPCServiceDescriptor { get }
+    var interceptors: Com_Hedera_Mirror_Api_Proto_NetworkServiceClientInterceptorFactoryProtocol? { get }
 
-        func makeGetNodesCall(
-            _ request: Com_Hedera_Mirror_Api_Proto_AddressBookQuery,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncServerStreamingCall<Com_Hedera_Mirror_Api_Proto_AddressBookQuery, Proto_NodeAddress>
+    func makeGetNodesCall(
+        _ request: Com_Hedera_Mirror_Api_Proto_AddressBookQuery,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncServerStreamingCall<Com_Hedera_Mirror_Api_Proto_AddressBookQuery, Proto_NodeAddress>
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClientProtocol {
+    public static var serviceDescriptor: GRPCServiceDescriptor {
+        return Com_Hedera_Mirror_Api_Proto_NetworkServiceClientMetadata.serviceDescriptor
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClientProtocol {
-        public static var serviceDescriptor: GRPCServiceDescriptor {
-            return Com_Hedera_Mirror_Api_Proto_NetworkServiceClientMetadata.serviceDescriptor
-        }
-
-        public var interceptors: Com_Hedera_Mirror_Api_Proto_NetworkServiceClientInterceptorFactoryProtocol? {
-            return nil
-        }
-
-        public func makeGetNodesCall(
-            _ request: Com_Hedera_Mirror_Api_Proto_AddressBookQuery,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncServerStreamingCall<Com_Hedera_Mirror_Api_Proto_AddressBookQuery, Proto_NodeAddress> {
-            return self.makeAsyncServerStreamingCall(
-                path: Com_Hedera_Mirror_Api_Proto_NetworkServiceClientMetadata.Methods.getNodes.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetNodesInterceptors() ?? []
-            )
-        }
+    public var interceptors: Com_Hedera_Mirror_Api_Proto_NetworkServiceClientInterceptorFactoryProtocol? {
+        return nil
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClientProtocol {
-        public func getNodes(
-            _ request: Com_Hedera_Mirror_Api_Proto_AddressBookQuery,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncResponseStream<Proto_NodeAddress> {
-            return self.performAsyncServerStreamingCall(
-                path: Com_Hedera_Mirror_Api_Proto_NetworkServiceClientMetadata.Methods.getNodes.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetNodesInterceptors() ?? []
-            )
-        }
+    public func makeGetNodesCall(
+        _ request: Com_Hedera_Mirror_Api_Proto_AddressBookQuery,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncServerStreamingCall<Com_Hedera_Mirror_Api_Proto_AddressBookQuery, Proto_NodeAddress> {
+        return self.makeAsyncServerStreamingCall(
+            path: Com_Hedera_Mirror_Api_Proto_NetworkServiceClientMetadata.Methods.getNodes.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetNodesInterceptors() ?? []
+        )
     }
+}
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public struct Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClient:
-        Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClientProtocol
-    {
-        public var channel: GRPCChannel
-        public var defaultCallOptions: CallOptions
-        public var interceptors: Com_Hedera_Mirror_Api_Proto_NetworkServiceClientInterceptorFactoryProtocol?
-
-        public init(
-            channel: GRPCChannel,
-            defaultCallOptions: CallOptions = CallOptions(),
-            interceptors: Com_Hedera_Mirror_Api_Proto_NetworkServiceClientInterceptorFactoryProtocol? = nil
-        ) {
-            self.channel = channel
-            self.defaultCallOptions = defaultCallOptions
-            self.interceptors = interceptors
-        }
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClientProtocol {
+    public func getNodes(
+        _ request: Com_Hedera_Mirror_Api_Proto_AddressBookQuery,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncResponseStream<Proto_NodeAddress> {
+        return self.performAsyncServerStreamingCall(
+            path: Com_Hedera_Mirror_Api_Proto_NetworkServiceClientMetadata.Methods.getNodes.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetNodesInterceptors() ?? []
+        )
     }
+}
 
-#endif  // compiler(>=5.6)
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public struct Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClient:
+    Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClientProtocol
+{
+    public var channel: GRPCChannel
+    public var defaultCallOptions: CallOptions
+    public var interceptors: Com_Hedera_Mirror_Api_Proto_NetworkServiceClientInterceptorFactoryProtocol?
 
-public protocol Com_Hedera_Mirror_Api_Proto_NetworkServiceClientInterceptorFactoryProtocol: GRPCSendable {
+    public init(
+        channel: GRPCChannel,
+        defaultCallOptions: CallOptions = CallOptions(),
+        interceptors: Com_Hedera_Mirror_Api_Proto_NetworkServiceClientInterceptorFactoryProtocol? = nil
+    ) {
+        self.channel = channel
+        self.defaultCallOptions = defaultCallOptions
+        self.interceptors = interceptors
+    }
+}
+
+public protocol Com_Hedera_Mirror_Api_Proto_NetworkServiceClientInterceptorFactoryProtocol: Sendable {
 
     /// - Returns: Interceptors to use when invoking 'getNodes'.
     func makegetNodesInterceptors() -> [ClientInterceptor<

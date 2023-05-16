@@ -127,7 +127,6 @@ public struct ContractId: EntityId {
     extension ContractId: @unchecked Sendable {}
 #endif
 
-
 extension ContractId: TryProtobufCodable {
     internal typealias Protobuf = Proto_ContractID
 

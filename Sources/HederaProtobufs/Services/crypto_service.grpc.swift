@@ -428,10 +428,8 @@ extension Proto_CryptoServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    @available(*, deprecated)
-    extension Proto_CryptoServiceClient: @unchecked Sendable {}
-#endif  // compiler(>=5.6)
+@available(*, deprecated)
+extension Proto_CryptoServiceClient: @unchecked Sendable {}
 
 @available(*, deprecated, renamed: "Proto_CryptoServiceNIOClient")
 public final class Proto_CryptoServiceClient: Proto_CryptoServiceClientProtocol {
@@ -487,513 +485,510 @@ public struct Proto_CryptoServiceNIOClient: Proto_CryptoServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    ///*
-    /// Transactions and queries for the Crypto Service
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public protocol Proto_CryptoServiceAsyncClientProtocol: GRPCClient {
-        static var serviceDescriptor: GRPCServiceDescriptor { get }
-        var interceptors: Proto_CryptoServiceClientInterceptorFactoryProtocol? { get }
+///*
+/// Transactions and queries for the Crypto Service
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public protocol Proto_CryptoServiceAsyncClientProtocol: GRPCClient {
+    static var serviceDescriptor: GRPCServiceDescriptor { get }
+    var interceptors: Proto_CryptoServiceClientInterceptorFactoryProtocol? { get }
 
-        func makeCreateAccountCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeCreateAccountCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeUpdateAccountCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeUpdateAccountCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeCryptoTransferCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeCryptoTransferCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeCryptoDeleteCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeCryptoDeleteCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeApproveAllowancesCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeApproveAllowancesCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeDeleteAllowancesCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeDeleteAllowancesCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeAddLiveHashCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeAddLiveHashCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeDeleteLiveHashCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeDeleteLiveHashCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeGetLiveHashCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetLiveHashCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeGetAccountRecordsCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetAccountRecordsCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeCryptoGetBalanceCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeCryptoGetBalanceCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeGetAccountInfoCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetAccountInfoCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeGetTransactionReceiptsCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetTransactionReceiptsCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeGetFastTransactionRecordCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetFastTransactionRecordCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeGetTxRecordByTxIDCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetTxRecordByTxIDCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeGetStakersByAccountIDCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetStakersByAccountIDCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_CryptoServiceAsyncClientProtocol {
+    public static var serviceDescriptor: GRPCServiceDescriptor {
+        return Proto_CryptoServiceClientMetadata.serviceDescriptor
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_CryptoServiceAsyncClientProtocol {
-        public static var serviceDescriptor: GRPCServiceDescriptor {
-            return Proto_CryptoServiceClientMetadata.serviceDescriptor
-        }
-
-        public var interceptors: Proto_CryptoServiceClientInterceptorFactoryProtocol? {
-            return nil
-        }
-
-        public func makeCreateAccountCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.createAccount.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecreateAccountInterceptors() ?? []
-            )
-        }
-
-        public func makeUpdateAccountCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.updateAccount.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeupdateAccountInterceptors() ?? []
-            )
-        }
-
-        public func makeCryptoTransferCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.cryptoTransfer.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecryptoTransferInterceptors() ?? []
-            )
-        }
-
-        public func makeCryptoDeleteCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.cryptoDelete.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecryptoDeleteInterceptors() ?? []
-            )
-        }
-
-        public func makeApproveAllowancesCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.approveAllowances.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeapproveAllowancesInterceptors() ?? []
-            )
-        }
-
-        public func makeDeleteAllowancesCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.deleteAllowances.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makedeleteAllowancesInterceptors() ?? []
-            )
-        }
-
-        public func makeAddLiveHashCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.addLiveHash.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeaddLiveHashInterceptors() ?? []
-            )
-        }
-
-        public func makeDeleteLiveHashCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.deleteLiveHash.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makedeleteLiveHashInterceptors() ?? []
-            )
-        }
-
-        public func makeGetLiveHashCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getLiveHash.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetLiveHashInterceptors() ?? []
-            )
-        }
-
-        public func makeGetAccountRecordsCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getAccountRecords.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetAccountRecordsInterceptors() ?? []
-            )
-        }
-
-        public func makeCryptoGetBalanceCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.cryptoGetBalance.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecryptoGetBalanceInterceptors() ?? []
-            )
-        }
-
-        public func makeGetAccountInfoCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getAccountInfo.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetAccountInfoInterceptors() ?? []
-            )
-        }
-
-        public func makeGetTransactionReceiptsCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getTransactionReceipts.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetTransactionReceiptsInterceptors() ?? []
-            )
-        }
-
-        public func makeGetFastTransactionRecordCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getFastTransactionRecord.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetFastTransactionRecordInterceptors() ?? []
-            )
-        }
-
-        public func makeGetTxRecordByTxIDCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getTxRecordByTxID.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetTxRecordByTxIDInterceptors() ?? []
-            )
-        }
-
-        public func makeGetStakersByAccountIDCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getStakersByAccountID.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetStakersByAccountIDInterceptors() ?? []
-            )
-        }
+    public var interceptors: Proto_CryptoServiceClientInterceptorFactoryProtocol? {
+        return nil
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_CryptoServiceAsyncClientProtocol {
-        public func createAccount(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.createAccount.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecreateAccountInterceptors() ?? []
-            )
-        }
-
-        public func updateAccount(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.updateAccount.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeupdateAccountInterceptors() ?? []
-            )
-        }
-
-        public func cryptoTransfer(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.cryptoTransfer.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecryptoTransferInterceptors() ?? []
-            )
-        }
-
-        public func cryptoDelete(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.cryptoDelete.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecryptoDeleteInterceptors() ?? []
-            )
-        }
-
-        public func approveAllowances(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.approveAllowances.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeapproveAllowancesInterceptors() ?? []
-            )
-        }
-
-        public func deleteAllowances(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.deleteAllowances.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makedeleteAllowancesInterceptors() ?? []
-            )
-        }
-
-        public func addLiveHash(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.addLiveHash.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeaddLiveHashInterceptors() ?? []
-            )
-        }
-
-        public func deleteLiveHash(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.deleteLiveHash.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makedeleteLiveHashInterceptors() ?? []
-            )
-        }
-
-        public func getLiveHash(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getLiveHash.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetLiveHashInterceptors() ?? []
-            )
-        }
-
-        public func getAccountRecords(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getAccountRecords.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetAccountRecordsInterceptors() ?? []
-            )
-        }
-
-        public func cryptoGetBalance(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.cryptoGetBalance.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecryptoGetBalanceInterceptors() ?? []
-            )
-        }
-
-        public func getAccountInfo(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getAccountInfo.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetAccountInfoInterceptors() ?? []
-            )
-        }
-
-        public func getTransactionReceipts(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getTransactionReceipts.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetTransactionReceiptsInterceptors() ?? []
-            )
-        }
-
-        public func getFastTransactionRecord(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getFastTransactionRecord.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetFastTransactionRecordInterceptors() ?? []
-            )
-        }
-
-        public func getTxRecordByTxID(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getTxRecordByTxID.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetTxRecordByTxIDInterceptors() ?? []
-            )
-        }
-
-        public func getStakersByAccountID(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_CryptoServiceClientMetadata.Methods.getStakersByAccountID.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetStakersByAccountIDInterceptors() ?? []
-            )
-        }
+    public func makeCreateAccountCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.createAccount.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecreateAccountInterceptors() ?? []
+        )
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public struct Proto_CryptoServiceAsyncClient: Proto_CryptoServiceAsyncClientProtocol {
-        public var channel: GRPCChannel
-        public var defaultCallOptions: CallOptions
-        public var interceptors: Proto_CryptoServiceClientInterceptorFactoryProtocol?
-
-        public init(
-            channel: GRPCChannel,
-            defaultCallOptions: CallOptions = CallOptions(),
-            interceptors: Proto_CryptoServiceClientInterceptorFactoryProtocol? = nil
-        ) {
-            self.channel = channel
-            self.defaultCallOptions = defaultCallOptions
-            self.interceptors = interceptors
-        }
+    public func makeUpdateAccountCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.updateAccount.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeupdateAccountInterceptors() ?? []
+        )
     }
 
-#endif  // compiler(>=5.6)
+    public func makeCryptoTransferCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.cryptoTransfer.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecryptoTransferInterceptors() ?? []
+        )
+    }
 
-public protocol Proto_CryptoServiceClientInterceptorFactoryProtocol: GRPCSendable {
+    public func makeCryptoDeleteCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.cryptoDelete.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecryptoDeleteInterceptors() ?? []
+        )
+    }
+
+    public func makeApproveAllowancesCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.approveAllowances.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeapproveAllowancesInterceptors() ?? []
+        )
+    }
+
+    public func makeDeleteAllowancesCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.deleteAllowances.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makedeleteAllowancesInterceptors() ?? []
+        )
+    }
+
+    public func makeAddLiveHashCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.addLiveHash.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeaddLiveHashInterceptors() ?? []
+        )
+    }
+
+    public func makeDeleteLiveHashCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.deleteLiveHash.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makedeleteLiveHashInterceptors() ?? []
+        )
+    }
+
+    public func makeGetLiveHashCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getLiveHash.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetLiveHashInterceptors() ?? []
+        )
+    }
+
+    public func makeGetAccountRecordsCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getAccountRecords.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetAccountRecordsInterceptors() ?? []
+        )
+    }
+
+    public func makeCryptoGetBalanceCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.cryptoGetBalance.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecryptoGetBalanceInterceptors() ?? []
+        )
+    }
+
+    public func makeGetAccountInfoCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getAccountInfo.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetAccountInfoInterceptors() ?? []
+        )
+    }
+
+    public func makeGetTransactionReceiptsCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getTransactionReceipts.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetTransactionReceiptsInterceptors() ?? []
+        )
+    }
+
+    public func makeGetFastTransactionRecordCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getFastTransactionRecord.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetFastTransactionRecordInterceptors() ?? []
+        )
+    }
+
+    public func makeGetTxRecordByTxIDCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getTxRecordByTxID.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetTxRecordByTxIDInterceptors() ?? []
+        )
+    }
+
+    public func makeGetStakersByAccountIDCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getStakersByAccountID.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetStakersByAccountIDInterceptors() ?? []
+        )
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_CryptoServiceAsyncClientProtocol {
+    public func createAccount(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.createAccount.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecreateAccountInterceptors() ?? []
+        )
+    }
+
+    public func updateAccount(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.updateAccount.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeupdateAccountInterceptors() ?? []
+        )
+    }
+
+    public func cryptoTransfer(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.cryptoTransfer.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecryptoTransferInterceptors() ?? []
+        )
+    }
+
+    public func cryptoDelete(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.cryptoDelete.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecryptoDeleteInterceptors() ?? []
+        )
+    }
+
+    public func approveAllowances(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.approveAllowances.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeapproveAllowancesInterceptors() ?? []
+        )
+    }
+
+    public func deleteAllowances(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.deleteAllowances.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makedeleteAllowancesInterceptors() ?? []
+        )
+    }
+
+    public func addLiveHash(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.addLiveHash.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeaddLiveHashInterceptors() ?? []
+        )
+    }
+
+    public func deleteLiveHash(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.deleteLiveHash.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makedeleteLiveHashInterceptors() ?? []
+        )
+    }
+
+    public func getLiveHash(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getLiveHash.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetLiveHashInterceptors() ?? []
+        )
+    }
+
+    public func getAccountRecords(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getAccountRecords.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetAccountRecordsInterceptors() ?? []
+        )
+    }
+
+    public func cryptoGetBalance(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.cryptoGetBalance.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecryptoGetBalanceInterceptors() ?? []
+        )
+    }
+
+    public func getAccountInfo(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getAccountInfo.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetAccountInfoInterceptors() ?? []
+        )
+    }
+
+    public func getTransactionReceipts(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getTransactionReceipts.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetTransactionReceiptsInterceptors() ?? []
+        )
+    }
+
+    public func getFastTransactionRecord(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getFastTransactionRecord.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetFastTransactionRecordInterceptors() ?? []
+        )
+    }
+
+    public func getTxRecordByTxID(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getTxRecordByTxID.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetTxRecordByTxIDInterceptors() ?? []
+        )
+    }
+
+    public func getStakersByAccountID(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_CryptoServiceClientMetadata.Methods.getStakersByAccountID.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetStakersByAccountIDInterceptors() ?? []
+        )
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public struct Proto_CryptoServiceAsyncClient: Proto_CryptoServiceAsyncClientProtocol {
+    public var channel: GRPCChannel
+    public var defaultCallOptions: CallOptions
+    public var interceptors: Proto_CryptoServiceClientInterceptorFactoryProtocol?
+
+    public init(
+        channel: GRPCChannel,
+        defaultCallOptions: CallOptions = CallOptions(),
+        interceptors: Proto_CryptoServiceClientInterceptorFactoryProtocol? = nil
+    ) {
+        self.channel = channel
+        self.defaultCallOptions = defaultCallOptions
+        self.interceptors = interceptors
+    }
+}
+
+public protocol Proto_CryptoServiceClientInterceptorFactoryProtocol: Sendable {
 
     /// - Returns: Interceptors to use when invoking 'createAccount'.
     func makecreateAccountInterceptors() -> [ClientInterceptor<Proto_Transaction, Proto_TransactionResponse>]
