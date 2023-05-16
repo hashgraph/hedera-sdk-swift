@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// The unique identifier for a schedule on Hedera.
-public struct ScheduleId: EntityId, ValidateChecksums {
+public struct ScheduleId: EntityId, ValidateChecksums, Sendable {
     public init(shard: UInt64 = 0, realm: UInt64 = 0, num: UInt64, checksum: Checksum?) {
         self.shard = shard
         self.realm = realm

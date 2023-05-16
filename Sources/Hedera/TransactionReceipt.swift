@@ -23,7 +23,7 @@ import HederaProtobufs
 
 // TODO: exchangeRate
 /// The summary of a transaction's result so far, if the transaction has reached consensus.
-public struct TransactionReceipt {
+public struct TransactionReceipt: Sendable {
     internal init(
         transactionId: TransactionId? = nil,
         status: Status,
