@@ -31,7 +31,7 @@ public final class ContractCreateTransaction: Transaction {
         adminKey: Key? = nil,
         gas: UInt64 = 0,
         initialBalance: Hbar = 0,
-        autoRenewPeriod: Duration? = nil,
+        autoRenewPeriod: Duration? = .days(90),
         constructorParameters: Data? = nil,
         contractMemo: String = "",
         maxAutomaticTokenAssociations: UInt32 = 0,
@@ -109,6 +109,10 @@ public final class ContractCreateTransaction: Transaction {
         self.declineStakingReward = data.declineReward
 
         try super.init(protobuf: proto)
+    }
+
+    internal override var defaultMaxTransactionFee: Hbar {
+        20
     }
 
     /// The bytes of the smart contract.

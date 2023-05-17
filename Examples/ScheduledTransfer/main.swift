@@ -158,7 +158,7 @@ internal enum Program {
         print("\(postTransactionInfo)")
 
         // Clean up
-        let _ = try await AccountDeleteTransaction()
+        _ = try await AccountDeleteTransaction()
             .transferAccountId(env.operatorAccountId)
             .accountId(bobsId)
             .freezeWith(client)

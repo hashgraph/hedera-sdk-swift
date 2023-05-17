@@ -31,4 +31,13 @@ public enum Resources {
             return try await bytecode(forUrl: url)
         }
     }
+
+    /// Bytecode for the stateful contract example.
+    public static var statefulContract: String {
+        get async throws {
+            let url = Bundle.module.url(forResource: "stateful", withExtension: "json")!
+
+            return try await bytecode(forUrl: url)
+        }
+    }
 }

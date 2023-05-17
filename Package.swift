@@ -32,6 +32,7 @@ let exampleTargets = [
     "CreateAccountThresholdKey",
     "CreateFile",
     "CreateSimpleContract",
+    "CreateStatefulContract",
     "CreateTopic",
     "DeleteAccount",
     "DeleteFile",
@@ -105,7 +106,8 @@ let package = Package(
         // weird name, but whatever, internal targets
         .target(
             name: "HederaExampleUtilities",
-            dependencies: ["Hedera"]
+            dependencies: ["Hedera"],
+            resources: [.process("Resources")]
         ),
         .target(
             name: "Hedera",
