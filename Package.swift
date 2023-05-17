@@ -31,6 +31,7 @@ let exampleTargets = [
     "CreateAccount",
     "CreateAccountThresholdKey",
     "CreateFile",
+    "CreateSimpleContract",
     "CreateTopic",
     "DeleteAccount",
     "DeleteFile",
