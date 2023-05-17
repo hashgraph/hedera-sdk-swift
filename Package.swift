@@ -29,6 +29,7 @@ let exampleTargets = [
     "ConsensusPubSubChunked",
     "ConsensusPubSubWithSubmitKey",
     "CreateAccount",
+    "CreateAccountThresholdKey",
     "CreateFile",
     "CreateTopic",
     "DeleteAccount",
