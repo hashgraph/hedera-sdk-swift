@@ -152,12 +152,12 @@ public class Transaction: ValidateChecksums {
     /// This forcibly disables transaction ID regeneration.
     @discardableResult
     public final func addSignature(_ publicKey: PublicKey, _ signature: Data) -> Self {
-        self.addSignatureSigner(Signer(publicKey) { _ in signature })
+        _ = self.addSignatureSigner(Signer(publicKey) { _ in signature })
 
         return self
     }
 
-    internal func addSignatureSigner(_ signer: Signer) {
+    internal func addSignatureSigner(_ signer: Signer) -> Data {
         precondition(isFrozen)
 
         precondition(nodeAccountIds?.count == 1, "cannot manually add a signature to a transaction with multiple nodes")
@@ -165,7 +165,12 @@ public class Transaction: ValidateChecksums {
         // swiftlint:disable:next force_try
         let sources = try! makeSources()
 
+        // hack: I don't care about perf here.
+        let ret = signer(sources.signedTransactions[0].bodyBytes).1
+
         self.sources = sources.signWithSigners([signer])
+
+        return ret
     }
 
     public final func schedule() -> ScheduleCreateTransaction {

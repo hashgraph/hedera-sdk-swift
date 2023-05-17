@@ -476,10 +476,10 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         Self.fromMnemonic(mnemonic, "")
     }
 
-    public func signTransaction(_ transaction: Transaction) throws {
+    public func signTransaction(_ transaction: Transaction) throws -> Data {
         try transaction.freeze()
 
-        transaction.addSignatureSigner(.privateKey(self))
+        return transaction.addSignatureSigner(.privateKey(self))
     }
 }
 
