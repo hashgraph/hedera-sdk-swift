@@ -106,7 +106,6 @@ let package = Package(
         // weird name, but whatever, internal targets
         .target(
             name: "HederaExampleUtilities",
-            dependencies: ["Hedera"],
             resources: [.process("Resources")]
         ),
         .target(
