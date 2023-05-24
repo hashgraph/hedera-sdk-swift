@@ -22,15 +22,15 @@ extension Network {
     internal struct Config {
         internal let map: [AccountId: Int]
         internal let nodes: [AccountId]
-        internal let addresses: [[String]]
+        internal let addresses: [Set<String>]
     }
 }
 
 extension Network.Config: ExpressibleByDictionaryLiteral {
-    internal init(dictionaryLiteral elements: (AccountId, [String])...) {
+    internal init(dictionaryLiteral elements: (AccountId, Set<String>)...) {
         var map: [AccountId: Int] = [:]
         var nodes: [AccountId] = []
-        var addresses: [[String]] = []
+        var addresses: [Set<String>] = []
         for (index, (key, value)) in elements.enumerated() {
             map[key] = index
             nodes.append(key)

@@ -64,43 +64,39 @@ internal final class ChannelBalancer: GRPCChannel {
     }
 }
 
-internal final class Network: Sendable {
+internal final class Network: Sendable, AtomicReference {
     private init(
         map: [AccountId: Int],
         nodes: [AccountId],
-        channels: [GRPCChannel],
-        healthy: [ManagedAtomic<Int64>],
-        lastPinged: [ManagedAtomic<Int64>]
+        health: [NodeHealth],
+        connections: [NodeConnection]
     ) {
         self.map = map
         self.nodes = nodes
-        self.channels = channels
-        self.healthy = healthy
-        self.lastPinged = lastPinged
+        self.health = health
+        self.connections = connections
     }
 
     internal let map: [AccountId: Int]
     internal let nodes: [AccountId]
-    fileprivate let channels: [GRPCChannel]
-    fileprivate let healthy: [ManagedAtomic<Int64>]
-    fileprivate let lastPinged: [ManagedAtomic<Int64>]
+    fileprivate let health: [NodeHealth]
+    fileprivate let connections: [NodeConnection]
 
     fileprivate convenience init(config: Config, eventLoop: NIOCore.EventLoopGroup) {
         // todo: someone verify this code pls.
-        let channels = config.addresses.map { addresses in
-            ChannelBalancer(eventLoop: eventLoop.next(), addresses.map { .hostAndPort($0, 50211) })
+        let connections = config.addresses.map { addresses in
+            let addresses = Set(addresses.map { HostAndPort(host: $0, port: 50211) })
+            return NodeConnection(eventLoop: eventLoop.next(), addresses: addresses)
         }
 
         // note: `Array(repeating: <element>, count: Int)` does *not* work the way you'd want with reference types.
-        let healthy = (0..<config.nodes.count).map { _ in ManagedAtomic(Int64(0)) }
-        let lastPinged = (0..<config.nodes.count).map { _ in ManagedAtomic(Int64(0)) }
+        let health = (0..<config.nodes.count).map { _ in NodeHealth() }
 
         self.init(
             map: config.map,
             nodes: config.nodes,
-            channels: channels,
-            healthy: healthy,
-            lastPinged: lastPinged
+            health: health,
+            connections: connections
         )
     }
 
@@ -118,7 +114,7 @@ internal final class Network: Sendable {
 
     internal func channel(for nodeIndex: Int) -> (AccountId, GRPCChannel) {
         let accountId = nodes[nodeIndex]
-        let channel = channels[nodeIndex]
+        let channel = connections[nodeIndex].channel
 
         return (accountId, channel)
     }
@@ -136,7 +132,7 @@ internal final class Network: Sendable {
     internal func healthyNodeIndexes() -> [Int] {
         let now = Timestamp.now
 
-        return (0..<healthy.count).filter { isNodeHealthy($0, now) }
+        return (0..<health.count).filter { isNodeHealthy($0, now) }
     }
 
     internal func healthyNodeIds() -> [AccountId] {
@@ -144,14 +140,43 @@ internal final class Network: Sendable {
     }
 
     internal func markNodeUsed(_ index: Int, now: Timestamp) {
-        lastPinged[index].store(Int64(now.unixTimestampNanos), ordering: .relaxed)
+        health[index].lastPinged.store(Int64(now.unixTimestampNanos), ordering: .relaxed)
     }
 
     internal func nodeRecentlyPinged(_ index: Int, now: Timestamp) -> Bool {
-        lastPinged[index].load(ordering: .relaxed) > Int64((now - .minutes(15)).unixTimestampNanos)
+        health[index].lastPinged.load(ordering: .relaxed) > Int64((now - .minutes(15)).unixTimestampNanos)
     }
 
     internal func isNodeHealthy(_ index: Int, _ now: Timestamp) -> Bool {
-        healthy[index].load(ordering: .relaxed) < Int64(now.unixTimestampNanos)
+        health[index].health.load(ordering: .relaxed) < Int64(now.unixTimestampNanos)
+    }
+}
+
+// this needs to be a class for reference semantics.
+internal final class NodeHealth: Sendable {
+    internal let health: ManagedAtomic<Int64>
+    internal let lastPinged: ManagedAtomic<Int64>
+    internal init() {
+        self.health = .init(0)
+        self.lastPinged = .init(0)
+    }
+}
+
+internal struct HostAndPort: Hashable, Equatable {
+    let host: String
+    let port: UInt16
+}
+
+internal struct NodeConnection: Sendable {
+    internal init(eventLoop: EventLoop, addresses: Set<HostAndPort>) {
+        realChannel = ChannelBalancer(eventLoop: eventLoop, addresses.map { .host($0.host, port: Int($0.port)) })
+        self.addresses = addresses
+    }
+
+    let addresses: Set<HostAndPort>
+    private let realChannel: ChannelBalancer
+
+    internal var channel: any GRPCChannel {
+        realChannel
     }
 }

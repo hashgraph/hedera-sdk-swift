@@ -42,7 +42,6 @@ public final class Client: Sendable {
         _ eventLoop: NIOCore.EventLoopGroup
     ) {
         self.eventLoop = eventLoop
-        // self.ptr = ptr
         self.mirrorNetwork = mirrorNetwork
         self.network = network
         self.operatorInner = .init(nil)
