@@ -388,7 +388,7 @@ public class Transaction: ValidateChecksums {
     public final func toBytes() throws -> Data {
         precondition(isFrozen, "Transaction must be frozen to call `toBytes`")
 
-        if let sources = self.sources {
+        if let sources = self.sources?.signWithSigners(self.signers) {
             return sources.toBytes()
         }
 
@@ -433,7 +433,7 @@ extension Transaction {
         }
         return HError(
             kind: .transactionPreCheckStatus(status: status, transactionId: transactionId),
-            description: "transaction `\(transactionId)` failed pre-check with status `\(status)"
+            description: "transaction `\(transactionId)` failed pre-check with status `\(status)`"
         )
     }
 
