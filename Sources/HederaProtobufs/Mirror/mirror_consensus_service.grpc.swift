@@ -72,10 +72,8 @@ extension Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    @available(*, deprecated)
-    extension Com_Hedera_Mirror_Api_Proto_ConsensusServiceClient: @unchecked Sendable {}
-#endif  // compiler(>=5.6)
+@available(*, deprecated)
+extension Com_Hedera_Mirror_Api_Proto_ConsensusServiceClient: @unchecked Sendable {}
 
 @available(*, deprecated, renamed: "Com_Hedera_Mirror_Api_Proto_ConsensusServiceNIOClient")
 public final class Com_Hedera_Mirror_Api_Proto_ConsensusServiceClient:
@@ -135,85 +133,82 @@ public struct Com_Hedera_Mirror_Api_Proto_ConsensusServiceNIOClient:
     }
 }
 
-#if compiler(>=5.6)
-    ///*
-    /// The Mirror Service provides the ability to query a stream of Hedera Consensus Service (HCS)
-    /// messages for an HCS Topic via a specific (possibly open-ended) time range.
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public protocol Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClientProtocol: GRPCClient {
-        static var serviceDescriptor: GRPCServiceDescriptor { get }
-        var interceptors: Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientInterceptorFactoryProtocol? { get }
+///*
+/// The Mirror Service provides the ability to query a stream of Hedera Consensus Service (HCS)
+/// messages for an HCS Topic via a specific (possibly open-ended) time range.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public protocol Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClientProtocol: GRPCClient {
+    static var serviceDescriptor: GRPCServiceDescriptor { get }
+    var interceptors: Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientInterceptorFactoryProtocol? { get }
 
-        func makeSubscribeTopicCall(
-            _ request: Com_Hedera_Mirror_Api_Proto_ConsensusTopicQuery,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncServerStreamingCall<
-            Com_Hedera_Mirror_Api_Proto_ConsensusTopicQuery, Com_Hedera_Mirror_Api_Proto_ConsensusTopicResponse
-        >
+    func makeSubscribeTopicCall(
+        _ request: Com_Hedera_Mirror_Api_Proto_ConsensusTopicQuery,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncServerStreamingCall<
+        Com_Hedera_Mirror_Api_Proto_ConsensusTopicQuery, Com_Hedera_Mirror_Api_Proto_ConsensusTopicResponse
+    >
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClientProtocol {
+    public static var serviceDescriptor: GRPCServiceDescriptor {
+        return Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientMetadata.serviceDescriptor
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClientProtocol {
-        public static var serviceDescriptor: GRPCServiceDescriptor {
-            return Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientMetadata.serviceDescriptor
-        }
-
-        public var interceptors: Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientInterceptorFactoryProtocol? {
-            return nil
-        }
-
-        public func makeSubscribeTopicCall(
-            _ request: Com_Hedera_Mirror_Api_Proto_ConsensusTopicQuery,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncServerStreamingCall<
-            Com_Hedera_Mirror_Api_Proto_ConsensusTopicQuery, Com_Hedera_Mirror_Api_Proto_ConsensusTopicResponse
-        > {
-            return self.makeAsyncServerStreamingCall(
-                path: Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientMetadata.Methods.subscribeTopic.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makesubscribeTopicInterceptors() ?? []
-            )
-        }
+    public var interceptors: Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientInterceptorFactoryProtocol? {
+        return nil
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClientProtocol {
-        public func subscribeTopic(
-            _ request: Com_Hedera_Mirror_Api_Proto_ConsensusTopicQuery,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncResponseStream<Com_Hedera_Mirror_Api_Proto_ConsensusTopicResponse> {
-            return self.performAsyncServerStreamingCall(
-                path: Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientMetadata.Methods.subscribeTopic.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makesubscribeTopicInterceptors() ?? []
-            )
-        }
+    public func makeSubscribeTopicCall(
+        _ request: Com_Hedera_Mirror_Api_Proto_ConsensusTopicQuery,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncServerStreamingCall<
+        Com_Hedera_Mirror_Api_Proto_ConsensusTopicQuery, Com_Hedera_Mirror_Api_Proto_ConsensusTopicResponse
+    > {
+        return self.makeAsyncServerStreamingCall(
+            path: Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientMetadata.Methods.subscribeTopic.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makesubscribeTopicInterceptors() ?? []
+        )
     }
+}
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public struct Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClient:
-        Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClientProtocol
-    {
-        public var channel: GRPCChannel
-        public var defaultCallOptions: CallOptions
-        public var interceptors: Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientInterceptorFactoryProtocol?
-
-        public init(
-            channel: GRPCChannel,
-            defaultCallOptions: CallOptions = CallOptions(),
-            interceptors: Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientInterceptorFactoryProtocol? = nil
-        ) {
-            self.channel = channel
-            self.defaultCallOptions = defaultCallOptions
-            self.interceptors = interceptors
-        }
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClientProtocol {
+    public func subscribeTopic(
+        _ request: Com_Hedera_Mirror_Api_Proto_ConsensusTopicQuery,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncResponseStream<Com_Hedera_Mirror_Api_Proto_ConsensusTopicResponse> {
+        return self.performAsyncServerStreamingCall(
+            path: Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientMetadata.Methods.subscribeTopic.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makesubscribeTopicInterceptors() ?? []
+        )
     }
+}
 
-#endif  // compiler(>=5.6)
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public struct Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClient:
+    Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClientProtocol
+{
+    public var channel: GRPCChannel
+    public var defaultCallOptions: CallOptions
+    public var interceptors: Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientInterceptorFactoryProtocol?
 
-public protocol Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientInterceptorFactoryProtocol: GRPCSendable {
+    public init(
+        channel: GRPCChannel,
+        defaultCallOptions: CallOptions = CallOptions(),
+        interceptors: Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientInterceptorFactoryProtocol? = nil
+    ) {
+        self.channel = channel
+        self.defaultCallOptions = defaultCallOptions
+        self.interceptors = interceptors
+    }
+}
+
+public protocol Com_Hedera_Mirror_Api_Proto_ConsensusServiceClientInterceptorFactoryProtocol: Sendable {
 
     /// - Returns: Interceptors to use when invoking 'subscribeTopic'.
     func makesubscribeTopicInterceptors() -> [ClientInterceptor<

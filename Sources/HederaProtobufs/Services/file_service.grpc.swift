@@ -232,10 +232,8 @@ extension Proto_FileServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    @available(*, deprecated)
-    extension Proto_FileServiceClient: @unchecked Sendable {}
-#endif  // compiler(>=5.6)
+@available(*, deprecated)
+extension Proto_FileServiceClient: @unchecked Sendable {}
 
 @available(*, deprecated, renamed: "Proto_FileServiceNIOClient")
 public final class Proto_FileServiceClient: Proto_FileServiceClientProtocol {
@@ -291,281 +289,278 @@ public struct Proto_FileServiceNIOClient: Proto_FileServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    ///*
-    /// Transactions and queries for the file service.
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public protocol Proto_FileServiceAsyncClientProtocol: GRPCClient {
-        static var serviceDescriptor: GRPCServiceDescriptor { get }
-        var interceptors: Proto_FileServiceClientInterceptorFactoryProtocol? { get }
+///*
+/// Transactions and queries for the file service.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public protocol Proto_FileServiceAsyncClientProtocol: GRPCClient {
+    static var serviceDescriptor: GRPCServiceDescriptor { get }
+    var interceptors: Proto_FileServiceClientInterceptorFactoryProtocol? { get }
 
-        func makeCreateFileCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeCreateFileCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeUpdateFileCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeUpdateFileCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeDeleteFileCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeDeleteFileCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeAppendContentCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeAppendContentCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeGetFileContentCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetFileContentCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeGetFileInfoCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetFileInfoCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeSystemDeleteCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeSystemDeleteCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeSystemUndeleteCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeSystemUndeleteCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_FileServiceAsyncClientProtocol {
+    public static var serviceDescriptor: GRPCServiceDescriptor {
+        return Proto_FileServiceClientMetadata.serviceDescriptor
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_FileServiceAsyncClientProtocol {
-        public static var serviceDescriptor: GRPCServiceDescriptor {
-            return Proto_FileServiceClientMetadata.serviceDescriptor
-        }
-
-        public var interceptors: Proto_FileServiceClientInterceptorFactoryProtocol? {
-            return nil
-        }
-
-        public func makeCreateFileCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.createFile.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecreateFileInterceptors() ?? []
-            )
-        }
-
-        public func makeUpdateFileCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.updateFile.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeupdateFileInterceptors() ?? []
-            )
-        }
-
-        public func makeDeleteFileCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.deleteFile.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makedeleteFileInterceptors() ?? []
-            )
-        }
-
-        public func makeAppendContentCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.appendContent.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeappendContentInterceptors() ?? []
-            )
-        }
-
-        public func makeGetFileContentCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.getFileContent.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetFileContentInterceptors() ?? []
-            )
-        }
-
-        public func makeGetFileInfoCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.getFileInfo.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetFileInfoInterceptors() ?? []
-            )
-        }
-
-        public func makeSystemDeleteCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.systemDelete.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makesystemDeleteInterceptors() ?? []
-            )
-        }
-
-        public func makeSystemUndeleteCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.systemUndelete.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makesystemUndeleteInterceptors() ?? []
-            )
-        }
+    public var interceptors: Proto_FileServiceClientInterceptorFactoryProtocol? {
+        return nil
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_FileServiceAsyncClientProtocol {
-        public func createFile(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.createFile.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makecreateFileInterceptors() ?? []
-            )
-        }
-
-        public func updateFile(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.updateFile.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeupdateFileInterceptors() ?? []
-            )
-        }
-
-        public func deleteFile(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.deleteFile.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makedeleteFileInterceptors() ?? []
-            )
-        }
-
-        public func appendContent(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.appendContent.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeappendContentInterceptors() ?? []
-            )
-        }
-
-        public func getFileContent(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.getFileContent.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetFileContentInterceptors() ?? []
-            )
-        }
-
-        public func getFileInfo(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.getFileInfo.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetFileInfoInterceptors() ?? []
-            )
-        }
-
-        public func systemDelete(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.systemDelete.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makesystemDeleteInterceptors() ?? []
-            )
-        }
-
-        public func systemUndelete(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_FileServiceClientMetadata.Methods.systemUndelete.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makesystemUndeleteInterceptors() ?? []
-            )
-        }
+    public func makeCreateFileCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.createFile.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecreateFileInterceptors() ?? []
+        )
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public struct Proto_FileServiceAsyncClient: Proto_FileServiceAsyncClientProtocol {
-        public var channel: GRPCChannel
-        public var defaultCallOptions: CallOptions
-        public var interceptors: Proto_FileServiceClientInterceptorFactoryProtocol?
-
-        public init(
-            channel: GRPCChannel,
-            defaultCallOptions: CallOptions = CallOptions(),
-            interceptors: Proto_FileServiceClientInterceptorFactoryProtocol? = nil
-        ) {
-            self.channel = channel
-            self.defaultCallOptions = defaultCallOptions
-            self.interceptors = interceptors
-        }
+    public func makeUpdateFileCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.updateFile.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeupdateFileInterceptors() ?? []
+        )
     }
 
-#endif  // compiler(>=5.6)
+    public func makeDeleteFileCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.deleteFile.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makedeleteFileInterceptors() ?? []
+        )
+    }
 
-public protocol Proto_FileServiceClientInterceptorFactoryProtocol: GRPCSendable {
+    public func makeAppendContentCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.appendContent.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeappendContentInterceptors() ?? []
+        )
+    }
+
+    public func makeGetFileContentCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.getFileContent.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetFileContentInterceptors() ?? []
+        )
+    }
+
+    public func makeGetFileInfoCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.getFileInfo.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetFileInfoInterceptors() ?? []
+        )
+    }
+
+    public func makeSystemDeleteCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.systemDelete.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makesystemDeleteInterceptors() ?? []
+        )
+    }
+
+    public func makeSystemUndeleteCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.systemUndelete.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makesystemUndeleteInterceptors() ?? []
+        )
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_FileServiceAsyncClientProtocol {
+    public func createFile(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.createFile.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makecreateFileInterceptors() ?? []
+        )
+    }
+
+    public func updateFile(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.updateFile.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeupdateFileInterceptors() ?? []
+        )
+    }
+
+    public func deleteFile(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.deleteFile.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makedeleteFileInterceptors() ?? []
+        )
+    }
+
+    public func appendContent(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.appendContent.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeappendContentInterceptors() ?? []
+        )
+    }
+
+    public func getFileContent(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.getFileContent.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetFileContentInterceptors() ?? []
+        )
+    }
+
+    public func getFileInfo(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.getFileInfo.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetFileInfoInterceptors() ?? []
+        )
+    }
+
+    public func systemDelete(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.systemDelete.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makesystemDeleteInterceptors() ?? []
+        )
+    }
+
+    public func systemUndelete(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_FileServiceClientMetadata.Methods.systemUndelete.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makesystemUndeleteInterceptors() ?? []
+        )
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public struct Proto_FileServiceAsyncClient: Proto_FileServiceAsyncClientProtocol {
+    public var channel: GRPCChannel
+    public var defaultCallOptions: CallOptions
+    public var interceptors: Proto_FileServiceClientInterceptorFactoryProtocol?
+
+    public init(
+        channel: GRPCChannel,
+        defaultCallOptions: CallOptions = CallOptions(),
+        interceptors: Proto_FileServiceClientInterceptorFactoryProtocol? = nil
+    ) {
+        self.channel = channel
+        self.defaultCallOptions = defaultCallOptions
+        self.interceptors = interceptors
+    }
+}
+
+public protocol Proto_FileServiceClientInterceptorFactoryProtocol: Sendable {
 
     /// - Returns: Interceptors to use when invoking 'createFile'.
     func makecreateFileInterceptors() -> [ClientInterceptor<Proto_Transaction, Proto_TransactionResponse>]

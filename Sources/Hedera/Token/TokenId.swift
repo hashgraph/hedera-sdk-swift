@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// The unique identifier for a token on Hedera.
-public struct TokenId: EntityId, ValidateChecksums {
+public struct TokenId: EntityId, ValidateChecksums, Sendable {
     public init(shard: UInt64 = 0, realm: UInt64 = 0, num: UInt64, checksum: Checksum?) {
         self.shard = shard
         self.realm = realm

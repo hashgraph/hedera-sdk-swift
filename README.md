@@ -76,24 +76,24 @@ protoc-gen-grpc-swift (from https://github.com/grpc/grpc-swift)
 
 ### Generate services
 ```bash
-# cwd: `$REPO/sdk/swift`
-protoc --swift_opt=Visibility=Public --swift_out=./Sources/HederaProtobufs/Services --proto_path=../../protobufs/services ../../protobufs/services/*
+# cwd: `$REPO`
+protoc --swift_opt=Visibility=Public  --swift_opt=FileNaming=PathToUnderscores --swift_out=./Sources/HederaProtobufs/Services --proto_path=./protobufs/services protobufs/services/**.proto
 
 # generate GRPC (if needed)
-protoc --grpc-swift_opt=Visibility=Public,Server=false --grpc-swift_out=./Sources/HederaProtobufs/Services --proto_path=../../protobufs/services ../../protobufs/services/*
+protoc --grpc-swift_opt=Visibility=Public,Server=false --grpc-swift_out=./Sources/HederaProtobufs/Services --proto_path=protobufs/services protobufs/services/**.proto
 ```
 
 ### Generate Mirror
 ```bash
 # cwd: `$REPO/sdk/swift`
-protoc --swift_opt=Visibility=Public --swift_opt=FileNaming=PathToUnderscores --swift_out=./Sources/HederaProtobufs/Mirror -I=../../protobufs/mirror -I=../../protobufs/services ../../protobufs/mirror/*
+protoc --swift_opt=Visibility=Public --swift_opt=FileNaming=PathToUnderscores --swift_out=./Sources/HederaProtobufs/Mirror -I=protobufs/mirror -I=protobufs/services protobufs/mirror/**.proto
 
 # generate GRPC (if needed)
-protoc --grpc-swift_opt=Visibility=Public,FileNaming=PathToUnderscores,Server=false --grpc-swift_out=./Sources/HederaProtobufs/Mirror -I=../../protobufs/mirror -I=../../protobufs/services ../../protobufs/mirror/*
+protoc --grpc-swift_opt=Visibility=Public,FileNaming=PathToUnderscores,Server=false --grpc-swift_out=./Sources/HederaProtobufs/Mirror -I=protobufs/mirror -I=protobufs/services protobufs/mirror/**.proto
 ```
 
 ### Generate SDK
 ```bash
 # cwd: `$REPO/sdk/swift`
-protoc --swift_opt=Visibility=Public --swift_opt=FileNaming=PathToUnderscores --swift_out=./Sources/HederaProtobufs/Sdk -I=../../protobufs/sdk -I=../../protobufs/services ../../protobufs/sdk/*
+protoc --swift_opt=Visibility=Public --swift_opt=FileNaming=PathToUnderscores --swift_out=./Sources/HederaProtobufs/Sdk -I=protobufs/sdk -I=protobufs/services protobufs/sdk/**.proto
 ```

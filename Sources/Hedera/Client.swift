@@ -24,24 +24,6 @@ import GRPC
 import NIOConcurrencyHelpers
 import NIOCore
 
-// safety: Atomics just forgot to put the conformance.
-private struct AtomicBool: @unchecked Sendable {
-    init(_ value: Bool) {
-        self.inner = .init(value)
-    }
-
-    fileprivate let inner: ManagedAtomic<Bool>
-}
-
-// safety: Atomics just forgot to put the conformance.
-private struct AtomicInt64: @unchecked Sendable {
-    init(_ value: Int64) {
-        self.inner = .init(value)
-    }
-
-    fileprivate let inner: ManagedAtomic<Int64>
-}
-
 /// Managed client for use on the Hedera network.
 public final class Client: Sendable {
     internal let eventLoop: NIOCore.EventLoopGroup
@@ -49,9 +31,9 @@ public final class Client: Sendable {
     private let mirrorNetwork: MirrorNetwork
     internal let network: Network
     private let operatorInner: NIOLockedValueBox<Operator?>
-    private let autoValidateChecksumsInner: AtomicBool
-    private let regenerateTransactionIdInner: AtomicBool
-    private let maxTransactionFeeInner: AtomicInt64
+    private let autoValidateChecksumsInner: ManagedAtomic<Bool>
+    private let regenerateTransactionIdInner: ManagedAtomic<Bool>
+    private let maxTransactionFeeInner: ManagedAtomic<Int64>
 
     private init(
         network: Network,
@@ -91,7 +73,7 @@ public final class Client: Sendable {
     }
 
     internal var maxTransactionFee: Hbar? {
-        let value = maxTransactionFeeInner.inner.load(ordering: .relaxed)
+        let value = maxTransactionFeeInner.load(ordering: .relaxed)
 
         guard value != 0 else {
             return nil
@@ -212,8 +194,8 @@ public final class Client: Sendable {
     }
 
     fileprivate var autoValidateChecksums: Bool {
-        get { self.autoValidateChecksumsInner.inner.load(ordering: .relaxed) }
-        set(value) { self.autoValidateChecksumsInner.inner.store(value, ordering: .relaxed) }
+        get { self.autoValidateChecksumsInner.load(ordering: .relaxed) }
+        set(value) { self.autoValidateChecksumsInner.store(value, ordering: .relaxed) }
     }
 
     @discardableResult
@@ -233,8 +215,8 @@ public final class Client: Sendable {
     ///
     /// >Note: Some operations forcibly disable transaction ID regeneration, such as setting the transaction ID explicitly.
     public var defaultRegenerateTransactionId: Bool {
-        get { self.regenerateTransactionIdInner.inner.load(ordering: .relaxed) }
-        set(value) { self.regenerateTransactionIdInner.inner.store(value, ordering: .relaxed) }
+        get { self.regenerateTransactionIdInner.load(ordering: .relaxed) }
+        set(value) { self.regenerateTransactionIdInner.store(value, ordering: .relaxed) }
     }
 
     /// Sets whether or not the transaction ID should be refreshed if a ``Status/transactionExpired`` occurs.

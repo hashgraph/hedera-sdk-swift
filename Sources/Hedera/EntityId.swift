@@ -253,7 +253,7 @@ internal enum PartialEntityId<S: StringProtocol> {
 // fixme(sr): How do DRY?
 
 /// The unique identifier for a file on Hedera.
-public struct FileId: EntityId, ValidateChecksums {
+public struct FileId: EntityId, ValidateChecksums, Sendable {
     public init(shard: UInt64 = 0, realm: UInt64 = 0, num: UInt64, checksum: Checksum?) {
         self.shard = shard
         self.realm = realm

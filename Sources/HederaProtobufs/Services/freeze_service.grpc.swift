@@ -65,10 +65,8 @@ extension Proto_FreezeServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    @available(*, deprecated)
-    extension Proto_FreezeServiceClient: @unchecked Sendable {}
-#endif  // compiler(>=5.6)
+@available(*, deprecated)
+extension Proto_FreezeServiceClient: @unchecked Sendable {}
 
 @available(*, deprecated, renamed: "Proto_FreezeServiceNIOClient")
 public final class Proto_FreezeServiceClient: Proto_FreezeServiceClientProtocol {
@@ -124,78 +122,75 @@ public struct Proto_FreezeServiceNIOClient: Proto_FreezeServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    ///*
-    /// The request and responses for freeze service.
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public protocol Proto_FreezeServiceAsyncClientProtocol: GRPCClient {
-        static var serviceDescriptor: GRPCServiceDescriptor { get }
-        var interceptors: Proto_FreezeServiceClientInterceptorFactoryProtocol? { get }
+///*
+/// The request and responses for freeze service.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public protocol Proto_FreezeServiceAsyncClientProtocol: GRPCClient {
+    static var serviceDescriptor: GRPCServiceDescriptor { get }
+    var interceptors: Proto_FreezeServiceClientInterceptorFactoryProtocol? { get }
 
-        func makeFreezeCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeFreezeCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_FreezeServiceAsyncClientProtocol {
+    public static var serviceDescriptor: GRPCServiceDescriptor {
+        return Proto_FreezeServiceClientMetadata.serviceDescriptor
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_FreezeServiceAsyncClientProtocol {
-        public static var serviceDescriptor: GRPCServiceDescriptor {
-            return Proto_FreezeServiceClientMetadata.serviceDescriptor
-        }
-
-        public var interceptors: Proto_FreezeServiceClientInterceptorFactoryProtocol? {
-            return nil
-        }
-
-        public func makeFreezeCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_FreezeServiceClientMetadata.Methods.freeze.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makefreezeInterceptors() ?? []
-            )
-        }
+    public var interceptors: Proto_FreezeServiceClientInterceptorFactoryProtocol? {
+        return nil
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_FreezeServiceAsyncClientProtocol {
-        public func freeze(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_FreezeServiceClientMetadata.Methods.freeze.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makefreezeInterceptors() ?? []
-            )
-        }
+    public func makeFreezeCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_FreezeServiceClientMetadata.Methods.freeze.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makefreezeInterceptors() ?? []
+        )
     }
+}
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public struct Proto_FreezeServiceAsyncClient: Proto_FreezeServiceAsyncClientProtocol {
-        public var channel: GRPCChannel
-        public var defaultCallOptions: CallOptions
-        public var interceptors: Proto_FreezeServiceClientInterceptorFactoryProtocol?
-
-        public init(
-            channel: GRPCChannel,
-            defaultCallOptions: CallOptions = CallOptions(),
-            interceptors: Proto_FreezeServiceClientInterceptorFactoryProtocol? = nil
-        ) {
-            self.channel = channel
-            self.defaultCallOptions = defaultCallOptions
-            self.interceptors = interceptors
-        }
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_FreezeServiceAsyncClientProtocol {
+    public func freeze(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_FreezeServiceClientMetadata.Methods.freeze.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makefreezeInterceptors() ?? []
+        )
     }
+}
 
-#endif  // compiler(>=5.6)
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public struct Proto_FreezeServiceAsyncClient: Proto_FreezeServiceAsyncClientProtocol {
+    public var channel: GRPCChannel
+    public var defaultCallOptions: CallOptions
+    public var interceptors: Proto_FreezeServiceClientInterceptorFactoryProtocol?
 
-public protocol Proto_FreezeServiceClientInterceptorFactoryProtocol: GRPCSendable {
+    public init(
+        channel: GRPCChannel,
+        defaultCallOptions: CallOptions = CallOptions(),
+        interceptors: Proto_FreezeServiceClientInterceptorFactoryProtocol? = nil
+    ) {
+        self.channel = channel
+        self.defaultCallOptions = defaultCallOptions
+        self.interceptors = interceptors
+    }
+}
+
+public protocol Proto_FreezeServiceClientInterceptorFactoryProtocol: Sendable {
 
     /// - Returns: Interceptors to use when invoking 'freeze'.
     func makefreezeInterceptors() -> [ClientInterceptor<Proto_Transaction, Proto_TransactionResponse>]

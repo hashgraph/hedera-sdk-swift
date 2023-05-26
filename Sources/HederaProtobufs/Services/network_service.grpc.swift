@@ -143,10 +143,8 @@ extension Proto_NetworkServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    @available(*, deprecated)
-    extension Proto_NetworkServiceClient: @unchecked Sendable {}
-#endif  // compiler(>=5.6)
+@available(*, deprecated)
+extension Proto_NetworkServiceClient: @unchecked Sendable {}
 
 @available(*, deprecated, renamed: "Proto_NetworkServiceNIOClient")
 public final class Proto_NetworkServiceClient: Proto_NetworkServiceClientProtocol {
@@ -202,165 +200,162 @@ public struct Proto_NetworkServiceNIOClient: Proto_NetworkServiceClientProtocol 
     }
 }
 
-#if compiler(>=5.6)
-    ///*
-    /// The requests and responses for different network services.
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public protocol Proto_NetworkServiceAsyncClientProtocol: GRPCClient {
-        static var serviceDescriptor: GRPCServiceDescriptor { get }
-        var interceptors: Proto_NetworkServiceClientInterceptorFactoryProtocol? { get }
+///*
+/// The requests and responses for different network services.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public protocol Proto_NetworkServiceAsyncClientProtocol: GRPCClient {
+    static var serviceDescriptor: GRPCServiceDescriptor { get }
+    var interceptors: Proto_NetworkServiceClientInterceptorFactoryProtocol? { get }
 
-        func makeGetVersionInfoCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetVersionInfoCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeGetExecutionTimeCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetExecutionTimeCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
 
-        func makeUncheckedSubmitCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makeUncheckedSubmitCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
-        func makeGetAccountDetailsCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+    func makeGetAccountDetailsCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response>
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_NetworkServiceAsyncClientProtocol {
+    public static var serviceDescriptor: GRPCServiceDescriptor {
+        return Proto_NetworkServiceClientMetadata.serviceDescriptor
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_NetworkServiceAsyncClientProtocol {
-        public static var serviceDescriptor: GRPCServiceDescriptor {
-            return Proto_NetworkServiceClientMetadata.serviceDescriptor
-        }
-
-        public var interceptors: Proto_NetworkServiceClientInterceptorFactoryProtocol? {
-            return nil
-        }
-
-        public func makeGetVersionInfoCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_NetworkServiceClientMetadata.Methods.getVersionInfo.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetVersionInfoInterceptors() ?? []
-            )
-        }
-
-        public func makeGetExecutionTimeCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_NetworkServiceClientMetadata.Methods.getExecutionTime.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetExecutionTimeInterceptors() ?? []
-            )
-        }
-
-        public func makeUncheckedSubmitCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_NetworkServiceClientMetadata.Methods.uncheckedSubmit.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeuncheckedSubmitInterceptors() ?? []
-            )
-        }
-
-        public func makeGetAccountDetailsCall(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_NetworkServiceClientMetadata.Methods.getAccountDetails.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetAccountDetailsInterceptors() ?? []
-            )
-        }
+    public var interceptors: Proto_NetworkServiceClientInterceptorFactoryProtocol? {
+        return nil
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_NetworkServiceAsyncClientProtocol {
-        public func getVersionInfo(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_NetworkServiceClientMetadata.Methods.getVersionInfo.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetVersionInfoInterceptors() ?? []
-            )
-        }
-
-        public func getExecutionTime(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_NetworkServiceClientMetadata.Methods.getExecutionTime.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetExecutionTimeInterceptors() ?? []
-            )
-        }
-
-        public func uncheckedSubmit(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_NetworkServiceClientMetadata.Methods.uncheckedSubmit.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeuncheckedSubmitInterceptors() ?? []
-            )
-        }
-
-        public func getAccountDetails(
-            _ request: Proto_Query,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_Response {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_NetworkServiceClientMetadata.Methods.getAccountDetails.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makegetAccountDetailsInterceptors() ?? []
-            )
-        }
+    public func makeGetVersionInfoCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_NetworkServiceClientMetadata.Methods.getVersionInfo.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetVersionInfoInterceptors() ?? []
+        )
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public struct Proto_NetworkServiceAsyncClient: Proto_NetworkServiceAsyncClientProtocol {
-        public var channel: GRPCChannel
-        public var defaultCallOptions: CallOptions
-        public var interceptors: Proto_NetworkServiceClientInterceptorFactoryProtocol?
-
-        public init(
-            channel: GRPCChannel,
-            defaultCallOptions: CallOptions = CallOptions(),
-            interceptors: Proto_NetworkServiceClientInterceptorFactoryProtocol? = nil
-        ) {
-            self.channel = channel
-            self.defaultCallOptions = defaultCallOptions
-            self.interceptors = interceptors
-        }
+    public func makeGetExecutionTimeCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_NetworkServiceClientMetadata.Methods.getExecutionTime.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetExecutionTimeInterceptors() ?? []
+        )
     }
 
-#endif  // compiler(>=5.6)
+    public func makeUncheckedSubmitCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_NetworkServiceClientMetadata.Methods.uncheckedSubmit.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeuncheckedSubmitInterceptors() ?? []
+        )
+    }
 
-public protocol Proto_NetworkServiceClientInterceptorFactoryProtocol: GRPCSendable {
+    public func makeGetAccountDetailsCall(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Query, Proto_Response> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_NetworkServiceClientMetadata.Methods.getAccountDetails.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetAccountDetailsInterceptors() ?? []
+        )
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_NetworkServiceAsyncClientProtocol {
+    public func getVersionInfo(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_NetworkServiceClientMetadata.Methods.getVersionInfo.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetVersionInfoInterceptors() ?? []
+        )
+    }
+
+    public func getExecutionTime(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_NetworkServiceClientMetadata.Methods.getExecutionTime.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetExecutionTimeInterceptors() ?? []
+        )
+    }
+
+    public func uncheckedSubmit(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_NetworkServiceClientMetadata.Methods.uncheckedSubmit.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeuncheckedSubmitInterceptors() ?? []
+        )
+    }
+
+    public func getAccountDetails(
+        _ request: Proto_Query,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_Response {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_NetworkServiceClientMetadata.Methods.getAccountDetails.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makegetAccountDetailsInterceptors() ?? []
+        )
+    }
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public struct Proto_NetworkServiceAsyncClient: Proto_NetworkServiceAsyncClientProtocol {
+    public var channel: GRPCChannel
+    public var defaultCallOptions: CallOptions
+    public var interceptors: Proto_NetworkServiceClientInterceptorFactoryProtocol?
+
+    public init(
+        channel: GRPCChannel,
+        defaultCallOptions: CallOptions = CallOptions(),
+        interceptors: Proto_NetworkServiceClientInterceptorFactoryProtocol? = nil
+    ) {
+        self.channel = channel
+        self.defaultCallOptions = defaultCallOptions
+        self.interceptors = interceptors
+    }
+}
+
+public protocol Proto_NetworkServiceClientInterceptorFactoryProtocol: Sendable {
 
     /// - Returns: Interceptors to use when invoking 'getVersionInfo'.
     func makegetVersionInfoInterceptors() -> [ClientInterceptor<Proto_Query, Proto_Response>]

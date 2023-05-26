@@ -64,10 +64,8 @@ extension Proto_UtilServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    @available(*, deprecated)
-    extension Proto_UtilServiceClient: @unchecked Sendable {}
-#endif  // compiler(>=5.6)
+@available(*, deprecated)
+extension Proto_UtilServiceClient: @unchecked Sendable {}
 
 @available(*, deprecated, renamed: "Proto_UtilServiceNIOClient")
 public final class Proto_UtilServiceClient: Proto_UtilServiceClientProtocol {
@@ -123,78 +121,75 @@ public struct Proto_UtilServiceNIOClient: Proto_UtilServiceClientProtocol {
     }
 }
 
-#if compiler(>=5.6)
-    ///*
-    /// The requests and responses for different utility services.
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public protocol Proto_UtilServiceAsyncClientProtocol: GRPCClient {
-        static var serviceDescriptor: GRPCServiceDescriptor { get }
-        var interceptors: Proto_UtilServiceClientInterceptorFactoryProtocol? { get }
+///*
+/// The requests and responses for different utility services.
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public protocol Proto_UtilServiceAsyncClientProtocol: GRPCClient {
+    static var serviceDescriptor: GRPCServiceDescriptor { get }
+    var interceptors: Proto_UtilServiceClientInterceptorFactoryProtocol? { get }
 
-        func makePrngCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions?
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+    func makePrngCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions?
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+}
+
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_UtilServiceAsyncClientProtocol {
+    public static var serviceDescriptor: GRPCServiceDescriptor {
+        return Proto_UtilServiceClientMetadata.serviceDescriptor
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_UtilServiceAsyncClientProtocol {
-        public static var serviceDescriptor: GRPCServiceDescriptor {
-            return Proto_UtilServiceClientMetadata.serviceDescriptor
-        }
-
-        public var interceptors: Proto_UtilServiceClientInterceptorFactoryProtocol? {
-            return nil
-        }
-
-        public func makePrngCall(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
-            return self.makeAsyncUnaryCall(
-                path: Proto_UtilServiceClientMetadata.Methods.prng.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeprngInterceptors() ?? []
-            )
-        }
+    public var interceptors: Proto_UtilServiceClientInterceptorFactoryProtocol? {
+        return nil
     }
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    extension Proto_UtilServiceAsyncClientProtocol {
-        public func prng(
-            _ request: Proto_Transaction,
-            callOptions: CallOptions? = nil
-        ) async throws -> Proto_TransactionResponse {
-            return try await self.performAsyncUnaryCall(
-                path: Proto_UtilServiceClientMetadata.Methods.prng.path,
-                request: request,
-                callOptions: callOptions ?? self.defaultCallOptions,
-                interceptors: self.interceptors?.makeprngInterceptors() ?? []
-            )
-        }
+    public func makePrngCall(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+        return self.makeAsyncUnaryCall(
+            path: Proto_UtilServiceClientMetadata.Methods.prng.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeprngInterceptors() ?? []
+        )
     }
+}
 
-    @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
-    public struct Proto_UtilServiceAsyncClient: Proto_UtilServiceAsyncClientProtocol {
-        public var channel: GRPCChannel
-        public var defaultCallOptions: CallOptions
-        public var interceptors: Proto_UtilServiceClientInterceptorFactoryProtocol?
-
-        public init(
-            channel: GRPCChannel,
-            defaultCallOptions: CallOptions = CallOptions(),
-            interceptors: Proto_UtilServiceClientInterceptorFactoryProtocol? = nil
-        ) {
-            self.channel = channel
-            self.defaultCallOptions = defaultCallOptions
-            self.interceptors = interceptors
-        }
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+extension Proto_UtilServiceAsyncClientProtocol {
+    public func prng(
+        _ request: Proto_Transaction,
+        callOptions: CallOptions? = nil
+    ) async throws -> Proto_TransactionResponse {
+        return try await self.performAsyncUnaryCall(
+            path: Proto_UtilServiceClientMetadata.Methods.prng.path,
+            request: request,
+            callOptions: callOptions ?? self.defaultCallOptions,
+            interceptors: self.interceptors?.makeprngInterceptors() ?? []
+        )
     }
+}
 
-#endif  // compiler(>=5.6)
+@available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
+public struct Proto_UtilServiceAsyncClient: Proto_UtilServiceAsyncClientProtocol {
+    public var channel: GRPCChannel
+    public var defaultCallOptions: CallOptions
+    public var interceptors: Proto_UtilServiceClientInterceptorFactoryProtocol?
 
-public protocol Proto_UtilServiceClientInterceptorFactoryProtocol: GRPCSendable {
+    public init(
+        channel: GRPCChannel,
+        defaultCallOptions: CallOptions = CallOptions(),
+        interceptors: Proto_UtilServiceClientInterceptorFactoryProtocol? = nil
+    ) {
+        self.channel = channel
+        self.defaultCallOptions = defaultCallOptions
+        self.interceptors = interceptors
+    }
+}
+
+public protocol Proto_UtilServiceClientInterceptorFactoryProtocol: Sendable {
 
     /// - Returns: Interceptors to use when invoking 'prng'.
     func makeprngInterceptors() -> [ClientInterceptor<Proto_Transaction, Proto_TransactionResponse>]

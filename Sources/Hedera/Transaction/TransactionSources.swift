@@ -62,7 +62,7 @@ private struct OnceRace<T> {
 
 // Note: This is fine: https://github.com/apple/swift-atomics/pull/46/files#diff-a94af62997ccad839d2a78a1fe0e824e43ee0523f01a6034a2e2abc34aa440a7R156
 // ideally this wouldn't need to be @unchecked
-extension OnceRace: @unchecked Sendable where T: Sendable {}
+extension OnceRace: Sendable where T: Sendable {}
 
 internal struct SourceChunk: Sendable {
     fileprivate init(map: TransactionSources.Ref, index: Int) {
