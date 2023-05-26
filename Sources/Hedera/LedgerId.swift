@@ -104,9 +104,4 @@ public struct LedgerId: LosslessStringConvertible, ExpressibleByStringLiteral, E
     }
 }
 
-#if compiler(<5.7)
-    // Swift 5.7 added the conformance to data, despite to the best of my knowledge, not changing anything in the underlying type.
-    extension LedgerId: @unchecked Sendable {}
-#else
-    extension LedgerId: Sendable {}
-#endif
+extension LedgerId: Sendable {}

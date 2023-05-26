@@ -31,7 +31,7 @@ private func rangeFromSlot(slot: UInt, size: UInt) -> Range<Int> {
 
 /// Result of invoking a contract via `ContractCallQuery`, `ContractExecuteTransaction`,
 /// or `ContractCreateTransaction`.
-public struct ContractFunctionResult {
+public struct ContractFunctionResult: Sendable {
     /// The smart contract instance whose function was called.
     public let contractId: ContractId
 

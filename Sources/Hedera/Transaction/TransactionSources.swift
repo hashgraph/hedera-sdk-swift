@@ -135,8 +135,7 @@ internal struct TransactionSources: Sendable {
     internal var chunksCount: Int { guts.chunks.count }
     internal var nodeAccountIds: [AccountId] { guts.nodeIds }
 
-    // note: this *would* be `some Sequence<SourceChunk>` but that is, of course, a swift 5.7 only feature.
-    internal var chunks: LazyMapSequence<Range<Int>, SourceChunk> {
+    internal var chunks: some Collection<SourceChunk> {
         (0..<chunksCount).lazy.map { SourceChunk(map: self.guts, index: $0) }
     }
 }

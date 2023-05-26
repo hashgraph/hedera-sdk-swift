@@ -3,7 +3,7 @@ import HederaProtobufs
 
 /// The log information for an event returned by a smart contract function call.
 /// One function call may return several such events.
-public struct ContractLogInfo: Equatable {
+public struct ContractLogInfo: Sendable, Equatable {
     /// Address of the contract that emitted the event.
     public let contractId: ContractId
 

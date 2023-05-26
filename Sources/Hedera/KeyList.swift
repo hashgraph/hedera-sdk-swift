@@ -1,6 +1,6 @@
 import HederaProtobufs
 
-public struct KeyList: ExpressibleByArrayLiteral, Equatable {
+public struct KeyList: Sendable, ExpressibleByArrayLiteral, Equatable {
     public typealias ArrayLiteralElement = Key
 
     public var keys: [Key]

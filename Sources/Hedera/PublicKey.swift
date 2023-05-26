@@ -445,10 +445,6 @@ extension PublicKey: TryProtobufCodable {
     }
 }
 
-#if compiler(>=5.7)
-    extension PublicKey.Repr: Sendable {}
-#else
-    extension PublicKey.Repr: @unchecked Sendable {}
-#endif
+extension PublicKey.Repr: Sendable {}
 
 extension PublicKey: Sendable {}

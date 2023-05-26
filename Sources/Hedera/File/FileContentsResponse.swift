@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// Response from `FileContentsQuery`.
-public struct FileContentsResponse {
+public struct FileContentsResponse: Sendable {
     /// The file ID of the file whose contents are being returned.
     public let fileId: FileId
 

@@ -120,12 +120,7 @@ public struct ContractId: EntityId {
     }
 }
 
-#if compiler(>=5.7)
-    extension ContractId: Sendable {}
-#else
-    // Swift 5.7 added the conformance to data, despite to the best of my knowledge, not changing anything in the underlying type.
-    extension ContractId: @unchecked Sendable {}
-#endif
+extension ContractId: Sendable {}
 
 extension ContractId: TryProtobufCodable {
     internal typealias Protobuf = Proto_ContractID

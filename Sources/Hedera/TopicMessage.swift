@@ -2,7 +2,7 @@ import Foundation
 import HederaProtobufs
 
 /// Metadata for an individual chunk of a `TopicMessage`.
-public struct TopicMessageChunk {
+public struct TopicMessageChunk: Sendable {
     /// The consensus timestamp for this chunk.
     public let consensusTimestamp: Timestamp
 
@@ -28,7 +28,7 @@ extension TopicMessageChunk {
 }
 
 /// Topic message records.
-public struct TopicMessage {
+public struct TopicMessage: Sendable {
     /// The consensus timestamp of the message.
     ///
     /// If there are multiple chunks, this is taken from the *last* chunk.

@@ -23,7 +23,7 @@ import HederaProtobufs
 
 /// The complete record for a transaction on Hedera that has reached consensus.
 /// Response from `TransactionRecordQuery`.
-public struct TransactionRecord {
+public struct TransactionRecord: Sendable {
     /// The status (reach consensus, or failed, or is unknown) and the ID of
     /// any new account/file/instance created.
     public let receipt: TransactionReceipt

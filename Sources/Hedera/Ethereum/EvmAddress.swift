@@ -76,9 +76,4 @@ public struct EvmAddress:
     }
 }
 
-#if compiler(<5.7)
-    // for some reason this wasn't `Sendable` before `5.7`
-    extension EvmAddress: @unchecked Sendable {}
-#else
-    extension EvmAddress: Sendable {}
-#endif
+extension EvmAddress: Sendable {}

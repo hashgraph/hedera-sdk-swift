@@ -184,7 +184,7 @@ extension Pkcs5.Pbkdf2Prf: DERImplicitlyTaggable {
 
         // these specifically want `null` as in, not missing.
         guard let params = algId.parameters else {
-            throw ASN1Error.invalidASN1Object
+            throw ASN1Error.invalidASN1Object(reason: "invalid alg-id params")
         }
 
         _ = try ASN1Null(asn1Any: params)
@@ -195,7 +195,7 @@ extension Pkcs5.Pbkdf2Prf: DERImplicitlyTaggable {
         case .DigestAlgorithm.hmacWithSha256: self = .hmacWithSha256
         case .DigestAlgorithm.hmacWithSha384: self = .hmacWithSha384
         case .DigestAlgorithm.hmacWithSha512: self = .hmacWithSha512
-        default: throw ASN1Error.invalidASN1Object
+        default: throw ASN1Error.invalidASN1Object(reason: "unsupported alg-id: \(algId.oid)")
         }
     }
 
@@ -222,7 +222,7 @@ extension Pkcs5.Pbkdf2Parameters: DERImplicitlyTaggable {
             guard
                 let value = Self(salt: Data(salt.bytes), iterationCount: iterationCount, keyLength: keyLength, prf: prf)
             else {
-                throw ASN1Error.invalidASN1Object
+                throw ASN1Error.invalidASN1Object(reason: "invalid params")
             }
 
             return value

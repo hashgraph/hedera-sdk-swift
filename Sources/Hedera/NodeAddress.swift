@@ -20,16 +20,63 @@
 
 import Foundation
 import HederaProtobufs
-import Network
+// import Network
 
-public struct SocketAddressV4: LosslessStringConvertible {
+public struct IpAddrV4: Sendable, LosslessStringConvertible {
+    // swiftlint:disable:next:large_tuple
+    private let octets: (a: UInt8, b: UInt8, c: UInt8, d: UInt8)
+
+    public init?<S: StringProtocol>(_ description: S) {
+        let parts = description.split(separator: ".")
+
+        if parts.count != 4 {
+            return nil
+        }
+
+        guard let a = UInt8(parts[0]) else {
+            return nil
+        }
+
+        guard let b = UInt8(parts[1]) else {
+            return nil
+        }
+
+        guard let c = UInt8(parts[2]) else {
+            return nil
+        }
+
+        guard let d = UInt8(parts[3]) else {
+            return nil
+        }
+
+        self.octets = (a, b, c, d)
+    }
+
+    public init?(_ data: Data) {
+        if data.count != 4 {
+            return nil
+        }
+
+        self.octets = (data[0], data[1], data[2], data[3])
+    }
+
+    public var description: String {
+        "\(octets.a).\(octets.b).\(octets.c).\(octets.d)"
+    }
+
+    public var rawValue: Data {
+        Data([octets.a, octets.b, octets.c, octets.d])
+    }
+}
+
+public struct SocketAddressV4: Sendable, LosslessStringConvertible {
     // name is is to match the other SDKs.
     // swiftlint:disable:next identifier_name
-    public var ip: IPv4Address
+    public var ip: IpAddrV4
     public var port: UInt16
 
     fileprivate init(ipBytes: Data, port: Int32) throws {
-        guard let ipAddress = IPv4Address(ipBytes) else {
+        guard let ipAddress = IpAddrV4(ipBytes) else {
             throw HError(kind: .basicParse, description: "expected 4 byte ip address, got `\(ipBytes.count)` bytes")
         }
 
@@ -48,7 +95,7 @@ public struct SocketAddressV4: LosslessStringConvertible {
             throw HError(kind: .basicParse, description: "expected ip:port")
         }
 
-        guard let ipAddress = IPv4Address(String(ipAddress)) else {
+        guard let ipAddress = IpAddrV4(ipAddress) else {
             throw HError(kind: .basicParse, description: "expected `ip` to be a valid IP")
         }
 
@@ -86,7 +133,7 @@ extension SocketAddressV4: TryProtobufCodable {
 
 /// The data about a node, including its service endpoints and the Hedera account to be paid for
 /// services provided by the node (that is, queries answered and transactions submitted.).
-public struct NodeAddress {
+public struct NodeAddress: Sendable {
     /// A non-sequential, unique, static identifier for the node
     public var nodeId: UInt64
 
