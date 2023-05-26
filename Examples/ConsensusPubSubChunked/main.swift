@@ -23,11 +23,10 @@ import Hedera
 import HederaExampleUtilities
 import SwiftDotenv
 
-private let bigContents = HederaExampleUtilities.Resources.bigContents
-
 @main
 internal enum Program {
     internal static func main() async throws {
+
         let env = try Dotenv.load()
         let client = try Client.forName(env.networkName)
 
@@ -50,6 +49,8 @@ internal enum Program {
         try await Task.sleep(nanoseconds: 1_000_000_000 * 10)
 
         _ = Task {
+            let bigContents = try await HederaExampleUtilities.Resources.bigContents
+
             print(
                 "about to prepare a transaction to send a message of \(bigContents.count) bytes"
             )

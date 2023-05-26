@@ -29,7 +29,10 @@ let exampleTargets = [
     "ConsensusPubSubChunked",
     "ConsensusPubSubWithSubmitKey",
     "CreateAccount",
+    "CreateAccountThresholdKey",
     "CreateFile",
+    "CreateSimpleContract",
+    "CreateStatefulContract",
     "CreateTopic",
     "DeleteAccount",
     "DeleteFile",
@@ -41,19 +44,21 @@ let exampleTargets = [
     "GetAddressBook",
     "GetExchangeRates",
     "GetFileContents",
+    "MultiAppTransfer",
+    "MultiSigOffline",
+    "Prng",
+    "Schedule",
+    "ScheduledTransactionMultiSigThreshold",
+    "ScheduledTransfer",
+    "ScheduleIdenticalTransaction",
+    "ScheduleMultiSigTransaction",
+    "Staking",
+    "StakingWithUpdate",
     "TopicWithAdminKey",
     "TransferCrypto",
     "TransferTokens",
-    "ValidateChecksum",
     "UpdateAccountPublicKey",
-    "Prng",
-    "Schedule",
-    "ScheduleIdenticalTransaction",
-    "ScheduleMultiSigTransaction",
-    "ScheduledTransactionMultiSigThreshold",
-    "ScheduledTransfer",
-    "Staking",
-    "StakingWithUpdate",
+    "ValidateChecksum",
 ].map { name in
     Target.executableTarget(
         name: "\(name)Example",
@@ -101,7 +106,7 @@ let package = Package(
         // weird name, but whatever, internal targets
         .target(
             name: "HederaExampleUtilities",
-            dependencies: ["Hedera"]
+            resources: [.process("Resources")]
         ),
         .target(
             name: "Hedera",

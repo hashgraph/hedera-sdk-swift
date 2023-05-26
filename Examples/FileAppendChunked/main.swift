@@ -1,13 +1,11 @@
-import Foundation
 import Hedera
 import HederaExampleUtilities
 import SwiftDotenv
 
-private let bigContents = HederaExampleUtilities.Resources.bigContents
-
 @main
 internal enum Program {
     internal static func main() async throws {
+        async let bigContents = HederaExampleUtilities.Resources.bigContents
         let env = try Dotenv.load()
         let client = try Client.forName(env.networkName)
 

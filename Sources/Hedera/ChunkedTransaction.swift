@@ -93,13 +93,13 @@ public class ChunkedTransaction: Transaction {
 
     }
 
-    internal final override func addSignatureSigner(_ signer: Signer) {
+    internal final override func addSignatureSigner(_ signer: Signer) -> Data {
         precondition(
             self.usedChunks <= 1,
             "cannot manually add a signature to a chunked transaction with multiple chunks (message length `\(data.count)` > chunk size `\(chunkSize)`)"
         )
 
-        super.addSignatureSigner(signer)
+        return super.addSignatureSigner(signer)
     }
 
     public final override func execute(_ client: Client, _ timeout: TimeInterval? = nil) async throws
