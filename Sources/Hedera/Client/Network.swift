@@ -100,6 +100,55 @@ internal final class Network: Sendable, AtomicReference {
         )
     }
 
+    internal static func withAddressBook(_ old: Network, _ eventLoop: EventLoop, _ addressBook: NodeAddressBook) -> Self
+    {
+        let addressBook = addressBook.nodeAddresses
+
+        var map: [AccountId: Int] = [:]
+        var nodeIds: [AccountId] = []
+        var health: [NodeHealth] = []
+        var connections: [NodeConnection] = []
+
+        for (index, address) in addressBook.enumerated() {
+            let new = Set(
+                address.serviceEndpoints.compactMap {
+                    $0.port == NodeConnection.plaintextPort
+                        ? HostAndPort(host: String(describing: $0.ip), port: NodeConnection.plaintextPort) : nil
+                })
+
+            // if the node is the exact same we want to reuse everything (namely the connections and `healthy`).
+            // if the node has different routes then we still want to reuse `healthy` but replace the channel with a new channel.
+            // if the node just flat out doesn't exist in `old`, we want to add the new node.
+            // and, last but not least, if the node doesn't exist in `new` we want to get rid of it.
+
+            let upsert: (NodeHealth, NodeConnection)
+
+            switch old.map[address.nodeAccountId] {
+            case .some(let account):
+                let connection: NodeConnection
+                switch old.connections[account].addresses.symmetricDifference(new).count {
+                case 0: connection = old.connections[account]
+                case _: connection = NodeConnection(eventLoop: eventLoop, addresses: new)
+                }
+
+                upsert = (old.health[account], connection)
+            case nil: upsert = (NodeHealth(), NodeConnection(eventLoop: eventLoop, addresses: new))
+            }
+
+            map[address.nodeAccountId] = index
+            nodeIds.append(address.nodeAccountId)
+            health.append(upsert.0)
+            connections.append(upsert.1)
+        }
+
+        return Self(
+            map: map,
+            nodes: nodeIds,
+            health: health,
+            connections: connections
+        )
+    }
+
     internal static func mainnet(_ eventLoop: NIOCore.EventLoopGroup) -> Self {
         Self(config: Config.mainnet, eventLoop: eventLoop)
     }
@@ -150,6 +199,21 @@ internal final class Network: Sendable, AtomicReference {
     internal func isNodeHealthy(_ index: Int, _ now: Timestamp) -> Bool {
         health[index].health.load(ordering: .relaxed) < Int64(now.unixTimestampNanos)
     }
+
+    internal func randomNodeIds()
+        -> [AccountId]
+    {
+        var nodeIds = self.healthyNodeIds()
+
+        if nodeIds.isEmpty {
+            nodeIds = self.nodes
+        }
+
+        let nodeSampleAmount = (nodeIds.count + 2) / 3
+
+        let nodeIdIndecies = randomIndexes(upTo: nodeIds.count, amount: nodeSampleAmount)
+        return nodeIdIndecies.map { nodeIds[$0] }
+    }
 }
 
 // this needs to be a class for reference semantics.
@@ -163,8 +227,8 @@ internal final class NodeHealth: Sendable {
 }
 
 internal struct HostAndPort: Hashable, Equatable {
-    let host: String
-    let port: UInt16
+    internal let host: String
+    internal let port: UInt16
 }
 
 internal struct NodeConnection: Sendable {
@@ -173,10 +237,12 @@ internal struct NodeConnection: Sendable {
         self.addresses = addresses
     }
 
-    let addresses: Set<HostAndPort>
+    internal let addresses: Set<HostAndPort>
     private let realChannel: ChannelBalancer
 
     internal var channel: any GRPCChannel {
         realChannel
     }
+
+    internal static let plaintextPort: UInt16 = 50211
 }

@@ -28,44 +28,41 @@ import NIOCore
 public final class Client: Sendable {
     internal let eventLoop: NIOCore.EventLoopGroup
 
-    private let mirrorNetwork: MirrorNetwork
-    internal let network: Network
+    private let network: ManagedNetwork
     private let operatorInner: NIOLockedValueBox<Operator?>
     private let autoValidateChecksumsInner: ManagedAtomic<Bool>
+    private let networkUpdateTask: NetworkUpdateTask
     private let regenerateTransactionIdInner: ManagedAtomic<Bool>
     private let maxTransactionFeeInner: ManagedAtomic<Int64>
+    private let networkUpdateIntervalInner: NIOLockedValueBox<UInt64?>
 
     private init(
-        network: Network,
-        mirrorNetwork: MirrorNetwork,
+        network: ManagedNetwork,
         ledgerId: LedgerId?,
+        networkUpdateInterval: UInt64? = 86400 * 1_000_000_000,
         _ eventLoop: NIOCore.EventLoopGroup
     ) {
         self.eventLoop = eventLoop
-        self.mirrorNetwork = mirrorNetwork
         self.network = network
         self.operatorInner = .init(nil)
         self.ledgerIdInner = .init(ledgerId)
         self.autoValidateChecksumsInner = .init(false)
         self.regenerateTransactionIdInner = .init(true)
         self.maxTransactionFeeInner = .init(0)
+        self.networkUpdateTask = NetworkUpdateTask(
+            eventLoop: eventLoop,
+            managedNetwork: network,
+            updateInterval: networkUpdateInterval
+        )
+        self.networkUpdateIntervalInner = .init(networkUpdateInterval)
     }
 
     /// Note: this operation is O(n)
     private var nodes: [AccountId] {
-        network.nodes
+        network.primary.load(ordering: .relaxed).nodes
     }
 
-    internal var mirrorChannel: GRPCChannel { mirrorNetwork.channel }
-
-    internal func randomNodeIds() -> [AccountId] {
-        let nodeIds = self.network.healthyNodeIds()
-
-        let nodeSampleAmount = (nodeIds.count + 2) / 3
-
-        let nodeIdIndecies = randomIndexes(upTo: nodeIds.count, amount: nodeSampleAmount)
-        return nodeIdIndecies.map { nodeIds[$0] }
-    }
+    internal var mirrorChannel: GRPCChannel { network.mirror.channel }
 
     internal var `operator`: Operator? {
         return operatorInner.withLockedValue { $0 }
@@ -86,7 +83,6 @@ public final class Client: Sendable {
         let eventLoop = PlatformSupport.makeEventLoopGroup(loopCount: 1)
         return Self(
             network: .mainnet(eventLoop),
-            mirrorNetwork: .mainnet(eventLoop),
             ledgerId: .mainnet,
             eventLoop
         )
@@ -97,7 +93,6 @@ public final class Client: Sendable {
         let eventLoop = PlatformSupport.makeEventLoopGroup(loopCount: 1)
         return Self(
             network: .testnet(eventLoop),
-            mirrorNetwork: .testnet(eventLoop),
             ledgerId: .testnet,
             eventLoop
         )
@@ -108,7 +103,6 @@ public final class Client: Sendable {
         let eventLoop = PlatformSupport.makeEventLoopGroup(loopCount: 1)
         return Self(
             network: .previewnet(eventLoop),
-            mirrorNetwork: .previewnet(eventLoop),
             ledgerId: .previewnet,
             eventLoop
         )
@@ -230,5 +224,22 @@ public final class Client: Sendable {
 
     internal func generateTransactionId() -> TransactionId? {
         (self.operator?.accountId).map { .generateFrom($0) }
+    }
+
+    internal var net: Network {
+        network.primary.load(ordering: .relaxed)
+    }
+
+    internal var mirrorNet: MirrorNetwork {
+        network.mirror
+    }
+
+    public var networkUpdateInterval: UInt64? {
+        networkUpdateIntervalInner.withLockedValue { $0 }
+    }
+
+    public func setNetworkUpdateInterval(nanoseconds: UInt64?) async {
+        await self.networkUpdateTask.setUpdateInterval(nanoseconds)
+        self.networkUpdateIntervalInner.withLockedValue { $0 = nanoseconds }
     }
 }

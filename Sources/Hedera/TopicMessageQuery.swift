@@ -94,9 +94,9 @@ extension TopicMessageQuery {
             self.init(startTime: nil)
         }
 
-        let startTime: Timestamp?
+        internal let startTime: Timestamp?
 
-        mutating func update(item: GrpcItem) {
+        internal mutating func update(item: GrpcItem) {
             let newStartTime = item.hasConsensusTimestamp ? Timestamp(protobuf: item.consensusTimestamp) : nil
             self = Self(startTime: newStartTime ?? startTime)
         }
