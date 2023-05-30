@@ -147,10 +147,19 @@ private func executeAnyInner<E: Execute>(ctx: ExecuteContext, executable: E) asy
             ?? ctx.operatorAccountId.map(TransactionId.generateFrom)) : nil
 
     let explicitNodeIndexes = try executable.nodeAccountIds.map(ctx.network.nodeIndexesForIds)
+    var attempt = 0
 
     while true {
         let randomNodeIndexes = randomNodeIndexes(ctx: ctx, explicitNodeIndexes: explicitNodeIndexes)
         inner: for await nodeIndex in randomNodeIndexes {
+            defer {
+                attempt += 1
+            }
+
+            if attempt >= ctx.maxAttempts {
+                throw HError.timedOut(String(describing: lastError))
+            }
+
             let (nodeAccountId, channel) = ctx.network.channel(for: nodeIndex)
             let (request, context) = try executable.makeRequest(transactionId, nodeAccountId)
             let response: E.GrpcResponse

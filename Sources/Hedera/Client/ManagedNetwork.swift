@@ -28,12 +28,12 @@ internal final class ManagedNetwork: Sendable {
 }
 
 internal actor NetworkUpdateTask: Sendable {
-    internal init(eventLoop: NIOCore.EventLoopGroup, managedNetwork: ManagedNetwork, updateInterval: UInt64?) {
+    internal init(eventLoop: NIOCore.EventLoopGroup, managedNetwork: ManagedNetwork, updatePeriod: UInt64?) {
         self.managedNetwork = managedNetwork
         self.eventLoop = eventLoop
 
-        if let updateInterval {
-            task = Self.makeTask(eventLoop, managedNetwork, ManagedNetwork.networkFirstUpdateDelay, updateInterval)
+        if let updatePeriod {
+            task = Self.makeTask(eventLoop, managedNetwork, ManagedNetwork.networkFirstUpdateDelay, updatePeriod)
         }
     }
 
@@ -41,7 +41,7 @@ internal actor NetworkUpdateTask: Sendable {
         _ eventLoop: NIOCore.EventLoopGroup,
         _ managedNetwork: ManagedNetwork,
         _ startDelay: Duration?,
-        _ updateInterval: UInt64
+        _ updatePeriod: UInt64
     ) -> Task<(), Error> {
         return Task {
             if let startDelay {
@@ -66,18 +66,18 @@ internal actor NetworkUpdateTask: Sendable {
                 }
 
                 let elapsed = (Timestamp.now - start).seconds * 1_000_000_000
-                if elapsed < updateInterval {
-                    try await Task.sleep(nanoseconds: updateInterval - elapsed)
+                if elapsed < updatePeriod {
+                    try await Task.sleep(nanoseconds: updatePeriod - elapsed)
                 }
             }
         }
     }
 
-    internal func setUpdateInterval(_ duration: UInt64?) {
+    internal func setUpdatePeriod(_ duration: UInt64?) {
         self.task?.cancel()
 
-        if let updateInterval = duration {
-            self.task = Self.makeTask(eventLoop, managedNetwork, nil, updateInterval)
+        if let updatePeriod = duration {
+            self.task = Self.makeTask(eventLoop, managedNetwork, nil, updatePeriod)
         }
     }
 

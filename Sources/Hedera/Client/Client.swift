@@ -34,12 +34,13 @@ public final class Client: Sendable {
     private let networkUpdateTask: NetworkUpdateTask
     private let regenerateTransactionIdInner: ManagedAtomic<Bool>
     private let maxTransactionFeeInner: ManagedAtomic<Int64>
-    private let networkUpdateIntervalInner: NIOLockedValueBox<UInt64?>
+    private let networkUpdatePeriodInner: NIOLockedValueBox<UInt64?>
+    private let backoffInner: NIOLockedValueBox<Backoff>
 
     private init(
         network: ManagedNetwork,
         ledgerId: LedgerId?,
-        networkUpdateInterval: UInt64? = 86400 * 1_000_000_000,
+        networkUpdatePeriod: UInt64? = 86400 * 1_000_000_000,
         _ eventLoop: NIOCore.EventLoopGroup
     ) {
         self.eventLoop = eventLoop
@@ -52,9 +53,10 @@ public final class Client: Sendable {
         self.networkUpdateTask = NetworkUpdateTask(
             eventLoop: eventLoop,
             managedNetwork: network,
-            updateInterval: networkUpdateInterval
+            updatePeriod: networkUpdatePeriod
         )
-        self.networkUpdateIntervalInner = .init(networkUpdateInterval)
+        self.networkUpdatePeriodInner = .init(networkUpdatePeriod)
+        self.backoffInner = .init(Backoff())
     }
 
     /// Note: this operation is O(n)
@@ -76,6 +78,34 @@ public final class Client: Sendable {
         }
 
         return .fromTinybars(value)
+    }
+
+    /// The maximum amount of time that will be spent on a request.
+    public var requestTimeout: TimeInterval? {
+        get { backoff.requestTimeout }
+        set(value) { backoffInner.withLockedValue { $0.requestTimeout = value } }
+    }
+
+    /// The maximum number of attempts for a request.
+    public var maxAttempts: Int {
+        get { backoff.maxAttempts }
+        set(value) { backoffInner.withLockedValue { $0.maxAttempts = value } }
+    }
+
+    /// The initial backoff for a request being executed.
+    public var minBackoff: TimeInterval {
+        get { backoff.initialBackoff }
+        set(value) { backoffInner.withLockedValue { $0.initialBackoff = value } }
+    }
+
+    /// The maximum amount of time a request will wait between attempts.
+    public var maxBackoff: TimeInterval {
+        get { backoff.maxBackoff }
+        set(value) { backoffInner.withLockedValue { $0.maxBackoff = value } }
+    }
+
+    internal var backoff: Backoff {
+        self.backoffInner.withLockedValue { $0 }
     }
 
     /// Construct a Hedera client pre-configured for mainnet access.
@@ -234,12 +264,37 @@ public final class Client: Sendable {
         network.mirror
     }
 
-    public var networkUpdateInterval: UInt64? {
-        networkUpdateIntervalInner.withLockedValue { $0 }
+    public var networkUpdatePeriod: UInt64? {
+        networkUpdatePeriodInner.withLockedValue { $0 }
     }
 
-    public func setNetworkUpdateInterval(nanoseconds: UInt64?) async {
-        await self.networkUpdateTask.setUpdateInterval(nanoseconds)
-        self.networkUpdateIntervalInner.withLockedValue { $0 = nanoseconds }
+    public func setNetworkUpdatePeriod(nanoseconds: UInt64?) async {
+        await self.networkUpdateTask.setUpdatePeriod(nanoseconds)
+        self.networkUpdatePeriodInner.withLockedValue { $0 = nanoseconds }
+    }
+}
+
+extension Client {
+    internal struct Backoff {
+        internal init(
+            maxBackoff: TimeInterval = LegacyExponentialBackoff.defaultMaxInterval,
+            initialBackoff: TimeInterval = LegacyExponentialBackoff.defaultInitialInterval,
+            maxAttempts: Int = 10,
+            requestTimeout: TimeInterval? = nil,
+            grpcTimeout: TimeInterval? = nil
+        ) {
+            self.maxBackoff = maxBackoff
+            self.initialBackoff = initialBackoff
+            self.maxAttempts = maxAttempts
+            self.requestTimeout = requestTimeout
+            self.grpcTimeout = grpcTimeout
+        }
+
+        internal var maxBackoff: TimeInterval
+        // min backoff.
+        internal var initialBackoff: TimeInterval
+        internal var maxAttempts: Int
+        internal var requestTimeout: TimeInterval?
+        internal var grpcTimeout: TimeInterval?
     }
 }

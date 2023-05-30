@@ -25,11 +25,14 @@ import Foundation
 // adapted from the Rust [`backoff`](https://github.com/ihrwein/backoff) crate, which is licensed under the MIT/Apache 2.0 licenses.
 internal struct LegacyExponentialBackoff {
     internal static let defaultMaxElapsedTime: TimeInterval = 900
+    internal static let defaultInitialInterval: TimeInterval = 0.5
+    internal static let defaultMaxInterval: TimeInterval = 60
+
     internal init(
-        initialInterval: TimeInterval = 0.5,
+        initialInterval: TimeInterval = defaultMaxElapsedTime,
         randomizationFactor: Double = 0.5,
         multiplier: Double = 1.5,
-        maxInterval: TimeInterval = 60,
+        maxInterval: TimeInterval = defaultMaxInterval,
         maxElapsedTime: Limit<TimeInterval> = .limited(defaultMaxElapsedTime),
         startTime: Date = Date()
     ) {
