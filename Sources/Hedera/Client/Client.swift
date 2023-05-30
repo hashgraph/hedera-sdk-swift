@@ -28,7 +28,7 @@ import NIOCore
 public final class Client: Sendable {
     internal let eventLoop: NIOCore.EventLoopGroup
 
-    private let network: ManagedNetwork
+    private let networkInner: ManagedNetwork
     private let operatorInner: NIOLockedValueBox<Operator?>
     private let autoValidateChecksumsInner: ManagedAtomic<Bool>
     private let networkUpdateTask: NetworkUpdateTask
@@ -44,7 +44,7 @@ public final class Client: Sendable {
         _ eventLoop: NIOCore.EventLoopGroup
     ) {
         self.eventLoop = eventLoop
-        self.network = network
+        self.networkInner = network
         self.operatorInner = .init(nil)
         self.ledgerIdInner = .init(ledgerId)
         self.autoValidateChecksumsInner = .init(false)
@@ -61,7 +61,7 @@ public final class Client: Sendable {
 
     /// Note: this operation is O(n)
     private var nodes: [AccountId] {
-        network.primary.load(ordering: .relaxed).nodes
+        networkInner.primary.load(ordering: .relaxed).nodes
     }
 
     internal var mirrorChannel: GRPCChannel { mirrorNet.channel }
@@ -307,12 +307,25 @@ public final class Client: Sendable {
     }
 
     internal var net: Network {
-        network.primary.load(ordering: .relaxed)
+        networkInner.primary.load(ordering: .relaxed)
     }
 
     internal var mirrorNet: MirrorNetwork {
-        get { network.mirror.load(ordering: .relaxed) }
-        set(value) { network.mirror.store(value, ordering: .relaxed) }
+        get { networkInner.mirror.load(ordering: .relaxed) }
+        set(value) { networkInner.mirror.store(value, ordering: .relaxed) }
+    }
+
+    public var network: [String: AccountId] {
+        net.addresses
+    }
+
+    @discardableResult
+    public func setNetwork(_ network: [String: AccountId]) throws -> Self {
+        _ = try self.networkInner.primary.readCopyUpdate { old in
+            try Network.withAddresses(old, network, eventLoop: self.eventLoop.next())
+        }
+
+        return self
     }
 
     public var mirrorNetwork: [String] {
@@ -320,15 +333,6 @@ public final class Client: Sendable {
         set(value) {
             self.mirrorNet = .init(targets: value, eventLoop: eventLoop)
         }
-    }
-
-    public var networkUpdatePeriod: UInt64? {
-        networkUpdatePeriodInner.withLockedValue { $0 }
-    }
-
-    public func setNetworkUpdatePeriod(nanoseconds: UInt64?) async {
-        await self.networkUpdateTask.setUpdatePeriod(nanoseconds)
-        self.networkUpdatePeriodInner.withLockedValue { $0 = nanoseconds }
     }
 
     /// Sets the addresses to use for the mirror network.
@@ -339,6 +343,15 @@ public final class Client: Sendable {
         mirrorNetwork = addresses
 
         return self
+    }
+
+    public var networkUpdatePeriod: UInt64? {
+        networkUpdatePeriodInner.withLockedValue { $0 }
+    }
+
+    public func setNetworkUpdatePeriod(nanoseconds: UInt64?) async {
+        await self.networkUpdateTask.setUpdatePeriod(nanoseconds)
+        self.networkUpdatePeriodInner.withLockedValue { $0 = nanoseconds }
     }
 }
 

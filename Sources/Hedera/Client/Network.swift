@@ -82,6 +82,15 @@ internal final class Network: Sendable, AtomicReference {
     fileprivate let health: [NodeHealth]
     fileprivate let connections: [NodeConnection]
 
+    internal var addresses: [String: AccountId] {
+        Dictionary(
+            map.lazy.flatMap { (account, index) in
+                self.connections[index].addresses.lazy.map { (String(describing: $0), account) }
+            },
+            uniquingKeysWith: { first, _ in first }
+        )
+    }
+
     fileprivate convenience init(config: Config, eventLoop: NIOCore.EventLoopGroup) {
         // todo: someone verify this code pls.
         let connections = config.addresses.map { addresses in
