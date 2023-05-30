@@ -100,6 +100,12 @@ internal final class Network: Sendable, AtomicReference {
         )
     }
 
+    internal convenience init(addresses: [String: AccountId], eventLoop: EventLoop) throws {
+        let tmp = try Self.withAddresses(
+            Self(map: [:], nodes: [], health: [], connections: []), addresses, eventLoop: eventLoop)
+        self.init(map: tmp.map, nodes: tmp.nodes, health: tmp.health, connections: tmp.connections)
+    }
+
     internal static func withAddressBook(_ old: Network, _ eventLoop: EventLoop, _ addressBook: NodeAddressBook) -> Self
     {
         let addressBook = addressBook.nodeAddresses
@@ -139,6 +145,51 @@ internal final class Network: Sendable, AtomicReference {
             nodeIds.append(address.nodeAccountId)
             health.append(upsert.0)
             connections.append(upsert.1)
+        }
+
+        return Self(
+            map: map,
+            nodes: nodeIds,
+            health: health,
+            connections: connections
+        )
+    }
+
+    internal static func withAddresses(_ old: Network, _ addresses: [String: AccountId], eventLoop: EventLoop) throws
+        -> Self
+    {
+        var map: [AccountId: Int] = [:]
+        var nodeIds: [AccountId] = []
+        var health: [NodeHealth] = []
+        var connections: [NodeConnection] = []
+
+        let addresses = Dictionary(
+            try addresses.map { (key, value) throws -> (AccountId, Set<HostAndPort>) in
+                let res = Set([try HostAndPort(parsing: key)])
+                return (value, res)
+            },
+            uniquingKeysWith: { $0.union($1) }
+        )
+
+        for (node, addresses) in addresses {
+            let nextIndex = nodeIds.count
+
+            map[node] = nextIndex
+            nodeIds.append(node)
+
+            var reusedHealth: NodeHealth?
+            var reusedConnection: NodeConnection?
+
+            if let index = old.map[node] {
+                if old.connections[index].addresses.symmetricDifference(addresses).count == 0 {
+                    reusedConnection = old.connections[index]
+                }
+
+                reusedHealth = old.health[index]
+            }
+
+            health.append(reusedHealth ?? .init())
+            connections.append(reusedConnection ?? .init(eventLoop: eventLoop, addresses: addresses))
         }
 
         return Self(
@@ -229,6 +280,36 @@ internal final class NodeHealth: Sendable {
 internal struct HostAndPort: Hashable, Equatable {
     internal let host: String
     internal let port: UInt16
+}
+
+extension HostAndPort: LosslessStringConvertible {
+    internal init?<S: StringProtocol>(_ description: S) {
+        let (host, port) = description.splitOnce(on: ":") ?? (description[...], nil)
+
+        guard let port = port else {
+            self = .init(host: String(host), port: 443)
+            return
+        }
+
+        guard let port = UInt16(port) else {
+            return nil
+        }
+
+        self = .init(host: String(host), port: port)
+    }
+
+    internal init<S: StringProtocol>(parsing description: S) throws {
+        guard let tmp = Self(description) else {
+            throw HError.basicParse("invalid URL")
+        }
+
+        self = tmp
+    }
+
+    internal var description: String {
+        "\(host):\(port)"
+    }
+
 }
 
 internal struct NodeConnection: Sendable {

@@ -18,37 +18,54 @@
   * ‍
   */
 
+import Atomics
 import GRPC
 import NIOCore
 
-internal struct MirrorNetwork {
+internal final class MirrorNetwork: AtomicReference, Sendable {
     private enum Targets {
-        static let mainnet: GRPC.ConnectionTarget = .hostAndPort("mainnet-public.mirrornode.hedera.com", 443)
-        static let testnet: GRPC.ConnectionTarget = .hostAndPort("hcs.testnet.mirrornode.hedera.com", 5600)
-        static let previewnet: GRPC.ConnectionTarget = .hostAndPort("hcs.previewnet.mirrornode.hedera.com", 5600)
+        static let mainnet: Set<HostAndPort> = [.init(host: "mainnet-public.mirrornode.hedera.com", port: 443)]
+        static let testnet: Set<HostAndPort> = [.init(host: "hcs.testnet.mirrornode.hedera.com", port: 5600)]
+        static let previewnet: Set<HostAndPort> = [.init(host: "hcs.previewnet.mirrornode.hedera.com", port: 5600)]
     }
 
-    internal let channel: GRPC.ClientConnection
+    internal let channel: ChannelBalancer
+    internal let addresses: Set<HostAndPort>
 
-    private init(channel: GRPC.ClientConnection) {
+    private init(channel: ChannelBalancer, targets: Set<HostAndPort>) {
         self.channel = channel
+        self.addresses = targets
     }
 
-    private init(target: GRPC.ConnectionTarget, eventLoop: EventLoopGroup) {
+    private convenience init(targets: Set<HostAndPort>, eventLoop: EventLoopGroup) {
+        let channel = ChannelBalancer(eventLoop: eventLoop.next(), targets.map { .hostAndPort($0.host, Int($0.port)) })
+
         self.init(
-            channel: GRPC.ClientConnection(configuration: .default(target: target, eventLoopGroup: eventLoop))
+            channel: channel,
+            targets: targets
         )
     }
 
+    internal convenience init(targets: [String], eventLoop: EventLoopGroup) {
+        let targets = Set(
+            targets.lazy.map { target in
+                let (host, port) = target.splitOnce(on: ":") ?? (target[...], nil)
+
+                return HostAndPort(host: String(host), port: port.flatMap { UInt16($0) } ?? 443)
+            })
+
+        self.init(targets: targets, eventLoop: eventLoop)
+    }
+
     internal static func mainnet(_ eventLoop: NIOCore.EventLoopGroup) -> Self {
-        Self(target: Targets.mainnet, eventLoop: eventLoop)
+        Self(targets: Targets.mainnet, eventLoop: eventLoop)
     }
 
     internal static func testnet(_ eventLoop: NIOCore.EventLoopGroup) -> Self {
-        Self(target: Targets.testnet, eventLoop: eventLoop)
+        Self(targets: Targets.testnet, eventLoop: eventLoop)
     }
 
     internal static func previewnet(_ eventLoop: NIOCore.EventLoopGroup) -> Self {
-        Self(target: Targets.previewnet, eventLoop: eventLoop)
+        Self(targets: Targets.previewnet, eventLoop: eventLoop)
     }
 }

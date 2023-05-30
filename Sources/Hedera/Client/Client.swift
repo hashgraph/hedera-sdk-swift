@@ -64,7 +64,7 @@ public final class Client: Sendable {
         network.primary.load(ordering: .relaxed).nodes
     }
 
-    internal var mirrorChannel: GRPCChannel { network.mirror.channel }
+    internal var mirrorChannel: GRPCChannel { mirrorNet.channel }
 
     internal var `operator`: Operator? {
         return operatorInner.withLockedValue { $0 }
@@ -108,6 +108,18 @@ public final class Client: Sendable {
         self.backoffInner.withLockedValue { $0 }
     }
 
+    public static func forNetwork(_ addresses: [String: AccountId]) throws -> Self {
+        let eventLoop = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+        return Self(
+            network: .init(
+                primary: try .init(addresses: addresses, eventLoop: eventLoop.next()),
+                mirror: .init(targets: [], eventLoop: eventLoop)
+            ),
+            ledgerId: nil,
+            eventLoop
+        )
+    }
+
     /// Construct a Hedera client pre-configured for mainnet access.
     public static func forMainnet() -> Self {
         let eventLoop = PlatformSupport.makeEventLoopGroup(loopCount: 1)
@@ -136,6 +148,44 @@ public final class Client: Sendable {
             ledgerId: .previewnet,
             eventLoop
         )
+    }
+
+    public static func fromConfig(_ config: String) throws -> Self {
+        let configData: Config
+        do {
+            configData = try JSONDecoder().decode(Config.self, from: config.data(using: .utf8)!)
+        } catch let error as DecodingError {
+            throw HError.basicParse(String(describing: error))
+        }
+
+        let `operator` = configData.operator
+        let network = configData.network
+        let mirrorNetwork = configData.mirrorNetwork
+
+        // fixme: check to ensure net and mirror net are the same when they're a network name (no other SDK actually checks this though)
+        let client: Self
+        switch network {
+        case .left(let network):
+            client = try Self.forNetwork(network)
+        case .right(.mainnet): client = .forMainnet()
+        case .right(.testnet): client = .forTestnet()
+        case .right(.previewnet): client = .forPreviewnet()
+        }
+
+        if let `operator` = `operator` {
+            client.operatorInner.withLockedValue { $0 = `operator` }
+        }
+
+        switch mirrorNetwork {
+        case nil: break
+        case .left(let mirrorNetwork):
+            client.mirrorNetwork = mirrorNetwork
+        case .right(.mainnet): client.mirrorNet = .mainnet(client.eventLoop)
+        case .right(.testnet): client.mirrorNet = .testnet(client.eventLoop)
+        case .right(.previewnet): client.mirrorNet = .previewnet(client.eventLoop)
+        }
+
+        return client
     }
 
     // wish I could write `init(for name: String)`
@@ -261,7 +311,15 @@ public final class Client: Sendable {
     }
 
     internal var mirrorNet: MirrorNetwork {
-        network.mirror
+        get { network.mirror.load(ordering: .relaxed) }
+        set(value) { network.mirror.store(value, ordering: .relaxed) }
+    }
+
+    public var mirrorNetwork: [String] {
+        get { Array(mirrorNet.addresses.map { "\($0.host):\($0.port)" }) }
+        set(value) {
+            self.mirrorNet = .init(targets: value, eventLoop: eventLoop)
+        }
     }
 
     public var networkUpdatePeriod: UInt64? {
@@ -271,6 +329,16 @@ public final class Client: Sendable {
     public func setNetworkUpdatePeriod(nanoseconds: UInt64?) async {
         await self.networkUpdateTask.setUpdatePeriod(nanoseconds)
         self.networkUpdatePeriodInner.withLockedValue { $0 = nanoseconds }
+    }
+
+    /// Sets the addresses to use for the mirror network.
+    ///
+    /// This is mostly useful if you used `Self.fromNetwork` and need to set a mirror network.
+    @discardableResult
+    public func setMirrorNetwork(_ addresses: [String]) -> Self {
+        mirrorNetwork = addresses
+
+        return self
     }
 }
 

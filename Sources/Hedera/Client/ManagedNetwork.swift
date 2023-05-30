@@ -6,13 +6,13 @@ import NIOCore
 internal final class ManagedNetwork: Sendable {
     internal init(primary: Network, mirror: MirrorNetwork) {
         self.primary = .init(primary)
-        self.mirror = mirror
+        self.mirror = .init(mirror)
     }
 
     internal static let networkFirstUpdateDelay: Duration = .seconds(10)
 
     internal let primary: ManagedAtomic<Network>
-    internal let mirror: MirrorNetwork
+    internal let mirror: ManagedAtomic<MirrorNetwork>
 
     internal static func mainnet(_ eventLoop: NIOCore.EventLoopGroup) -> Self {
         Self(primary: .mainnet(eventLoop), mirror: .mainnet(eventLoop))
@@ -53,8 +53,8 @@ internal actor NetworkUpdateTask: Sendable {
                 let start = Timestamp.now
 
                 do {
-                    let addressBook = try await NodeAddressBookQuery(FileId.addressBook).executeChannel(
-                        managedNetwork.mirror.channel)
+                    let mirror = managedNetwork.mirror.load(ordering: .relaxed)
+                    let addressBook = try await NodeAddressBookQuery(FileId.addressBook).executeChannel(mirror.channel)
 
                     _ = managedNetwork.primary.readCopyUpdate {
                         Network.withAddressBook($0, eventLoop.next(), addressBook)
