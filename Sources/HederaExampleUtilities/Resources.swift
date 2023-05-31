@@ -11,9 +11,6 @@ private struct ContractJson: Decodable {
 
 public enum Resources {
     private static func getData(forUrl url: URL) async throws -> Data {
-        #if compiler(>=5.8)
-            return try await URLSession.shared.data(from: url).0
-        #else
             if #available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *) {
                 // this version is different than the one above (this one has a `delegate: nil`), confusing I know
                 return try await URLSession.shared.data(from: url, delegate: nil).0
@@ -31,7 +28,6 @@ public enum Resources {
 
                 task.resume()
             }
-        #endif
     }
 
     private static func bytecode(forUrl url: URL) async throws -> String {
