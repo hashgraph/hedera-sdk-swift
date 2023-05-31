@@ -33,8 +33,7 @@ public final class AccountCreateTransaction: Transaction {
         autoRenewAccountId: AccountId? = nil,
         accountMemo: String = "",
         maxAutomaticTokenAssociations: UInt32 = 0,
-        alias: PublicKey? = nil,
-        evmAddress: EvmAddress? = nil,
+        alias: EvmAddress? = nil,
         stakedAccountId: AccountId? = nil,
         stakedNodeId: UInt64? = nil,
         declineStakingReward: Bool = false
@@ -47,7 +46,6 @@ public final class AccountCreateTransaction: Transaction {
         self.accountMemo = accountMemo
         self.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
         self.alias = alias
-        self.evmAddress = evmAddress
         self.stakedAccountId = stakedAccountId
         self.stakedNodeId = stakedNodeId
         self.declineStakingReward = declineStakingReward
@@ -75,6 +73,7 @@ public final class AccountCreateTransaction: Transaction {
         }
 
         self.declineStakingReward = data.declineReward
+        self.alias = !data.alias.isEmpty ? try EvmAddress(data.alias) : nil
 
         try super.init(protobuf: proto)
     }
@@ -190,40 +189,21 @@ public final class AccountCreateTransaction: Transaction {
         return self
     }
 
-    /// A key to be used as the account's alias.
+    /// A 20-byte EVM address to be used as the account's alias.
     ///
-    /// > Warning: This not supported on any mainnet at this time.
-    public var alias: PublicKey? {
+    /// > Warning: This not supported on mainnet at this time.
+    public var alias: EvmAddress? {
         willSet {
             ensureNotFrozen()
         }
     }
 
-    /// Sets the key to be used as the account's alias.
+    /// Sets the 20-byte evm address to be used as the account's alias.
     ///
-    /// > Warning: This not supported on any mainnet at this time.
+    /// > Warning: This not supported on mainnet at this time.
     @discardableResult
-    public func alias(_ alias: PublicKey) -> Self {
+    public func alias(_ alias: EvmAddress) -> Self {
         self.alias = alias
-
-        return self
-    }
-
-    /// A 20-byte EVM address to be used as the account's evm address.
-    ///
-    /// > Warning: This not supported on any mainnet at this time.
-    public var evmAddress: EvmAddress? {
-        willSet {
-            ensureNotFrozen()
-        }
-    }
-
-    /// Sets the 20-byte evm address to be used as the account's evm address.
-    ///
-    /// > Warning: This not supported on any mainnet at this time.
-    @discardableResult
-    public func evmAddress(_ evmAddress: EvmAddress) -> Self {
-        self.evmAddress = evmAddress
 
         return self
     }
@@ -310,13 +290,9 @@ extension AccountCreateTransaction: ToProtobuf {
             proto.memo = accountMemo
             proto.maxAutomaticTokenAssociations = Int32(maxAutomaticTokenAssociations)
 
-            if let alias = alias?.toProtobufBytes() {
-                proto.alias = alias
+            if let alias = alias {
+                proto.alias = alias.data
             }
-
-            // if let evmAddress = evmAddress {
-            //     proto.evmAddress = evmAddress.data
-            // }
 
             if let stakedNodeId = stakedNodeId {
                 proto.stakedNodeID = Int64(stakedNodeId)
