@@ -61,6 +61,10 @@ public final class NodeAddressBookQuery: ValidateChecksums, MirrorQuery {
         try await executeInner(client, timeout)
     }
 
+    internal func executeMirrornet(_ mirrorNet: MirrorNetwork) async throws -> NodeAddressBook {
+        try await executeChannel(mirrorNet.channel)
+    }
+
     internal func validateChecksums(on ledgerId: LedgerId) throws {
         try fileId.validateChecksums(on: ledgerId)
     }

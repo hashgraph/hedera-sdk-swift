@@ -99,14 +99,18 @@ extension MirrorQuery where Self: MirrorRequest & ValidateChecksums {
     ///
     /// - Returns: The ``Response`` from executing the mirror query.
     internal func executeInner(_ client: Client, _ timeout: TimeInterval? = nil) async throws -> Response {
-        // default timeout of 15 minutes.
-        let timeout = timeout ?? TimeInterval(900)
-
         if client.isAutoValidateChecksumsEnabled() {
             try validateChecksums(on: client)
         }
 
-        return try await Self.collect(mirrorSubscribe(client.mirrorChannel, self, timeout))
+        return try await executeChannel(client.mirrorChannel, timeout)
+    }
+
+    internal func executeChannel(_ channel: any GRPCChannel, _ timeout: TimeInterval? = nil) async throws -> Response {
+        // default timeout of 15 minutes.
+        let timeout = timeout ?? TimeInterval(900)
+
+        return try await Self.collect(mirrorSubscribe(channel, self, timeout))
     }
 }
 

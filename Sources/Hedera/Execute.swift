@@ -81,36 +81,91 @@ extension Execute {
     }
 }
 
-// swiftlint:disable:next function_body_length
+private struct ExecuteContext {
+    // When not `nil` the `transactionId` will be regenerated when expired.
+    fileprivate let operatorAccountId: AccountId?
+    fileprivate let network: Network
+    fileprivate let backoffConfig: LegacyExponentialBackoff
+    fileprivate let maxAttempts: Int
+    // timeout for a single grpc request.
+    fileprivate let grpcTimeout: Duration?
+}
+
 internal func executeAny<E: Execute & ValidateChecksums>(_ client: Client, _ executable: E, _ timeout: TimeInterval?)
     async throws -> E.Response
 {
     let timeout = timeout ?? LegacyExponentialBackoff.defaultMaxElapsedTime
 
-    var backoff = LegacyExponentialBackoff(maxElapsedTime: .limited(timeout))
-    var lastError: HError?
-
     if client.isAutoValidateChecksumsEnabled() {
         try executable.validateChecksums(on: client)
     }
 
+    let operatorAccountId: AccountId?
+    do {
+        if executable.explicitTransactionId != nil
+            || !(executable.regenerateTransactionId ?? client.defaultRegenerateTransactionId)
+        {
+            operatorAccountId = nil
+        } else {
+            operatorAccountId = executable.operatorAccountId ?? client.operator?.accountId
+        }
+    }
+
+    // let backoff = client.backoff();
+    // let mut backoff_builder = ExponentialBackoffBuilder::new();
+
+    // backoff_builder
+    //     .with_initial_interval(backoff.initial_backoff)
+    //     .with_max_interval(backoff.max_backoff);
+
+    // if let Some(timeout) = timeout.or(backoff.request_timeout) {
+    //     backoff_builder.with_max_elapsed_time(Some(timeout));
+    // }
+
+    let backoffBuilder = LegacyExponentialBackoff(maxElapsedTime: .limited(timeout))
+
+    return try await executeAnyInner(
+        ctx: ExecuteContext(
+            operatorAccountId: operatorAccountId,
+            network: client.net,
+            backoffConfig: backoffBuilder,
+            maxAttempts: 0,
+            grpcTimeout: nil
+        ),
+        executable: executable)
+}
+
+private func executeAnyInner<E: Execute>(ctx: ExecuteContext, executable: E) async throws -> E.Response {
     let explicitTransactionId = executable.explicitTransactionId
+
+    var backoff = ctx.backoffConfig
+    var lastError: HError?
+
     var transactionId =
         executable.requiresTransactionId
         ? (explicitTransactionId ?? executable.operatorAccountId.map(TransactionId.generateFrom)
-            ?? client.generateTransactionId()) : nil
+            ?? ctx.operatorAccountId.map(TransactionId.generateFrom)) : nil
 
-    let explicitNodeIndexes = try executable.nodeAccountIds.map { try client.network.nodeIndexesForIds($0) }
+    let explicitNodeIndexes = try executable.nodeAccountIds.map(ctx.network.nodeIndexesForIds)
+    var attempt = 0
 
     while true {
-        let randomNodeIndexes = randomNodeIndexes(client: client, explicitNodeIndexes: explicitNodeIndexes)
+        let randomNodeIndexes = randomNodeIndexes(ctx: ctx, explicitNodeIndexes: explicitNodeIndexes)
         inner: for await nodeIndex in randomNodeIndexes {
-            let (nodeAccountId, channel) = client.network.channel(for: nodeIndex)
+            defer {
+                attempt += 1
+            }
+
+            if attempt >= ctx.maxAttempts {
+                throw HError.timedOut(String(describing: lastError))
+            }
+
+            let (nodeAccountId, channel) = ctx.network.channel(for: nodeIndex)
             let (request, context) = try executable.makeRequest(transactionId, nodeAccountId)
             let response: E.GrpcResponse
 
             defer {
-                client.network.markNodeUsed(nodeIndex, now: .now)
+                ctx.network.markNodeUsed(nodeIndex, now: .now)
             }
 
             do {
@@ -153,12 +208,13 @@ internal func executeAny<E: Execute & ValidateChecksums>(_ client: Client, _ exe
 
             case .transactionExpired
             where explicitTransactionId == nil
-                && (executable.regenerateTransactionId ?? client.defaultRegenerateTransactionId):
+                && ctx.operatorAccountId != nil:
                 // the transaction that was generated has since expired
                 // re-generate the transaction ID and try again, immediately
                 lastError = executable.makeErrorPrecheck(precheckStatus, transactionId)
                 transactionId =
-                    executable.operatorAccountId.map(TransactionId.generateFrom) ?? client.generateTransactionId()
+                    executable.operatorAccountId.map(TransactionId.generateFrom)
+                    ?? .generateFrom(ctx.operatorAccountId!)
                 continue inner
 
             case .UNRECOGNIZED(let value):
@@ -208,25 +264,34 @@ private struct NodeIndexesGeneratorMap: AsyncSequence, AsyncIteratorProtocol {
         self
     }
 
-    fileprivate init(indecies: [Int], passthrough: Bool, client: Client) {
+    fileprivate init(indecies: [Int], passthrough: Bool, ctx: ExecuteContext) {
         // `popLast` is generally faster, sooo...
         self.source = indecies.reversed()
         self.passthrough = passthrough
-        self.client = client
+        self.ctx = ctx
     }
 
     fileprivate var source: [Int]
     fileprivate let passthrough: Bool
-    fileprivate let client: Client
+    fileprivate let ctx: ExecuteContext
 
     mutating func next() async -> Int? {
-        func recursePing(client: Client, nodeIndex: Int) async -> Bool {
-            do {
-                try await (client.ping(client.network.nodes[nodeIndex]))
-                return true
-            } catch {
-                return false
-            }
+        func recursePing(ctx: ExecuteContext, nodeIndex: Int) async -> Bool {
+            let request = PingQuery(nodeAccountId: ctx.network.nodes[nodeIndex])
+
+            let res: ()? = try? await executeAnyInner(
+                ctx: ExecuteContext(
+                    operatorAccountId: nil,
+                    network: ctx.network,
+                    backoffConfig: ctx.backoffConfig,
+                    maxAttempts: ctx.maxAttempts,
+                    grpcTimeout: ctx.grpcTimeout
+                ),
+                executable: request
+            )
+
+            return res != nil
+
         }
 
         guard let current = source.popLast() else {
@@ -237,11 +302,11 @@ private struct NodeIndexesGeneratorMap: AsyncSequence, AsyncIteratorProtocol {
             return current
         }
 
-        if client.network.nodeRecentlyPinged(current, now: .now) {
+        if ctx.network.nodeRecentlyPinged(current, now: .now) {
             return current
         }
 
-        if await recursePing(client: client, nodeIndex: current) {
+        if await recursePing(ctx: ctx, nodeIndex: current) {
             return current
         }
 
@@ -250,12 +315,12 @@ private struct NodeIndexesGeneratorMap: AsyncSequence, AsyncIteratorProtocol {
 }
 
 // this is made complicated by the fact that we *might* have to ping nodes (and we really want to not do that if at all possible)
-private func randomNodeIndexes(client: Client, explicitNodeIndexes: [Int]?) -> NodeIndexesGeneratorMap {
-    let nodeIndexes = explicitNodeIndexes ?? client.network.healthyNodeIndexes()
+private func randomNodeIndexes(ctx: ExecuteContext, explicitNodeIndexes: [Int]?) -> NodeIndexesGeneratorMap {
+    let nodeIndexes = explicitNodeIndexes ?? ctx.network.healthyNodeIndexes()
 
     let nodeSampleAmount = (explicitNodeIndexes != nil) ? nodeIndexes.count : (nodeIndexes.count + 2) / 3
 
     let randomNodeIndexes = randomIndexes(upTo: nodeIndexes.count, amount: nodeSampleAmount).map { nodeIndexes[$0] }
 
-    return NodeIndexesGeneratorMap(indecies: randomNodeIndexes, passthrough: explicitNodeIndexes != nil, client: client)
+    return NodeIndexesGeneratorMap(indecies: randomNodeIndexes, passthrough: explicitNodeIndexes != nil, ctx: ctx)
 }

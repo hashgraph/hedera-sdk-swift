@@ -73,6 +73,10 @@ public struct Timestamp: Sendable, Equatable, Hashable, CustomStringConvertible,
     public static func - (lhs: Self, rhs: Duration) -> Self {
         Self(seconds: lhs.seconds - rhs.seconds, subSecondNanos: lhs.subSecondNanos)
     }
+
+    internal static func - (lhs: Self, rhs: Self) -> Duration {
+        Duration(seconds: (lhs.unixTimestampNanos - rhs.unixTimestampNanos) / nanosPerSecond)
+    }
 }
 
 extension Timestamp: ProtobufCodable {

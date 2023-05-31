@@ -11,27 +11,23 @@ private struct ContractJson: Decodable {
 
 public enum Resources {
     private static func getData(forUrl url: URL) async throws -> Data {
-        #if compiler(>=5.8)
-            return try await URLSession.shared.data(from: url).0
-        #else
-            if #available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *) {
-                // this version is different than the one above (this one has a `delegate: nil`), confusing I know
-                return try await URLSession.shared.data(from: url, delegate: nil).0
-            }
+        if #available(macOS 12.0, iOS 15.0, watchOS 8.0, tvOS 15.0, *) {
+            // this version is different than the one above (this one has a `delegate: nil`), confusing I know
+            return try await URLSession.shared.data(from: url, delegate: nil).0
+        }
 
-            return try await withCheckedThrowingContinuation { continuation in
-                let task = URLSession.shared.dataTask(with: url) { data, response, error in
-                    guard let data = data, let _ = response else {
-                        let error = error ?? URLError(.badServerResponse)
-                        return continuation.resume(throwing: error)
-                    }
-
-                    continuation.resume(returning: data)
+        return try await withCheckedThrowingContinuation { continuation in
+            let task = URLSession.shared.dataTask(with: url) { data, response, error in
+                guard let data = data, let _ = response else {
+                    let error = error ?? URLError(.badServerResponse)
+                    return continuation.resume(throwing: error)
                 }
 
-                task.resume()
+                continuation.resume(returning: data)
             }
-        #endif
+
+            task.resume()
+        }
     }
 
     private static func bytecode(forUrl url: URL) async throws -> String {

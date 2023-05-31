@@ -278,7 +278,7 @@ public class Transaction: ValidateChecksums {
             return self
         }
 
-        guard let nodeAccountIds = self.nodeAccountIds ?? client?.randomNodeIds() else {
+        guard let nodeAccountIds = self.nodeAccountIds ?? client?.net.randomNodeIds() else {
             throw HError(
                 kind: .freezeUnsetNodeAccountIds, description: "transaction frozen without client or explicit node IDs")
         }
