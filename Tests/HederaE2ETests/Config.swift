@@ -144,4 +144,8 @@ internal struct NonfreeTestEnvironment {
 
     internal let client: Hedera.Client
     internal let config: Config
+
+    internal var `operator`: TestEnvironment.Operator {
+        config.operator
+    }
 }

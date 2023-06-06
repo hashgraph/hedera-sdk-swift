@@ -128,7 +128,7 @@ let package = Package(
         ),
         .testTarget(name: "HederaTests", dependencies: ["Hedera"]),
         .testTarget(
-            name: "HederaEndToEndTests",
+            name: "HederaE2ETests",
             dependencies: ["Hedera", .product(name: "SwiftDotenv", package: "swift-dotenv")]),
     ] + exampleTargets
 )
