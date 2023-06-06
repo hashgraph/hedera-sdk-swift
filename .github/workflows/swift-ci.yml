@@ -18,10 +18,7 @@ jobs:
     strategy:
       matrix:
         swift: ["5.7", "5.8"]
-        os: [macos-11, macos-12, macos-latest]
-        exclude: 
-          - swift: "5.8"
-            os: macos-11
+        os: [macos-12, macos-latest]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -45,10 +42,8 @@ jobs:
     strategy:
       matrix:
         swift: ["5.7", "5.8"]
-        os: [macos-11, macos-12, macos-latest]
-        exclude: 
-          - swift: "5.8"
-            os: macos-11
+        os: [macos-12, macos-latest]
+
     needs: [build]
     runs-on: ${{ matrix.os }}
     steps:

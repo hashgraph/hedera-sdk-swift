@@ -2,7 +2,6 @@ import Hedera
 import XCTest
 
 internal final class AccountCreateE2ETests: XCTestCase {
-    @available(macOS 12.0, *)
     internal func testInitialBalanceAndKey() async throws {
         let testEnv = try TestEnvironment.nonFree
 
