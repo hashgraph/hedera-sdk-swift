@@ -111,6 +111,14 @@ internal func executeAny<E: Execute & ValidateChecksums>(_ client: Client, _ exe
         }
     }
 
+    let backoff = client.backoff
+
+    let backoffBuilder = LegacyExponentialBackoff(
+        initialInterval: backoff.initialBackoff,
+        maxInterval: backoff.maxBackoff,
+        maxElapsedTime: .limited(timeout)
+    )
+
     // let backoff = client.backoff();
     // let mut backoff_builder = ExponentialBackoffBuilder::new();
 
@@ -122,14 +130,12 @@ internal func executeAny<E: Execute & ValidateChecksums>(_ client: Client, _ exe
     //     backoff_builder.with_max_elapsed_time(Some(timeout));
     // }
 
-    let backoffBuilder = LegacyExponentialBackoff(maxElapsedTime: .limited(timeout))
-
     return try await executeAnyInner(
         ctx: ExecuteContext(
             operatorAccountId: operatorAccountId,
             network: client.net,
             backoffConfig: backoffBuilder,
-            maxAttempts: 0,
+            maxAttempts: backoff.maxAttempts,
             grpcTimeout: nil
         ),
         executable: executable)
@@ -231,13 +237,13 @@ private func executeAnyInner<E: Execute>(ctx: ExecuteContext, executable: E) asy
             default:
                 throw executable.makeErrorPrecheck(precheckStatus, transactionId)
             }
-
-            guard let timeout = backoff.next() else {
-                throw HError.timedOut(String(describing: lastError))
-            }
-
-            try await Task.sleep(nanoseconds: UInt64(timeout * 1e9))
         }
+
+        guard let timeout = backoff.next() else {
+            throw HError.timedOut(String(describing: lastError))
+        }
+
+        try await Task.sleep(nanoseconds: UInt64(timeout * 1e9))
     }
 }
 
