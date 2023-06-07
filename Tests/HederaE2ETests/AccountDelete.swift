@@ -89,7 +89,7 @@ internal final class AccountDelete: XCTestCase {
                 .execute(testEnv.client)
                 .getReceipt(testEnv.client)
 
-                XCTFail()
+            XCTFail()
         } catch let error as HError {
             guard case .receiptStatus(status: .invalidSignature, transactionId: _) = error.kind
             else {
