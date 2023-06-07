@@ -84,7 +84,6 @@ internal final class AccountUpdate: XCTestCase {
                 XCTFail("incorrect error: \(error)")
                 return
             }
-
         }
     }
 }
