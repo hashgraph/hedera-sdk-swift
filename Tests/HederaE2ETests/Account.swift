@@ -10,9 +10,7 @@ internal struct Account {
     internal static func create(_ testEnv: NonfreeTestEnvironment, balance: Hbar = 0) async throws -> Self {
         let key = PrivateKey.generateEd25519()
 
-        let receipt = try await AccountCreateTransaction()
-            .key(.single(key.publicKey))
-            .initialBalance(balance)
+        let receipt = try await AccountCreateTransaction(key: .single(key.publicKey), initialBalance: balance)
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
 

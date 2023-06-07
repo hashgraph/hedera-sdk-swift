@@ -28,7 +28,7 @@ internal final class AccountUpdate: XCTestCase {
         }
 
         do {
-            let info = try await AccountInfoQuery().accountId(accountId).execute(testEnv.client)
+            let info = try await AccountInfoQuery(accountId: accountId).execute(testEnv.client)
 
             XCTAssertEqual(info.key, .single(key1.publicKey))
 
@@ -41,7 +41,7 @@ internal final class AccountUpdate: XCTestCase {
                 .getReceipt(testEnv.client)
         }
 
-        let info = try await AccountInfoQuery().accountId(accountId).execute(testEnv.client)
+        let info = try await AccountInfoQuery(accountId: accountId).execute(testEnv.client)
 
         XCTAssertEqual(info.accountId, accountId)
         XCTAssertFalse(info.isDeleted)

@@ -84,7 +84,7 @@ internal final class AccountBalance: XCTestCase {
         let testEnv = TestEnvironment.global
 
         do {
-            _ = try await AccountBalanceQuery().accountId("1.0.3").execute(testEnv.client)
+            _ = try await AccountBalanceQuery(accountId: "1.0.3").execute(testEnv.client)
 
             XCTFail("expected error querying account balance")
             return
