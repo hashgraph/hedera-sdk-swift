@@ -2,17 +2,6 @@ import Hedera
 import XCTest
 
 internal final class AccountCreate: XCTestCase {
-    private static func teardownDeleteAccount(_ testEnv: NonfreeTestEnvironment, accountId: AccountId, key: PrivateKey)
-        async throws
-    {
-        _ = try await AccountDeleteTransaction()
-            .accountId(accountId)
-            .transferAccountId(testEnv.operator.accountId)
-            .sign(key)
-            .execute(testEnv.client)
-            .getReceipt(testEnv.client)
-    }
-
     internal func testInitialBalanceAndKey() async throws {
         let testEnv = try TestEnvironment.nonFree
 
@@ -26,7 +15,7 @@ internal final class AccountCreate: XCTestCase {
 
         let accountId = try XCTUnwrap(receipt.accountId)
 
-        addTeardownBlock { try await Self.teardownDeleteAccount(testEnv, accountId: accountId, key: key) }
+        addTeardownBlock { try await Account(id: accountId, key: key).delete(testEnv) }
 
         let info = try await AccountInfoQuery(accountId: accountId).execute(testEnv.client)
 
@@ -52,7 +41,7 @@ internal final class AccountCreate: XCTestCase {
 
         let accountId = try XCTUnwrap(receipt.accountId)
 
-        addTeardownBlock { try await Self.teardownDeleteAccount(testEnv, accountId: accountId, key: key) }
+        addTeardownBlock { try await Account(id: accountId, key: key).delete(testEnv) }
 
         let info = try await AccountInfoQuery(accountId: accountId).execute(testEnv.client)
 
@@ -99,7 +88,7 @@ internal final class AccountCreate: XCTestCase {
 
         let info = try await AccountInfoQuery().accountId(aliasId).execute(testEnv.client)
 
-        addTeardownBlock { try await Self.teardownDeleteAccount(testEnv, accountId: info.accountId, key: key) }
+        addTeardownBlock { try await Account(id: info.accountId, key: key).delete(testEnv) }
 
         XCTAssertEqual(info.aliasKey, key.publicKey)
     }
@@ -125,7 +114,7 @@ internal final class AccountCreate: XCTestCase {
 
     //     let accountId = try XCTUnwrap(receipt.accountId)
 
-    //     addTeardownBlock { try await Self.teardownDeleteAccount(testEnv, accountId: accountId, key: key) }
+    //        addTeardownBlock { try await Account(id: accountId, key: key).delete(testEnv) }
 
     //     let info = try await AccountInfoQuery(accountId: accountId).execute(testEnv.client)
 
@@ -155,7 +144,7 @@ internal final class AccountCreate: XCTestCase {
 
         let accountId = try XCTUnwrap(receipt.accountId)
 
-        addTeardownBlock { try await Self.teardownDeleteAccount(testEnv, accountId: accountId, key: adminKey) }
+        addTeardownBlock { try await Account(id: accountId, key: adminKey).delete(testEnv) }
 
         let info = try await AccountInfoQuery(accountId: accountId).execute(testEnv.client)
 
@@ -183,7 +172,7 @@ internal final class AccountCreate: XCTestCase {
 
         let accountId = try XCTUnwrap(receipt.accountId)
 
-        addTeardownBlock { try await Self.teardownDeleteAccount(testEnv, accountId: accountId, key: adminKey) }
+        addTeardownBlock { try await Account(id: accountId, key: adminKey).delete(testEnv) }
 
         let info = try await AccountInfoQuery(accountId: accountId).execute(testEnv.client)
 
@@ -239,7 +228,7 @@ internal final class AccountCreate: XCTestCase {
 
         let accountId = try XCTUnwrap(receipt.accountId)
 
-        addTeardownBlock { try await Self.teardownDeleteAccount(testEnv, accountId: accountId, key: adminKey) }
+        addTeardownBlock { try await Account(id: accountId, key: adminKey).delete(testEnv) }
 
         let info = try await AccountInfoQuery(accountId: accountId).execute(testEnv.client)
 
@@ -296,7 +285,7 @@ internal final class AccountCreate: XCTestCase {
 
         let accountId = try XCTUnwrap(receipt.accountId)
 
-        addTeardownBlock { try await Self.teardownDeleteAccount(testEnv, accountId: accountId, key: adminKey) }
+        addTeardownBlock { try await Account(id: accountId, key: adminKey).delete(testEnv) }
 
         let info = try await AccountInfoQuery(accountId: accountId).execute(testEnv.client)
 

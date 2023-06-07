@@ -113,6 +113,10 @@ internal struct TestEnvironment {
 
     let client: Hedera.Client
     let config: Config
+
+    internal var `operator`: Operator? {
+        config.operator
+    }
 }
 
 internal struct NonfreeTestEnvironment {
