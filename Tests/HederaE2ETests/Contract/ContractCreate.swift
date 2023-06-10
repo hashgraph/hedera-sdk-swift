@@ -88,21 +88,21 @@ internal final class ContractCreate: XCTestCase {
 
         let bytecode = try await File.forContent(ContractHelpers.bytecode, testEnv)
 
-        do {
-            _ = try await ContractCreateTransaction()
+        await assertThrowsHErrorAsync(
+            try await ContractCreateTransaction()
                 .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
                 .bytecodeFileId(bytecode.fileId)
                 .contractMemo("[e2e::ContractCreateTransaction]")
                 .execute(testEnv.client)
-                .getReceipt(testEnv.client)
-
-            XCTFail("Expected contract creation to fail")
-            return
-        } catch let error as HError {
-            guard case .receiptStatus(status: .insufficientGas, transactionId: _) = error.kind else {
-                XCTFail("incorrect error: \(error)")
+                .getReceipt(testEnv.client),
+            "expected error creating contract"
+        ) { error in
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
                 return
             }
+
+            XCTAssertEqual(status, .insufficientGas)
         }
     }
 
@@ -111,42 +111,42 @@ internal final class ContractCreate: XCTestCase {
 
         let bytecode = try await File.forContent(ContractHelpers.bytecode, testEnv)
 
-        do {
-            _ = try await ContractCreateTransaction()
+        await assertThrowsHErrorAsync(
+            try await ContractCreateTransaction()
                 .gas(100000)
                 .bytecodeFileId(bytecode.fileId)
                 .contractMemo("[e2e::ContractCreateTransaction]")
                 .execute(testEnv.client)
-                .getReceipt(testEnv.client)
-
-            XCTFail("Expected contract creation to fail")
-            return
-        } catch let error as HError {
-            guard case .receiptStatus(status: .contractRevertExecuted, transactionId: _) = error.kind else {
-                XCTFail("incorrect error: \(error)")
+                .getReceipt(testEnv.client),
+            "expected error creating contract"
+        ) { error in
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
                 return
             }
+
+            XCTAssertEqual(status, .contractRevertExecuted)
         }
     }
 
     internal func bytecodeFileIdUnsetFails() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        do {
-            _ = try await ContractCreateTransaction()
+        await assertThrowsHErrorAsync(
+            try await ContractCreateTransaction()
                 .gas(100000)
                 .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
                 .contractMemo("[e2e::ContractCreateTransaction]")
                 .execute(testEnv.client)
-                .getReceipt(testEnv.client)
-
-            XCTFail("Expected contract creation to fail")
-            return
-        } catch let error as HError {
-            guard case .receiptStatus(status: .invalidFileID, transactionId: _) = error.kind else {
-                XCTFail("incorrect error: \(error)")
+                .getReceipt(testEnv.client),
+            "expected error creating contract"
+        ) { error in
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
                 return
             }
+
+            XCTAssertEqual(status, .invalidFileID)
         }
     }
 }

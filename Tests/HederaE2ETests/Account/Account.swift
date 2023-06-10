@@ -22,13 +22,13 @@ import Hedera
 import XCTest
 
 internal struct Account {
-    internal init(id: AccountId, key: PrivateKey) {
-        self.id = id
-        self.key = key
-    }
+    internal let id: AccountId
+    internal let key: PrivateKey
 
     internal static func create(_ testEnv: NonfreeTestEnvironment, balance: Hbar = 0) async throws -> Self {
         let key = PrivateKey.generateEd25519()
+
+        try await testEnv.ratelimits.accountCreate()
 
         let receipt = try await AccountCreateTransaction(key: .single(key.publicKey), initialBalance: balance)
             .execute(testEnv.client)
@@ -47,7 +47,4 @@ internal struct Account {
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
     }
-
-    internal let id: AccountId
-    internal let key: PrivateKey
 }

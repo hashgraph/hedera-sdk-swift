@@ -22,7 +22,7 @@ import Hedera
 import XCTest
 
 internal final class AccountUpdate: XCTestCase {
-    func testSetKey() async throws {
+    internal func testSetKey() async throws {
         let testEnv = try TestEnvironment.nonFree
 
         let key1 = PrivateKey.generateEd25519()
@@ -74,16 +74,18 @@ internal final class AccountUpdate: XCTestCase {
 
     }
 
-    func testMissingAccountIdFails() async throws {
+    internal func testMissingAccountIdFails() async throws {
         let testEnv = try TestEnvironment.nonFree
-        do {
-            let _ = try await AccountUpdateTransaction().execute(testEnv.client).getReceipt(testEnv.client)
-            XCTFail()
-        } catch let error as HError {
-            guard case .receiptStatus(status: Status.accountIDDoesNotExist, transactionId: _) = error.kind else {
-                XCTFail("incorrect error: \(error)")
+
+        await assertThrowsHErrorAsync(
+            try await AccountUpdateTransaction().execute(testEnv.client).getReceipt(testEnv.client)
+        ) { error in
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
                 return
             }
+
+            XCTAssertEqual(status, .accountIDDoesNotExist)
         }
     }
 }

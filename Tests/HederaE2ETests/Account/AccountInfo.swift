@@ -72,71 +72,57 @@ internal final class AccountInfo: XCTestCase {
 
         let cost = try await query.getCost(testEnv.client)
 
-        do {
-            _ = try await query.execute(testEnv.client)
-            XCTFail()
-        } catch let error as HError {
+        await assertThrowsHErrorAsync(
+            try await query.execute(testEnv.client),
+            "expected error querying account"
+        ) { error in
             // note: there's a very small chance this fails if the cost of a AccountInfoQuery changes right when we execute it.
-            guard case .maxQueryPaymentExceeded(cost, .fromTinybars(1)) = error.kind else {
-                XCTFail("incorrect error: \(error)")
-                return
-            }
-
+            XCTAssertEqual(error.kind, .maxQueryPaymentExceeded(queryCost: cost, maxQueryPayment: .fromTinybars(1)))
         }
     }
 
     internal func testGetCostInsufficientTxFeeFails() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        do {
-            _ = try await AccountInfoQuery()
+        await assertThrowsHErrorAsync(
+            try await AccountInfoQuery()
                 .accountId(testEnv.operator.accountId)
                 .maxPaymentAmount(.fromTinybars(10000))
                 .paymentAmount(.fromTinybars(1))
-                .execute(testEnv.client)
-
-            XCTFail()
-        } catch let error as HError {
-            guard case .queryPaymentPreCheckStatus(status: .insufficientTxFee, transactionId: _) = error.kind else {
-                XCTFail("incorrect error: \(error)")
+                .execute(testEnv.client),
+            "expected error querying account"
+        ) { error in
+            guard case .queryPaymentPreCheckStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.queryPaymentPreCheckStatus`")
                 return
             }
+            // note: there's a very small chance this fails if the cost of a AccountInfoQuery changes right when we execute it.
+            XCTAssertEqual(status, .insufficientTxFee)
         }
     }
 
-    internal func testFlowVerifyTransaction() async throws {
+    internal func testFlowVerifySignedTransaction() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let newKey = PrivateKey.generateEd25519()
-        let newPublicKey = newKey.publicKey
-
-        let signedTx = try AccountCreateTransaction()
-            .key(.single(newPublicKey))
-            .initialBalance(.fromTinybars(1000))
+        let transaction = try AccountCreateTransaction()
             .freezeWith(testEnv.client)
             .signWithOperator(testEnv.client)
 
+        try await AccountInfoFlow.verifyTransactionSignature(testEnv.client, testEnv.operator.accountId, transaction)
+    }
+
+    internal func testFlowVerifyUnsignedTransactionFails() async throws {
+        let testEnv = try TestEnvironment.nonFree
+
         let unsignedTx = try AccountCreateTransaction()
-            .key(.single(newPublicKey))
-            .initialBalance(.fromTinybars(1000))
             .freezeWith(testEnv.client)
 
-        do {
-            try await AccountInfoFlow.verifyTransactionSignature(testEnv.client, testEnv.operator.accountId, signedTx)
-        } catch {
-            XCTFail("Expected `verifyTransactionSignature` to not throw, error: \(error)")
+        await assertThrowsHErrorAsync(
+            try await AccountInfoFlow
+                .verifyTransactionSignature(testEnv.client, testEnv.operator.accountId, unsignedTx),
+            "expected `verifyTransactionSignature` to throw error"
+        ) { error in
+            XCTAssertEqual(error.kind, .signatureVerify)
         }
-
-        do {
-            try await AccountInfoFlow.verifyTransactionSignature(testEnv.client, testEnv.operator.accountId, unsignedTx)
-
-            XCTFail("Expected `verifyTransactionSignature` to throw")
-        } catch let error as HError {
-            guard case .signatureVerify = error.kind else {
-                XCTFail("incorrect error: \(error)")
-                return
-            }
-        }
-
     }
 }

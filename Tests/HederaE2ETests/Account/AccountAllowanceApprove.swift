@@ -34,8 +34,7 @@ internal final class AccountAllowanceApprove: XCTestCase {
 
     internal func testSpend() async throws {
         let testEnv = try TestEnvironment.nonFree
-
-        let (alice, bob) = try await (createAccount(testEnv, balance: 10), createAccount(testEnv, balance: 10))
+        async let (alice, bob) = (createAccount(testEnv, balance: 10), createAccount(testEnv, balance: 10))
 
         _ = try await AccountAllowanceApproveTransaction()
             .approveHbarAllowance(bob.id, alice.id, 10)

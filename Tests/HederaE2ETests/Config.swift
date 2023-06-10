@@ -22,6 +22,71 @@ import Hedera
 import SwiftDotenv
 import XCTest
 
+private struct Bucket {
+    /// Divide the entire ratelimit for everything by this amount because we don't actually want to use the entire network's worth of rss.
+    private static let globalDivider: Int = 2
+    /// Multiply the refresh delay
+    private static let refreshMultiplier: Double = 1.05
+
+
+    /// Create a bucket for at most `limit` items per `refreshDelay`.
+    internal init(limit: Int, refreshDelay: TimeInterval) {
+        precondition(limit > 0)
+        self.limit = max(limit / Self.globalDivider, 1)
+        self.refreshDelay = refreshDelay * Self.refreshMultiplier
+        self.items = []
+    }
+
+    fileprivate var limit: Int
+    // how quickly items are removed (an item older than `refreshDelay` is dropped)
+    fileprivate var refreshDelay: TimeInterval
+    fileprivate var items: [Date]
+
+    fileprivate mutating func next(now: Date = Date()) -> UInt64? {
+        items.removeAll { now.timeIntervalSince($0) >= refreshDelay }
+
+        let usedTime: Date
+
+        if items.count >= limit {
+            // if the limit is `2` items per `0.5` seconds and we have `3` items, we want `items[1] + 0.5 seconds` 
+            // because `items[1]` will expire 0.5 seconds after *it* was added.  
+            usedTime = items[items.count - limit] + refreshDelay
+        } else {
+            usedTime = now
+        }
+
+        items.append(usedTime)
+        
+        if usedTime > now {
+            return UInt64(usedTime.timeIntervalSince(now) * 1e9)
+        }
+
+        return nil
+    }    
+}
+
+/// Ratelimits for the really stringent operations.
+/// 
+/// This is a best-effort attempt to protect against E2E tests being flakey due to Hedera having a global ratelimit per transaction type.
+internal actor Ratelimit {
+    // todo: use something fancier or find something fancier, preferably the latter, but the swift ecosystem is as it is.
+    private var accountCreate = Bucket(limit: 2, refreshDelay: 1.0)
+    private var file = Bucket(limit: 10, refreshDelay: 1.0)
+    // private var topicCreate = Bucket(limit: 5, refreshDelay: 1.0)
+
+    internal func accountCreate() async throws {
+        // if let sleepTime = accountCreate.next() {
+        //    try await Task.sleep(nanoseconds: sleepTime)
+        // }
+    }
+
+    internal func file() async throws {
+        if let sleepTime = file.next() {
+           try await Task.sleep(nanoseconds: sleepTime)
+        }
+    }
+}
+
 internal struct TestEnvironment {
     internal struct Config {
         private static func envBool(env: Environment?, key: String, defaultValue: Bool) -> Bool {
@@ -37,13 +102,14 @@ internal struct TestEnvironment {
             case _:
                 print(
                     "warn: expected `\(key)` to be `1` or `0` but it was `\(value)`, returning `\(defaultValue)`",
-                    stderr)
+                    stderr
+                )
 
                 return defaultValue
             }
         }
 
-        init() {
+        fileprivate init() {
             let env = try? Dotenv.load()
 
             network = env?[Keys.network]?.stringValue ?? "testnet"
@@ -66,7 +132,7 @@ internal struct TestEnvironment {
     }
 
     internal struct Operator {
-        init?(env: Environment?) {
+        internal init?(env: Environment?) {
             guard let env = env else {
                 return nil
             }
@@ -111,6 +177,7 @@ internal struct TestEnvironment {
 
     private init() {
         config = .init()
+        ratelimits = .init()
 
         // todo: warn when error
         client = (try? Client.forName(config.network)) ?? Client.forTestnet()
@@ -131,8 +198,9 @@ internal struct TestEnvironment {
         }
     }
 
-    let client: Hedera.Client
-    let config: Config
+    internal let client: Hedera.Client
+    internal let config: Config
+    internal let ratelimits: Ratelimit
 
     internal var `operator`: Operator? {
         config.operator
@@ -141,9 +209,8 @@ internal struct TestEnvironment {
 
 internal struct NonfreeTestEnvironment {
     internal struct Config {
-        init?(base: TestEnvironment.Config) {
-
-            if !base.runNonfreeTests {
+        fileprivate init?(base: TestEnvironment.Config) {
+            guard base.runNonfreeTests else {
                 return nil
             }
 
@@ -162,12 +229,14 @@ internal struct NonfreeTestEnvironment {
 
         self.config = config
         self.client = env.client
+        self.ratelimits = env.ratelimits
     }
 
     fileprivate static let global: Self? = Self(.global)
 
     internal let client: Hedera.Client
     internal let config: Config
+    internal let ratelimits: Ratelimit
 
     internal var `operator`: TestEnvironment.Operator {
         config.operator

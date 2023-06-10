@@ -27,6 +27,8 @@ internal final class AccountCreate: XCTestCase {
 
         let key = PrivateKey.generateEd25519()
 
+        try await testEnv.ratelimits.accountCreate()
+
         let receipt = try await AccountCreateTransaction()
             .key(.single(key.publicKey))
             .initialBalance(Hbar(1))
@@ -54,6 +56,8 @@ internal final class AccountCreate: XCTestCase {
 
         let key = PrivateKey.generateEd25519()
 
+        try await testEnv.ratelimits.accountCreate()
+
         let receipt = try await AccountCreateTransaction()
             .key(.single(key.publicKey))
             .execute(testEnv.client)
@@ -75,21 +79,20 @@ internal final class AccountCreate: XCTestCase {
         XCTAssertEqual(info.proxyReceived, 0)
     }
 
-    internal func testMissingKeyError() async throws {
+    internal func testMissingKeyFails() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        do {
-            let receipt = try await AccountCreateTransaction()
-                .execute(testEnv.client)
-                .getReceipt(testEnv.client)
-
-            XCTFail("expected error creating account: \(receipt)")
-            return
-        } catch let error as HError {
-            guard case .transactionPreCheckStatus(status: .keyRequired, transactionId: _) = error.kind else {
-                XCTFail("incorrect error: \(error)")
+        try await testEnv.ratelimits.accountCreate()
+        await assertThrowsHErrorAsync(
+            try await AccountCreateTransaction().execute(testEnv.client),
+            "expected error creating account"
+        ) { error in
+            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("\(error.kind) is not `.transactionPreCheckStatus(status: _)`")
                 return
             }
+
+            XCTAssertEqual(status, .keyRequired)
         }
     }
 
@@ -156,9 +159,10 @@ internal final class AccountCreate: XCTestCase {
         let adminKey = PrivateKey.generateEcdsa()
         let evmAddress = try XCTUnwrap(adminKey.publicKey.toEvmAddress())
 
+        try await testEnv.ratelimits.accountCreate()
         let receipt = try await AccountCreateTransaction()
             .key(.single(adminKey.publicKey))
-            // .alias(evmAddress)
+            .alias(evmAddress)
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
 
@@ -181,6 +185,7 @@ internal final class AccountCreate: XCTestCase {
         let adminKey = PrivateKey.generateEcdsa()
         let evmAddress = try XCTUnwrap(adminKey.publicKey.toEvmAddress())
 
+        try await testEnv.ratelimits.accountCreate()
         let receipt = try await AccountCreateTransaction()
             .receiverSignatureRequired(true)
             .key(.single(adminKey.publicKey))
@@ -209,22 +214,22 @@ internal final class AccountCreate: XCTestCase {
         let adminKey = PrivateKey.generateEcdsa()
         let evmAddress = try XCTUnwrap(adminKey.publicKey.toEvmAddress())
 
-        do {
-            let receipt = try await AccountCreateTransaction()
+        await assertThrowsHErrorAsync(
+            try await AccountCreateTransaction()
                 .receiverSignatureRequired(true)
                 .key(.single(adminKey.publicKey))
                 .alias(evmAddress)
                 .freezeWith(testEnv.client)
                 .execute(testEnv.client)
-                .getReceipt(testEnv.client)
-
-            XCTFail("expected error creating account: \(receipt)")
-            return
-        } catch let error as HError {
-            guard case .receiptStatus(status: .invalidSignature, transactionId: _) = error.kind else {
-                XCTFail("incorrect error: \(error)")
+                .getReceipt(testEnv.client),
+            "expected error creating account"
+        ) { error in
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
                 return
             }
+
+            XCTAssertEqual(status, .invalidSignature)
         }
     }
 
@@ -265,21 +270,21 @@ internal final class AccountCreate: XCTestCase {
         let key = PrivateKey.generateEcdsa()
         let evmAddress = try XCTUnwrap(key.publicKey.toEvmAddress())
 
-        do {
-            let receipt = try await AccountCreateTransaction()
+        await assertThrowsHErrorAsync(
+            try await AccountCreateTransaction()
                 .key(.single(adminKey.publicKey))
                 .alias(evmAddress)
                 .freezeWith(testEnv.client)
                 .execute(testEnv.client)
-                .getReceipt(testEnv.client)
-
-            XCTFail("expected error creating account: \(receipt)")
-            return
-        } catch let error as HError {
-            guard case .receiptStatus(status: .invalidSignature, transactionId: _) = error.kind else {
-                XCTFail("incorrect error: \(error)")
+                .getReceipt(testEnv.client),
+            "expected error creating account"
+        ) { error in
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
                 return
             }
+
+            XCTAssertEqual(status, .invalidSignature)
         }
     }
 
@@ -293,6 +298,7 @@ internal final class AccountCreate: XCTestCase {
         let key = PrivateKey.generateEcdsa()
         let evmAddress = try XCTUnwrap(key.publicKey.toEvmAddress())
 
+        try await testEnv.ratelimits.accountCreate()
         let receipt = try await AccountCreateTransaction()
             .receiverSignatureRequired(true)
             .key(.single(adminKey.publicKey))
@@ -322,22 +328,23 @@ internal final class AccountCreate: XCTestCase {
         let key = PrivateKey.generateEcdsa()
         let evmAddress = try XCTUnwrap(key.publicKey.toEvmAddress())
 
-        do {
-            let receipt = try await AccountCreateTransaction()
+        try await testEnv.ratelimits.accountCreate()
+        await assertThrowsHErrorAsync(
+            try await AccountCreateTransaction()
                 .receiverSignatureRequired(true)
                 .key(.single(adminKey.publicKey))
                 .alias(evmAddress)
                 .freezeWith(testEnv.client)
                 .execute(testEnv.client)
-                .getReceipt(testEnv.client)
-
-            XCTFail("expected error creating account: \(receipt)")
-            return
-        } catch let error as HError {
-            guard case .receiptStatus(status: .invalidSignature, transactionId: _) = error.kind else {
-                XCTFail("incorrect error: \(error)")
+                .getReceipt(testEnv.client),
+            "expected error creating account"
+        ) { error in
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
                 return
             }
+
+            XCTAssertEqual(status, .invalidSignature)
         }
     }
 }

@@ -27,6 +27,8 @@ internal final class AccountDelete: XCTestCase {
 
         let key = PrivateKey.generateEd25519()
 
+
+        try await testEnv.ratelimits.accountCreate()
         let receipt = try await AccountCreateTransaction()
             .key(.single(key.publicKey))
             .initialBalance(1)
@@ -42,33 +44,34 @@ internal final class AccountDelete: XCTestCase {
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
 
-        do {
-            _ = try await AccountInfoQuery(accountId: accountId).execute(testEnv.client)
-            XCTFail()
-        } catch let error as HError {
-            guard case .queryNoPaymentPreCheckStatus(status: .accountDeleted) = error.kind
-            else {
-                XCTFail("incorrect error: \(error)")
+        await assertThrowsHErrorAsync(
+            try await AccountInfoQuery(accountId: accountId).execute(testEnv.client),
+            "expected error querying account"
+        ) { error in
+            guard case .queryNoPaymentPreCheckStatus(let status) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.queryNoPaymentPreCheckStatus`")
                 return
             }
+
+            XCTAssertEqual(status, .accountDeleted)
         }
     }
 
     internal func testMissingAccountIdFails() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        do {
-            _ = try await AccountDeleteTransaction()
+        await assertThrowsHErrorAsync(
+            try await AccountDeleteTransaction()
                 .transferAccountId(testEnv.operator.accountId)
-                .execute(testEnv.client)
-
-            XCTFail()
-        } catch let error as HError {
-            guard case .transactionPreCheckStatus(status: .accountIDDoesNotExist, transactionId: _) = error.kind
-            else {
-                XCTFail("incorrect error: \(error)")
+                .execute(testEnv.client),
+            "expected error deleting account"
+        ) { error in
+            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
                 return
             }
+
+            XCTAssertEqual(status, .accountIDDoesNotExist)
         }
     }
 
@@ -82,20 +85,20 @@ internal final class AccountDelete: XCTestCase {
             try await account.delete(testEnv)
         }
 
-        do {
-            _ = try await AccountDeleteTransaction()
+        await assertThrowsHErrorAsync(
+            try await AccountDeleteTransaction()
                 .transferAccountId(testEnv.operator.accountId)
                 .accountId(account.id)
                 .execute(testEnv.client)
-                .getReceipt(testEnv.client)
-
-            XCTFail()
-        } catch let error as HError {
-            guard case .receiptStatus(status: .invalidSignature, transactionId: _) = error.kind
-            else {
-                XCTFail("incorrect error: \(error)")
+                .getReceipt(testEnv.client),
+            "expected error deleting account"
+        ) { error in
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
                 return
             }
+
+            XCTAssertEqual(status, .invalidSignature)
         }
     }
 }

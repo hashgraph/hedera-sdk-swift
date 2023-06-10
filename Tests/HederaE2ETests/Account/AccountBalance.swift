@@ -31,8 +31,6 @@ internal final class AccountBalance: XCTestCase {
 
         let balance = try await AccountBalanceQuery(accountId: op.accountId).execute(testEnv.client)
 
-        // log::trace!("successfully queried balance: {balance:?}");
-
         XCTAssertEqual(balance.accountId, op.accountId)
         XCTAssertGreaterThan(balance.hbars, 0)
     }
@@ -103,16 +101,16 @@ internal final class AccountBalance: XCTestCase {
     internal func testInvalidAccountIdFails() async throws {
         let testEnv = TestEnvironment.global
 
-        do {
-            _ = try await AccountBalanceQuery(accountId: "1.0.3").execute(testEnv.client)
-
-            XCTFail("expected error querying account balance")
-            return
-        } catch let error as HError {
-            guard case .queryNoPaymentPreCheckStatus(status: .invalidAccountID) = error.kind else {
-                XCTFail("incorrect error: \(error)")
+        await assertThrowsHErrorAsync(
+            try await AccountBalanceQuery(accountId: "1.0.3").execute(testEnv.client),
+            "expected error querying account balance"
+        ) { error in
+            guard case .queryNoPaymentPreCheckStatus(let status) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.queryNoPaymentPrecheckStatus`")
                 return
             }
+
+            XCTAssertEqual(status, .invalidAccountID)
         }
     }
 

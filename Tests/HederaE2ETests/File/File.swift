@@ -27,6 +27,8 @@ internal struct File {
 
     /// Creates a file with the given content.
     internal static func forContent(_ content: Data, _ testEnv: NonfreeTestEnvironment) async throws -> Self {
+        try await testEnv.ratelimits.file()
+
         let receipt = try await FileCreateTransaction()
             .keys([.single(testEnv.operator.privateKey.publicKey)])
             .contents(content)
