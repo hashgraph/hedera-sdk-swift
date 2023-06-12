@@ -28,7 +28,6 @@ private struct Bucket {
     /// Multiply the refresh delay
     private static let refreshMultiplier: Double = 1.05
 
-
     /// Create a bucket for at most `limit` items per `refreshDelay`.
     internal init(limit: Int, refreshDelay: TimeInterval) {
         precondition(limit > 0)
@@ -48,25 +47,25 @@ private struct Bucket {
         let usedTime: Date
 
         if items.count >= limit {
-            // if the limit is `2` items per `0.5` seconds and we have `3` items, we want `items[1] + 0.5 seconds` 
-            // because `items[1]` will expire 0.5 seconds after *it* was added.  
+            // if the limit is `2` items per `0.5` seconds and we have `3` items, we want `items[1] + 0.5 seconds`
+            // because `items[1]` will expire 0.5 seconds after *it* was added.
             usedTime = items[items.count - limit] + refreshDelay
         } else {
             usedTime = now
         }
 
         items.append(usedTime)
-        
+
         if usedTime > now {
             return UInt64(usedTime.timeIntervalSince(now) * 1e9)
         }
 
         return nil
-    }    
+    }
 }
 
 /// Ratelimits for the really stringent operations.
-/// 
+///
 /// This is a best-effort attempt to protect against E2E tests being flakey due to Hedera having a global ratelimit per transaction type.
 internal actor Ratelimit {
     // todo: use something fancier or find something fancier, preferably the latter, but the swift ecosystem is as it is.
@@ -82,7 +81,7 @@ internal actor Ratelimit {
 
     internal func file() async throws {
         if let sleepTime = file.next() {
-           try await Task.sleep(nanoseconds: sleepTime)
+            try await Task.sleep(nanoseconds: sleepTime)
         }
     }
 }

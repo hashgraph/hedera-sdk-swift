@@ -27,7 +27,6 @@ internal final class AccountDelete: XCTestCase {
 
         let key = PrivateKey.generateEd25519()
 
-
         try await testEnv.ratelimits.accountCreate()
         let receipt = try await AccountCreateTransaction()
             .key(.single(key.publicKey))
