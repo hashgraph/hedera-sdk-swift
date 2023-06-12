@@ -77,8 +77,8 @@ internal final class ContractDelete: XCTestCase {
 
             XCTAssertEqual(status, .modifyingImmutableContract)
         }
-
     }
+
     internal func testMissingContractIdFails() async throws {
         let testEnv = try TestEnvironment.nonFree
 
