@@ -56,4 +56,22 @@ extension ContractHelpers {
         """
 
     internal static let bytecode = bytecodeString.data(using: .utf8)!
+
+    internal static func makeContract(_ testEnv: NonfreeTestEnvironment, operatorAdminKey: Bool) async throws
+        -> ContractId
+    {
+        let file = try await File.forContent(bytecode, testEnv)
+
+        let receipt = try await ContractCreateTransaction(
+            bytecodeFileId: file.fileId,
+            adminKey: operatorAdminKey ? .single(testEnv.operator.privateKey.publicKey) : nil,
+            gas: 100000,
+            constructorParameters: ContractFunctionParameters().addString("Hello from Hedera.").toBytes(),
+            contractMemo: "[e2e::ContractCreateTransaction]"
+        )
+        .execute(testEnv.client)
+        .getReceipt(testEnv.client)
+
+        return try XCTUnwrap(receipt.contractId)
+    }
 }

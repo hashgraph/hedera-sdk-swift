@@ -25,18 +25,7 @@ internal final class ContractDelete: XCTestCase {
     internal func testAdminKey() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let bytecode = try await File.forContent(ContractHelpers.bytecode, testEnv)
-
-        let receipt = try await ContractCreateTransaction()
-            .adminKey(.single(testEnv.operator.privateKey.publicKey))
-            .gas(100000)
-            .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
-            .bytecodeFileId(bytecode.fileId)
-            .contractMemo("[e2e::ContractCreateTransaction]")
-            .execute(testEnv.client)
-            .getReceipt(testEnv.client)
-
-        let contractId = try XCTUnwrap(receipt.contractId)
+        let contractId = try await ContractHelpers.makeContract(testEnv, operatorAdminKey: true)
 
         _ = try await ContractDeleteTransaction(contractId: contractId)
             .transferAccountId(testEnv.operator.accountId)
@@ -51,17 +40,7 @@ internal final class ContractDelete: XCTestCase {
     internal func testMissingAdminKeyFails() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let bytecode = try await File.forContent(ContractHelpers.bytecode, testEnv)
-
-        let receipt = try await ContractCreateTransaction()
-            .gas(100000)
-            .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
-            .bytecodeFileId(bytecode.fileId)
-            .contractMemo("[e2e::ContractCreateTransaction]")
-            .execute(testEnv.client)
-            .getReceipt(testEnv.client)
-
-        let contractId = try XCTUnwrap(receipt.contractId)
+        let contractId = try await ContractHelpers.makeContract(testEnv, operatorAdminKey: false)
 
         await assertThrowsHErrorAsync(
             try await ContractDeleteTransaction(contractId: contractId)

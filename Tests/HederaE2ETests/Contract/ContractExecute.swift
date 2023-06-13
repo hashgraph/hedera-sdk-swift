@@ -26,18 +26,7 @@ internal final class ContractExecute: XCTestCase {
     internal func testBasic() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let bytecode = try await File.forContent(ContractHelpers.bytecode, testEnv)
-
-        let receipt = try await ContractCreateTransaction()
-            .adminKey(.single(testEnv.operator.privateKey.publicKey))
-            .gas(100000)
-            .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
-            .bytecodeFileId(bytecode.fileId)
-            .contractMemo("[e2e::ContractCreateTransaction]")
-            .execute(testEnv.client)
-            .getReceipt(testEnv.client)
-
-        let contractId = try XCTUnwrap(receipt.contractId)
+        let contractId = try await ContractHelpers.makeContract(testEnv, operatorAdminKey: true)
 
         addTeardownBlock {
             _ = try await ContractDeleteTransaction(contractId: contractId)
@@ -74,18 +63,7 @@ internal final class ContractExecute: XCTestCase {
     internal func testMissingFunctionParametersFails() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let bytecode = try await File.forContent(ContractHelpers.bytecode, testEnv)
-
-        let receipt = try await ContractCreateTransaction()
-            .adminKey(.single(testEnv.operator.privateKey.publicKey))
-            .gas(100000)
-            .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
-            .bytecodeFileId(bytecode.fileId)
-            .contractMemo("[e2e::ContractCreateTransaction]")
-            .execute(testEnv.client)
-            .getReceipt(testEnv.client)
-
-        let contractId = try XCTUnwrap(receipt.contractId)
+        let contractId = try await ContractHelpers.makeContract(testEnv, operatorAdminKey: true)
 
         addTeardownBlock {
             _ = try await ContractDeleteTransaction(contractId: contractId)
@@ -112,18 +90,7 @@ internal final class ContractExecute: XCTestCase {
     internal func testMissingGasFails() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let bytecode = try await File.forContent(ContractHelpers.bytecode, testEnv)
-
-        let receipt = try await ContractCreateTransaction()
-            .adminKey(.single(testEnv.operator.privateKey.publicKey))
-            .gas(100000)
-            .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
-            .bytecodeFileId(bytecode.fileId)
-            .contractMemo("[e2e::ContractCreateTransaction]")
-            .execute(testEnv.client)
-            .getReceipt(testEnv.client)
-
-        let contractId = try XCTUnwrap(receipt.contractId)
+        let contractId = try await ContractHelpers.makeContract(testEnv, operatorAdminKey: true)
 
         addTeardownBlock {
             _ = try await ContractDeleteTransaction(contractId: contractId)
