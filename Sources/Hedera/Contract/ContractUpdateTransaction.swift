@@ -357,6 +357,10 @@ extension ContractUpdateTransaction: ToProtobuf {
             if let declineStakingReward = declineStakingReward {
                 proto.declineReward = Google_Protobuf_BoolValue(declineStakingReward)
             }
+
+            if let contractMemo = contractMemo {
+                proto.memoWrapper = .init(contractMemo)
+            }
         }
     }
 }
