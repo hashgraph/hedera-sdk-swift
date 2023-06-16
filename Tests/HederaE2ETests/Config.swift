@@ -171,7 +171,7 @@ internal struct TestEnvironment {
         fileprivate static let network = "TEST_NETWORK_NAME"
         fileprivate static let operatorKey = "TEST_OPERATOR_KEY"
         fileprivate static let operatorAccountId = "TEST_OPERATOR_ACCOUNT_ID"
-        fileprivate static let runNonfree = "TEST_RUN_NONEFREE"
+        fileprivate static let runNonfree = "TEST_RUN_NONFREE"
     }
 
     private init() {
