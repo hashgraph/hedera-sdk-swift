@@ -40,4 +40,17 @@ internal struct File {
 
         return Self(fileId: fileId)
     }
+
+    internal static func forContent(_ content: String, _ testEnv: NonfreeTestEnvironment) async throws -> Self {
+        try await forContent(content.data(using: .utf8)!, testEnv)
+    }
+
+    internal func delete(_ testEnv: NonfreeTestEnvironment) async throws {
+        try await testEnv.ratelimits.file()
+
+        _ = try await FileDeleteTransaction(fileId: fileId)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+    }
 }

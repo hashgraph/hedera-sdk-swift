@@ -176,6 +176,7 @@ private func executeAnyInner<E: Execute>(ctx: ExecuteContext, executable: E) asy
 
             do {
                 response = try await executable.execute(channel, request)
+
             } catch let error as GRPCStatus {
                 switch error.code {
                 case .unavailable, .resourceExhausted:

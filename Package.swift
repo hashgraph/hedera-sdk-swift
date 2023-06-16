@@ -94,6 +94,7 @@ let package = Package(
         // we use this entirely for sha3-keccak256, yes, I'm serious.
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.0.0"),
     ],
     targets: [
         .target(
@@ -129,6 +130,13 @@ let package = Package(
         .testTarget(name: "HederaTests", dependencies: ["Hedera"]),
         .testTarget(
             name: "HederaE2ETests",
-            dependencies: ["Hedera", .product(name: "SwiftDotenv", package: "swift-dotenv")]),
+            dependencies: [
+                "Hedera",
+                .product(name: "SwiftDotenv", package: "swift-dotenv"),
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+                "HederaExampleUtilities",
+            ],
+            exclude: ["File/__Snapshots__"]
+        ),
     ] + exampleTargets
 )
