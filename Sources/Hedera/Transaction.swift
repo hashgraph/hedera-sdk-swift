@@ -430,12 +430,8 @@ extension Transaction {
     }
 
     internal final func makeErrorPrecheck(_ status: Status, _ transactionId: TransactionId?) -> HError {
-        guard let transactionId = transactionId else {
-            return HError(
-                kind: .transactionNoIdPreCheckStatus(status: status),
-                description: "transaction without transaction id failed pre-check with status `\(status)`"
-            )
-        }
+        let transactionId = transactionId!
+
         return HError(
             kind: .transactionPreCheckStatus(status: status, transactionId: transactionId),
             description: "transaction `\(transactionId)` failed pre-check with status `\(status)`"

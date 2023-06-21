@@ -81,7 +81,7 @@ public class Query<Response>: ValidateChecksums {
     ///
     /// The client will submit exactly this amount for the payment of this query. Hedera
     /// will not return any remainder (over the actual cost for this query).
-    ///
+    @discardableResult
     public final func paymentAmount(_ amount: Hbar) -> Self {
         self.payment.amount = amount
 
@@ -100,7 +100,7 @@ public class Query<Response>: ValidateChecksums {
     /// Defaults to the maximum payment amount configured on the client.
     ///
     /// Set to `None` to allow unlimited payment amounts.
-    ///
+    @discardableResult
     public final func maxPaymentAmount(_ maxAmount: Hbar?) -> Self {
         self.payment.maxAmount = maxAmount
 
@@ -110,7 +110,7 @@ public class Query<Response>: ValidateChecksums {
     /// Sets the duration that the payment transaction is valid for, once finalized and signed.
     ///
     /// Defaults to 120 seconds (or two minutes).
-    ///
+    @discardableResult
     public final func paymentTransactionValidDuration(_ validDuration: Duration) -> Self {
         self.payment.transactionValidDuration = validDuration
 
@@ -121,7 +121,7 @@ public class Query<Response>: ValidateChecksums {
     /// payment transaction.
     ///
     /// Defaults to 1 hbar.
-    ///
+    @discardableResult
     public final func maxPaymentTransactionFee(_ maxPaymentTransactionFee: Hbar) -> Self {
         self.payment.maxTransactionFee = maxPaymentTransactionFee
 
@@ -130,6 +130,7 @@ public class Query<Response>: ValidateChecksums {
 
     /// Set a note or description that should be recorded in the transaction record (maximum length
     /// of 100 characters) for the payment transaction.
+    @discardableResult
     public final func paymentTransactionMemo(_ memo: String) -> Self {
         self.payment.transactionMemo = memo
 
@@ -140,6 +141,7 @@ public class Query<Response>: ValidateChecksums {
     /// on this query.
     ///
     /// Overrides payer account defined on this query or on the client.
+    @discardableResult
     public final func paymentTransactionId(_ transactionId: TransactionId) -> Self {
         self.payment.transactionId = transactionId
 

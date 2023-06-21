@@ -31,6 +31,11 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
         return Self(accountId: accountId, validStart: validStart, scheduled: false)
     }
 
+    /// Creates a new transaction Id with the given account id and valid start.
+    public static func withValidStart(_ accountId: AccountId, _ validStart: Timestamp) -> Self {
+        Self(accountId: accountId, validStart: validStart, scheduled: false)
+    }
+
     private init<S: StringProtocol>(parsing description: S) throws {
         let expected = "expecting <accountId>@<validStart>[?scheduled][/<nonce>]"
 

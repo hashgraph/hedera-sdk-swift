@@ -28,13 +28,18 @@ import SwiftProtobuf
 // Random is surprisingly good at this though (avoids the thundering herd that would happen if round-robin was used), so...
 internal final class ChannelBalancer: GRPCChannel {
     internal let eventLoop: EventLoop
-    private let channels: [GRPC.ClientConnection]
+    private let channels: [any GRPCChannel]
+    private let targets: [GRPC.ConnectionTarget]
+
+    // fixme: if the request never returns (IE the host doesn't exist) we
 
     internal init(eventLoop: EventLoop, _ channelTargets: [GRPC.ConnectionTarget]) {
         self.eventLoop = eventLoop
+        self.targets = channelTargets
 
         self.channels = channelTargets.map { target in
-            GRPC.ClientConnection(configuration: .default(target: target, eventLoopGroup: eventLoop))
+            // GRPC.ClientConnection(configuration: .default(target: target, eventLoopGroup: eventLoop))
+            try! GRPCChannelPool.with(target: target, transportSecurity: .plaintext, eventLoopGroup: eventLoop)
         }
     }
 
@@ -46,7 +51,11 @@ internal final class ChannelBalancer: GRPCChannel {
     )
         -> GRPC.Call<Request, Response> where Request: GRPC.GRPCPayload, Response: GRPC.GRPCPayload
     {
-        channels.randomElement()!.makeCall(path: path, type: type, callOptions: callOptions, interceptors: interceptors)
+        let elem = channels.randomElement()!
+
+        let res = elem.makeCall(path: path, type: type, callOptions: callOptions, interceptors: interceptors)
+
+        return res
     }
 
     internal func makeCall<Request, Response>(
@@ -55,7 +64,11 @@ internal final class ChannelBalancer: GRPCChannel {
         callOptions: GRPC.CallOptions,
         interceptors: [GRPC.ClientInterceptor<Request, Response>]
     ) -> GRPC.Call<Request, Response> where Request: SwiftProtobuf.Message, Response: SwiftProtobuf.Message {
-        channels.randomElement()!.makeCall(path: path, type: type, callOptions: callOptions, interceptors: interceptors)
+        let elem = channels.randomElement()!
+
+        let res = elem.makeCall(path: path, type: type, callOptions: callOptions, interceptors: interceptors)
+
+        return res
     }
 
     // todo: have someone look at this.

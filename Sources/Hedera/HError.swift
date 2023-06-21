@@ -28,7 +28,6 @@ public struct HError: Error, CustomStringConvertible {
         case grpcStatus(status: Int32)
         case fromProtobuf
         case transactionPreCheckStatus(status: Status, transactionId: TransactionId)
-        case transactionNoIdPreCheckStatus(status: Status)
         case queryPreCheckStatus(status: Status, transactionId: TransactionId)
         case queryPaymentPreCheckStatus(status: Status, transactionId: TransactionId)
         case queryNoPaymentPreCheckStatus(status: Status)
