@@ -89,8 +89,8 @@ let package = Package(
         .package(url: "https://github.com/vsanthanam/AnyAsyncSequence.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-atomics.git", from: "1.1.0"),
         // swift-asn1 wants swift 5.7+ past 0.4
-        .package(url: "https://github.com/apple/swift-asn1.git", "0.3.0"..<"0.4.0"),
-        .package(url: "https://github.com/GigaBitcoin/secp256k1.swift.git", .upToNextMajor(from: "0.10.0")),
+        .package(url: "https://github.com/apple/swift-asn1.git", .upToNextMinor(from: "0.3.0")),
+        .package(url: "https://github.com/GigaBitcoin/secp256k1.swift.git", .upToNextMinor(from: "0.12.0")),
         // we use this entirely for sha3-keccak256, yes, I'm serious.
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),

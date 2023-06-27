@@ -79,7 +79,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
 
         fileprivate init(kind: PrivateKey.Kind) {
             switch kind {
-            case .ecdsa(let key): self = .ecdsa(key.rawRepresentation)
+            case .ecdsa(let key): self = .ecdsa(key.dataRepresentation)
             case .ed25519(let key): self = .ed25519(key.rawRepresentation)
             }
         }
@@ -87,7 +87,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         fileprivate var kind: PrivateKey.Kind {
             // swiftlint:disable force_try
             switch self {
-            case .ecdsa(let key): return .ecdsa(try! .init(rawRepresentation: key))
+            case .ecdsa(let key): return .ecdsa(try! .init(dataRepresentation: key))
             case .ed25519(let key): return .ed25519(try! .init(rawRepresentation: key))
             }
 
@@ -144,7 +144,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         }
 
         do {
-            self.init(kind: .ecdsa(try .init(rawRepresentation: bytes.safeSubdata(in: 0..<32)!)))
+            self.init(kind: .ecdsa(try .init(dataRepresentation: bytes.safeSubdata(in: 0..<32)!)))
             return
         } catch {
             throw HError.keyParse(String(describing: error))
@@ -335,7 +335,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
 
     public func toBytesRaw() -> Data {
         switch kind {
-        case .ecdsa(let ecdsa): return ecdsa.rawRepresentation
+        case .ecdsa(let ecdsa): return ecdsa.dataRepresentation
         case .ed25519(let ed25519): return ed25519.rawRepresentation
         }
     }
@@ -380,7 +380,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
     public func sign(_ message: Data) -> Data {
         switch kind {
         case .ecdsa(let key):
-            return try! key.ecdsa.signature(for: Keccak256Digest(Crypto.Sha3.keccak256(message))!).compactRepresentation
+            return try! key.signature(for: Keccak256Digest(Crypto.Sha3.keccak256(message))!).compactRepresentation
         case .ed25519(let key):
             return try! key.signature(for: message)
         }

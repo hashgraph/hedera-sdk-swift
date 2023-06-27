@@ -35,7 +35,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
 
         fileprivate init(kind: PublicKey.Kind) {
             switch kind {
-            case .ecdsa(let key): self = .ecdsa(key.rawRepresentation, compressed: key.format == .compressed)
+            case .ecdsa(let key): self = .ecdsa(key.dataRepresentation, compressed: key.format == .compressed)
             case .ed25519(let key): self = .ed25519(key.rawRepresentation)
             }
         }
@@ -43,7 +43,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         fileprivate var kind: PublicKey.Kind {
             switch self {
             case .ecdsa(let key, let compressed):
-                return .ecdsa(try! .init(rawRepresentation: key, format: compressed ? .compressed : .uncompressed))
+                return .ecdsa(try! .init(dataRepresentation: key, format: compressed ? .compressed : .uncompressed))
             case .ed25519(let key): return .ed25519(try! .init(rawRepresentation: key))
             }
         }
@@ -129,7 +129,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         }
 
         do {
-            self.init(.ecdsa(try .init(rawRepresentation: bytes, format: .compressed)))
+            self.init(.ecdsa(try .init(dataRepresentation: bytes, format: .compressed)))
         } catch {
             throw HError.keyParse(String(describing: error))
         }
@@ -239,7 +239,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
 
     public func toBytesRaw() -> Data {
         switch kind {
-        case .ecdsa(let key): return key.rawRepresentation
+        case .ecdsa(let key): return key.dataRepresentation
         case .ed25519(let key): return key.rawRepresentation
         }
     }
@@ -274,7 +274,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         case .ecdsa(let key):
             let isValid: Bool
             do {
-                isValid = try key.ecdsa.isValidSignature(
+                isValid = try key.isValidSignature(
                     .init(compactRepresentation: signature), for: Keccak256Digest(Crypto.Sha3.keccak256(message))!)
             } catch {
                 throw HError(kind: .signatureVerify, description: "invalid signature")
@@ -319,12 +319,15 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
             return nil
         }
 
+        let context = secp256k1.Context.rawRepresentation
+
         // when the bindings aren't enough :/
+        // and to be clear, using `key.rawRepresentation` which gives a `secp256k1_pubkey` _fails_ to work.
         var pubkey = secp256k1_pubkey()
 
-        key.rawRepresentation.withUnsafeTypedBytes { bytes in
+        key.dataRepresentation.withUnsafeTypedBytes { bytes in
             let result = secp256k1_bindings.secp256k1_ec_pubkey_parse(
-                secp256k1.Context.raw,
+                context,
                 &pubkey,
                 bytes.baseAddress!,
                 bytes.count
@@ -333,16 +336,19 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
             precondition(result == 1)
         }
 
-        var output = Data(repeating: 0, count: 65)
+        let format = secp256k1.Format.uncompressed
+
+        var output = Data(repeating: 0, count: format.length)
 
         output.withUnsafeMutableTypedBytes { output in
             var outputLen = output.count
 
             let result = secp256k1_ec_pubkey_serialize(
-                secp256k1.Context.raw, output.baseAddress!,
+                context,
+                output.baseAddress!,
                 &outputLen,
                 &pubkey,
-                secp256k1.Format.uncompressed.rawValue
+                format.rawValue
             )
 
             precondition(result == 1)
