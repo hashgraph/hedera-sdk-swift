@@ -102,6 +102,8 @@ public final class TokenCreateTransaction: Transaction {
         try super.init(protobuf: proto)
     }
 
+    internal override var defaultMaxTransactionFee: Hbar { 40 }
+
     /// The publicly visible name of the token.
     public var name: String {
         willSet {
