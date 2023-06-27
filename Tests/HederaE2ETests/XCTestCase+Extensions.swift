@@ -21,8 +21,19 @@
 import XCTest
 
 import struct Hedera.HError
+import struct Hedera.Hbar
 
 extension XCTestCase {
+    internal func makeAccount(_ testEnv: NonfreeTestEnvironment, balance: Hbar = 0) async throws -> Account {
+        let account = try await Account.create(testEnv, balance: balance)
+
+        addTeardownBlock {
+            try await account.delete(testEnv)
+        }
+
+        return account
+    }
+
     internal func assertThrowsHErrorAsync<T>(
         _ expression: @autoclosure () async throws -> T,
         _ message: @autoclosure () -> String = "",

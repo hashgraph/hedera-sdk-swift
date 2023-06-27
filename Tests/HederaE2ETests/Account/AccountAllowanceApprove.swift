@@ -22,19 +22,9 @@ import Hedera
 import XCTest
 
 internal final class AccountAllowanceApprove: XCTestCase {
-    internal func createAccount(_ testEnv: NonfreeTestEnvironment, balance: Hbar) async throws -> Account {
-        let account = try await Account.create(testEnv, balance: balance)
-
-        addTeardownBlock {
-            try await account.delete(testEnv)
-        }
-
-        return account
-    }
-
     internal func testSpend() async throws {
         let testEnv = try TestEnvironment.nonFree
-        async let (alice, bob) = (createAccount(testEnv, balance: 10), createAccount(testEnv, balance: 10))
+        async let (alice, bob) = (makeAccount(testEnv, balance: 10), makeAccount(testEnv, balance: 10))
 
         _ = try await AccountAllowanceApproveTransaction()
             .approveHbarAllowance(bob.id, alice.id, 10)

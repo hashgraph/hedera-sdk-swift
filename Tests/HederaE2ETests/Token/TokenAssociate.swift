@@ -22,20 +22,10 @@ import Hedera
 import XCTest
 
 internal class TokenAssociate: XCTestCase {
-    internal func createAccount(_ testEnv: NonfreeTestEnvironment, balance: Hbar = 0) async throws -> Account {
-        let account = try await Account.create(testEnv, balance: balance)
-
-        addTeardownBlock {
-            try await account.delete(testEnv)
-        }
-
-        return account
-    }
-
     internal func testBasic() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        async let (alice, bob) = (createAccount(testEnv), createAccount(testEnv))
+        async let (alice, bob) = (makeAccount(testEnv), makeAccount(testEnv))
 
         let token = try await FungibleToken.create(testEnv, owner: alice)
 
@@ -77,7 +67,7 @@ internal class TokenAssociate: XCTestCase {
     internal func testMissingSignatureFails() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let account = try await createAccount(testEnv)
+        let account = try await makeAccount(testEnv)
 
         await assertThrowsHErrorAsync(
             try await TokenAssociateTransaction(accountId: account.id)
