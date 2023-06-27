@@ -49,19 +49,29 @@ internal struct Nft {
         return Self(id: id, owner: owner)
     }
 
-    internal func mint(_ testEnv: NonfreeTestEnvironment, count nfts: UInt8) async throws -> TransactionReceipt {
+    internal func mint(_ testEnv: NonfreeTestEnvironment, count nfts: UInt8) async throws -> [UInt64] {
         try await mint(testEnv, metadata: (0..<nfts).map { Data([$0]) })
     }
 
-    internal func mint(_ testEnv: NonfreeTestEnvironment, metadata: [Data]) async throws -> TransactionReceipt {
-        try await TokenMintTransaction(tokenId: id, metadata: metadata)
+    internal func mint(_ testEnv: NonfreeTestEnvironment, metadata: [Data]) async throws -> [UInt64] {
+        let receipt = try await TokenMintTransaction(tokenId: id, metadata: metadata)
+            .sign(owner.key)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        return try XCTUnwrap(receipt.serials)
+    }
+
+    internal func burn(_ testEnv: NonfreeTestEnvironment, serials: [UInt64]) async throws {
+        _ = try await TokenBurnTransaction(tokenId: id, serials: serials)
             .sign(owner.key)
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
     }
 
-    internal func burn(_ testEnv: NonfreeTestEnvironment, serials: [UInt64]) async throws {
-        _ = try await TokenBurnTransaction(tokenId: id, serials: serials)
+    internal func wipe(_ testEnv: NonfreeTestEnvironment, serials: [UInt64], from account: AccountId) async throws {
+        _ = try await TokenWipeTransaction(tokenId: id, serials: serials)
+            .accountId(account)
             .sign(owner.key)
             .execute(testEnv.client)
             .getReceipt(testEnv.client)

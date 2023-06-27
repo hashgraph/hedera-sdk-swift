@@ -35,7 +35,7 @@ internal struct FungibleToken {
             name: "ffff",
             symbol: "f",
             decimals: 3,
-            initialSupply: 0,
+            initialSupply: initialSupply,
             treasuryAccountId: owner.id,
             adminKey: ownerKey,
             kycKey: ownerKey,

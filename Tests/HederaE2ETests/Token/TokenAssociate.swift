@@ -61,7 +61,6 @@ internal class TokenAssociate: XCTestCase {
 
             XCTAssertEqual(status, .invalidAccountID)
         }
-
     }
 
     internal func testMissingSignatureFails() async throws {
@@ -73,7 +72,7 @@ internal class TokenAssociate: XCTestCase {
             try await TokenAssociateTransaction(accountId: account.id)
                 .execute(testEnv.client)
                 .getReceipt(testEnv.client),
-            "expected error creating contract"
+            "expected error associating to token"
         ) { error in
             guard case .receiptStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.receiptStatus`")
@@ -83,5 +82,4 @@ internal class TokenAssociate: XCTestCase {
             XCTAssertEqual(status, .invalidSignature)
         }
     }
-
 }
