@@ -19,7 +19,6 @@
  */
 
 import Hedera
-import SwiftDotenv
 import XCTest
 
 internal struct FungibleToken {
