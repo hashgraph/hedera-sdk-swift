@@ -52,7 +52,7 @@ internal class TokenGrantKyc: XCTestCase {
             try await TokenGrantKycTransaction(accountId: testEnv.operator.accountId)
                 .execute(testEnv.client)
                 .getReceipt(testEnv.client),
-            "expected error freezing token"
+            "expected error granting kyc"
         ) { error in
             guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
@@ -77,7 +77,7 @@ internal class TokenGrantKyc: XCTestCase {
 
         await assertThrowsHErrorAsync(
             try await TokenGrantKycTransaction(tokenId: token.id).execute(testEnv.client),
-            "expected error freezing token"
+            "expected error granting kyc"
         ) { error in
             guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
@@ -107,7 +107,7 @@ internal class TokenGrantKyc: XCTestCase {
                 .sign(token.owner.key)
                 .execute(testEnv.client)
                 .getReceipt(testEnv.client),
-            "expected error freezing token"
+            "expected error granting kyc"
         ) { error in
             guard case .receiptStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.receiptStatus`")
