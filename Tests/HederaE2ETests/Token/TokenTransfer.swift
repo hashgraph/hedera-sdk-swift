@@ -187,4 +187,86 @@ internal final class TokenTransfer: XCTestCase {
             XCTAssertEqual(status, .insufficientTokenBalance)
         }
     }
+
+    internal func testDecimals() async throws {
+        let testEnv = try TestEnvironment.nonFree
+
+        async let aliceFut = makeAccount(testEnv)
+        async let bobFut = makeAccount(testEnv)
+
+        let (alice, bob) = try await (aliceFut, bobFut)
+
+        let token = try await FungibleToken.create(testEnv, owner: alice, initialSupply: 10)
+
+        addTeardownBlock {
+            try await token.burn(testEnv, supply: 10)
+            try await token.delete(testEnv)
+        }
+
+        _ = try await TokenAssociateTransaction(accountId: bob.id, tokenIds: [token.id])
+            .sign(bob.key)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        _ = try await TokenGrantKycTransaction(accountId: bob.id, tokenId: token.id)
+            .sign(alice.key)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        _ = try await TransferTransaction()
+            .tokenTransferWithDecimals(token.id, alice.id, -10, 3)
+            .tokenTransferWithDecimals(token.id, bob.id, 10, 3)
+            .sign(alice.key)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        _ = try await TransferTransaction()
+            .tokenTransferWithDecimals(token.id, bob.id, -10, 3)
+            .tokenTransferWithDecimals(token.id, alice.id, 10, 3)
+            .sign(bob.key)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+    }
+
+    internal func testIncorrectDecimalsFails() async throws {
+        let testEnv = try TestEnvironment.nonFree
+
+        async let aliceFut = makeAccount(testEnv)
+        async let bobFut = makeAccount(testEnv)
+
+        let (alice, bob) = try await (aliceFut, bobFut)
+
+        let token = try await FungibleToken.create(testEnv, owner: alice, initialSupply: 10)
+
+        addTeardownBlock {
+            try await token.burn(testEnv, supply: 10)
+            try await token.delete(testEnv)
+        }
+
+        _ = try await TokenAssociateTransaction(accountId: bob.id, tokenIds: [token.id])
+            .sign(bob.key)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        _ = try await TokenGrantKycTransaction(accountId: bob.id, tokenId: token.id)
+            .sign(alice.key)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        await assertThrowsHErrorAsync(
+            _ = try await TransferTransaction()
+                .tokenTransferWithDecimals(token.id, alice.id, -10, 2)
+                .tokenTransferWithDecimals(token.id, bob.id, 10, 2)
+                .sign(alice.key)
+                .execute(testEnv.client)
+                .getReceipt(testEnv.client)
+        ) { error in
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
+                return
+            }
+
+            XCTAssertEqual(status, .unexpectedTokenDecimals)
+        }
+    }
 }
