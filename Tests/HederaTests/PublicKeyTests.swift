@@ -52,7 +52,7 @@ internal final class PublicKeyTests: XCTestCase {
             "debae3ca62ab3157110dba79c8de26540dc320ee9be73a77d70ba175643a3500"
         ).publicKey
 
-        let evmAddress = publicKey.toEvmAddress()
+        let evmAddress = try XCTUnwrap(publicKey.toEvmAddress())
 
         XCTAssertEqual(evmAddress, "0xd8eb8db03c699faa3f47adcdcd2ae91773b10f8b")
     }
@@ -61,7 +61,7 @@ internal final class PublicKeyTests: XCTestCase {
         let publicKey = try PublicKey.fromStringEcdsa(
             "029469a657510f3bf199a0e29b21e11e7039d8883f3547d59c3568f9c89f704cbc")
 
-        let evmAddress = publicKey.toEvmAddress()
+        let evmAddress = try XCTUnwrap(publicKey.toEvmAddress())
 
         XCTAssertEqual(evmAddress, "0xbbaa6bdfe888ae1fc8e7c8cee82081fa79ba8834")
     }
