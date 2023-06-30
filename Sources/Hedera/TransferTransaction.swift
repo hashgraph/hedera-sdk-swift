@@ -29,6 +29,11 @@ import SwiftProtobuf
 /// from the corresponding account (a sender), and each positive one is added to the corresponding
 /// account (a receiver). The amounts list must sum to zero.
 ///
+///
+/// All transfers are in the lowest denomination, for `Hbar` that is tinybars (although `Hbar` handles this itself).
+///
+/// As an example:
+/// For a fungible token with `3` decimals (and let's say the symbol is `ƒ`), transferring `1` _always_ transfers `0.001 ƒ`.
 public final class TransferTransaction: Transaction {
     // avoid scope collisions by nesting :/
     fileprivate struct Transfer: ValidateChecksums {
@@ -110,18 +115,25 @@ public final class TransferTransaction: Transaction {
     }
 
     /// Add a non-approved token transfer to the transaction.
+    ///
+    /// `amount` is in the lowest denomination for the token (if the token has `2` decimals this would be `0.01` tokens).
     @discardableResult
     public func tokenTransfer(_ tokenId: TokenId, _ accountId: AccountId, _ amount: Int64) -> Self {
         doTokenTransfer(tokenId, accountId, amount, false, nil)
     }
 
     /// Add an approved token transfer to the transaction.
+    ///
+    /// `amount` is in the lowest denomination for the token (if the token has `2` decimals this would be `0.01` tokens).
     @discardableResult
     public func approvedTokenTransfer(_ tokenId: TokenId, _ accountId: AccountId, _ amount: Int64) -> Self {
         doTokenTransfer(tokenId, accountId, amount, true, nil)
     }
 
-    /// Add a non-approved token transfer with decimals to the transaction.
+    /// Add a non-approved token transfer with decimals to the transaction, ensuring that the token has `expectedDecimals` decimals.
+    ///
+    /// `amount` is _still_ in the lowest denomination, however,
+    /// you will get an error if the token has a different amount of decimals than `expectedDecimals`.
     @discardableResult
     public func tokenTransferWithDecimals(
         _ tokenId: TokenId, _ accountId: AccountId, _ amount: Int64, _ expectedDecimals: UInt32
@@ -129,7 +141,10 @@ public final class TransferTransaction: Transaction {
         doTokenTransfer(tokenId, accountId, amount, false, expectedDecimals)
     }
 
-    /// Add an approved token transfer with decimals to the transaction.
+    /// Add an approved token transfer with decimals to the transaction, ensuring that the token has `expectedDecimals` decimals.
+    ///
+    /// `amount` is _still_ in the lowest denomination, however,
+    /// you will get an error if the token has a different amount of decimals than `expectedDecimals`.
     @discardableResult
     public func approvedTokenTransferWithDecimals(
         _ tokenId: TokenId, _ accountId: AccountId, _ amount: Int64, _ expectedDecimals: UInt32
