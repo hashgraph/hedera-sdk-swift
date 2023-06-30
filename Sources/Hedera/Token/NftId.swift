@@ -83,14 +83,14 @@ extension NftId: ProtobufCodable {
     internal init(protobuf proto: Protobuf) {
         self.init(
             tokenId: .fromProtobuf(proto.tokenID),
-            serial: UInt64(proto.serialNumber)
+            serial: UInt64(bitPattern: proto.serialNumber)
         )
     }
 
     internal func toProtobuf() -> Protobuf {
         .with { proto in
             proto.tokenID = tokenId.toProtobuf()
-            proto.serialNumber = Int64(serial)
+            proto.serialNumber = Int64(bitPattern: serial)
         }
     }
 }

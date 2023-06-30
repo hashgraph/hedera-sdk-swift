@@ -216,8 +216,10 @@ public final class TransferTransaction: Transaction {
             isApproval: approved
         )
 
-        if var tokenTransfer = tokenTransfers.first(where: { (transfer) in transfer.tokenId == nftId.tokenId }) {
-            tokenTransfer.nftTransfers.append(transfer)
+        if let index = tokenTransfers.firstIndex(where: { (transfer) in transfer.tokenId == nftId.tokenId }) {
+            var tmp = tokenTransfers[index]
+            tmp.nftTransfers.append(transfer)
+            tokenTransfers[index] = tmp
         } else {
             tokenTransfers.append(
                 TokenTransfer(
@@ -225,7 +227,8 @@ public final class TransferTransaction: Transaction {
                     transfers: [],
                     nftTransfers: [transfer],
                     expectedDecimals: nil
-                ))
+                )
+            )
         }
 
         return self
@@ -312,7 +315,7 @@ extension TransferTransaction.NftTransfer: TryProtobufCodable {
         .with { proto in
             proto.senderAccountID = senderAccountId.toProtobuf()
             proto.receiverAccountID = receiverAccountId.toProtobuf()
-            proto.serialNumber = Int64(proto.serialNumber)
+            proto.serialNumber = Int64(bitPattern: serial)
             proto.isApproval = isApproval
         }
     }

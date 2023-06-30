@@ -62,7 +62,7 @@ extension CustomFee {
 
 /// A transfer fee to assess during a `TransferTransaction` that transfers units of
 /// the token to which the fee is attached.
-public enum AnyCustomFee {
+public enum AnyCustomFee: Equatable {
     /// A fee that costs a fixed number of hbar/tokens.
     case fixed(FixedFee)
     /// A fee that costs a fraction of the transferred amount.
@@ -211,7 +211,7 @@ extension AnyCustomFee: TryProtobufCodable {
 
 /// A fixed number of units (hbar or token) to assess as a fee during a `TransferTransaction` that transfers
 /// units of the token to which this fixed fee is attached.
-public struct FixedFee: CustomFee, ValidateChecksums {
+public struct FixedFee: CustomFee, Equatable, ValidateChecksums {
     public var feeCollectorAccountId: AccountId?
 
     public var allCollectorsAreExempt: Bool
@@ -292,7 +292,7 @@ public struct FixedFee: CustomFee, ValidateChecksums {
 /// than the given `maximumAmount`.
 ///
 /// The denomination is always in units of the token to which this fractional fee is attached.
-public struct FractionalFee: CustomFee, ValidateChecksums {
+public struct FractionalFee: CustomFee, Equatable, ValidateChecksums {
     public var feeCollectorAccountId: AccountId?
 
     public var allCollectorsAreExempt: Bool
@@ -461,7 +461,7 @@ extension FractionalFee {
 ///
 /// Defines the fraction of the fungible value exchanged for an NFT that the ledger
 /// should collect as a royalty.
-public struct RoyaltyFee: CustomFee {
+public struct RoyaltyFee: CustomFee, Equatable {
     public var feeCollectorAccountId: AccountId?
 
     public var allCollectorsAreExempt: Bool
