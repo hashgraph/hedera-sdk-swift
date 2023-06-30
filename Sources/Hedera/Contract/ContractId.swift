@@ -88,7 +88,8 @@ public struct ContractId: EntityId {
         guard let evmAddress = evmAddress else {
             return helper.description
         }
-        return "\(shard).\(realm).\(evmAddress)"
+
+        return "\(shard).\(realm).\(try! EvmAddress(evmAddress))"
     }
 
     public func toStringWithChecksum(_ client: Client) throws -> String {
