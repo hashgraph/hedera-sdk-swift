@@ -94,6 +94,10 @@ public struct AccountId: Sendable, EntityId, ValidateChecksums {
             return "\(shard).\(realm).\(alias)"
         }
 
+        if let evmAddress = evmAddress {
+            return String(describing: evmAddress)
+        }
+
         return helper.description
     }
 

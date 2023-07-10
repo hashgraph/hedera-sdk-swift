@@ -127,7 +127,14 @@ let package = Package(
             //     .unsafeFlags(["-Xfrontend", "-warn-concurrency", "-Xfrontend", "-enable-actor-data-race-checks"])
             // ]
         ),
-        .testTarget(name: "HederaTests", dependencies: ["Hedera"]),
+        .testTarget(
+            name: "HederaTests",
+            dependencies: [
+                "Hedera",
+                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+            ],
+            exclude: ["__Snapshots__"]
+        ),
         .testTarget(
             name: "HederaE2ETests",
             dependencies: [
