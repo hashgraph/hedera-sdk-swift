@@ -173,6 +173,14 @@ public final class TopicUpdateTransaction: Transaction {
         return self
     }
 
+    /// Clear the auto renew account ID for this topic.
+    @discardableResult
+    public func clearAutoRenewAccountId() -> Self {
+        self.autoRenewAccountId = 0
+
+        return self
+    }
+
     internal override func validateChecksums(on ledgerId: LedgerId) throws {
         try topicId?.validateChecksums(on: ledgerId)
         try autoRenewAccountId?.validateChecksums(on: ledgerId)
