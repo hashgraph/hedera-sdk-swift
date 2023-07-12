@@ -48,7 +48,7 @@ internal class ScheduleInfo: XCTestCase {
 
     internal func testQuery() async throws {
         let testEnv = try TestEnvironment.nonFree
-        
+
         let account = try await makeAccount(testEnv, balance: 1)
 
         let receipt = try await TransferTransaction()
@@ -59,7 +59,7 @@ internal class ScheduleInfo: XCTestCase {
             .getReceipt(testEnv.client)
 
         let scheduleId = try XCTUnwrap(receipt.scheduleId)
-        
+
         let info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
 
         XCTAssertEqual(info.adminKey, nil)
@@ -80,7 +80,7 @@ internal class ScheduleInfo: XCTestCase {
 
         await assertThrowsHErrorAsync(
             try await ScheduleInfoQuery()
-            .execute(testEnv.client)
+                .execute(testEnv.client)
         ) { error in
             guard case .queryNoPaymentPreCheckStatus(let status) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.queryPaymentPreCheckStatus`")
@@ -91,7 +91,7 @@ internal class ScheduleInfo: XCTestCase {
         }
     }
 
-   internal func testQueryCost() async throws {
+    internal func testQueryCost() async throws {
         let testEnv = try TestEnvironment.nonFree
 
         let account = try await makeAccount(testEnv, balance: 1)
@@ -104,7 +104,6 @@ internal class ScheduleInfo: XCTestCase {
             .getReceipt(testEnv.client)
 
         let scheduleId = try XCTUnwrap(receipt.scheduleId)
-
 
         let query = ScheduleInfoQuery(scheduleId: scheduleId)
 
