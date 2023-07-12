@@ -103,7 +103,6 @@ internal class ScheduleDelete: XCTestCase {
         }
     }
 
-
     internal func testMissingScheduleIdFails() async throws {
         let testEnv = try TestEnvironment.nonFree
 

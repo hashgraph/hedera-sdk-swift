@@ -25,7 +25,7 @@ internal class NetworkVersionInfo: XCTestCase {
     internal func testQuery() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let _ = try await NetworkVersionInfoQuery().execute(testEnv.client)
+        _ = try await NetworkVersionInfoQuery().execute(testEnv.client)
     }
 
     internal func testQueryCost() async throws {
@@ -37,7 +37,7 @@ internal class NetworkVersionInfo: XCTestCase {
 
         let cost = try await query.getCost(testEnv.client)
 
-        let _ = try await query.paymentAmount(cost).execute(testEnv.client)
+        _ = try await query.paymentAmount(cost).execute(testEnv.client)
     }
 
     internal func testQueryCostBigMax() async throws {
