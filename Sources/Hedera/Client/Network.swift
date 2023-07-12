@@ -203,7 +203,7 @@ internal final class Network: Sendable, AtomicReference {
             var reusedConnection: NodeConnection?
 
             if let index = old.map[node] {
-                if old.connections[index].addresses.symmetricDifference(addresses).count == 0 {
+                if old.connections[index].addresses.symmetricDifference(addresses).isEmpty {
                     reusedConnection = old.connections[index]
                 }
 

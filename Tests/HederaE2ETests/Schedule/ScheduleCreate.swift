@@ -72,13 +72,13 @@ internal class ScheduleCreate: XCTestCase {
         let key2 = PrivateKey.generateEd25519()
         let key3 = PrivateKey.generateEd25519()
 
-        let key_list: KeyList = [.single(key1.publicKey), .single(key2.publicKey), .single(key3.publicKey)]
+        let keyList: KeyList = [.single(key1.publicKey), .single(key2.publicKey), .single(key3.publicKey)]
 
         // Create the account with the `KeyList`
         let transaction = AccountCreateTransaction()
         let accountReceipt =
             try await transaction
-            .key(.keyList(key_list))
+            .key(.keyList(keyList))
             .initialBalance(Hbar(1))
             .execute(testEnv.client)
 

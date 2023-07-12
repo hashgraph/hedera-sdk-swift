@@ -78,7 +78,7 @@ internal enum Either<Left, Right> {
 }
 
 extension Either: Decodable where Left: Decodable, Right: Decodable {
-    init(from decoder: Decoder) throws {
+    internal init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
 
         if let res = try? container.decode(Left.self) {

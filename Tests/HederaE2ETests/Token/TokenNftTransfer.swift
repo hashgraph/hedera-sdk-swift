@@ -35,9 +35,10 @@ internal final class TokenNftTransfer: XCTestCase {
             try await token.delete(testEnv)
         }
 
-        let _ = try await TokenAssociateTransaction(accountId: bob.id, tokenIds: [token.id]).sign(bob.key).execute(
-            testEnv.client
-        ).getReceipt(testEnv.client)
+        _ = try await TokenAssociateTransaction(accountId: bob.id, tokenIds: [token.id])
+            .sign(bob.key)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
 
         let serials = try await token.mint(testEnv, count: 10)
 
@@ -79,9 +80,10 @@ internal final class TokenNftTransfer: XCTestCase {
             try await token.delete(testEnv)
         }
 
-        let _ = try await TokenAssociateTransaction(accountId: bob.id, tokenIds: [token.id]).sign(bob.key).execute(
-            testEnv.client
-        ).getReceipt(testEnv.client)
+        _ = try await TokenAssociateTransaction(accountId: bob.id, tokenIds: [token.id])
+            .sign(bob.key)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
 
         let serials = try await token.mint(testEnv, count: 10)
 
