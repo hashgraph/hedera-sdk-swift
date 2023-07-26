@@ -1,3 +1,4 @@
+import HederaProtobufs
 import NumberKit
 import XCTest
 
@@ -153,5 +154,40 @@ internal final class ContractFunctionResultTests: XCTestCase {
         XCTAssertNil(result.getInt256((0)))
         XCTAssertNil(result.getUInt256((0)))
         XCTAssertNil(result.getAddress((0)))
+    }
+
+    internal func testFromProtobuf() throws {
+        let result = try ContractFunctionResult.fromProtobuf(
+            Proto_ContractFunctionResult.with { proto in
+                proto.contractID = ContractId(num: 3).toProtobuf()
+                proto.contractCallResult = callResult
+                proto.senderID = AccountId(shard: 31, realm: 41, num: 65).toProtobuf()
+                proto.contractNonces = [
+                    .with { proto in
+                        proto.contractID = ContractId(shard: 1, realm: 2, num: 3).toProtobuf()
+                        proto.nonce = 10
+                    }
+                ]
+            })
+
+        XCTAssertEqual(result.getBool(0), true)
+        XCTAssertEqual(result.getInt32(0), -1)
+        XCTAssertEqual(result.getInt64(0), Int64(UInt32.max))
+        XCTAssertEqual(result.getInt256(0), BigInt(UInt32.max))
+        XCTAssertEqual(result.getInt256(1), (1 << 255) - 1)
+        XCTAssertEqual(result.getAddress(2), "11223344556677889900aabbccddeeff00112233")
+        XCTAssertEqual(result.getUInt32(3), .max)
+        XCTAssertEqual(result.getUInt64(3), .max)
+        // BigInteger can represent the full range and so should be 2^256 - 1
+        XCTAssertEqual(result.getUInt256(3), (1 << 256) - 1)
+        XCTAssertEqual(result.getInt256(3), -1)
+
+        XCTAssertEqual(result.getString(4), "Hello, world!")
+        XCTAssertEqual(result.getString(5), "Hello, world, again!")
+
+        XCTAssertEqual(result.senderAccountId, AccountId(shard: 31, realm: 41, num: 65))
+
+        XCTAssertEqual(
+            result.contractNonces, [ContractNonceInfo(contractId: ContractId(shard: 1, realm: 2, num: 3), nonce: 10)])
     }
 }

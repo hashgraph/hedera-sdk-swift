@@ -65,6 +65,10 @@ public struct ContractFunctionResult {
     /// The account that is the "sender." If not present it is the accountId from the transactionId.
     public let senderAccountId: AccountId?
 
+    /// A list of updated contract account nonces containing the new nonce value for each contract account.
+    /// This is always empty in a ContractLocalCallQuery response, since no internal creations can happen in a static EVM call.
+    public let contractNonces: [ContractNonceInfo]
+
     internal init(
         contractId: ContractId,
         evmAddress: ContractId? = nil,
@@ -76,7 +80,8 @@ public struct ContractFunctionResult {
         contractFunctionParametersBytes: Data,
         bytes: Data,
         senderAccountId: AccountId? = nil,
-        logs: [ContractLogInfo] = []
+        logs: [ContractLogInfo] = [],
+        contractNonces: [ContractNonceInfo] = []
     ) {
         self.contractId = contractId
         self.evmAddress = evmAddress
@@ -89,6 +94,7 @@ public struct ContractFunctionResult {
         self.bytes = bytes
         self.senderAccountId = senderAccountId
         self.logs = logs
+        self.contractNonces = contractNonces
     }
 
     private func getFixedBytesAt(slot: UInt, size: UInt) -> Data? {
@@ -250,7 +256,8 @@ extension ContractFunctionResult: TryFromProtobuf {
             contractFunctionParametersBytes: proto.functionParameters,
             bytes: bytes,
             senderAccountId: proto.hasSenderID ? try .fromProtobuf(proto.senderID) : nil,
-            logs: try .fromProtobuf(proto.logInfo)
+            logs: try .fromProtobuf(proto.logInfo),
+            contractNonces: try .fromProtobuf(proto.contractNonces)
         )
     }
 }
