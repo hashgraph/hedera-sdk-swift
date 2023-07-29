@@ -160,6 +160,12 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
             // So, we, awkwardly, have an `OctetString` containing an `OctetString` containing our key material.
             inner = try .init(derEncoded: info.privateKey.bytes)
         } catch {
+            // this is kinda painful, buuut...
+            if let v = try? Self(sec1Bytes: bytes) {
+                self = v
+                return
+            }
+
             throw HError.keyParse(String(describing: error))
         }
 
@@ -168,6 +174,24 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         case .NamedCurves.secp256k1: try self.init(ecdsaBytes: Data(inner.bytes))
         case let oid:
             throw HError.keyParse("unsupported key algorithm: \(oid)")
+        }
+    }
+
+    private init(sec1Bytes bytes: Data) throws {
+        let info: Sec1.ECPrivateKey
+        do {
+            info = try .init(derEncoded: Array(bytes))
+        } catch {
+            throw HError.keyParse(String(describing: error))
+        }
+
+        switch info.parameters?.namedCurve {
+        case .NamedCurves.secp256k1:
+            try self.init(ecdsaBytes: Data(info.privateKey.bytes))
+        case .some(let oid):
+            throw HError.keyParse("unsupported key algorithm: \(oid)")
+        case nil:
+            throw HError.keyParse("missing curve parameters")
         }
     }
 
@@ -223,24 +247,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
     }
 
     public static func fromBytesDer(_ bytes: Data) throws -> Self {
-        let info: Pkcs8.PrivateKeyInfo
-        let inner: ASN1OctetString
-        do {
-            info = try .init(derEncoded: Array(bytes))
-
-            // PrivateKey is an `OctetString`, and the `PrivateKey`s we all support are `OctetStrings`.
-            // So, we, awkwardly, have an `OctetString` containing an `OctetString` containing our key material.
-            inner = try .init(derEncoded: info.privateKey.bytes)
-        } catch {
-            throw HError.keyParse(String(describing: error))
-        }
-
-        switch info.algorithm.oid {
-        case .NamedCurves.ed25519: return try .fromBytesEd25519(Data(inner.bytes))
-        case .NamedCurves.secp256k1: return try .fromBytesEcdsa(Data(inner.bytes))
-        case let oid:
-            throw HError.keyParse("unsupported key algorithm: \(oid)")
-        }
+        try Self(derBytes: bytes)
     }
 
     private init<S: StringProtocol>(parsing description: S) throws {
@@ -276,33 +283,82 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
     public static func fromPem(_ pem: String) throws -> Self {
         let document = try Crypto.Pem.decode(pem)
 
-        guard document.typeLabel == "PRIVATE KEY" else {
-            throw HError.keyParse("incorrect PEM type label: expected: `PRIVATE KEY`, got: `\(document.typeLabel)`")
+        switch document.typeLabel {
+        case "PRIVATE KEY": return try fromBytesDer(document.der)
+        case "EC PRIVATE KEY": return try Self(sec1Bytes: document.der)
+        case let label:
+            throw HError.keyParse("incorrect PEM type label: expected: `PRIVATE KEY`, got: `\(label)`")
         }
-
-        return try fromBytesDer(document.der)
     }
 
     /// Parse a `PrivateKey` from a password protected [PEM](https://www.rfc-editor.org/rfc/rfc7468#section-11) encoded string.
     public static func fromPem(_ pem: String, _ password: String) throws -> Self {
         let document = try Crypto.Pem.decode(pem)
 
-        guard document.typeLabel == "ENCRYPTED PRIVATE KEY" else {
-            throw HError.keyParse(
-                "incorrect PEM type label: expected: `ENCRYPTED PRIVATE KEY`, got: `\(document.typeLabel)`")
+        switch document.typeLabel {
+        case "ENCRYPTED PRIVATE KEY":
+
+            guard document.headers.isEmpty else {
+                throw HError.keyParse("expected pem document to have no headers")
+            }
+
+            let decrypted: Data
+
+            do {
+                let document = try Pkcs8.EncryptedPrivateKeyInfo(derEncoded: Array(document.der))
+                decrypted = try document.decrypt(password: password.data(using: .utf8)!)
+            } catch {
+                throw HError.keyParse(String(describing: error))
+            }
+
+            return try fromBytesDer(decrypted)
+
+        case "EC PRIVATE KEY":
+            guard document.headers["Proc-Type"] == "4,ENCRYPTED" else {
+                throw HError.keyParse("Encrypted EC Private Key missing or invalid `Proc-Type` header")
+            }
+
+            guard let dekInfo = document.headers["DEK-Info"] else {
+                throw HError.keyParse("EC Private Key missing `DEK-Info` header")
+            }
+
+            guard let (alg, iv) = dekInfo.splitOnce(on: ",") else {
+                throw HError.keyParse("Invalid `DEK-Info`")
+            }
+
+            guard let iv = Data(hexEncoded: iv) else {
+                throw HError.keyParse("invalid IV: \(iv)")
+            }
+
+            let decrypted: Data
+
+            switch alg {
+            case "AES-128-CBC":
+                guard iv.count == 16 else {
+                    throw HError.keyParse("invalid IV")
+                }
+
+                var md5 = CryptoKit.Insecure.MD5()
+
+                md5.update(data: password.data(using: .utf8)!)
+                md5.update(data: iv[slicing: ..<8]!)
+
+                let passphrase = Data(md5.finalize().bytes)
+
+                do {
+                    decrypted = try Crypto.Aes.aes128CbcPadDecrypt(key: passphrase, iv: iv, message: document.der)
+                } catch {
+                    throw HError.keyParse("Failed to decrypt message: \(error)")
+                }
+
+            default:
+                throw HError.keyParse("unexpected decryption alg: \(alg)")
+            }
+
+            return try Self(sec1Bytes: decrypted)
+        case let label:
+            throw HError.keyParse("incorrect PEM type label: expected: `PRIVATE KEY`, got: `\(label)`")
         }
-
-        let decrypted: Data
-
-        do {
-            let document = try Pkcs8.EncryptedPrivateKeyInfo(derEncoded: Array(document.der))
-            decrypted = try document.decrypt(password: password.data(using: .utf8)!)
-        } catch {
-            throw HError.keyParse(String(describing: error))
-        }
-
-        return try .fromBytesDer(decrypted)
-
     }
 
     public func toBytesDer() -> Data {

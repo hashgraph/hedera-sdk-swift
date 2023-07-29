@@ -123,4 +123,26 @@ internal final class PublicKeyTests: XCTestCase {
 
         XCTAssertThrowsError(try publicKey.verify("hello world".data(using: .utf8)!, signature))
     }
+
+    internal func testK256CompressedPkcs8EcSpkiDer() throws {
+        let pk = try PublicKey.fromString(
+            "3036301006072a8648ce3d020106052b8104000a032200036843f5cb338bbb4cdb21b0da4ea739d910951d6e8a5f703d313efe31afe788f4"
+        )
+
+        XCTAssertEqual(
+            pk.toStringRaw(),
+            "036843f5cb338bbb4cdb21b0da4ea739d910951d6e8a5f703d313efe31afe788f4"
+        )
+    }
+
+    internal func testK256UncompressedPkcs8EcSpkiDer() throws {
+        let pk = try PublicKey.fromString(
+            "3056301006072a8648ce3d020106052b8104000a03420004aaac1c3ac1bea0245b8e00ce1e2018f9eab61b6331fbef7266f2287750a6597795f855ddcad2377e22259d1fcb4e0f1d35e8f2056300c15070bcbfce3759cc9d"
+        )
+
+        XCTAssertEqual(
+            pk.toStringRaw(),
+            "03aaac1c3ac1bea0245b8e00ce1e2018f9eab61b6331fbef7266f2287750a65977"
+        )
+    }
 }

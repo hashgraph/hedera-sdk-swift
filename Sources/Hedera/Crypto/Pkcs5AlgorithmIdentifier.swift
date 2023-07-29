@@ -36,6 +36,10 @@ extension Pkcs5 {
 
         internal let oid: ASN1ObjectIdentifier
         internal let parameters: ASN1Any?
+
+        internal var parametersOID: ASN1ObjectIdentifier? {
+            try? parameters.map(ASN1ObjectIdentifier.init(asn1Any:))
+        }
     }
 }
 

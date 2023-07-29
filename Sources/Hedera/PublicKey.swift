@@ -25,6 +25,48 @@ import SwiftASN1
 import secp256k1
 import secp256k1_bindings
 
+extension secp256k1.Signing.PublicKey {
+    internal func toBytesIn(format: secp256k1.Format) -> Data {
+        let context = secp256k1.Context.rawRepresentation
+
+        // when the bindings aren't enough :/
+        // and to be clear, using `key.rawRepresentation` which gives a `secp256k1_pubkey` _fails_ to work.
+        var pubkey = secp256k1_pubkey()
+
+        self.dataRepresentation.withUnsafeTypedBytes { bytes in
+            let result = secp256k1_bindings.secp256k1_ec_pubkey_parse(
+                context,
+                &pubkey,
+                bytes.baseAddress!,
+                bytes.count
+            )
+
+            precondition(result == 1)
+        }
+
+        let format = format
+
+        var output = Data(repeating: 0, count: format.length)
+
+        output.withUnsafeMutableTypedBytes { output in
+            var outputLen = output.count
+
+            let result = secp256k1_ec_pubkey_serialize(
+                context,
+                output.baseAddress!,
+                &outputLen,
+                &pubkey,
+                format.rawValue
+            )
+
+            precondition(result == 1)
+            precondition(outputLen == output.count)
+        }
+
+        return output
+    }
+}
+
 /// A public key on the Hedera network.
 public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, Equatable, Hashable {
     // we need to be sendable, so...
@@ -123,17 +165,22 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
     }
 
     fileprivate init(ecdsaBytes bytes: Data) throws {
-        guard bytes.count == 33 else {
+        switch bytes.count {
+        case secp256k1.Format.compressed.length:
+            do {
+                self.init(.ecdsa(try .init(dataRepresentation: bytes, format: .compressed)))
+            } catch {
+                throw HError.keyParse(String(describing: error))
+            }
+        case secp256k1.Format.uncompressed.length:
+            do {
+                self.init(.ecdsa(try .init(dataRepresentation: bytes, format: .uncompressed)))
+            } catch {
+                throw HError.keyParse(String(describing: error))
+            }
+        default:
             try self.init(derBytes: bytes)
-            return
         }
-
-        do {
-            self.init(.ecdsa(try .init(dataRepresentation: bytes, format: .compressed)))
-        } catch {
-            throw HError.keyParse(String(describing: error))
-        }
-
     }
 
     public static func fromBytesEcdsa(_ bytes: Data) throws -> Self {
@@ -152,7 +199,8 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         switch info.algorithm.oid {
         // hack: Rust had a bug where it used the wrong OID for public keys, the only test verifying the correct behavior exists in JS,
         // rather than Java, where the impl was ported from, the incorrect OID being `id-ecpub`.
-        case .NamedCurves.secp256k1, .AlgorithmIdentifier.idEcPublicKey:
+        case .NamedCurves.secp256k1,
+            .AlgorithmIdentifier.idEcPublicKey where info.algorithm.parametersOID == .NamedCurves.secp256k1:
             guard info.subjectPublicKey.paddingBits == 0 else {
                 throw HError.keyParse("Invalid padding for secp256k1 spki")
             }
@@ -239,7 +287,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
 
     public func toBytesRaw() -> Data {
         switch kind {
-        case .ecdsa(let key): return key.dataRepresentation
+        case .ecdsa(let key): return key.toBytesIn(format: .compressed)
         case .ed25519(let key): return key.rawRepresentation
         }
     }
@@ -319,41 +367,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
             return nil
         }
 
-        let context = secp256k1.Context.rawRepresentation
-
-        // when the bindings aren't enough :/
-        // and to be clear, using `key.rawRepresentation` which gives a `secp256k1_pubkey` _fails_ to work.
-        var pubkey = secp256k1_pubkey()
-
-        key.dataRepresentation.withUnsafeTypedBytes { bytes in
-            let result = secp256k1_bindings.secp256k1_ec_pubkey_parse(
-                context,
-                &pubkey,
-                bytes.baseAddress!,
-                bytes.count
-            )
-
-            precondition(result == 1)
-        }
-
-        let format = secp256k1.Format.uncompressed
-
-        var output = Data(repeating: 0, count: format.length)
-
-        output.withUnsafeMutableTypedBytes { output in
-            var outputLen = output.count
-
-            let result = secp256k1_ec_pubkey_serialize(
-                context,
-                output.baseAddress!,
-                &outputLen,
-                &pubkey,
-                format.rawValue
-            )
-
-            precondition(result == 1)
-            precondition(outputLen == output.count)
-        }
+        let output = key.toBytesIn(format: .uncompressed)
 
         // note(important): sec1 uncompressed point
         let hash = Crypto.Sha3.keccak256(output[1...])
