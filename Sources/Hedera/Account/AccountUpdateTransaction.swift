@@ -167,7 +167,7 @@ public final class AccountUpdateTransaction: Transaction {
     }
 
     // this is the official recommendation for deprecation while not getting warnings internally.
-    private var proxyAccountIdInner: AccountId? {
+    internal var proxyAccountIdInner: AccountId? {
         willSet {
             ensureNotFrozen()
         }

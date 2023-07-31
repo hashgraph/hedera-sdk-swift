@@ -44,7 +44,7 @@ public final class AccountStakersQuery: Query<[ProxyStaker]> {
 
     internal override func toQueryProtobufWith(_ header: Proto_QueryHeader) -> Proto_Query {
         .with { proto in
-            proto.cryptoGetInfo = .with { proto in
+            proto.cryptoGetProxyStakers = .with { proto in
                 proto.header = header
                 if let accountId = self.accountId {
                     proto.accountID = accountId.toProtobuf()

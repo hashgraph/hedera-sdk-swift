@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2023 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,5 +56,38 @@ internal final class ContractFunctionSelectorTests: XCTestCase {
         let result = ContractFunctionSelector("foo").addFunction().addFunction().finish()
 
         XCTAssertEqual(result.hexStringEncoded(), "c99c40cd")
+    }
+
+    internal func testSelectorAllTypes() {
+        let signature = ContractFunctionSelector("testFunction")
+            .addAddress()
+            .addAddressArray()
+            .addBool()
+            .addBytes()
+            .addBytes32()
+            .addBytes32Array()
+            .addBytesArray()
+            .addFunction()
+            .addInt8()
+            .addInt8Array()
+            .addInt32()
+            .addInt32Array()
+            .addInt64()
+            .addInt64Array()
+            .addInt256()
+            .addInt256Array()
+            .addUint8()
+            .addUint8Array()
+            .addUint32()
+            .addUint32Array()
+            .addUint64()
+            .addUint64Array()
+            .addUint256()
+            .addUint256Array()
+            .addString()
+            .addStringArray()
+            .finish()
+
+        XCTAssertEqual(signature.hexStringEncoded(), "4438e4ce")
     }
 }
