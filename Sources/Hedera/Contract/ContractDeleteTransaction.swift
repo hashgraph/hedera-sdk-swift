@@ -36,15 +36,35 @@ public final class ContractDeleteTransaction: Transaction {
 
         switch data.obtainers {
         case .transferAccountID(let account):
-            self.transferAccountId = try .fromProtobuf(account)
+            obtainer = try .accountId(.fromProtobuf(account))
         case .transferContractID(let contract):
-            self.transferContractId = try .fromProtobuf(contract)
+            obtainer = try .contractId(.fromProtobuf(contract))
         case nil:
-            break
-
+            obtainer = nil
         }
 
         try super.init(protobuf: proto)
+    }
+
+    private enum Obtainer {
+        case accountId(AccountId)
+        case contractId(ContractId)
+
+        fileprivate var accountId: AccountId? {
+            if case .accountId(let id) = self {
+                return id
+            }
+
+            return nil
+        }
+
+        fileprivate var contractId: ContractId? {
+            if case .contractId(let id) = self {
+                return id
+            }
+
+            return nil
+        }
     }
 
     /// The contract to be deleted.
@@ -53,6 +73,8 @@ public final class ContractDeleteTransaction: Transaction {
             ensureNotFrozen()
         }
     }
+
+    private var obtainer: Obtainer?
 
     /// Sets the contract to be deleted.
     @discardableResult
@@ -64,8 +86,10 @@ public final class ContractDeleteTransaction: Transaction {
 
     /// The account ID which will receive all remaining hbars.
     public var transferAccountId: AccountId? {
-        willSet {
+        get { obtainer?.accountId }
+        set(value) {
             ensureNotFrozen()
+            obtainer = value.map(Obtainer.accountId)
         }
     }
 
@@ -79,8 +103,10 @@ public final class ContractDeleteTransaction: Transaction {
 
     /// The contract ID which will receive all remaining hbars.
     public var transferContractId: ContractId? {
-        willSet {
+        get { obtainer?.contractId }
+        set(value) {
             ensureNotFrozen()
+            obtainer = value.map(Obtainer.contractId)
         }
     }
 
@@ -118,16 +144,13 @@ extension ContractDeleteTransaction: ToProtobuf {
     internal func toProtobuf() -> Protobuf {
 
         .with { proto in
-            switch (transferAccountId, transferContractId) {
-            case (.some, .some):
-                // fixme: do what rust does
-                fatalError("unreachable: transferAccount & transferContract")
-            case (.some(let id), nil):
+            switch obtainer {
+            case .accountId(let id):
                 proto.transferAccountID = id.toProtobuf()
-            case (nil, .some(let id)):
+            case .contractId(let id):
                 proto.transferContractID = id.toProtobuf()
-            case (nil, nil):
-                break
+            case nil: break
+
             }
 
             contractId?.toProtobufInto(&proto.contractID)

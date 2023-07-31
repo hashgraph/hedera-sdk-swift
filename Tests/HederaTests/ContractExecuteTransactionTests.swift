@@ -24,16 +24,12 @@ import XCTest
 
 @testable import Hedera
 
-internal class AccountAllowanceDeleteTransactionTests: XCTestCase {
+internal class ContractExecuteTransactionTests: XCTestCase {
     internal static let unusedPrivateKey: PrivateKey =
         "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
 
-    private static func makeTransaction() throws -> AccountAllowanceDeleteTransaction {
-        let ownerId: AccountId = "5.6.7"
-
-        let invalidTokenIds: [TokenId] = ["4.4.4", "8.8.8"]
-
-        return try AccountAllowanceDeleteTransaction()
+    private static func makeTransaction() throws -> ContractExecuteTransaction {
+        try ContractExecuteTransaction()
             .nodeAccountIds(["0.0.5005", "0.0.5006"])
             .transactionId(
                 TransactionId(
@@ -42,10 +38,10 @@ internal class AccountAllowanceDeleteTransactionTests: XCTestCase {
                     scheduled: false
                 )
             )
-            .deleteAllTokenNftAllowances(invalidTokenIds[0].nft(123), ownerId)
-            .deleteAllTokenNftAllowances(invalidTokenIds[0].nft(456), ownerId)
-            .deleteAllTokenNftAllowances(invalidTokenIds[1].nft(456), ownerId)
-            .deleteAllTokenNftAllowances(invalidTokenIds[0].nft(789), ownerId)
+            .contractId("0.0.5007")
+            .gas(10)
+            .payableAmount(Hbar.fromTinybars(1000))
+            .functionParameters(Data([24, 43, 11]))
             .maxTransactionFee(Hbar.fromTinybars(100_000))
             .freeze()
             .sign(unusedPrivateKey)
