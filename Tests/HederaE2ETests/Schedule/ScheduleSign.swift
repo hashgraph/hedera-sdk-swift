@@ -145,20 +145,20 @@ internal final class ScheduleSign: XCTestCase {
         }
         // Mint Token with signature
         let receipt = try await TokenMintTransaction()
-                .tokenId(token.id)
-                .sign(account.key)
-                .schedule()
-                .execute(testEnv.client)
-                .getReceipt(testEnv.client)
+            .tokenId(token.id)
+            .sign(account.key)
+            .schedule()
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
 
         let scheduleId = try XCTUnwrap(receipt.scheduleId)
 
         // Schedule Sign with account Private key
         _ = try await ScheduleSignTransaction()
-                .scheduleId(scheduleId)
-                .sign(account.key)
-                .execute(testEnv.client)
-                .getReceipt(testEnv.client)
+            .scheduleId(scheduleId)
+            .sign(account.key)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
 
         let info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
 

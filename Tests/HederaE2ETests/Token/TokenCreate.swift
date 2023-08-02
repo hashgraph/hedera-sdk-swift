@@ -55,24 +55,24 @@ internal final class TokenCreate: XCTestCase {
     }
 
     internal func testMinimalProperties() async throws {
-       let testEnv = try TestEnvironment.nonFree
+        let testEnv = try TestEnvironment.nonFree
 
-       let account = try await Account.create(testEnv)
+        let account = try await Account.create(testEnv)
 
-       _ = try await TokenCreateTransaction()
-           .name("ffff")
-           .symbol("F")
-           .treasuryAccountId(account.id)
-           .expirationTime(.now + .minutes(5))
-           .sign(account.key)
-           .execute(testEnv.client)
-           .getReceipt(testEnv.client)
+        _ = try await TokenCreateTransaction()
+            .name("ffff")
+            .symbol("F")
+            .treasuryAccountId(account.id)
+            .expirationTime(.now + .minutes(5))
+            .sign(account.key)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
     }
 
     internal func testMissingNameFail() async throws {
-       let testEnv = try TestEnvironment.nonFree
+        let testEnv = try TestEnvironment.nonFree
 
-       let account = try await makeAccount(testEnv)
+        let account = try await makeAccount(testEnv)
 
         await assertThrowsHErrorAsync(
             try await TokenCreateTransaction()
@@ -80,7 +80,7 @@ internal final class TokenCreate: XCTestCase {
                 .treasuryAccountId(account.id)
                 .expirationTime(.now + .minutes(5))
                 .sign(account.key).execute(testEnv.client),
-                "expected error creating token"
+            "expected error creating token"
         ) { error in
             guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.missingTokenName`")
@@ -92,9 +92,9 @@ internal final class TokenCreate: XCTestCase {
     }
 
     internal func testMissingSymbolFail() async throws {
-       let testEnv = try TestEnvironment.nonFree
+        let testEnv = try TestEnvironment.nonFree
 
-       let account = try await makeAccount(testEnv)
+        let account = try await makeAccount(testEnv)
 
         await assertThrowsHErrorAsync(
             try await TokenCreateTransaction()
@@ -102,7 +102,7 @@ internal final class TokenCreate: XCTestCase {
                 .treasuryAccountId(account.id)
                 .expirationTime(.now + .minutes(5))
                 .sign(account.key).execute(testEnv.client),
-                "expected error creating token"
+            "expected error creating token"
         ) { error in
             guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `transactionPreCheckStatus`")
@@ -114,9 +114,9 @@ internal final class TokenCreate: XCTestCase {
     }
 
     internal func testMissingTreasuryAccountIdFail() async throws {
-       let testEnv = try TestEnvironment.nonFree
+        let testEnv = try TestEnvironment.nonFree
 
-       let account = try await makeAccount(testEnv)
+        let account = try await makeAccount(testEnv)
 
         await assertThrowsHErrorAsync(
             try await TokenCreateTransaction()
@@ -125,7 +125,7 @@ internal final class TokenCreate: XCTestCase {
                 .expirationTime(.now + .minutes(5))
                 .sign(account.key)
                 .execute(testEnv.client),
-                "expected error creating token"
+            "expected error creating token"
         ) { error in
             guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
@@ -146,7 +146,7 @@ internal final class TokenCreate: XCTestCase {
                 .expirationTime(.now + .minutes(5))
                 .execute(testEnv.client)
                 .getReceipt(testEnv.client),
-                "expected error creating token"
+            "expected error creating token"
         ) { error in
             guard case .receiptStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.receiptStatus`")
@@ -172,7 +172,7 @@ internal final class TokenCreate: XCTestCase {
                 .expirationTime(.now + .minutes(5))
                 .execute(testEnv.client)
                 .getReceipt(testEnv.client),
-                "expected error creating token"
+            "expected error creating token"
         ) { error in
             guard case .receiptStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.receiptStatus`")
@@ -217,7 +217,8 @@ internal final class TokenCreate: XCTestCase {
 
         let account = try await makeAccount(testEnv)
 
-        let customFees: [AnyCustomFee] = Array(repeating: .fixed(.init(amount: 10, feeCollectorAccountId: account.id)), count: 11)
+        let customFees: [AnyCustomFee] = Array(
+            repeating: .fixed(.init(amount: 10, feeCollectorAccountId: account.id)), count: 11)
 
         await assertThrowsHErrorAsync(
             try await TokenCreateTransaction()
@@ -230,7 +231,7 @@ internal final class TokenCreate: XCTestCase {
                 .sign(account.key)
                 .execute(testEnv.client)
                 .getReceipt(testEnv.client),
-                "expected error creating token"
+            "expected error creating token"
         ) { error in
             guard case .receiptStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.receiptStatus`")
@@ -245,7 +246,8 @@ internal final class TokenCreate: XCTestCase {
 
         let account = try await makeAccount(testEnv)
 
-        let customFees: [AnyCustomFee] = Array(repeating: .fixed(.init(amount: 10, feeCollectorAccountId: account.id)), count: 10)
+        let customFees: [AnyCustomFee] = Array(
+            repeating: .fixed(.init(amount: 10, feeCollectorAccountId: account.id)), count: 10)
 
         let receipt = try await TokenCreateTransaction()
             .name("ffff")
@@ -272,7 +274,10 @@ internal final class TokenCreate: XCTestCase {
 
         let account = try await makeAccount(testEnv)
 
-        let customFees: [AnyCustomFee] = Array(repeating: .fractional(.init(amount: "1/20", minimumAmount: 1, maximumAmount: 10, feeCollectorAccountId: account.id)), count: 10)
+        let customFees: [AnyCustomFee] = Array(
+            repeating: .fractional(
+                .init(amount: "1/20", minimumAmount: 1, maximumAmount: 10, feeCollectorAccountId: account.id)),
+            count: 10)
 
         let receipt = try await TokenCreateTransaction()
             .name("ffff")
@@ -299,7 +304,9 @@ internal final class TokenCreate: XCTestCase {
 
         let account = try await makeAccount(testEnv)
 
-        let customFees: [AnyCustomFee] = [.fractional(.init(amount: "1/3", minimumAmount: 3, maximumAmount: 2, feeCollectorAccountId: account.id))]
+        let customFees: [AnyCustomFee] = [
+            .fractional(.init(amount: "1/3", minimumAmount: 3, maximumAmount: 2, feeCollectorAccountId: account.id))
+        ]
 
         await assertThrowsHErrorAsync(
             try await TokenCreateTransaction()
@@ -312,7 +319,7 @@ internal final class TokenCreate: XCTestCase {
                 .sign(account.key)
                 .execute(testEnv.client)
                 .getReceipt(testEnv.client),
-                "expected error creating token"
+            "expected error creating token"
         ) { error in
             guard case .receiptStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.receiptStatus`")
@@ -358,7 +365,10 @@ internal final class TokenCreate: XCTestCase {
         let account = try await makeAccount(testEnv)
 
         let customFees: [AnyCustomFee] = [
-            .royalty(.init(exchangeValue: "1/10", fallbackFee: FixedFee(amount: 1), feeCollectorAccountId: account.id, allCollectorsAreExempt: false)),
+            .royalty(
+                .init(
+                    exchangeValue: "1/10", fallbackFee: FixedFee(amount: 1), feeCollectorAccountId: account.id,
+                    allCollectorsAreExempt: false))
         ]
 
         let receipt = try await TokenCreateTransaction()
