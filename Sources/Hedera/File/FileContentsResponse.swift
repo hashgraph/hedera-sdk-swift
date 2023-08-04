@@ -30,10 +30,17 @@ public struct FileContentsResponse {
     public let contents: Data
 }
 
-extension FileContentsResponse: FromProtobuf {
+extension FileContentsResponse: TryProtobufCodable {
     internal typealias Protobuf = Proto_FileGetContentsResponse.FileContents
 
     internal init(protobuf proto: Protobuf) {
         self.init(fileId: .fromProtobuf(proto.fileID), contents: proto.contents)
+    }
+
+    internal func toProtobuf() -> Protobuf {
+        .with { proto in
+            proto.fileID = fileId.toProtobuf()
+            proto.contents = Data(contents)
+        }
     }
 }
