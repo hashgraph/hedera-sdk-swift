@@ -25,8 +25,8 @@ import NIOCore
 internal final class MirrorNetwork: AtomicReference, Sendable {
     private enum Targets {
         static let mainnet: Set<HostAndPort> = [.init(host: "mainnet-public.mirrornode.hedera.com", port: 443)]
-        static let testnet: Set<HostAndPort> = [.init(host: "hcs.testnet.mirrornode.hedera.com", port: 5600)]
-        static let previewnet: Set<HostAndPort> = [.init(host: "hcs.previewnet.mirrornode.hedera.com", port: 5600)]
+        static let testnet: Set<HostAndPort> = [.init(host: "testnet.mirrornode.hedera.com", port: 443)]
+        static let previewnet: Set<HostAndPort> = [.init(host: "previewnet.mirrornode.hedera.com", port: 443)]
     }
 
     internal let channel: ChannelBalancer
@@ -38,10 +38,14 @@ internal final class MirrorNetwork: AtomicReference, Sendable {
     }
 
     private convenience init(targets: Set<HostAndPort>, eventLoop: EventLoopGroup) {
-        let channel = ChannelBalancer(eventLoop: eventLoop.next(), targets.map { .hostAndPort($0.host, Int($0.port)) })
-
         self.init(
-            channel: channel,
+            channel: ChannelBalancer(
+                eventLoop: eventLoop.next(),
+                targets.map { .hostAndPort($0.host, Int($0.port)) },
+                transportSecurity: .tls(
+                    .makeClientDefault(compatibleWith: eventLoop)
+                )
+            ),
             targets: targets
         )
     }

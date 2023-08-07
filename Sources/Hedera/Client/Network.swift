@@ -33,13 +33,17 @@ internal final class ChannelBalancer: GRPCChannel {
 
     // fixme: if the request never returns (IE the host doesn't exist) we
 
-    internal init(eventLoop: EventLoop, _ channelTargets: [GRPC.ConnectionTarget]) {
+    internal init(
+        eventLoop: EventLoop,
+        _ channelTargets: [GRPC.ConnectionTarget],
+        transportSecurity: GRPCChannelPool.Configuration.TransportSecurity
+    ) {
         self.eventLoop = eventLoop
         self.targets = channelTargets
 
         self.channels = channelTargets.map { target in
             // GRPC.ClientConnection(configuration: .default(target: target, eventLoopGroup: eventLoop))
-            try! GRPCChannelPool.with(target: target, transportSecurity: .plaintext, eventLoopGroup: eventLoop)
+            try! GRPCChannelPool.with(target: target, transportSecurity: transportSecurity, eventLoopGroup: eventLoop)
         }
     }
 
@@ -336,7 +340,11 @@ extension HostAndPort: LosslessStringConvertible {
 
 internal struct NodeConnection: Sendable {
     internal init(eventLoop: EventLoop, addresses: Set<HostAndPort>) {
-        realChannel = ChannelBalancer(eventLoop: eventLoop, addresses.map { .host($0.host, port: Int($0.port)) })
+        realChannel = ChannelBalancer(
+            eventLoop: eventLoop,
+            addresses.map { .host($0.host, port: Int($0.port)) },
+            transportSecurity: .plaintext
+        )
         self.addresses = addresses
     }
 
