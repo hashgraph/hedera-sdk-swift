@@ -1,0 +1,1 @@
+ContractLogInfo(contractId: 0.0.10, bloom: 5 bytes, topics: [5 bytes], data: 4 bytes)
