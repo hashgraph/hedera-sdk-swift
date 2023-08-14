@@ -36,10 +36,10 @@ internal final class FileContentsResponseTests: XCTestCase {
     }
 
     internal func testFromProtobuf() throws {
-        assertSnapshot(matching: try FileContentsResponse.fromProtobuf(Self.response), as: .description)
+        assertSnapshot(matching: FileContentsResponse.fromProtobuf(Self.response), as: .description)
     }
 
     internal func testToProtobuf() throws {
-        assertSnapshot(matching: try FileContentsResponse.fromProtobuf(Self.response).toProtobuf(), as: .description)
+        assertSnapshot(matching: FileContentsResponse.fromProtobuf(Self.response).toProtobuf(), as: .description)
     }
 }

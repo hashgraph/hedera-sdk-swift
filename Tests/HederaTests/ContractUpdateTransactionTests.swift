@@ -84,14 +84,14 @@ internal final class ContractUpdateTransactionTests: XCTestCase {
 
     internal func testToFromBytes() throws {
         let tx = try Self.updateTransaction()
-        let tx2 = try ContractUpdateTransaction.fromBytes(tx.toBytes())
+        let tx2 = try Transaction.fromBytes(tx.toBytes())
 
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }
 
     internal func testToFromBytes2() throws {
         let tx = try Self.updateTransaction2()
-        let tx2 = try ContractUpdateTransaction.fromBytes(tx.toBytes())
+        let tx2 = try Transaction.fromBytes(tx.toBytes())
 
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }

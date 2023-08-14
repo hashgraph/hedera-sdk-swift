@@ -47,9 +47,9 @@ internal final class EthereumTransactionTests: XCTestCase {
         assertSnapshot(matching: try Self.createTransaction().makeProtoBody(), as: .description)
     }
 
-    internal func testBytesNft() throws {
+    internal func testToFromBytes() throws {
         let tx = try Self.createTransaction()
-        let tx2 = try TokenCreateTransaction.fromBytes(tx.toBytes())
+        let tx2 = try Transaction.fromBytes(tx.toBytes())
 
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }
