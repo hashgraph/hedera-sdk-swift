@@ -83,7 +83,34 @@ public final class TransferTransaction: Transaction {
             uniquingKeysWith: { (first, second) in first })
     }
 
-    private var tokenTransfers: [TransferTransaction.TokenTransfer] = [] {
+    public var tokenTransfers: [TokenId: [AccountId: Int64]] {
+        Dictionary(
+            tokenTransfersInner.lazy.map { item in
+                (
+                    item.tokenId,
+                    Dictionary(
+                        item.transfers.lazy.map { ($0.accountId, $0.amount) },
+                        uniquingKeysWith: { (first, second) in first }
+                    )
+                )
+            },
+            uniquingKeysWith: { (first, second) in first }
+        )
+    }
+
+    public var tokenNftTransfers: [TokenId: [TokenNftTransfer]] {
+        Dictionary(
+            tokenTransfersInner.lazy.map { item in
+                (
+                    item.tokenId,
+                    item.nftTransfers.map { TokenNftTransfer(nftTransfer: $0, withTokenId: item.tokenId) }
+                )
+            },
+            uniquingKeysWith: { (first, second) in first }
+        )
+    }
+
+    private var tokenTransfersInner: [TransferTransaction.TokenTransfer] = [] {
         willSet {
             ensureNotFrozen(fieldName: "tokenTransfers")
         }
@@ -97,7 +124,7 @@ public final class TransferTransaction: Transaction {
     internal init(protobuf proto: Proto_TransactionBody, _ data: Proto_CryptoTransferTransactionBody) throws {
         // init fields
         transfers = try .fromProtobuf(data.transfers.accountAmounts)
-        tokenTransfers = try .fromProtobuf(data.tokenTransfers)
+        tokenTransfersInner = try .fromProtobuf(data.tokenTransfers)
 
         try super.init(protobuf: proto)
     }
@@ -187,11 +214,12 @@ public final class TransferTransaction: Transaction {
     ) -> Self {
         let transfer = Transfer(accountId: accountId, amount: amount, isApproval: approved)
 
-        if let firstIndex = tokenTransfers.firstIndex(where: { (tokenTransfer) in tokenTransfer.tokenId == tokenId }) {
-            tokenTransfers[firstIndex].expectedDecimals = expectedDecimals
-            tokenTransfers[firstIndex].transfers.append(transfer)
+        if let firstIndex = tokenTransfersInner.firstIndex(where: { (tokenTransfer) in tokenTransfer.tokenId == tokenId
+        }) {
+            tokenTransfersInner[firstIndex].expectedDecimals = expectedDecimals
+            tokenTransfersInner[firstIndex].transfers.append(transfer)
         } else {
-            tokenTransfers.append(
+            tokenTransfersInner.append(
                 TokenTransfer(
                     tokenId: tokenId,
                     transfers: [transfer],
@@ -216,12 +244,12 @@ public final class TransferTransaction: Transaction {
             isApproval: approved
         )
 
-        if let index = tokenTransfers.firstIndex(where: { (transfer) in transfer.tokenId == nftId.tokenId }) {
-            var tmp = tokenTransfers[index]
+        if let index = tokenTransfersInner.firstIndex(where: { transfer in transfer.tokenId == nftId.tokenId }) {
+            var tmp = tokenTransfersInner[index]
             tmp.nftTransfers.append(transfer)
-            tokenTransfers[index] = tmp
+            tokenTransfersInner[index] = tmp
         } else {
-            tokenTransfers.append(
+            tokenTransfersInner.append(
                 TokenTransfer(
                     tokenId: nftId.tokenId,
                     transfers: [],
@@ -236,7 +264,7 @@ public final class TransferTransaction: Transaction {
 
     internal override func validateChecksums(on ledgerId: LedgerId) throws {
         try transfers.validateChecksums(on: ledgerId)
-        try tokenTransfers.validateChecksums(on: ledgerId)
+        try tokenTransfersInner.validateChecksums(on: ledgerId)
         try super.validateChecksums(on: ledgerId)
     }
 
@@ -327,7 +355,7 @@ extension TransferTransaction: ToProtobuf {
     internal func toProtobuf() -> Protobuf {
         .with { proto in
             proto.transfers = .with { $0.accountAmounts = transfers.toProtobuf() }
-            proto.tokenTransfers = tokenTransfers.toProtobuf()
+            proto.tokenTransfers = tokenTransfersInner.toProtobuf()
         }
     }
 }
@@ -335,5 +363,17 @@ extension TransferTransaction: ToProtobuf {
 extension TransferTransaction {
     internal func toSchedulableTransactionData() -> Proto_SchedulableTransactionBody.OneOf_Data {
         .cryptoTransfer(toProtobuf())
+    }
+}
+
+extension TokenNftTransfer {
+    fileprivate init(nftTransfer: TransferTransaction.NftTransfer, withTokenId tokenId: TokenId) {
+        self.init(
+            tokenId: tokenId,
+            sender: nftTransfer.senderAccountId,
+            receiver: nftTransfer.receiverAccountId,
+            serial: nftTransfer.serial,
+            isApproved: nftTransfer.isApproval
+        )
     }
 }
