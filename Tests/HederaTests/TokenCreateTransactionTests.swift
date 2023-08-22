@@ -138,7 +138,7 @@ internal final class TokenCreateTransactionTests: XCTestCase {
         XCTAssertEqual(tx.freezeDefault, true)
         XCTAssertEqual(tx.expirationTime, Timestamp(seconds: 1_554_158_557, subSecondNanos: 0))
         XCTAssertEqual(tx.autoRenewAccountId, try AccountId.fromString("0.0.123"))
-        XCTAssertEqual(tx.tokenMemo, "look memo")
+        XCTAssertEqual(tx.tokenMemo, "flook memo")
         XCTAssertEqual(tx.tokenType, TokenType.fungibleCommon)
         XCTAssertEqual(tx.tokenSupplyType, TokenSupplyType.infinite)
         XCTAssertEqual(tx.maxSupply, 0)
