@@ -1,0 +1,11 @@
+HederaProtobufs.Proto_Query:
+tokenGetNftInfo {
+  header {
+  }
+  nftID {
+    tokenID {
+      tokenNum: 5005
+    }
+    serialNumber: 101
+  }
+}
