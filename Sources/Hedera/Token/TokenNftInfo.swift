@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// Response from `TokenNftInfoQuery`.
-public final class TokenNftInfo {
+public struct TokenNftInfo {
     /// The ID of the NFT.
     public let nftId: NftId
 
@@ -75,7 +75,7 @@ public final class TokenNftInfo {
 extension TokenNftInfo: TryProtobufCodable {
     internal typealias Protobuf = Proto_TokenNftInfo
 
-    internal convenience init(protobuf proto: Protobuf) throws {
+    internal init(protobuf proto: Protobuf) throws {
         let spenderId = proto.hasSpenderID ? proto.spenderID : nil
 
         self.init(
@@ -94,6 +94,7 @@ extension TokenNftInfo: TryProtobufCodable {
             proto.accountID = accountId.toProtobuf()
             proto.creationTime = creationTime.toProtobuf()
             proto.metadata = metadata
+            proto.ledgerID = ledgerId.bytes
 
             if let spenderId = spenderId?.toProtobuf() {
                 proto.spenderID = spenderId
