@@ -1,0 +1,1 @@
+TokenNftInfo(nftId: 1.2.3/4, accountId: 5.6.7, creationTime: 1554158542000000000, metadata: 4 bytes, spenderId: Optional(8.9.10), ledgerId: mainnet)
