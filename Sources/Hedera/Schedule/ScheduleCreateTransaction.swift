@@ -51,7 +51,11 @@ public final class ScheduleCreateTransaction: Transaction {
     }
 
     internal init(protobuf proto: Proto_TransactionBody, _ data: Proto_ScheduleCreateTransactionBody) throws {
-        fatalError("Fixme: ScheduleCreateTransaction from bytes")
+        expirationTime = data.hasExpirationTime ? .fromProtobuf(data.expirationTime) : nil
+        isWaitForExpiry = data.waitForExpiry
+        scheduleMemo = data.memo
+
+        try super.init(protobuf: proto)
     }
 
     /// The timestamp for when the transaction should be evaluated for execution and then expire.
