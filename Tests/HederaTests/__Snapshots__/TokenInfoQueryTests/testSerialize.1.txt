@@ -1,0 +1,9 @@
+HederaProtobufs.Proto_Query:
+tokenGetInfo {
+  header {
+  }
+  token {
+    shardNum: 4
+    realmNum: 2
+  }
+}
