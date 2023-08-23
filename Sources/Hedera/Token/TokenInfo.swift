@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// Response from ``TokenInfoQuery``.
-public final class TokenInfo {
+public struct TokenInfo {
     internal init(
         tokenId: TokenId,
         name: String,
@@ -177,7 +177,7 @@ extension TokenInfo: TryProtobufCodable {
     internal typealias Protobuf = Proto_TokenInfo
 
     // swiftlint:disable:next function_body_length
-    internal convenience init(protobuf proto: Protobuf) throws {
+    internal init(protobuf proto: Protobuf) throws {
         let adminKey = proto.hasAdminKey ? proto.adminKey : nil
         let kycKey = proto.hasKycKey ? proto.kycKey : nil
         let freezeKey = proto.hasFreezeKey ? proto.freezeKey : nil
