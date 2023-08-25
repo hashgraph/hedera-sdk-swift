@@ -1,0 +1,1 @@
+AssessedCustomFee(amount: 201, tokenId: Optional(1.2.3), feeCollectorAccountId: Optional(4.5.6), payerAccountIdList: [0.0.1, 0.0.2, 0.0.3])
