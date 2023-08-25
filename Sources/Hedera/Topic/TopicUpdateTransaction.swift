@@ -129,7 +129,7 @@ public final class TopicUpdateTransaction: Transaction {
     @discardableResult
     public func clearAdminKey() -> Self {
         self.adminKey = .keyList([])
-        
+
         return self
     }
 
@@ -152,7 +152,7 @@ public final class TopicUpdateTransaction: Transaction {
     @discardableResult
     public func clearSubmitKey() -> Self {
         self.submitKey = .keyList([])
-        
+
         return self
     }
 

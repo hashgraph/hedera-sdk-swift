@@ -51,7 +51,7 @@ internal final class TopicUpdateTransactionTests: XCTestCase {
     }
 
     private static func makeTransaction2() throws -> TopicUpdateTransaction {
-            try TopicUpdateTransaction()
+        try TopicUpdateTransaction()
             .nodeAccountIds([5005, 5006])
             .transactionId(testTxId)
             .adminKey(.single(unusedPrivateKey.publicKey))
