@@ -24,29 +24,7 @@ import HederaProtobufs
 // TODO: keys
 
 /// Response from `FileInfoQuery`.
-public final class FileInfo {
-    internal init(
-        fileId: FileId,
-        size: UInt64,
-        expirationTime: Timestamp?,
-        isDeleted: Bool,
-        keys: KeyList,
-        fileMemo: String,
-        ledgerId: LedgerId,
-        autoRenewPeriod: Duration?,
-        autoRenewAccountId: AccountId?
-    ) {
-        self.fileId = fileId
-        self.size = size
-        self.expirationTime = expirationTime
-        self.isDeleted = isDeleted
-        self.keys = keys
-        self.fileMemo = fileMemo
-        self.ledgerId = ledgerId
-        self.autoRenewPeriod = autoRenewPeriod
-        self.autoRenewAccountId = autoRenewAccountId
-    }
-
+public struct FileInfo {
     /// The file ID of the file for which information is requested.
     public let fileId: FileId
 
@@ -97,7 +75,7 @@ public final class FileInfo {
 extension FileInfo: TryProtobufCodable {
     internal typealias Protobuf = Proto_FileGetInfoResponse.FileInfo
 
-    internal convenience init(protobuf proto: Protobuf) throws {
+    internal init(protobuf proto: Protobuf) throws {
         let expirationTime = proto.hasExpirationTime ? proto.expirationTime : nil
         self.init(
             fileId: .fromProtobuf(proto.fileID),
