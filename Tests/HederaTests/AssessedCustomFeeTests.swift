@@ -31,18 +31,17 @@ internal final class AssessedCustomFeeTests: XCTestCase {
         scheduled: false
     )
 
-
-    private static let amount: Int64 = 1;
+    private static let amount: Int64 = 1
     private static let tokenId: TokenId = "2.3.4"
-    private static let feeCollector: AccountId = "5.6.7";
+    private static let feeCollector: AccountId = "5.6.7"
 
     private static let payerAccountIds: [AccountId] = [
         "8.9.10",
         "11.12.13",
-        "14.15.16"
-    ];
+        "14.15.16",
+    ]
 
-    private static let feeProto: Proto_AssessedCustomFee = .with { proto in 
+    private static let feeProto: Proto_AssessedCustomFee = .with { proto in
         proto.amount = amount
         proto.tokenID = tokenId.toProtobuf()
         proto.feeCollectorAccountID = feeCollector.toProtobuf()
@@ -56,14 +55,12 @@ internal final class AssessedCustomFeeTests: XCTestCase {
         payerAccountIdList: [1, 2, 3]
     )
 
-
     internal func testSerialize() throws {
         let original = Self.fee
         let bytes = original.toBytes()
         let new = try AssessedCustomFee.fromBytes(bytes)
 
         XCTAssertEqual(original, new)
-
 
         assertSnapshot(matching: original, as: .description)
     }
