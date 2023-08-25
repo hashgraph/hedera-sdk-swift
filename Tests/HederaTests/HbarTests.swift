@@ -43,6 +43,25 @@ internal final class HbarTests: XCTestCase {
         XCTAssertEqual(fifty, Hbar.fromTinybars(5_000_000_000))
     }
 
+    internal func testInitNegative() throws {
+        let fifty: Hbar = -50
+
+        XCTAssertEqual(fifty, Hbar(-50))
+        XCTAssertEqual(fifty, Hbar(-50.0))
+        XCTAssertEqual(fifty, -50.0)
+
+        XCTAssertEqual(fifty, "-50")
+        XCTAssertEqual(fifty, "-50.0")
+        XCTAssertEqual(fifty, Hbar("-50"))
+        XCTAssertEqual(fifty, Hbar("-50.0"))
+
+        XCTAssertEqual(fifty, try Hbar.from(-50))
+        XCTAssertEqual(fifty, try Hbar.from(-50.0))
+        XCTAssertEqual(fifty, try Hbar.fromString("-50"))
+        XCTAssertEqual(fifty, try Hbar.fromString("-50.0"))
+        XCTAssertEqual(fifty, Hbar.fromTinybars(-5_000_000_000))
+    }
+
     internal func testFractionalTinybarThrowsError() {
         // todo: test the exact error.
         XCTAssertThrowsError(try Hbar(0.1, .tinybar))
@@ -135,5 +154,17 @@ internal final class HbarTests: XCTestCase {
         XCTAssertEqual(fifty.toString(.kilobar), "0.05 kℏ")
         XCTAssertEqual(fifty.toString(.megabar), "0.00005 Mℏ")
         XCTAssertEqual(fifty.toString(.gigabar), "0.00000005 Gℏ")
+    }
+
+    internal func testToStringWithUnitNegative() {
+        let fifty: Hbar = -50
+
+        XCTAssertEqual(fifty.toString(.tinybar), "-5000000000 tℏ")
+        XCTAssertEqual(fifty.toString(.microbar), "-50000000 µℏ")
+        XCTAssertEqual(fifty.toString(.millibar), "-50000 mℏ")
+        XCTAssertEqual(fifty.toString(.hbar), "-50 ℏ")
+        XCTAssertEqual(fifty.toString(.kilobar), "-0.05 kℏ")
+        XCTAssertEqual(fifty.toString(.megabar), "-0.00005 Mℏ")
+        XCTAssertEqual(fifty.toString(.gigabar), "-0.00000005 Gℏ")
     }
 }
