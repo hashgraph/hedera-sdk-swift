@@ -125,6 +125,14 @@ public final class TopicUpdateTransaction: Transaction {
         return self
     }
 
+    /// Clears the access control for `TopicUpdateTransaction` and `TopicDeleteTransaction`.
+    @discardableResult
+    public func clearAdminKey() -> Self {
+        self.adminKey = .keyList([])
+        
+        return self
+    }
+
     /// Access control for `TopicMessageSubmitTransaction`.
     public var submitKey: Key? {
         willSet {
@@ -137,6 +145,14 @@ public final class TopicUpdateTransaction: Transaction {
     public func submitKey(_ submitKey: Key) -> Self {
         self.submitKey = submitKey
 
+        return self
+    }
+
+    /// Access control for `TopicMessageSubmitTransaction`.
+    @discardableResult
+    public func clearSubmitKey() -> Self {
+        self.submitKey = .keyList([])
+        
         return self
     }
 
