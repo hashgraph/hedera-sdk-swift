@@ -41,22 +41,6 @@ public struct TokenNftInfo {
     /// The ledger ID the response was returned from
     public let ledgerId: LedgerId
 
-    internal init(
-        nftId: NftId,
-        accountId: AccountId,
-        creationTime: Timestamp,
-        metadata: Data,
-        spenderId: AccountId?,
-        ledgerId: LedgerId
-    ) {
-        self.nftId = nftId
-        self.accountId = accountId
-        self.creationTime = creationTime
-        self.metadata = metadata
-        self.spenderId = spenderId
-        self.ledgerId = ledgerId
-    }
-
     /// Decode `Self` from protobuf-encoded `bytes`.
     ///
     /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:

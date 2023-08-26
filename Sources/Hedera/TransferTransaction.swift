@@ -90,11 +90,11 @@ public final class TransferTransaction: Transaction {
                     item.tokenId,
                     Dictionary(
                         item.transfers.lazy.map { ($0.accountId, $0.amount) },
-                        uniquingKeysWith: { (first, second) in first }
+                        uniquingKeysWith: { first, _ in first }
                     )
                 )
             },
-            uniquingKeysWith: { (first, second) in first }
+            uniquingKeysWith: { (first, _) in first }
         )
     }
 
@@ -106,7 +106,7 @@ public final class TransferTransaction: Transaction {
                     item.nftTransfers.map { TokenNftTransfer(nftTransfer: $0, withTokenId: item.tokenId) }
                 )
             },
-            uniquingKeysWith: { (first, second) in first }
+            uniquingKeysWith: { (first, _) in first }
         )
     }
 
@@ -114,6 +114,19 @@ public final class TransferTransaction: Transaction {
         willSet {
             ensureNotFrozen(fieldName: "tokenTransfers")
         }
+    }
+
+    public var tokenDecimals: [TokenId: UInt32] {
+        Dictionary(
+            tokenTransfersInner.lazy.compactMap { elem in
+                guard let decimals = elem.expectedDecimals else {
+                    return nil
+                }
+
+                return (elem.tokenId, decimals)
+            },
+            uniquingKeysWith: { first, _ in first }
+        )
     }
 
     /// Create a new `TransferTransaction`.

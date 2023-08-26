@@ -23,62 +23,6 @@ import HederaProtobufs
 
 /// Response from ``TokenInfoQuery``.
 public struct TokenInfo {
-    internal init(
-        tokenId: TokenId,
-        name: String,
-        symbol: String,
-        decimals: UInt32,
-        totalSupply: UInt64,
-        treasuryAccountId: AccountId,
-        adminKey: Key?,
-        kycKey: Key?,
-        freezeKey: Key?,
-        wipeKey: Key?,
-        supplyKey: Key?,
-        feeScheduleKey: Key?,
-        defaultFreezeStatus: Bool?,
-        defaultKycStatus: Bool?,
-        isDeleted: Bool,
-        autoRenewAccount: AccountId?,
-        autoRenewPeriod: Duration?,
-        expirationTime: Timestamp?,
-        tokenMemo: String,
-        tokenType: TokenType,
-        supplyType: TokenSupplyType,
-        maxSupply: UInt64,
-        customFees: [AnyCustomFee],
-        pauseKey: Key?,
-        pauseStatus: Bool?,
-        ledgerId: LedgerId
-    ) {
-        self.tokenId = tokenId
-        self.name = name
-        self.symbol = symbol
-        self.decimals = decimals
-        self.totalSupply = totalSupply
-        self.treasuryAccountId = treasuryAccountId
-        self.adminKey = adminKey
-        self.kycKey = kycKey
-        self.freezeKey = freezeKey
-        self.wipeKey = wipeKey
-        self.supplyKey = supplyKey
-        self.feeScheduleKey = feeScheduleKey
-        self.defaultFreezeStatus = defaultFreezeStatus
-        self.defaultKycStatus = defaultKycStatus
-        self.isDeleted = isDeleted
-        self.autoRenewAccount = autoRenewAccount
-        self.autoRenewPeriod = autoRenewPeriod
-        self.expirationTime = expirationTime
-        self.tokenMemo = tokenMemo
-        self.tokenType = tokenType
-        self.supplyType = supplyType
-        self.maxSupply = maxSupply
-        self.customFees = customFees
-        self.pauseKey = pauseKey
-        self.pauseStatus = pauseStatus
-        self.ledgerId = ledgerId
-    }
-
     /// The ID of the token for which information is requested.
     public let tokenId: TokenId
 
