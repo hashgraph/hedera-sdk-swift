@@ -86,7 +86,13 @@ extension Pkcs5 {
     ///   algid-hmacWithSHA1 }
     /// ```
     internal struct Pbkdf2Parameters {
-        // todo: note that hmacWithSha1 is bad even though it's the default
+        /// Make PBKDF2 Parameters.
+        ///
+        /// - Parameters:
+        ///   - salt: The salt for the derivation.
+        ///   - keyLength: the length of the resulting key, must be at least 1.
+        ///   - iterationCount: the number of iterations to use, must be between 1 and 10,000,000.
+        ///   - prf: a PRF to use, the default is `hmacWithSha1` for specification reasons, but you should absolutely use something else.
         internal init?(
             salt: Data,
             iterationCount: UInt32,

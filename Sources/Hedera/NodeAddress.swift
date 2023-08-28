@@ -30,7 +30,7 @@ public struct SocketAddressV4: LosslessStringConvertible {
 
     fileprivate init(ipBytes: Data, port: Int32) throws {
         guard let ipAddress = IPv4Address(ipBytes) else {
-            throw HError(kind: .basicParse, description: "expected 4 byte ip address, got `\(ipBytes.count)` bytes")
+            throw HError.basicParse("expected 4 byte ip address, got `\(ipBytes.count)` bytes")
         }
 
         guard let port = UInt16(exactly: port) else {
@@ -45,15 +45,15 @@ public struct SocketAddressV4: LosslessStringConvertible {
 
     fileprivate init<S: StringProtocol>(parsing description: S) throws {
         guard let (ipAddress, port) = description.splitOnce(on: ":") else {
-            throw HError(kind: .basicParse, description: "expected ip:port")
+            throw HError.basicParse("expected ip:port")
         }
 
         guard let ipAddress = IPv4Address(String(ipAddress)) else {
-            throw HError(kind: .basicParse, description: "expected `ip` to be a valid IP")
+            throw HError.basicParse("expected `ip` to be a valid IP")
         }
 
         guard let port = UInt16(port) else {
-            throw HError(kind: .basicParse, description: "expected 16 bit port number")
+            throw HError.basicParse("expected 16 bit port number")
         }
 
         self.ip = ipAddress

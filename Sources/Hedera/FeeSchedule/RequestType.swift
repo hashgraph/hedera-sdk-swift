@@ -25,10 +25,6 @@ import HederaProtobufs
 
 /// The functionality provided by Hedera.
 public enum RequestType {
-    // fixme: maybe we want to make this `nil` instead?
-    /// UNSPECIFIED - Need to keep first value as unspecified because first element is ignored and not parsed (0 is ignored by parser)
-    case none
-
     /// Transfer from one account to another.
     case cryptoTransfer
 
@@ -244,16 +240,12 @@ public enum RequestType {
 
     /// Execute a PRNG transaction.
     case utilPrng
-}
-
-extension RequestType: TryProtobufCodable {
-    internal typealias Protobuf = Proto_HederaFunctionality
 
     // this literally can't be smaller.
     // swiftlint:disable:next function_body_length
-    internal init(protobuf proto: Protobuf) throws {
+    internal init?(protobuf proto: Proto_HederaFunctionality) throws {
         switch proto {
-        case .none: self = .none
+        case .none: return nil
         case .cryptoTransfer: self = .cryptoTransfer
         case .cryptoUpdate: self = .cryptoUpdate
         case .cryptoDelete: self = .cryptoDelete
@@ -331,11 +323,8 @@ extension RequestType: TryProtobufCodable {
         }
     }
 
-    // this literally can't be smaller.
-    // swiftlint:disable:next function_body_length
-    internal func toProtobuf() -> Protobuf {
+    internal func toProtobuf() -> Proto_HederaFunctionality {
         switch self {
-        case .none: return .none
         case .cryptoTransfer: return .cryptoTransfer
         case .cryptoUpdate: return .cryptoUpdate
         case .cryptoDelete: return .cryptoDelete

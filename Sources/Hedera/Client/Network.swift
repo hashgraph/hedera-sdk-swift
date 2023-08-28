@@ -31,8 +31,7 @@ internal final class ChannelBalancer: GRPCChannel {
     private let channels: [any GRPCChannel]
     private let targets: [GRPC.ConnectionTarget]
 
-    // fixme: if the request never returns (IE the host doesn't exist) we
-
+    // fixme: if the request never returns (IE the host doesn't exist) we kinda just, get stuck
     internal init(
         eventLoop: EventLoop,
         _ channelTargets: [GRPC.ConnectionTarget],

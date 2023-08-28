@@ -170,7 +170,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         }
 
         switch info.algorithm.oid {
-        case .NamedCurves.ed25519: try self.init(ed25519Bytes: Data(inner.bytes))
+        case .AlgorithmIdentifier.ed25519: try self.init(ed25519Bytes: Data(inner.bytes))
         case .NamedCurves.secp256k1: try self.init(ecdsaBytes: Data(inner.bytes))
         case let oid:
             throw HError.keyParse("unsupported key algorithm: \(oid)")
@@ -225,9 +225,8 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
     private var algorithm: Pkcs5.AlgorithmIdentifier {
         let oid: ASN1ObjectIdentifier
 
-        // todo: `self.kind`
-        switch self.kind {
-        case .ed25519: oid = .NamedCurves.ed25519
+        switch self.guts {
+        case .ed25519: oid = .AlgorithmIdentifier.ed25519
         case .ecdsa: oid = .NamedCurves.secp256k1
         }
 

@@ -201,7 +201,7 @@ public final class Client: Sendable {
             return .forPreviewnet()
 
         default:
-            throw HError(kind: .basicParse, description: "Unknown network name \(name)")
+            throw HError.basicParse("Unknown network name \(name)")
         }
     }
 

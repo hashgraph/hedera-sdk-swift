@@ -151,9 +151,8 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
     private var algorithm: Pkcs5.AlgorithmIdentifier {
         let oid: ASN1ObjectIdentifier
 
-        // todo: `self.kind`
-        switch self.kind {
-        case .ed25519: oid = .NamedCurves.ed25519
+        switch guts {
+        case .ed25519: oid = .AlgorithmIdentifier.ed25519
         case .ecdsa: oid = .NamedCurves.secp256k1
         }
 
@@ -197,8 +196,6 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
         }
 
         switch info.algorithm.oid {
-        // hack: Rust had a bug where it used the wrong OID for public keys, the only test verifying the correct behavior exists in JS,
-        // rather than Java, where the impl was ported from, the incorrect OID being `id-ecpub`.
         case .NamedCurves.secp256k1,
             .AlgorithmIdentifier.idEcPublicKey where info.algorithm.parametersOID == .NamedCurves.secp256k1:
             guard info.subjectPublicKey.paddingBits == 0 else {
@@ -207,7 +204,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
 
             try self.init(ecdsaBytes: Data(info.subjectPublicKey.bytes))
 
-        case .NamedCurves.ed25519:
+        case .AlgorithmIdentifier.ed25519:
             guard info.subjectPublicKey.paddingBits == 0 else {
                 throw HError.keyParse("Invalid padding for ed25519 spki")
             }
