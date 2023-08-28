@@ -1,0 +1,1 @@
+TokenNftAllowance(tokenId: 1.2.3, ownerAccountId: 0.0.5006, spenderAccountId: 0.0.5007, serials: [1, 2], approvedForAll: Optional(true), delegatingSpenderAccountId: Optional(0.0.5008))
