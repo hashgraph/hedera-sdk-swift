@@ -50,7 +50,7 @@ extension TokenBalance: ProtobufCodable {
 }
 
 /// Response from ``AccountBalanceQuery``.
-public struct AccountBalance {
+public struct AccountBalance: Sendable {
     /// The account that is being referenced.
     public let accountId: AccountId
 

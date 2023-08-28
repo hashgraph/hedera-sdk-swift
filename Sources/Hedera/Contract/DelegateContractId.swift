@@ -23,7 +23,7 @@ import HederaProtobufs
 
 // fixme(sr,docs): describe what a Delegate contract ID is actually for / what it does / etc.
 /// A unique identifier for a smart contract on Hedera.
-public struct DelegateContractId: EntityId {
+public struct DelegateContractId: Sendable, EntityId {
     private init(_ inner: ContractId) {
         self.inner = inner
     }

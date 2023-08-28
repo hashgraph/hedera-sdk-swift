@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// Info related to account/contract staking settings.
-public struct StakingInfo {
+public struct StakingInfo: Sendable {
     /// If true, the contract declines receiving a staking reward. The default value is false.
     public let declineStakingReward: Bool
 

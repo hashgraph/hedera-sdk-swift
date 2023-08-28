@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// Response from `ScheduleInfoQuery`.
-public struct ScheduleInfo {
+public struct ScheduleInfo: Sendable {
     /// The ID of the schedule for which information is requested.
     public let scheduleId: ScheduleId
 

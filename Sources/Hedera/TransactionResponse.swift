@@ -28,7 +28,7 @@ import Foundation
 ///
 /// To learn the consensus result, the client should later obtain a
 /// receipt (free), or can buy a more detailed record (not free).
-public struct TransactionResponse {
+public struct TransactionResponse: Sendable {
     /// The account ID of the node that the transaction was submitted to.
     public let nodeAccountId: AccountId
 
