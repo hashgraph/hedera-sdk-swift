@@ -65,13 +65,6 @@ internal enum Program {
 
         print("accountId = \(accountId)")
 
-        // fixme: This is actually unused in this SDK, Java, and Rust, figure out if this is supposed to actually exist or not.
-        // Generate a `TransactionId`. This id is used to query the inner scheduled transaction
-        // after we expect it to have been executed
-        let transactionId = TransactionId.generateFrom(env.operatorAccountId)
-
-        print("transactionId for scheduled transaction = \(transactionId)")
-
         // Create a transfer transaction with 2/3 signatures.
         let transferTransaction = TransferTransaction()
             .hbarTransfer(accountId, -Hbar(1))
