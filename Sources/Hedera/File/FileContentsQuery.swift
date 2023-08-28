@@ -56,7 +56,7 @@ public final class FileContentsQuery: Query<FileContentsResponse> {
             throw HError.fromProtobuf("unexpected \(response) received, expected `fileGetContents`")
         }
 
-        return try .fromProtobuf(proto.fileContents)
+        return .fromProtobuf(proto.fileContents)
     }
 
     internal override func validateChecksums(on ledgerId: LedgerId) throws {

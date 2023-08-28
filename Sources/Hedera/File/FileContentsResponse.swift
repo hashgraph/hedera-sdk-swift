@@ -44,3 +44,10 @@ extension FileContentsResponse: ProtobufCodable {
         }
     }
 }
+
+#if compiler(<5.7)
+    // Swift 5.7 added the conformance to data, despite to the best of my knowledge, not changing anything in the underlying type.
+    extension FileContentsResponse: @unchecked Sendable {}
+#else
+    extension FileContentsResponse: Sendable {}
+#endif

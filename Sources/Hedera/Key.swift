@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// Any method that can be used to authorize an operation on Hedera.
-public enum Key: Equatable {
+public enum Key: Sendable, Equatable {
     case single(PublicKey)
     case contractId(ContractId)
 

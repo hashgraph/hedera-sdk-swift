@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// Response from `AccountInfoQuery`.
-public struct AccountInfo {
+public struct AccountInfo: Sendable {
     private struct DeprecatedGuts {
         fileprivate let proxyAccountId: AccountId?
         fileprivate let sendRecordThreshold: Hbar

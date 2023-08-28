@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// A token <-> account association.
-public struct TokenAssociation {
+public struct TokenAssociation: Sendable {
     /// The token involved in the association.
     public let tokenId: TokenId
 

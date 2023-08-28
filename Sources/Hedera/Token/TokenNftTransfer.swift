@@ -2,7 +2,7 @@
 
 import HederaProtobufs
 
-public struct TokenNftTransfer: Equatable {
+public struct TokenNftTransfer: Sendable, Equatable {
     /// The ID of the NFT's token.
     public let tokenId: TokenId
 

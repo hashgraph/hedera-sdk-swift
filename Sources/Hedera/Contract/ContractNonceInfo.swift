@@ -23,7 +23,7 @@ import struct HederaProtobufs.Proto_ContractNonceInfo
 
 // Info about a contract account's nonce value.
 /// The nonce for a contract is only incremented when that contract creates another contract.
-public struct ContractNonceInfo: Equatable {
+public struct ContractNonceInfo: Sendable, Equatable {
     /// The contract's ID.
     public let contractId: ContractId
     /// The contract's nonce.
