@@ -23,7 +23,7 @@ import HederaProtobufs
 
 // TODO: exchangeRate
 /// The summary of a transaction's result so far, if the transaction has reached consensus.
-public struct TransactionReceipt: Sendable {
+public struct TransactionReceipt {
     internal init(
         transactionId: TransactionId? = nil,
         status: Status,
@@ -32,7 +32,7 @@ public struct TransactionReceipt: Sendable {
         contractId: ContractId? = nil,
         topicId: TopicId? = nil,
         topicSequenceNumber: UInt64,
-        topicRunningHash: String? = nil,
+        topicRunningHash: Data? = nil,
         topicRunningHashVersion: UInt64,
         tokenId: TokenId? = nil,
         totalSupply: UInt64,
@@ -83,11 +83,10 @@ public struct TransactionReceipt: Sendable {
     /// that received the message.
     public let topicSequenceNumber: UInt64
 
-    // fixme: make this a `Data``
     // TODO: hash type (?)
     /// In the receipt for a `TopicMessageSubmitTransaction`, the new running hash of the
     /// topic that received the message.
-    public let topicRunningHash: String?
+    public let topicRunningHash: Data?
 
     /// In the receipt of a `TopicMessageSubmitTransaction`, the version of the SHA-384
     /// digest used to update the running hash.
@@ -144,7 +143,7 @@ public struct TransactionReceipt: Sendable {
             contractId: try .fromProtobuf(contractId),
             topicId: .fromProtobuf(topicId),
             topicSequenceNumber: proto.topicSequenceNumber,
-            topicRunningHash: topicRunningHash?.base64EncodedString(),
+            topicRunningHash: topicRunningHash,
             topicRunningHashVersion: proto.topicRunningHashVersion,
             tokenId: .fromProtobuf(tokenId),
             totalSupply: proto.newTotalSupply,
@@ -200,6 +199,7 @@ extension TransactionReceipt: TryProtobufCodable {
             contractId?.toProtobufInto(&proto.contractID)
             topicId?.toProtobufInto(&proto.topicID)
             proto.topicSequenceNumber = topicSequenceNumber
+            proto.topicRunningHash = topicRunningHash ?? Data()
             proto.topicRunningHashVersion = topicRunningHashVersion
             tokenId?.toProtobufInto(&proto.tokenID)
             proto.newTotalSupply = totalSupply
@@ -209,3 +209,10 @@ extension TransactionReceipt: TryProtobufCodable {
         }
     }
 }
+
+#if compiler(>=5.7)
+    extension TransactionReceipt: Sendable {}
+#else
+    // Swift 5.7 added the conformance to data, despite to the best of my knowledge, not changing anything in the underlying type.
+    extension TransactionReceipt: @unchecked Sendable {}
+#endif
