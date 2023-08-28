@@ -30,10 +30,12 @@ internal final class EthereumTransactionTests: XCTestCase {
 
     private static func createTransaction() throws -> EthereumTransaction {
         try EthereumTransaction()
-            .nodeAccountIds([AccountId("0.0.5005"), AccountId("0.0.5006")])
+            .nodeAccountIds([5005, 5006])
             .transactionId(
                 TransactionId(
-                    accountId: 5006, validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0), scheduled: false)
+                    accountId: 5006,
+                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
+                )
             )
             .ethereumData("livestock".data(using: .utf8)!)
             .callDataFileId(FileId.fromString("4.5.6"))

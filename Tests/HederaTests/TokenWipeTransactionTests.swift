@@ -28,8 +28,7 @@ internal final class TokenWipeTransactionTests: XCTestCase {
 
     private static let testTxId: TransactionId = TransactionId(
         accountId: 5006,
-        validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0),
-        scheduled: false
+        validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
     )
 
     private static let unusedPrivateKey: PrivateKey =

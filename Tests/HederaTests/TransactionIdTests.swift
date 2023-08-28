@@ -41,9 +41,7 @@ internal final class TransactionIdTests: XCTestCase {
 
         let expected: TransactionId = TransactionId(
             accountId: "0.0.31415",
-            validStart: validStart,
-            scheduled: false,
-            nonce: nil
+            validStart: validStart
         )
 
         XCTAssertEqual("0.0.31415@1641088801.2", expected)
@@ -54,9 +52,7 @@ internal final class TransactionIdTests: XCTestCase {
 
         let transactionId: TransactionId = TransactionId(
             accountId: "0.0.31415",
-            validStart: validStart,
-            scheduled: false,
-            nonce: nil
+            validStart: validStart
         )
 
         XCTAssertEqual(transactionId.description, "0.0.31415@1641088801.2")

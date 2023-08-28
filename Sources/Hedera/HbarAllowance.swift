@@ -1,6 +1,6 @@
 import HederaProtobufs
 
-public struct HbarAllowance: ValidateChecksums {
+public struct HbarAllowance: Equatable, ValidateChecksums {
     public let ownerAccountId: AccountId
     public let spenderAccountId: AccountId
     public let amount: Hbar

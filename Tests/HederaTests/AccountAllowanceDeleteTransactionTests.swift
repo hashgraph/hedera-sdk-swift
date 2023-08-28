@@ -34,12 +34,11 @@ internal class AccountAllowanceDeleteTransactionTests: XCTestCase {
         let invalidTokenIds: [TokenId] = ["4.4.4", "8.8.8"]
 
         return try AccountAllowanceDeleteTransaction()
-            .nodeAccountIds(["0.0.5005", "0.0.5006"])
+            .nodeAccountIds([5005, 5006])
             .transactionId(
                 TransactionId(
                     accountId: 5006,
-                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0),
-                    scheduled: false
+                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
                 )
             )
             .deleteAllTokenNftAllowances(invalidTokenIds[0].nft(123), ownerId)

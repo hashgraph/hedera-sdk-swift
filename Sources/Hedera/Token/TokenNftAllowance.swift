@@ -1,7 +1,7 @@
 import HederaProtobufs
 import SwiftProtobuf
 
-public struct TokenNftAllowance: ValidateChecksums {
+public struct TokenNftAllowance: Equatable, ValidateChecksums {
     public let tokenId: TokenId
     public let ownerAccountId: AccountId
     public let spenderAccountId: AccountId

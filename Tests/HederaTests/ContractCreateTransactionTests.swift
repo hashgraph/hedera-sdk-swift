@@ -30,12 +30,11 @@ internal class ContractCreateTransactionTests: XCTestCase {
 
     private static func makeTransaction() throws -> ContractCreateTransaction {
         try ContractCreateTransaction()
-            .nodeAccountIds(["0.0.5005", "0.0.5006"])
+            .nodeAccountIds([5005, 5006])
             .transactionId(
                 TransactionId(
                     accountId: 5006,
-                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0),
-                    scheduled: false
+                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
                 )
             )
             .bytecodeFileId(3003)
@@ -54,12 +53,11 @@ internal class ContractCreateTransactionTests: XCTestCase {
 
     private static func makeTransaction2() throws -> ContractCreateTransaction {
         try ContractCreateTransaction()
-            .nodeAccountIds(["0.0.5005", "0.0.5006"])
+            .nodeAccountIds([5005, 5006])
             .transactionId(
                 TransactionId(
                     accountId: 5006,
-                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0),
-                    scheduled: false
+                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
                 )
             )
             .bytecodeFileId(3003)

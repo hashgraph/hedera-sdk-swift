@@ -30,10 +30,12 @@ internal final class FileCreateTransactionTests: XCTestCase {
 
     private static func createTransaction() throws -> FileCreateTransaction {
         try FileCreateTransaction()
-            .nodeAccountIds([AccountId("0.0.5005"), AccountId("0.0.5006")])
+            .nodeAccountIds([5005, 5006])
             .transactionId(
                 TransactionId(
-                    accountId: 5005, validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0), scheduled: false)
+                    accountId: 5005,
+                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
+                )
             )
             .contents("[swift::unit::fileCreate::1]".data(using: .utf8)!)
             .expirationTime(Timestamp(seconds: 1_554_158_728, subSecondNanos: 0))

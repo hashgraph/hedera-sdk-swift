@@ -28,12 +28,12 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
 
         let validStart = Timestamp.now.subtracting(nanos: random)
 
-        return Self(accountId: accountId, validStart: validStart, scheduled: false)
+        return Self(accountId: accountId, validStart: validStart)
     }
 
     /// Creates a new transaction Id with the given account id and valid start.
     public static func withValidStart(_ accountId: AccountId, _ validStart: Timestamp) -> Self {
-        Self(accountId: accountId, validStart: validStart, scheduled: false)
+        Self(accountId: accountId, validStart: validStart)
     }
 
     private init<S: StringProtocol>(parsing description: S) throws {
