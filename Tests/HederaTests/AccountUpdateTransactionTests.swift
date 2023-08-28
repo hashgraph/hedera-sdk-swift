@@ -35,12 +35,11 @@ internal class AccountUpdateTransactionTests: XCTestCase {
 
         return
             try tx
-            .nodeAccountIds(["0.0.5005", "0.0.5006"])
+            .nodeAccountIds([5005, 5006])
             .transactionId(
                 TransactionId(
                     accountId: 5006,
-                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0),
-                    scheduled: false
+                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
                 )
             )
             .accountId(2002)
@@ -61,15 +60,13 @@ internal class AccountUpdateTransactionTests: XCTestCase {
 
         return
             try tx
-            .nodeAccountIds(["0.0.5005", "0.0.5006"])
+            .nodeAccountIds([5005, 5006])
             .transactionId(
                 TransactionId(
                     accountId: 5006,
-                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0),
-                    scheduled: false
+                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
                 )
-            )
-            .accountId(2002)
+            ).accountId(2002)
             .autoRenewPeriod(.hours(10))
             .expirationTime(Timestamp(seconds: 1_554_158_543, subSecondNanos: 0))
             .receiverSignatureRequired(false)

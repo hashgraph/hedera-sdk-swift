@@ -28,8 +28,7 @@ internal final class TopicUpdateTransactionTests: XCTestCase {
     private static let validStart = Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
     private static let testTxId: TransactionId = TransactionId(
         accountId: 5006,
-        validStart: validStart,
-        scheduled: false
+        validStart: validStart
     )
 
     private static let unusedPrivateKey: PrivateKey =

@@ -30,7 +30,6 @@ internal class AccountAllowanceApproveTransactionTests: XCTestCase {
 
     private static func makeTransaction() throws -> AccountAllowanceApproveTransaction {
         let ownerId: AccountId = "5.6.7"
-        let tx = AccountAllowanceApproveTransaction()
 
         let invalidTokenIds: [TokenId] = [
             "2.2.2",
@@ -47,12 +46,11 @@ internal class AccountAllowanceApproveTransactionTests: XCTestCase {
             "9.9.9",
         ]
 
-        try tx.nodeAccountIds(["0.0.5005", "0.0.5006"])
+        return try AccountAllowanceApproveTransaction().nodeAccountIds([5005, 5006])
             .transactionId(
                 TransactionId(
                     accountId: 5006,
-                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0),
-                    scheduled: false
+                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
                 )
             )
             .approveHbarAllowance(ownerId, invalidAccountIds[0], Hbar(3))
@@ -85,8 +83,6 @@ internal class AccountAllowanceApproveTransactionTests: XCTestCase {
             .maxTransactionFee(.fromTinybars(100_000))
             .freeze()
             .sign(unusedPrivateKey)
-
-        return tx
     }
 
     internal func testSerialize() throws {
@@ -108,5 +104,42 @@ internal class AccountAllowanceApproveTransactionTests: XCTestCase {
         XCTAssertFalse(tx.getHbarApprovals().isEmpty)
         XCTAssertFalse(tx.getTokenApprovals().isEmpty)
         XCTAssertFalse(tx.getNftApprovals().isEmpty)
+    }
+
+    internal func testGetSetHbarAllowance() {
+        let tx = AccountAllowanceApproveTransaction()
+        tx.approveHbarAllowance(10, 11, 1)
+
+        XCTAssertEqual(tx.getHbarApprovals(), [HbarAllowance(ownerAccountId: 10, spenderAccountId: 11, amount: 1)])
+    }
+
+    internal func testGetSetTokenAllowance() {
+        let tx = AccountAllowanceApproveTransaction()
+        tx.approveTokenAllowance(9, 10, 11, 1)
+
+        XCTAssertEqual(
+            tx.getTokenApprovals(),
+            [TokenAllowance(tokenId: 9, ownerAccountId: 10, spenderAccountId: 11, amount: 1)]
+        )
+    }
+
+    internal func testGetSetNftAllowance() {
+        let tx = AccountAllowanceApproveTransaction()
+
+        tx.approveTokenNftAllowance(TokenId(num: 9).nft(8), 10, 11)
+
+        XCTAssertEqual(
+            tx.getNftApprovals(),
+            [
+                TokenNftAllowance(
+                    tokenId: 9,
+                    ownerAccountId: 10,
+                    spenderAccountId: 11,
+                    serials: [8],
+                    approvedForAll: nil,
+                    delegatingSpenderAccountId: nil
+                )
+            ]
+        )
     }
 }

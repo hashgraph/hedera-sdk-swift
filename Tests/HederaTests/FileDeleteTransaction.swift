@@ -30,12 +30,14 @@ internal final class FileDeleteTransactionTests: XCTestCase {
 
     private static func makeTransaction() throws -> FileDeleteTransaction {
         try FileDeleteTransaction()
-            .nodeAccountIds([AccountId("0.0.5005"), AccountId("0.0.5006")])
+            .nodeAccountIds([5005, 5006])
             .transactionId(
                 TransactionId(
-                    accountId: 5006, validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0), scheduled: false)
+                    accountId: 5006,
+                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
+                )
             )
-            .fileId(FileId("0.0.6006"))
+            .fileId("0.0.6006")
             .maxTransactionFee(.fromTinybars(100_000))
             .freeze()
             .sign(unusedPrivateKey)

@@ -31,8 +31,7 @@ internal final class TokenRevokeKycTransactionTests: XCTestCase {
 
     internal static let testTxId: TransactionId = TransactionId(
         accountId: 5006,
-        validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0),
-        scheduled: false
+        validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
     )
 
     internal static let unusedPrivateKey: PrivateKey =
@@ -40,7 +39,7 @@ internal final class TokenRevokeKycTransactionTests: XCTestCase {
 
     private static func makeTransaction() throws -> TokenRevokeKycTransaction {
         try TokenRevokeKycTransaction()
-            .nodeAccountIds([AccountId("0.0.5005"), AccountId("0.0.5006")])
+            .nodeAccountIds([5005, 5006])
             .transactionId(testTxId)
             .tokenId(testTokenId)
             .accountId(testAccountId)

@@ -30,12 +30,11 @@ internal final class ContractUpdateTransactionTests: XCTestCase {
 
     private static func updateTransaction() throws -> ContractUpdateTransaction {
         try ContractUpdateTransaction()
-            .nodeAccountIds([AccountId("0.0.5005"), AccountId("0.0.5006")])
+            .nodeAccountIds([5005, 5006])
             .transactionId(
-                TransactionId(
-                    accountId: 5006, validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0), scheduled: false)
+                TransactionId(accountId: 5006, validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0))
             )
-            .contractId(ContractId.fromString("0.0.5007"))
+            .contractId("0.0.5007")
             .adminKey(.single(unusedPrivateKey.publicKey))
             .maxAutomaticTokenAssociations(101)
             .autoRenewPeriod(.days(1))
@@ -51,10 +50,9 @@ internal final class ContractUpdateTransactionTests: XCTestCase {
 
     private static func updateTransaction2() throws -> ContractUpdateTransaction {
         try ContractUpdateTransaction()
-            .nodeAccountIds([AccountId("0.0.5005"), AccountId("0.0.5006")])
+            .nodeAccountIds([5005, 5006])
             .transactionId(
-                TransactionId(
-                    accountId: 5005, validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0), scheduled: false)
+                TransactionId(accountId: 5005, validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0))
             )
             .contractId(ContractId(5007))
             .adminKey(.single(unusedPrivateKey.publicKey))

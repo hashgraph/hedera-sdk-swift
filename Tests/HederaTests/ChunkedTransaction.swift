@@ -7,7 +7,7 @@ internal final class ChunkedTransactionTests: XCTestCase {
         let client = Client.forTestnet()
         client.setOperator(0, .generateEd25519())
 
-        let transactionId = TransactionId(accountId: 0, validStart: Timestamp(from: Date()), scheduled: false)
+        let transactionId = TransactionId(accountId: 0, validStart: .now)
 
         let bytes = try TopicMessageSubmitTransaction()
             .topicId(314)
@@ -28,6 +28,5 @@ internal final class ChunkedTransactionTests: XCTestCase {
         XCTAssertEqual(transaction.topicId, 314)
         XCTAssertEqual(transaction.message, "Hello, world!".data(using: .utf8)!)
         XCTAssertEqual(transaction.transactionId, transactionId)
-
     }
 }

@@ -27,8 +27,7 @@ import XCTest
 internal final class TokenUnfreezeTransactionTests: XCTestCase {
     internal static let testTxId: TransactionId = TransactionId(
         accountId: 5006,
-        validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0),
-        scheduled: false
+        validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
     )
 
     internal static let unusedPrivateKey: PrivateKey =
@@ -36,7 +35,7 @@ internal final class TokenUnfreezeTransactionTests: XCTestCase {
 
     private static func makeTransaction() throws -> TokenUnfreezeTransaction {
         try TokenUnfreezeTransaction()
-            .nodeAccountIds([AccountId("0.0.5005"), AccountId("0.0.5006")])
+            .nodeAccountIds([5005, 5006])
             .transactionId(testTxId)
             .accountId(222)
             .tokenId("6.5.4")

@@ -29,8 +29,7 @@ internal final class TokenUpdateTransactionTests: XCTestCase {
 
     private static let testTxId: TransactionId = TransactionId(
         accountId: 5006,
-        validStart: testValidStart,
-        scheduled: false
+        validStart: testValidStart
     )
 
     private static let unusedPrivateKey: PrivateKey =
