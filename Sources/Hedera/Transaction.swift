@@ -500,7 +500,6 @@ extension Transaction {
         var signatures: [SignaturePair] = []
 
         if let `operator` = self.operator {
-            // todo: avoid the `.map(xyz).collect()`
             let operatorSignature = `operator`.signer(bodyBytes)
 
             signatures.append(SignaturePair(operatorSignature))

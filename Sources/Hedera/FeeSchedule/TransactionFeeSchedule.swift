@@ -29,14 +29,14 @@ import HederaProtobufs
 public struct TransactionFeeSchedule {
     // missing_docs on memberwise init -> fine.
     // swiftlint:disable:next missing_docs
-    public init(requestType: RequestType, feeData: FeeData? = nil, fees: [FeeData]) {
+    public init(requestType: RequestType?, feeData: FeeData? = nil, fees: [FeeData]) {
         self.requestType = requestType
         self.feeData = feeData
         self.fees = fees
     }
 
     /// The request type that this fee schedule applies to.
-    public var requestType: RequestType
+    public var requestType: RequestType?
 
     /// Resource price coefficients.
     public var feeData: FeeData?
@@ -66,7 +66,7 @@ extension TransactionFeeSchedule: TryProtobufCodable {
 
     internal init(protobuf proto: Protobuf) throws {
         self.init(
-            requestType: try .fromProtobuf(proto.hederaFunctionality),
+            requestType: try .init(protobuf: proto.hederaFunctionality),
             feeData: proto.hasFeeData ? try .fromProtobuf(proto.feeData) : nil,
             fees: try .fromProtobuf(proto.fees)
         )
@@ -74,7 +74,7 @@ extension TransactionFeeSchedule: TryProtobufCodable {
 
     internal func toProtobuf() -> Protobuf {
         .with { proto in
-            proto.hederaFunctionality = requestType.toProtobuf()
+            proto.hederaFunctionality = requestType?.toProtobuf() ?? .none
             if let feeData = feeData?.toProtobuf() {
                 proto.feeData = feeData
             }

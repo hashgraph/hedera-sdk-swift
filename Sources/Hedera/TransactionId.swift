@@ -15,7 +15,7 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
     public let scheduled: Bool
     public let nonce: Int32?
 
-    internal init(accountId: AccountId, validStart: Timestamp, scheduled: Bool, nonce: Int32? = nil) {
+    internal init(accountId: AccountId, validStart: Timestamp, scheduled: Bool = false, nonce: Int32? = nil) {
         self.accountId = accountId
         self.validStart = validStart
         self.scheduled = scheduled
@@ -45,7 +45,7 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
         // .stripSuffix("?scheduled") -> ("<validStart>") and the suffix was either removed or not.
         // (except it's better ux to do a `splitOnce('?')`... Except it doesn't matter that much)
         guard let (accountIdStr, rest) = description.splitOnce(on: "@") else {
-            throw HError(kind: .basicParse, description: expected)
+            throw HError.basicParse(expected)
         }
 
         let accountId = try AccountId(parsing: accountIdStr)
@@ -67,7 +67,7 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
         }
 
         guard let (validStartSeconds, validStartNanos) = validStartStr.splitOnce(on: ".") else {
-            throw HError(kind: .basicParse, description: expected)
+            throw HError.basicParse(expected)
         }
 
         let validStart = Timestamp(

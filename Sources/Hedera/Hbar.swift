@@ -189,7 +189,7 @@ public struct Hbar: LosslessStringConvertible, ExpressibleByIntegerLiteral,
         let unit = try rawUnit.map { try HbarUnit(parsing: $0) } ?? .hbar
 
         guard let amount = Decimal(string: String(rawAmount)) else {
-            throw HError(kind: .basicParse, description: "amount not parsable as a decimal")
+            throw HError.basicParse("amount not parsable as a decimal")
         }
 
         try self.init(amount, unit)

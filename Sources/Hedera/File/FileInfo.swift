@@ -21,8 +21,6 @@
 import Foundation
 import HederaProtobufs
 
-// TODO: keys
-
 /// Response from `FileInfoQuery`.
 public final class FileInfo {
     internal init(

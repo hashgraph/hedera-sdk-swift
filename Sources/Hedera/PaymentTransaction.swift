@@ -26,8 +26,6 @@ internal final class PaymentTransaction: Transaction {
     internal var amount: Hbar?
     internal var maxAmount: Hbar?
 
-    // TODO: private var paymentSigners: [OpaquePointer] = [];
-
     internal override func toTransactionDataProtobuf(_ chunkInfo: ChunkInfo) -> Proto_TransactionBody.OneOf_Data {
         let (transactionId, nodeAccountId) = chunkInfo.assertSingleTransaction()
 
