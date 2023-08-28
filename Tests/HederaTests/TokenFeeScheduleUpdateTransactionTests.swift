@@ -33,15 +33,18 @@ internal final class TokenFeeScheduleUpdateTransactionTests: XCTestCase {
     internal static let unusedPrivateKey: PrivateKey =
         "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
 
+    private static let testTokenId: TokenId = 4322
+    private static let testCustomFees: [AnyCustomFee] = [
+        .fixed(.init(amount: 10, denominatingTokenId: 483902, feeCollectorAccountId: 4322)),
+        .fractional(.init(amount: "3/7", minimumAmount: 3, maximumAmount: 100, feeCollectorAccountId: 389042)),
+    ]
+
     private static func makeTransaction() throws -> TokenFeeScheduleUpdateTransaction {
         try TokenFeeScheduleUpdateTransaction()
             .nodeAccountIds([5005, 5006])
             .transactionId(testTxId)
-            .tokenId(4322)
-            .customFees([
-                .fixed(.init(amount: 10, denominatingTokenId: 483902, feeCollectorAccountId: 4322)),
-                .fractional(.init(amount: "3/7", minimumAmount: 3, maximumAmount: 100, feeCollectorAccountId: 389042)),
-            ])
+            .tokenId(testTokenId)
+            .customFees(testCustomFees)
             .freeze()
             .sign(unusedPrivateKey)
     }
@@ -58,5 +61,36 @@ internal final class TokenFeeScheduleUpdateTransactionTests: XCTestCase {
         let tx2 = try Transaction.fromBytes(tx.toBytes())
 
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
+    }
+
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_TokenFeeScheduleUpdateTransactionBody.with { proto in
+            proto.tokenID = Self.testTokenId.toProtobuf()
+            proto.customFees = Self.testCustomFees.toProtobuf()
+        }
+
+        let protoBody = Proto_TransactionBody.with { proto in
+            proto.tokenFeeScheduleUpdate = protoData
+            proto.transactionID = Self.testTxId.toProtobuf()
+        }
+
+        let tx = try TokenFeeScheduleUpdateTransaction(protobuf: protoBody, protoData)
+
+        XCTAssertEqual(tx.tokenId, Self.testTokenId)
+        XCTAssertEqual(tx.customFees, Self.testCustomFees)
+    }
+
+    internal func testGetSetTokenId() {
+        let tx = TokenFeeScheduleUpdateTransaction()
+        tx.tokenId(Self.testTokenId)
+
+        XCTAssertEqual(tx.tokenId, Self.testTokenId)
+    }
+
+    internal func testGetSetCustomFees() {
+        let tx = TokenFeeScheduleUpdateTransaction()
+        tx.customFees(Self.testCustomFees)
+
+        XCTAssertEqual(tx.customFees, Self.testCustomFees)
     }
 }
