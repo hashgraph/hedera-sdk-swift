@@ -21,7 +21,6 @@
 import Foundation
 import HederaProtobufs
 
-// TODO: exchangeRate
 /// The summary of a transaction's result so far, if the transaction has reached consensus.
 public struct TransactionReceipt: Sendable {
     internal init(
@@ -37,6 +36,7 @@ public struct TransactionReceipt: Sendable {
         tokenId: TokenId? = nil,
         totalSupply: UInt64,
         scheduleId: ScheduleId? = nil,
+        exchangeRates: ExchangeRates? = nil,
         scheduledTransactionId: TransactionId? = nil,
         serials: [UInt64]? = nil,
         duplicates: [TransactionReceipt],
@@ -54,6 +54,7 @@ public struct TransactionReceipt: Sendable {
         self.tokenId = tokenId
         self.totalSupply = totalSupply
         self.scheduleId = scheduleId
+        self.exchangeRates = exchangeRates
         self.scheduledTransactionId = scheduledTransactionId
         self.serials = serials
         self.duplicates = duplicates
@@ -104,6 +105,18 @@ public struct TransactionReceipt: Sendable {
 
     /// In the receipt for a `ScheduleCreateTransaction`, the id of the newly created schedule.
     public let scheduleId: ScheduleId?
+
+    /// The current exchange rate between Hbar and USD-cents.
+    /// 
+    /// This exists purely for "Well, I expected this name to exist because it exists in JS"
+    /// 
+    /// This is just a getter property for `current` in ``TransactionReceipt/exchangeRates``
+    public var exchangeRate: ExchangeRate? {
+        exchangeRates?.currentRate
+    }
+
+    /// The current and next exchange rate between Hbar and USD-cents.
+    public let exchangeRates: ExchangeRates?
 
     /// In the receipt of a `ScheduleCreateTransaction` or `ScheduleSignTransaction` that resolves
     /// to `Success`, the `TransactionId` that should be used to query for the receipt or
@@ -204,6 +217,7 @@ extension TransactionReceipt: TryProtobufCodable {
             tokenId?.toProtobufInto(&proto.tokenID)
             proto.newTotalSupply = totalSupply
             scheduleId?.toProtobufInto(&proto.scheduleID)
+            exchangeRates?.toProtobufInto(&proto.exchangeRate)
             scheduledTransactionId?.toProtobufInto(&proto.scheduledTransactionID)
             proto.serialNumbers = serials?.map(Int64.init) ?? []
         }

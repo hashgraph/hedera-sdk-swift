@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// The current and next exchange rates between ``Hbar`` and USD-cents.
-public struct ExchangeRates {
+public struct ExchangeRates: Sendable {
     /// The current exchange rate between Hbar and USD-cents.
     public let currentRate: ExchangeRate
     /// The next exchange rate between Hbar and USD-cents.
@@ -38,7 +38,7 @@ public struct ExchangeRates {
     }
 }
 
-extension ExchangeRates: FromProtobuf {
+extension ExchangeRates: ProtobufCodable {
     internal typealias Protobuf = Proto_ExchangeRateSet
 
     internal init(protobuf proto: Protobuf) {
@@ -47,10 +47,17 @@ extension ExchangeRates: FromProtobuf {
             nextRate: .fromProtobuf(proto.nextRate)
         )
     }
+
+    internal func toProtobuf() -> Protobuf {
+        .with { proto in
+            proto.currentRate = currentRate.toProtobuf()
+            proto.nextRate = nextRate.toProtobuf()
+        }
+    }
 }
 
 /// Denotes a conversion between Hbars and cents (USD).
-public struct ExchangeRate {
+public struct ExchangeRate: Sendable {
     /// Denotes Hbar equivalent to cents (USD).
     public let hbars: UInt32
 
@@ -66,7 +73,7 @@ public struct ExchangeRate {
     }
 }
 
-extension ExchangeRate: FromProtobuf {
+extension ExchangeRate: ProtobufCodable {
     internal typealias Protobuf = Proto_ExchangeRate
 
     internal init(protobuf proto: Protobuf) {
@@ -75,5 +82,13 @@ extension ExchangeRate: FromProtobuf {
             cents: UInt32(proto.centEquiv),
             expirationTime: .init(seconds: UInt64(proto.expirationTime.seconds), subSecondNanos: 0)
         )
+    }
+
+    internal func toProtobuf() -> Protobuf {
+        .with { proto in
+            proto.hbarEquiv = Int32(bitPattern: hbars)
+            proto.centEquiv = Int32(bitPattern: cents)
+            proto.expirationTime = Proto_TimestampSeconds.with { $0.seconds = Int64(expirationTime.seconds) }
+        }
     }
 }
