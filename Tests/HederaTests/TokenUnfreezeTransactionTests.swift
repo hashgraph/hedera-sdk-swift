@@ -33,12 +33,16 @@ internal final class TokenUnfreezeTransactionTests: XCTestCase {
     internal static let unusedPrivateKey: PrivateKey =
         "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
 
+
+    private static let testAccountId: AccountId = 222
+    private static let testTokenId: TokenId = "6.5.4"
+
     private static func makeTransaction() throws -> TokenUnfreezeTransaction {
         try TokenUnfreezeTransaction()
             .nodeAccountIds([5005, 5006])
             .transactionId(testTxId)
-            .accountId(222)
-            .tokenId("6.5.4")
+            .accountId(testAccountId)
+            .tokenId(testTokenId)
             .freeze()
             .sign(unusedPrivateKey)
     }
@@ -55,5 +59,37 @@ internal final class TokenUnfreezeTransactionTests: XCTestCase {
         let tx2 = try Transaction.fromBytes(tx.toBytes())
 
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
+    }
+
+
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_TokenUnfreezeAccountTransactionBody.with { proto in
+            proto.account = Self.testAccountId.toProtobuf()
+            proto.token = Self.testTokenId.toProtobuf()
+        }
+
+        let protoBody = Proto_TransactionBody.with { proto in
+            proto.tokenUnfreeze = protoData
+            proto.transactionID = Self.testTxId.toProtobuf()
+        }
+
+        let tx = try TokenUnfreezeTransaction(protobuf: protoBody, protoData)
+
+        XCTAssertEqual(tx.accountId, Self.testAccountId)
+        XCTAssertEqual(tx.tokenId, Self.testTokenId)
+    }
+
+    internal func testGetSetAccountId() {
+        let tx = TokenUnfreezeTransaction()
+        tx.accountId(Self.testAccountId)
+
+        XCTAssertEqual(tx.accountId, Self.testAccountId)
+    }
+
+    internal func testGetSetTokenId() {
+        let tx = TokenUnfreezeTransaction()
+        tx.tokenId(Self.testTokenId)
+
+        XCTAssertEqual(tx.tokenId, Self.testTokenId)
     }
 }
