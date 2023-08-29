@@ -25,6 +25,17 @@ import XCTest
 @testable import Hedera
 
 internal class AccountAllowanceApproveTransactionTests: XCTestCase {
+    private static let hbarAllowance = HbarAllowance(ownerAccountId: 10, spenderAccountId: 11, amount: 1)
+    private static let tokenAllowance = TokenAllowance(tokenId: 9, ownerAccountId: 10, spenderAccountId: 11, amount: 1)
+    private static let nftAllowance = TokenNftAllowance(
+        tokenId: 9,
+        ownerAccountId: 10,
+        spenderAccountId: 11,
+        serials: [8],
+        approvedForAll: nil,
+        delegatingSpenderAccountId: nil
+    )
+
     private static func makeTransaction() throws -> AccountAllowanceApproveTransaction {
         let ownerId: AccountId = "5.6.7"
 
@@ -91,6 +102,25 @@ internal class AccountAllowanceApproveTransactionTests: XCTestCase {
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }
 
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_CryptoApproveAllowanceTransactionBody.with { proto in
+            proto.cryptoAllowances = [Self.hbarAllowance].toProtobuf()
+            proto.tokenAllowances = [Self.tokenAllowance].toProtobuf()
+            proto.nftAllowances = [Self.nftAllowance].toProtobuf()
+        }
+
+        let protoBody = Proto_TransactionBody.with { proto in
+            proto.cryptoApproveAllowance = protoData
+            proto.transactionID = Resources.txId.toProtobuf()
+        }
+
+        let tx = try AccountAllowanceApproveTransaction(protobuf: protoBody, protoData)
+
+        XCTAssertEqual(tx.getHbarApprovals(), [Self.hbarAllowance])
+        XCTAssertEqual(tx.getTokenApprovals(), [Self.tokenAllowance])
+        XCTAssertEqual(tx.getNftApprovals(), [Self.nftAllowance])
+    }
+
     internal func testCheckProperties() throws {
         let tx = try Self.makeTransaction()
 
@@ -103,17 +133,14 @@ internal class AccountAllowanceApproveTransactionTests: XCTestCase {
         let tx = AccountAllowanceApproveTransaction()
         tx.approveHbarAllowance(10, 11, 1)
 
-        XCTAssertEqual(tx.getHbarApprovals(), [HbarAllowance(ownerAccountId: 10, spenderAccountId: 11, amount: 1)])
+        XCTAssertEqual(tx.getHbarApprovals(), [Self.hbarAllowance])
     }
 
     internal func testGetSetTokenAllowance() {
         let tx = AccountAllowanceApproveTransaction()
         tx.approveTokenAllowance(9, 10, 11, 1)
 
-        XCTAssertEqual(
-            tx.getTokenApprovals(),
-            [TokenAllowance(tokenId: 9, ownerAccountId: 10, spenderAccountId: 11, amount: 1)]
-        )
+        XCTAssertEqual(tx.getTokenApprovals(), [Self.tokenAllowance])
     }
 
     internal func testGetSetNftAllowance() {
@@ -121,18 +148,6 @@ internal class AccountAllowanceApproveTransactionTests: XCTestCase {
 
         tx.approveTokenNftAllowance(TokenId(num: 9).nft(8), 10, 11)
 
-        XCTAssertEqual(
-            tx.getNftApprovals(),
-            [
-                TokenNftAllowance(
-                    tokenId: 9,
-                    ownerAccountId: 10,
-                    spenderAccountId: 11,
-                    serials: [8],
-                    approvedForAll: nil,
-                    delegatingSpenderAccountId: nil
-                )
-            ]
-        )
+        XCTAssertEqual(tx.getNftApprovals(), [Self.nftAllowance])
     }
 }
