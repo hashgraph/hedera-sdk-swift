@@ -24,7 +24,7 @@ import XCTest
 
 @testable import Hedera
 
-internal final class TokenUnfreezeTransactionTests: XCTestCase {
+internal final class PrngTransactionTests: XCTestCase {
     internal static let testTxId: TransactionId = TransactionId(
         accountId: 5006,
         validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
@@ -33,15 +33,19 @@ internal final class TokenUnfreezeTransactionTests: XCTestCase {
     internal static let unusedPrivateKey: PrivateKey =
         "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
 
-    private static let testAccountId: AccountId = 222
-    private static let testTokenId: TokenId = "6.5.4"
-
-    private static func makeTransaction() throws -> TokenUnfreezeTransaction {
-        try TokenUnfreezeTransaction()
+    private static func makeTransaction() throws -> PrngTransaction {
+        try PrngTransaction()
             .nodeAccountIds([5005, 5006])
             .transactionId(testTxId)
-            .accountId(testAccountId)
-            .tokenId(testTokenId)
+            .freeze()
+            .sign(unusedPrivateKey)
+    }
+
+    private static func makeTransaction2() throws -> PrngTransaction {
+        try PrngTransaction()
+            .nodeAccountIds([5005, 5006])
+            .transactionId(testTxId)
+            .range(100)
             .freeze()
             .sign(unusedPrivateKey)
     }
@@ -60,34 +64,39 @@ internal final class TokenUnfreezeTransactionTests: XCTestCase {
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }
 
+    internal func testSerialize2() throws {
+        let tx = try Self.makeTransaction2().makeProtoBody()
+
+        assertSnapshot(matching: tx, as: .description)
+    }
+
+    internal func testToFromBytes2() throws {
+        let tx = try Self.makeTransaction2()
+
+        let tx2 = try Transaction.fromBytes(tx.toBytes())
+
+        XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
+    }
+
     internal func testFromProtoBody() throws {
-        let protoData = Proto_TokenUnfreezeAccountTransactionBody.with { proto in
-            proto.account = Self.testAccountId.toProtobuf()
-            proto.token = Self.testTokenId.toProtobuf()
+        let protoData = Proto_UtilPrngTransactionBody.with { proto in
+            proto.range = 100
         }
 
         let protoBody = Proto_TransactionBody.with { proto in
-            proto.tokenUnfreeze = protoData
+            proto.utilPrng = protoData
             proto.transactionID = Self.testTxId.toProtobuf()
         }
 
-        let tx = try TokenUnfreezeTransaction(protobuf: protoBody, protoData)
+        let tx = try PrngTransaction(protobuf: protoBody, protoData)
 
-        XCTAssertEqual(tx.accountId, Self.testAccountId)
-        XCTAssertEqual(tx.tokenId, Self.testTokenId)
+        XCTAssertEqual(tx.range, 100)
     }
 
-    internal func testGetSetAccountId() {
-        let tx = TokenUnfreezeTransaction()
-        tx.accountId(Self.testAccountId)
+    internal func testGetSetRange() {
+        let tx = PrngTransaction()
+        tx.range(100)
 
-        XCTAssertEqual(tx.accountId, Self.testAccountId)
-    }
-
-    internal func testGetSetTokenId() {
-        let tx = TokenUnfreezeTransaction()
-        tx.tokenId(Self.testTokenId)
-
-        XCTAssertEqual(tx.tokenId, Self.testTokenId)
+        XCTAssertEqual(tx.range, 100)
     }
 }
