@@ -34,24 +34,28 @@ internal final class TransferTransactionTests: XCTestCase {
         "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
 
     private static func makeTransaction() throws -> TransferTransaction {
-        try TransferTransaction()
+        // CI thinks this is too big of an expression, so, it's split into a few parts
+        let tx = TransferTransaction()
             .nodeAccountIds([5005, 5006])
             .transactionId(testTxId)
-            .hbarTransfer(AccountId(num: 5008), Hbar.fromTinybars(400))
+
+        tx.hbarTransfer(AccountId(num: 5008), Hbar.fromTinybars(400))
             .hbarTransfer(AccountId(num: 5006), Hbar.fromTinybars(800).negated())
             .approvedHbarTransfer(AccountId(num: 5007), Hbar.fromTinybars(400))
-            .tokenTransfer(TokenId(num: 5), AccountId(num: 5008), 400)
+
+        tx.tokenTransfer(TokenId(num: 5), AccountId(num: 5008), 400)
             .tokenTransferWithDecimals(TokenId(num: 5), AccountId(num: 5006), -800, 3)
             .tokenTransferWithDecimals(TokenId(num: 5), AccountId(num: 5007), 400, 3)
             .tokenTransfer(TokenId(num: 4), AccountId(num: 5008), 1)
             .approvedTokenTransfer(TokenId(num: 4), AccountId(num: 5006), -1)
-            .nftTransfer(TokenId(num: 3).nft(2), AccountId(num: 5008), AccountId(num: 5007))
+
+        tx.nftTransfer(TokenId(num: 3).nft(2), AccountId(num: 5008), AccountId(num: 5007))
             .approvedNftTransfer(TokenId(num: 3).nft(1), AccountId(num: 5008), AccountId(num: 5007))
             .nftTransfer(TokenId(num: 3).nft(3), AccountId(num: 5008), AccountId(num: 5006))
             .nftTransfer(TokenId(num: 3).nft(4), AccountId(num: 5007), AccountId(num: 5006))
             .nftTransfer(TokenId(num: 2).nft(4), AccountId(num: 5007), AccountId(num: 5006))
-            .freeze()
-            .sign(unusedPrivateKey)
+
+        return try tx.freeze().sign(unusedPrivateKey)
     }
 
     internal func testSerialize() throws {
