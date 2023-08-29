@@ -100,7 +100,8 @@ internal enum AnySchedulableTransaction {
         case let transaction as SystemUndeleteTransaction: self = .systemUndelete(transaction)
         case let transaction as FreezeTransaction: self = .freeze(transaction)
         case let transaction as ScheduleDeleteTransaction: self = .scheduleDelete(transaction)
-        case is ScheduleCreateTransaction, is ScheduleSignTransaction, is EthereumTransaction: fatalError("Cannot schedule `\(type(of: transaction))`")
+        case is ScheduleCreateTransaction, is ScheduleSignTransaction, is EthereumTransaction:
+            fatalError("Cannot schedule `\(type(of: transaction))`")
         default: fatalError("Unrecognized transaction type: \(type(of: transaction))")
         }
     }
