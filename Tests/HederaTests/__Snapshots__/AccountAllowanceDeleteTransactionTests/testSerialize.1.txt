@@ -26,7 +26,7 @@ cryptoDeleteAllowance {
       realmNum: 6
       accountNum: 7
     }
-    serial_numbers: [123]
+    serial_numbers: [123, 456, 789]
   }
   nftAllowances {
     token_id {
