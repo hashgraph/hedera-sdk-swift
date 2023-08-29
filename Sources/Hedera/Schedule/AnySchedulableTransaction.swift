@@ -61,140 +61,52 @@ internal enum AnySchedulableTransaction {
     case prng(PrngTransaction)
 
     internal init(upcasting transaction: Transaction) {
-        self.init(AnyTransaction(upcasting: transaction))
-    }
-
-    // There's unfortunately very little that can be done about this.
-    // swiftlint:disable:next function_body_length
-    fileprivate init(_ anyTransaction: AnyTransaction) {
-        switch anyTransaction {
-        case .accountCreate(let transaction):
-            self = .accountCreate(transaction)
-        case .accountUpdate(let transaction):
-            self = .accountUpdate(transaction)
-        case .accountDelete(let transaction):
-            self = .accountDelete(transaction)
-        case .accountAllowanceApprove(let transaction):
-            self = .accountAllowanceApprove(transaction)
-        case .accountAllowanceDelete(let transaction):
-            self = .accountAllowanceDelete(transaction)
-        case .contractCreate(let transaction):
-            self = .contractCreate(transaction)
-        case .contractUpdate(let transaction):
-            self = .contractUpdate(transaction)
-        case .contractDelete(let transaction):
-            self = .contractDelete(transaction)
-        case .contractExecute(let transaction):
-            self = .contractExecute(transaction)
-        case .transfer(let transaction):
-            self = .transfer(transaction)
-        case .topicCreate(let transaction):
-            self = .topicCreate(transaction)
-        case .topicUpdate(let transaction):
-            self = .topicUpdate(transaction)
-        case .topicDelete(let transaction):
-            self = .topicDelete(transaction)
-        case .topicMessageSubmit(let transaction):
-            self = .topicMessageSubmit(transaction)
-        case .fileAppend(let transaction):
-            self = .fileAppend(transaction)
-        case .fileCreate(let transaction):
-            self = .fileCreate(transaction)
-        case .fileUpdate(let transaction):
-            self = .fileUpdate(transaction)
-        case .fileDelete(let transaction):
-            self = .fileDelete(transaction)
-        case .tokenAssociate(let transaction):
-            self = .tokenAssociate(transaction)
-        case .tokenBurn(let transaction):
-            self = .tokenBurn(transaction)
-        case .tokenCreate(let transaction):
-            self = .tokenCreate(transaction)
-        case .tokenDelete(let transaction):
-            self = .tokenDelete(transaction)
-        case .tokenDissociate(let transaction):
-            self = .tokenDissociate(transaction)
-        case .tokenFeeScheduleUpdate(let transaction):
-            self = .tokenFeeScheduleUpdate(transaction)
-        case .tokenFreeze(let transaction):
-            self = .tokenFreeze(transaction)
-        case .tokenGrantKyc(let transaction):
-            self = .tokenGrantKyc(transaction)
-        case .tokenMint(let transaction):
-            self = .tokenMint(transaction)
-        case .tokenPause(let transaction):
-            self = .tokenPause(transaction)
-        case .tokenRevokeKyc(let transaction):
-            self = .tokenRevokeKyc(transaction)
-        case .tokenUnfreeze(let transaction):
-            self = .tokenUnfreeze(transaction)
-        case .tokenUnpause(let transaction):
-            self = .tokenUnpause(transaction)
-        case .tokenUpdate(let transaction):
-            self = .tokenUpdate(transaction)
-        case .tokenWipe(let transaction):
-            self = .tokenWipe(transaction)
-        case .systemDelete(let transaction):
-            self = .systemDelete(transaction)
-        case .systemUndelete(let transaction):
-            self = .systemUndelete(transaction)
-        case .freeze(let transaction):
-            self = .freeze(transaction)
-        case .scheduleDelete(let transaction):
-            self = .scheduleDelete(transaction)
-        case .prng(let transaction):
-            self = .prng(transaction)
-        case .ethereum:
-            fatalError("Cannot schedule `EthereumTransaction`")
-        case .scheduleCreate:
-            fatalError("Cannot schedule `ScheduleCreateTransaction`")
-        case .scheduleSign:
-            fatalError("Cannot schedule `ScheduleSignTransaction`")
+        switch transaction {
+        case let transaction as AccountCreateTransaction: self = .accountCreate(transaction)
+        case let transaction as AccountUpdateTransaction: self = .accountUpdate(transaction)
+        case let transaction as AccountDeleteTransaction: self = .accountDelete(transaction)
+        case let transaction as AccountAllowanceApproveTransaction: self = .accountAllowanceApprove(transaction)
+        case let transaction as AccountAllowanceDeleteTransaction: self = .accountAllowanceDelete(transaction)
+        case let transaction as ContractCreateTransaction: self = .contractCreate(transaction)
+        case let transaction as ContractUpdateTransaction: self = .contractUpdate(transaction)
+        case let transaction as ContractDeleteTransaction: self = .contractDelete(transaction)
+        case let transaction as ContractExecuteTransaction: self = .contractExecute(transaction)
+        case let transaction as TransferTransaction: self = .transfer(transaction)
+        case let transaction as TopicCreateTransaction: self = .topicCreate(transaction)
+        case let transaction as TopicUpdateTransaction: self = .topicUpdate(transaction)
+        case let transaction as TopicDeleteTransaction: self = .topicDelete(transaction)
+        case let transaction as TopicMessageSubmitTransaction: self = .topicMessageSubmit(transaction)
+        case let transaction as FileAppendTransaction: self = .fileAppend(transaction)
+        case let transaction as FileCreateTransaction: self = .fileCreate(transaction)
+        case let transaction as FileUpdateTransaction: self = .fileUpdate(transaction)
+        case let transaction as FileDeleteTransaction: self = .fileDelete(transaction)
+        case let transaction as PrngTransaction: self = .prng(transaction)
+        case let transaction as TokenAssociateTransaction: self = .tokenAssociate(transaction)
+        case let transaction as TokenBurnTransaction: self = .tokenBurn(transaction)
+        case let transaction as TokenCreateTransaction: self = .tokenCreate(transaction)
+        case let transaction as TokenDeleteTransaction: self = .tokenDelete(transaction)
+        case let transaction as TokenDissociateTransaction: self = .tokenDissociate(transaction)
+        case let transaction as TokenFeeScheduleUpdateTransaction: self = .tokenFeeScheduleUpdate(transaction)
+        case let transaction as TokenFreezeTransaction: self = .tokenFreeze(transaction)
+        case let transaction as TokenGrantKycTransaction: self = .tokenGrantKyc(transaction)
+        case let transaction as TokenMintTransaction: self = .tokenMint(transaction)
+        case let transaction as TokenPauseTransaction: self = .tokenPause(transaction)
+        case let transaction as TokenRevokeKycTransaction: self = .tokenRevokeKyc(transaction)
+        case let transaction as TokenUnfreezeTransaction: self = .tokenUnfreeze(transaction)
+        case let transaction as TokenUnpauseTransaction: self = .tokenUnpause(transaction)
+        case let transaction as TokenUpdateTransaction: self = .tokenUpdate(transaction)
+        case let transaction as TokenWipeTransaction: self = .tokenWipe(transaction)
+        case let transaction as SystemDeleteTransaction: self = .systemDelete(transaction)
+        case let transaction as SystemUndeleteTransaction: self = .systemUndelete(transaction)
+        case let transaction as FreezeTransaction: self = .freeze(transaction)
+        case let transaction as ScheduleDeleteTransaction: self = .scheduleDelete(transaction)
+        case is ScheduleCreateTransaction, is ScheduleSignTransaction, is EthereumTransaction: fatalError("Cannot schedule `\(type(of: transaction))`")
+        default: fatalError("Unrecognized transaction type: \(type(of: transaction))")
         }
     }
 }
 
 extension AnySchedulableTransaction {
-    // internal enum Kind: String {
-    //     case accountCreate
-    //     case accountUpdate
-    //     case accountDelete
-    //     case accountAllowanceApprove
-    //     case accountAllowanceDelete
-    //     case contractCreate
-    //     case contractUpdate
-    //     case contractDelete
-    //     case contractExecute
-    //     case transfer
-    //     case topicCreate
-    //     case topicUpdate
-    //     case topicDelete
-    //     case topicMessageSubmit
-    //     case fileAppend
-    //     case fileCreate
-    //     case fileUpdate
-    //     case fileDelete
-    //     case tokenAssociate
-    //     case tokenBurn
-    //     case tokenCreate
-    //     case tokenDelete
-    //     case tokenDissociate
-    //     case tokenFeeScheduleUpdate
-    //     case tokenFreeze
-    //     case tokenGrantKyc
-    //     case tokenMint
-    //     case tokenPause
-    //     case tokenRevokeKyc
-    //     case tokenUnfreeze
-    //     case tokenUnpause
-    //     case tokenUpdate
-    //     case tokenWipe
-    //     case systemDelete
-    //     case systemUndelete
-    //     case freeze
-    //     case scheduleDelete
-    // }
-
     internal var transaction: Transaction {
         switch self {
         case .accountCreate(let transaction):

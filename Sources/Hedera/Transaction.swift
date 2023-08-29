@@ -380,7 +380,7 @@ public class Transaction: ValidateChecksums {
             }
 
         // note: this creates the transaction in a unfrozen state by pure need.
-        let transaction = try AnyTransaction.fromProtobuf(transactionBodies[0], transactionData).transaction
+        let transaction = try Transaction.fromProtobuf(transactionBodies[0], transactionData)
 
         transaction.nodeAccountIds = sources.nodeAccountIds
         transaction.sources = sources

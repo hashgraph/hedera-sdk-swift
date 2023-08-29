@@ -119,7 +119,7 @@ public struct ScheduleInfo {
                 proto.transactionID = scheduledTransactionId.toProtobuf()
             }
 
-            return try AnyTransaction.fromProtobuf(transactionBody, [transactionBody.data!]).transaction
+            return try Transaction.fromProtobuf(transactionBody, [transactionBody.data!])
         }
     }
 
