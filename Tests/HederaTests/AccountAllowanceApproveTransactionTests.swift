@@ -25,9 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal class AccountAllowanceApproveTransactionTests: XCTestCase {
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static func makeTransaction() throws -> AccountAllowanceApproveTransaction {
         let ownerId: AccountId = "5.6.7"
 
@@ -46,13 +43,10 @@ internal class AccountAllowanceApproveTransactionTests: XCTestCase {
             "9.9.9",
         ]
 
-        return try AccountAllowanceApproveTransaction().nodeAccountIds([5005, 5006])
-            .transactionId(
-                TransactionId(
-                    accountId: 5006,
-                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-                )
-            )
+        return try AccountAllowanceApproveTransaction()
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .approveHbarAllowance(ownerId, invalidAccountIds[0], Hbar(3))
             .approveTokenAllowance(invalidTokenIds[0], ownerId, invalidAccountIds[1], 6)
             .approveTokenNftAllowance(
@@ -82,7 +76,6 @@ internal class AccountAllowanceApproveTransactionTests: XCTestCase {
             )
             .maxTransactionFee(.fromTinybars(100_000))
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     internal func testSerialize() throws {

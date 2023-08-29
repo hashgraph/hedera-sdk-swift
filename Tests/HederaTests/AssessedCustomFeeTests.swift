@@ -25,11 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal final class AssessedCustomFeeTests: XCTestCase {
-    internal static let testTxId: TransactionId = TransactionId(
-        accountId: 5006,
-        validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-    )
-
     private static let amount: Int64 = 1
     private static let tokenId: TokenId = "2.3.4"
     private static let feeCollector: AccountId = "5.6.7"

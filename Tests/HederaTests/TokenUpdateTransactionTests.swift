@@ -25,16 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal final class TokenUpdateTransactionTests: XCTestCase {
-    private static let testValidStart = Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-
-    private static let testTxId: TransactionId = TransactionId(
-        accountId: 5006,
-        validStart: testValidStart
-    )
-
-    private static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static let testAdminKey: PrivateKey =
         "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e11"
     private static let testKycKey: PrivateKey =
@@ -57,12 +47,13 @@ internal final class TokenUpdateTransactionTests: XCTestCase {
     private static let testTokenMemo: String = "test memo"
     private static let testTokenId: TokenId = "4.2.0"
     private static let testAutoRenewPeriod: Duration = .hours(10)
-    private static let testExpirationTime = testValidStart
+    private static let testExpirationTime = Resources.validStart
 
     private static func makeTransaction() throws -> TokenUpdateTransaction {
         try TokenUpdateTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(testTxId)
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .tokenId(testTokenId)
             .supplyKey(.single(testSupplyKey.publicKey))
             .adminKey(.single(testSupplyKey.publicKey))
@@ -78,8 +69,8 @@ internal final class TokenUpdateTransactionTests: XCTestCase {
             .tokenName(testTokenName)
             .tokenMemo(testTokenMemo)
             .freeze()
-            .sign(unusedPrivateKey)
     }
+
     internal func testSerialize() throws {
         let tx = try Self.makeTransaction().makeProtoBody()
 
@@ -115,7 +106,7 @@ internal final class TokenUpdateTransactionTests: XCTestCase {
 
         let protoBody = Proto_TransactionBody.with { proto in
             proto.tokenUpdate = protoData
-            proto.transactionID = Self.testTxId.toProtobuf()
+            proto.transactionID = Resources.txId.toProtobuf()
         }
 
         let tx = try TokenUpdateTransaction(protobuf: protoBody, protoData)

@@ -25,9 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal class AccountUpdateTransactionTests: XCTestCase {
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static func makeTransaction() throws -> AccountUpdateTransaction {
         let tx = AccountUpdateTransaction()
 
@@ -35,13 +32,9 @@ internal class AccountUpdateTransactionTests: XCTestCase {
 
         return
             try tx
-            .nodeAccountIds([5005, 5006])
-            .transactionId(
-                TransactionId(
-                    accountId: 5006,
-                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-                )
-            )
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .accountId(2002)
             .autoRenewPeriod(.hours(10))
             .expirationTime(Timestamp(seconds: 1_554_158_543, subSecondNanos: 0))
@@ -50,7 +43,6 @@ internal class AccountUpdateTransactionTests: XCTestCase {
             .maxTransactionFee(.fromTinybars(100_000))
             .stakedAccountId("0.0.3")
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     private static func makeTransaction2() throws -> AccountUpdateTransaction {
@@ -60,13 +52,10 @@ internal class AccountUpdateTransactionTests: XCTestCase {
 
         return
             try tx
-            .nodeAccountIds([5005, 5006])
-            .transactionId(
-                TransactionId(
-                    accountId: 5006,
-                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-                )
-            ).accountId(2002)
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
+            .accountId(2002)
             .autoRenewPeriod(.hours(10))
             .expirationTime(Timestamp(seconds: 1_554_158_543, subSecondNanos: 0))
             .receiverSignatureRequired(false)
@@ -74,7 +63,6 @@ internal class AccountUpdateTransactionTests: XCTestCase {
             .maxTransactionFee(.fromTinybars(100_000))
             .stakedNodeId(4)
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     internal func testSerialize() throws {

@@ -25,19 +25,12 @@ import XCTest
 @testable import Hedera
 
 internal final class TransferTransactionTests: XCTestCase {
-    internal static let testTxId: TransactionId = TransactionId(
-        accountId: 5006,
-        validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-    )
-
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static func makeTransaction() throws -> TransferTransaction {
         // CI thinks this is too big of an expression, so, it's split into a few parts
         let tx = TransferTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(testTxId)
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
 
         tx.hbarTransfer(AccountId(num: 5008), Hbar.fromTinybars(400))
             .hbarTransfer(AccountId(num: 5006), Hbar.fromTinybars(800).negated())
@@ -55,7 +48,7 @@ internal final class TransferTransactionTests: XCTestCase {
             .nftTransfer(TokenId(num: 3).nft(4), AccountId(num: 5007), AccountId(num: 5006))
             .nftTransfer(TokenId(num: 2).nft(4), AccountId(num: 5007), AccountId(num: 5006))
 
-        return try tx.freeze().sign(unusedPrivateKey)
+        return try tx.freeze()
     }
 
     internal func testSerialize() throws {

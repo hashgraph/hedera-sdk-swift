@@ -25,29 +25,21 @@ import XCTest
 @testable import Hedera
 
 internal final class PrngTransactionTests: XCTestCase {
-    internal static let testTxId: TransactionId = TransactionId(
-        accountId: 5006,
-        validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-    )
-
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static func makeTransaction() throws -> PrngTransaction {
         try PrngTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(testTxId)
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     private static func makeTransaction2() throws -> PrngTransaction {
         try PrngTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(testTxId)
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .range(100)
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     internal func testSerialize() throws {
@@ -85,7 +77,7 @@ internal final class PrngTransactionTests: XCTestCase {
 
         let protoBody = Proto_TransactionBody.with { proto in
             proto.utilPrng = protoData
-            proto.transactionID = Self.testTxId.toProtobuf()
+            proto.transactionID = Resources.txId.toProtobuf()
         }
 
         let tx = try PrngTransaction(protobuf: protoBody, protoData)

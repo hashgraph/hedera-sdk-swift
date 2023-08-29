@@ -25,36 +25,28 @@ import XCTest
 @testable import Hedera
 
 internal final class TokenMintTransactionTests: XCTestCase {
-    internal static let testTxId: TransactionId = TransactionId(
-        accountId: 5006,
-        validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-    )
-
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static let testTokenId: TokenId = "4.2.0"
     private static let testAmount: UInt64 = 10
     private static let testMetadata = [Data([1, 2, 3, 4, 5])]
 
     private static func makeTransaction() throws -> TokenMintTransaction {
         try TokenMintTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(testTxId)
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .tokenId(testTokenId)
             .amount(testAmount)
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     private static func makeMetadataTransaction() throws -> TokenMintTransaction {
         try TokenMintTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(testTxId)
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .tokenId(testTokenId)
             .metadata(testMetadata)
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     internal func testSerialize() throws {
@@ -94,7 +86,7 @@ internal final class TokenMintTransactionTests: XCTestCase {
 
         let protoBody = Proto_TransactionBody.with { proto in
             proto.tokenMint = protoData
-            proto.transactionID = Self.testTxId.toProtobuf()
+            proto.transactionID = Resources.txId.toProtobuf()
         }
 
         let tx = try TokenMintTransaction(protobuf: protoBody, protoData)

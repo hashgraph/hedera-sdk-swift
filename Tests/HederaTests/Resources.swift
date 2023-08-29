@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2023 - 2023 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,11 +24,17 @@ import XCTest
 
 @testable import Hedera
 
-internal class AccountStakersQueryTests: XCTestCase {
-    internal func testSerialize() throws {
-        let query = AccountStakersQuery(accountId: AccountId(num: 5005))
-            .toQueryProtobufWith(.init())
+internal enum Resources {
+    internal static let nodeAccountIds: [AccountId] = [5005, 5006]
+    internal static let validStart = Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
+    internal static let txId = TransactionId(accountId: 5006, validStart: validStart)
 
-        assertSnapshot(matching: query, as: .description)
+    // some unused private key
+    internal static let privateKey: PrivateKey =
+        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
+
+    internal static var publicKey: PublicKey {
+        privateKey.publicKey
     }
+
 }
