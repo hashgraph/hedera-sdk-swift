@@ -53,7 +53,6 @@ public struct SemanticVersion: ExpressibleByStringLiteral, LosslessStringConvert
     }
 
     // internal API, do NOT expose.
-    // internal API, do NOT expose.
     private init<S: StringProtocol>(parsing description: S) throws {
         let parts = description.split(separator: ".", maxSplits: 2)
 
@@ -91,7 +90,6 @@ public struct SemanticVersion: ExpressibleByStringLiteral, LosslessStringConvert
         try! self.init(parsing: value)
     }
 
-    // semver parsing is shockingly hard. So the FFI really does carry its weight.
     public init?(_ description: String) {
         try? self.init(parsing: description)
     }
