@@ -48,17 +48,21 @@ public final class AccountAllowanceDeleteTransaction: Transaction {
     @discardableResult
     public func deleteAllTokenNftAllowances(_ nftId: NftId, _ ownerAccountId: AccountId) -> Self {
         ensureNotFrozen()
-        if var allowance = nftAllowances.first(where: { (allowance) in
+
+        let index = nftAllowances.firstIndex { allowance in
             allowance.tokenId == nftId.tokenId && allowance.ownerAccountId == ownerAccountId
-        }) {
-            allowance.serials.append(nftId.serial)
+        }
+
+        if let index = index {
+            nftAllowances[index].serials.append(nftId.serial)
         } else {
             nftAllowances.append(
                 NftRemoveAllowance(
                     tokenId: nftId.tokenId,
                     ownerAccountId: ownerAccountId,
                     serials: [nftId.serial]
-                ))
+                )
+            )
         }
 
         return self
