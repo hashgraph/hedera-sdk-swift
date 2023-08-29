@@ -26,7 +26,7 @@ import secp256k1
 import secp256k1_bindings
 
 extension secp256k1.Signing.PublicKey {
-    internal func toBytesIn(format: secp256k1.Format) -> Data {
+    internal func toBytes(format: secp256k1.Format) -> Data {
         let context = secp256k1.Context.rawRepresentation
 
         // when the bindings aren't enough :/
@@ -287,7 +287,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
 
     public func toBytesRaw() -> Data {
         switch kind {
-        case .ecdsa(let key): return key.toBytesIn(format: .compressed)
+        case .ecdsa(let key): return key.toBytes(format: .compressed)
         case .ed25519(let key): return key.rawRepresentation
         }
     }
@@ -367,7 +367,7 @@ public struct PublicKey: LosslessStringConvertible, ExpressibleByStringLiteral, 
             return nil
         }
 
-        let output = key.toBytesIn(format: .uncompressed)
+        let output = key.toBytes(format: .uncompressed)
 
         // note(important): sec1 uncompressed point
         let hash = Crypto.Sha3.keccak256(output[1...])
@@ -454,12 +454,9 @@ extension PublicKey: TryProtobufCodable {
 
     internal func toProtobuf() -> Protobuf {
         .with { proto in
-            if self.isEd25519() {
-                proto.ed25519 = toBytesRaw()
-            } else if self.isEcdsa() {
-                proto.ecdsaSecp256K1 = toBytesRaw()
-            } else {
-                fatalError("BUG: Unexpected PublicKey kind")
+            switch self.guts {
+            case .ed25519: proto.ed25519 = toBytesRaw()
+            case .ecdsa: proto.ecdsaSecp256K1 = toBytesRaw()
             }
         }
     }
