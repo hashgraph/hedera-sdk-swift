@@ -21,6 +21,7 @@
 import Atomics
 import Foundation
 import GRPC
+import NIOConcurrencyHelpers
 import NIOCore
 import SwiftProtobuf
 
@@ -84,7 +85,7 @@ internal final class Network: Sendable, AtomicReference {
     private init(
         map: [AccountId: Int],
         nodes: [AccountId],
-        health: [NodeHealth],
+        health: [NIOLockedValueBox<NodeHealth>],
         connections: [NodeConnection]
     ) {
         self.map = map
@@ -95,7 +96,8 @@ internal final class Network: Sendable, AtomicReference {
 
     internal let map: [AccountId: Int]
     internal let nodes: [AccountId]
-    fileprivate let health: [NodeHealth]
+    // locked-value-box is a reference type, which we need.
+    fileprivate let health: [NIOLockedValueBox<NodeHealth>]
     fileprivate let connections: [NodeConnection]
 
     internal var addresses: [String: AccountId] {
@@ -115,7 +117,7 @@ internal final class Network: Sendable, AtomicReference {
         }
 
         // note: `Array(repeating: <element>, count: Int)` does *not* work the way you'd want with reference types.
-        let health = (0..<config.nodes.count).map { _ in NodeHealth() }
+        let health: [NIOLockedValueBox<NodeHealth>] = (0..<config.nodes.count).map { _ in .init(.unused) }
 
         self.init(
             map: config.map,
@@ -137,7 +139,7 @@ internal final class Network: Sendable, AtomicReference {
 
         var map: [AccountId: Int] = [:]
         var nodeIds: [AccountId] = []
-        var health: [NodeHealth] = []
+        var health: [NIOLockedValueBox<NodeHealth>] = []
         var connections: [NodeConnection] = []
 
         for (index, address) in addressBook.enumerated() {
@@ -152,7 +154,7 @@ internal final class Network: Sendable, AtomicReference {
             // if the node just flat out doesn't exist in `old`, we want to add the new node.
             // and, last but not least, if the node doesn't exist in `new` we want to get rid of it.
 
-            let upsert: (NodeHealth, NodeConnection)
+            let upsert: (NIOLockedValueBox<NodeHealth>, NodeConnection)
 
             switch old.map[address.nodeAccountId] {
             case .some(let account):
@@ -163,7 +165,7 @@ internal final class Network: Sendable, AtomicReference {
                 }
 
                 upsert = (old.health[account], connection)
-            case nil: upsert = (NodeHealth(), NodeConnection(eventLoop: eventLoop, addresses: new))
+            case nil: upsert = (.init(.unused), NodeConnection(eventLoop: eventLoop, addresses: new))
             }
 
             map[address.nodeAccountId] = index
@@ -185,7 +187,7 @@ internal final class Network: Sendable, AtomicReference {
     {
         var map: [AccountId: Int] = [:]
         var nodeIds: [AccountId] = []
-        var health: [NodeHealth] = []
+        var health: [NIOLockedValueBox<NodeHealth>] = []
         var connections: [NodeConnection] = []
 
         let addresses = Dictionary(
@@ -202,7 +204,7 @@ internal final class Network: Sendable, AtomicReference {
             map[node] = nextIndex
             nodeIds.append(node)
 
-            var reusedHealth: NodeHealth?
+            var reusedHealth: NIOLockedValueBox<NodeHealth>?
             var reusedConnection: NodeConnection?
 
             if let index = old.map[node] {
@@ -213,7 +215,7 @@ internal final class Network: Sendable, AtomicReference {
                 reusedHealth = old.health[index]
             }
 
-            health.append(reusedHealth ?? .init())
+            health.append(reusedHealth ?? .init(.unused))
             connections.append(reusedConnection ?? .init(eventLoop: eventLoop, addresses: addresses))
         }
 
@@ -264,16 +266,22 @@ internal final class Network: Sendable, AtomicReference {
         healthyNodeIndexes().map { nodes[$0] }
     }
 
-    internal func markNodeUsed(_ index: Int, now: Timestamp) {
-        health[index].lastPinged.store(Int64(now.unixTimestampNanos), ordering: .relaxed)
+    internal func markNodeUnhealthy(_ index: Int) {
+        health[index].withLockedValue { $0.markUnhealthy(now: .now) }
+    }
+
+    internal func markNodeHealthy(_ index: Int) {
+        health[index].withLockedValue { $0.markHealthy(now: .now) }
     }
 
     internal func nodeRecentlyPinged(_ index: Int, now: Timestamp) -> Bool {
-        health[index].lastPinged.load(ordering: .relaxed) > Int64((now - .minutes(15)).unixTimestampNanos)
+        // use the lock to *just* read the state, since we aren't updating it.
+        health[index].withLockedValue { $0 }.recentlyPinged(now: now)
     }
 
     internal func isNodeHealthy(_ index: Int, _ now: Timestamp) -> Bool {
-        health[index].health.load(ordering: .relaxed) < Int64(now.unixTimestampNanos)
+        // use the lock to *just* read the state, since we aren't updating it.
+        health[index].withLockedValue { $0 }.isHealthy(now: now)
     }
 
     internal func randomNodeIds()
@@ -288,17 +296,79 @@ internal final class Network: Sendable, AtomicReference {
         let nodeSampleAmount = (nodeIds.count + 2) / 3
 
         let nodeIdIndecies = randomIndexes(upTo: nodeIds.count, amount: nodeSampleAmount)
+
         return nodeIdIndecies.map { nodeIds[$0] }
     }
 }
 
-// this needs to be a class for reference semantics.
-internal final class NodeHealth: Sendable {
-    internal let health: ManagedAtomic<Int64>
-    internal let lastPinged: ManagedAtomic<Int64>
-    internal init() {
-        self.health = .init(0)
-        self.lastPinged = .init(0)
+internal enum NodeHealth: Sendable {
+    /// The node has never been used, so we don't know anything about it.
+    ///
+    /// However, we'll vaguely consider it healthy (`isHealthy` returns `true`).
+    case unused
+
+    /// When we used or pinged the node we got some kind of error with it (like a BUSY response).
+    ///
+    /// Repeated errors cause the backoff to increase.
+    ///
+    /// Once we've reached `healthyAt` the node is *semantically* in the ``unused`` state,
+    /// other than retaining the backoff until a `healthy` request happens.
+    case unhealthy(backoffInterval: TimeInterval, healthyAt: Timestamp)
+
+    /// When we last used the node the node acted as normal, so, we get to treat it as a healthy node for 15 minutes.
+    case healthy(usedAt: Timestamp)
+
+    // note: this is a computed property rather than a stored one.
+    // we compute it because:
+    // A: it's a large struct.
+    // B: we only really need it when we're marking ourselves as `unhealthy` which shouldn't be such a common operation that it's happening every few ms on the same node.
+    internal var backoff: LegacyExponentialBackoff {
+        var backoff = LegacyExponentialBackoff(
+            initialInterval: 0.25,
+            maxInterval: 30 * 60,
+            maxElapsedTime: .unlimited
+        )
+
+        if case .unhealthy(let backoffInterval, _) = self {
+            backoff.currentInterval = backoffInterval
+        }
+
+        return backoff
+    }
+
+    internal mutating func markUnhealthy(now: Timestamp) {
+        var backoff = self.backoff
+        let backoffInterval = backoff.next()!
+
+        let healthyAt = now.adding(nanos: UInt64(backoffInterval * 1e9))
+
+        self = .unhealthy(backoffInterval: backoffInterval, healthyAt: healthyAt)
+    }
+
+    internal mutating func markHealthy(now: Timestamp) {
+        self = .healthy(usedAt: now)
+    }
+
+    internal func isHealthy(now: Timestamp) -> Bool {
+        // a healthy node is any node that isn't *unhealthy*...
+        guard case .unhealthy(_, let healthyAt) = self else {
+            return true
+        }
+
+        // Which includes when the node *was* unhealthy but isn't anymore.
+        return healthyAt < now
+    }
+
+    internal func recentlyPinged(now: Timestamp) -> Bool {
+        switch self {
+        // when used at was less than 15 minutes ago we consider ourselves "pinged", otherwise we're basically `.unused`.
+        case .healthy(let usedAt): return now < usedAt + .minutes(15)
+        // likewise an unhealthy node (healthyAt > now) has been "pinged" (although we don't want to use it probably we at least *have* gotten *something* from it)
+        case .unhealthy(_, let healthyAt): return now < healthyAt
+
+        // an unused node is by definition not pinged.
+        case .unused: return false
+        }
     }
 }
 
