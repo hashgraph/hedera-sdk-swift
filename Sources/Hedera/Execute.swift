@@ -170,18 +170,14 @@ private func executeAnyInner<E: Execute>(ctx: ExecuteContext, executable: E) asy
             let (request, context) = try executable.makeRequest(transactionId, nodeAccountId)
             let response: E.GrpcResponse
 
-            defer {
-                ctx.network.markNodeUsed(nodeIndex, now: .now)
-            }
-
             do {
                 response = try await executable.execute(channel, request)
 
             } catch let error as GRPCStatus {
                 switch error.code {
                 case .unavailable, .resourceExhausted:
+                    ctx.network.markNodeUnhealthy(nodeIndex)
                     // NOTE: this is an "unhealthy" node
-                    // todo: mark unhealthy
                     // try the next node in our allowed list, immediately
                     lastError = HError(
                         kind: .grpcStatus(status: Int32(error.code.rawValue)),
@@ -196,6 +192,8 @@ private func executeAnyInner<E: Execute>(ctx: ExecuteContext, executable: E) asy
                     )
                 }
             }
+
+            ctx.network.markNodeHealthy(nodeIndex)
 
             let rawPrecheckStatus = try E.responsePrecheckStatus(response)
             let precheckStatus = Status(rawValue: rawPrecheckStatus)

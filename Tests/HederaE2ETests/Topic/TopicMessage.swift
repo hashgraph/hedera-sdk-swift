@@ -67,6 +67,7 @@ internal class TopicMessage: XCTestCase {
             group.addTask {
                 await Task.yield()
                 try await Task.sleep(nanoseconds: 60 * 1_000_000_000)
+                XCTFail("Operation timed out")
                 throw CancellationError()
             }
 
