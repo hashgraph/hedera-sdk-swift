@@ -25,42 +25,33 @@ import XCTest
 @testable import Hedera
 
 internal final class TopicUpdateTransactionTests: XCTestCase {
-    private static let validStart = Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-    private static let testTxId: TransactionId = TransactionId(
-        accountId: 5006,
-        validStart: validStart
-    )
-
-    private static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static let testTopicId: TopicId = 5007
 
     private static func makeTransaction() throws -> TopicUpdateTransaction {
         try TopicUpdateTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(testTxId)
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .topicId(testTopicId)
             .clearAdminKey()
             .clearAutoRenewAccountId()
             .clearSubmitKey()
             .topicMemo("")
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     private static func makeTransaction2() throws -> TopicUpdateTransaction {
         try TopicUpdateTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(testTxId)
-            .adminKey(.single(unusedPrivateKey.publicKey))
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
+            .adminKey(.single(Resources.publicKey))
             .autoRenewAccountId(5009)
             .autoRenewPeriod(.days(1))
-            .submitKey(.single(unusedPrivateKey.publicKey))
+            .submitKey(.single(Resources.publicKey))
             .topicMemo("Hello memo")
-            .expirationTime(validStart)
+            .expirationTime(Resources.validStart)
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     internal func testSerialize() throws {
@@ -98,7 +89,7 @@ internal final class TopicUpdateTransactionTests: XCTestCase {
 
         let protoBody = Proto_TransactionBody.with { proto in
             proto.consensusUpdateTopic = protoData
-            proto.transactionID = Self.testTxId.toProtobuf()
+            proto.transactionID = Resources.txId.toProtobuf()
         }
 
         let tx = try TopicUpdateTransaction(protobuf: protoBody, protoData)
@@ -115,9 +106,9 @@ internal final class TopicUpdateTransactionTests: XCTestCase {
 
     internal func testGetSetClearAdminKey() {
         let tx = TopicUpdateTransaction()
-        tx.adminKey(.single(Self.unusedPrivateKey.publicKey))
+        tx.adminKey(.single(Resources.publicKey))
 
-        XCTAssertEqual(tx.adminKey, .single(Self.unusedPrivateKey.publicKey))
+        XCTAssertEqual(tx.adminKey, .single(Resources.publicKey))
 
         tx.clearAdminKey()
         XCTAssertEqual(tx.adminKey, .keyList([]))
@@ -126,9 +117,9 @@ internal final class TopicUpdateTransactionTests: XCTestCase {
 
     internal func testGetSetClearSubmitKey() {
         let tx = TopicUpdateTransaction()
-        tx.submitKey(.single(Self.unusedPrivateKey.publicKey))
+        tx.submitKey(.single(Resources.publicKey))
 
-        XCTAssertEqual(tx.submitKey, .single(Self.unusedPrivateKey.publicKey))
+        XCTAssertEqual(tx.submitKey, .single(Resources.publicKey))
 
         tx.clearSubmitKey()
         XCTAssertEqual(tx.submitKey, .keyList([]))

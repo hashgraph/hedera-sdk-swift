@@ -25,30 +25,22 @@ import XCTest
 @testable import Hedera
 
 internal final class FileCreateTransactionTests: XCTestCase {
-    private static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
-    private static let testTxId: TransactionId = TransactionId(
-        accountId: 5006,
-        validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-    )
-
     private static let contents: Data = "[swift::unit::fileCreate::1]".data(using: .utf8)!
     private static let expirationTime = Timestamp(seconds: 1_554_158_728, subSecondNanos: 0)
-    private static let keys: KeyList = [.single(unusedPrivateKey.publicKey)]
+    private static let keys: KeyList = [.single(Resources.publicKey)]
     private static let fileMemo = "Hello memo"
 
     private static func createTransaction() throws -> FileCreateTransaction {
         try FileCreateTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(testTxId)
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .maxTransactionFee(.fromTinybars(100_000))
             .contents(contents)
             .expirationTime(expirationTime)
             .keys(keys)
             .fileMemo(fileMemo)
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     internal func testSerialize() throws {
@@ -74,7 +66,7 @@ internal final class FileCreateTransactionTests: XCTestCase {
 
         let protoBody = Proto_TransactionBody.with { proto in
             proto.fileCreate = protoData
-            proto.transactionID = Self.testTxId.toProtobuf()
+            proto.transactionID = Resources.txId.toProtobuf()
         }
 
         let tx = try FileCreateTransaction(protobuf: protoBody, protoData)

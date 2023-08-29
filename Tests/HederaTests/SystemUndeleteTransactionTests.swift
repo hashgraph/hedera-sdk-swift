@@ -25,31 +25,22 @@ import XCTest
 @testable import Hedera
 
 internal final class SystemUndeleteTransactionTests: XCTestCase {
-    internal static let validStart = Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-    internal static let testTxId: TransactionId = TransactionId(
-        accountId: 5006,
-        validStart: validStart
-    )
-
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     internal static func makeTransactionFile() throws -> SystemUndeleteTransaction {
         try SystemUndeleteTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(testTxId)
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .fileId(444)
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     internal static func makeTransactionContract() throws -> SystemUndeleteTransaction {
         try SystemUndeleteTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(testTxId)
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .contractId(444)
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     internal func testSerializeFile() throws {

@@ -25,20 +25,13 @@ import XCTest
 @testable import Hedera
 
 internal class ContractCreateTransactionTests: XCTestCase {
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static func makeTransaction() throws -> ContractCreateTransaction {
         try ContractCreateTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(
-                TransactionId(
-                    accountId: 5006,
-                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-                )
-            )
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .bytecodeFileId(3003)
-            .adminKey(.single(unusedPrivateKey.publicKey))
+            .adminKey(.single(Resources.publicKey))
             .gas(0)
             .initialBalance(.fromTinybars(1000))
             .stakedAccountId("0.0.3")
@@ -48,20 +41,15 @@ internal class ContractCreateTransactionTests: XCTestCase {
             .autoRenewAccountId("0.0.30")
             .maxTransactionFee(.fromTinybars(100_000))
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     private static func makeTransaction2() throws -> ContractCreateTransaction {
         try ContractCreateTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(
-                TransactionId(
-                    accountId: 5006,
-                    validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-                )
-            )
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
             .bytecodeFileId(3003)
-            .adminKey(.single(unusedPrivateKey.publicKey))
+            .adminKey(.single(Resources.publicKey))
             .gas(0)
             .initialBalance(.fromTinybars(1000))
             .stakedNodeId(4)
@@ -71,7 +59,6 @@ internal class ContractCreateTransactionTests: XCTestCase {
             .autoRenewAccountId("0.0.30")
             .maxTransactionFee(.fromTinybars(100_000))
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     internal func testSerialize() throws {

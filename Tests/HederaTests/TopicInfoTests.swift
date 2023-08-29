@@ -25,9 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal final class TopicInfoTests: XCTestCase {
-    private static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static let topicInfo: Proto_ConsensusGetTopicInfoResponse = .with { proto in
         proto.topicID = TopicId(shard: 0, realm: 6, num: 9).toProtobuf()
         proto.topicInfo = .with { proto in
@@ -35,8 +32,8 @@ internal final class TopicInfoTests: XCTestCase {
             proto.runningHash = Data([2])
             proto.sequenceNumber = 3
             proto.expirationTime = Timestamp(seconds: 0, subSecondNanos: 4_000_000).toProtobuf()
-            proto.adminKey = unusedPrivateKey.publicKey.toProtobuf()
-            proto.submitKey = unusedPrivateKey.publicKey.toProtobuf()
+            proto.adminKey = Resources.publicKey.toProtobuf()
+            proto.submitKey = Resources.publicKey.toProtobuf()
             proto.autoRenewPeriod = Duration.days(5).toProtobuf()
             proto.autoRenewAccount = AccountId(num: 4).toProtobuf()
             proto.ledgerID = LedgerId.testnet.bytes

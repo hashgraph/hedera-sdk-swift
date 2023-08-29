@@ -45,9 +45,6 @@ import XCTest
  */
 
 internal class ContractBytecodeQueryTests: XCTestCase {
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     internal func testSerialize() throws {
         let query = ContractBytecodeQuery(contractId: ContractId(num: 5005))
             .toQueryProtobufWith(.init())

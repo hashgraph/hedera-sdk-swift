@@ -25,27 +25,19 @@ import XCTest
 @testable import Hedera
 
 internal final class TopicCreateTransactionTests: XCTestCase {
-    private static let testTxId: TransactionId = TransactionId(
-        accountId: 5006,
-        validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
-    )
-
-    private static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static let testAutoRenewAccountId: AccountId = "0.0.5007"
     private static let testAutoRenewPeriod: Duration = .days(1)
 
     private static func makeTransaction() throws -> TopicCreateTransaction {
         try TopicCreateTransaction()
-            .nodeAccountIds([5005, 5006])
-            .transactionId(testTxId)
-            .submitKey(.single(unusedPrivateKey.publicKey))
-            .adminKey(.single(unusedPrivateKey.publicKey))
+            .nodeAccountIds(Resources.nodeAccountIds)
+            .transactionId(Resources.txId)
+            .sign(Resources.privateKey)
+            .submitKey(.single(Resources.publicKey))
+            .adminKey(.single(Resources.publicKey))
             .autoRenewAccountId(testAutoRenewAccountId)
             .autoRenewPeriod(testAutoRenewPeriod)
             .freeze()
-            .sign(unusedPrivateKey)
     }
 
     internal func testSerialize() throws {
@@ -64,37 +56,37 @@ internal final class TopicCreateTransactionTests: XCTestCase {
 
     internal func testFromProtoBody() throws {
         let protoData = Proto_ConsensusCreateTopicTransactionBody.with { proto in
-            proto.submitKey = (Self.unusedPrivateKey.publicKey).toProtobuf()
-            proto.adminKey = (Self.unusedPrivateKey.publicKey).toProtobuf()
+            proto.submitKey = Resources.publicKey.toProtobuf()
+            proto.adminKey = Resources.publicKey.toProtobuf()
             proto.autoRenewAccount = Self.testAutoRenewAccountId.toProtobuf()
             proto.autoRenewPeriod = Self.testAutoRenewPeriod.toProtobuf()
         }
 
         let protoBody = Proto_TransactionBody.with { proto in
             proto.consensusCreateTopic = protoData
-            proto.transactionID = Self.testTxId.toProtobuf()
+            proto.transactionID = Resources.txId.toProtobuf()
         }
 
         let tx = try TopicCreateTransaction(protobuf: protoBody, protoData)
 
-        XCTAssertEqual(tx.submitKey, .single(Self.unusedPrivateKey.publicKey))
-        XCTAssertEqual(tx.adminKey, .single(Self.unusedPrivateKey.publicKey))
+        XCTAssertEqual(tx.submitKey, .single(Resources.publicKey))
+        XCTAssertEqual(tx.adminKey, .single(Resources.publicKey))
         XCTAssertEqual(tx.autoRenewAccountId, Self.testAutoRenewAccountId)
         XCTAssertEqual(tx.autoRenewPeriod, Self.testAutoRenewPeriod)
     }
 
     internal func testGetSetSubmitKey() {
         let tx = TopicCreateTransaction()
-        tx.submitKey(.single(Self.unusedPrivateKey.publicKey))
+        tx.submitKey(.single(Resources.publicKey))
 
-        XCTAssertEqual(tx.submitKey, .single(Self.unusedPrivateKey.publicKey))
+        XCTAssertEqual(tx.submitKey, .single(Resources.publicKey))
     }
 
     internal func testGetSetAdminKey() {
         let tx = TopicCreateTransaction()
-        tx.adminKey(.single(Self.unusedPrivateKey.publicKey))
+        tx.adminKey(.single(Resources.publicKey))
 
-        XCTAssertEqual(tx.adminKey, .single(Self.unusedPrivateKey.publicKey))
+        XCTAssertEqual(tx.adminKey, .single(Resources.publicKey))
     }
 
     internal func testGetSetAutoRenewAccountId() {
