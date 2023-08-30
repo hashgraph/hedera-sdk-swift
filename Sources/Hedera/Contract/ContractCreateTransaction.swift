@@ -24,6 +24,28 @@ import HederaProtobufs
 
 /// Start a new smart contract instance.
 public final class ContractCreateTransaction: Transaction {
+    private enum Initcode: ProtobufCodable {
+        case bytecode(Data)
+        case fileId(FileId)
+
+        internal typealias Protobuf = Proto_ContractCreateTransactionBody.OneOf_InitcodeSource
+
+        internal init(protobuf proto: Protobuf) {
+            switch proto {
+            case .initcode(let bytecode): self = .bytecode(bytecode)
+            case .fileID(let fileId): self = .fileId(.fromProtobuf(fileId))
+            }
+        }
+
+        internal func toProtobuf() -> Protobuf {
+            switch self {
+            case .bytecode(let bytecode): return .initcode(bytecode)
+            case .fileId(let fileId): return .fileID(fileId.toProtobuf())
+            }
+        }
+    }
+
+    // fixme: Replace `bytecode` and `bytecodeFileId` here with `Initcode`
     /// Create a new `ContractCreateTransaction`.
     public init(
         bytecode: Data? = nil,
@@ -40,8 +62,17 @@ public final class ContractCreateTransaction: Transaction {
         stakedNodeId: UInt64? = nil,
         declineStakingReward: Bool = false
     ) {
-        self.bytecode = bytecode
-        self.bytecodeFileId = bytecodeFileId
+        switch (bytecode, bytecodeFileId) {
+        case (.some, .some(let fileId)):
+            // log a really annoyed warning.
+            self.initcode = .fileId(fileId)
+
+        case (nil, .some(let fileId)): self.initcode = .fileId(fileId)
+
+        case (.some(let bytecode), nil): self.initcode = .bytecode(bytecode)
+        case (nil, nil): break
+        }
+
         self.adminKey = adminKey
         self.gas = gas
         self.initialBalance = initialBalance
@@ -79,23 +110,7 @@ public final class ContractCreateTransaction: Transaction {
             stakedNodeId = nil
         }
 
-        let bytecode: Data?
-        let bytecodeFileId: FileId?
-
-        switch data.initcodeSource {
-        case .initcode(let initcode):
-            bytecode = initcode
-            bytecodeFileId = nil
-        case .fileID(let fileId):
-            bytecode = nil
-            bytecodeFileId = .fromProtobuf(fileId)
-        case nil:
-            bytecode = nil
-            bytecodeFileId = nil
-        }
-
-        self.bytecode = bytecode
-        self.bytecodeFileId = bytecodeFileId
+        self.initcode = .fromProtobuf(data.initcodeSource)
         self.adminKey = try .fromProtobuf(data.adminKey)
         self.gas = UInt64(data.gas)
         self.initialBalance = .fromTinybars(data.initialBalance)
@@ -115,10 +130,23 @@ public final class ContractCreateTransaction: Transaction {
         20
     }
 
-    /// The bytes of the smart contract.
-    public var bytecode: Data? {
+    private var initcode: Initcode? {
         willSet {
             ensureNotFrozen()
+        }
+    }
+
+    /// The bytes of the smart contract.
+    public var bytecode: Data? {
+        get {
+            guard case .bytecode(let initcode) = initcode else { return nil }
+
+            return initcode
+        }
+        set(value) {
+            ensureNotFrozen()
+
+            initcode = value.map(Initcode.bytecode)
         }
     }
 
@@ -132,8 +160,15 @@ public final class ContractCreateTransaction: Transaction {
 
     /// The file to use as the bytes for the smart contract.
     public var bytecodeFileId: FileId? {
-        willSet {
+        get {
+            guard case .fileId(let initcode) = initcode else { return nil }
+
+            return initcode
+        }
+        set(value) {
             ensureNotFrozen()
+
+            initcode = value.map(Initcode.fileId)
         }
     }
 
@@ -351,13 +386,8 @@ extension ContractCreateTransaction: ToProtobuf {
 
     internal func toProtobuf() -> Protobuf {
         .with { proto in
-            switch (bytecode, bytecodeFileId) {
-            // todo: just do whatever rust does
-            case (.some, .some): fatalError("Cannot set both bytecode and bytecodeFileId")
-            case (.some(let code), nil): proto.initcode = code
-            case (nil, .some(let fileId)): proto.fileID = fileId.toProtobuf()
-            default:
-                break
+            if let initcode = initcode {
+                proto.initcodeSource = initcode.toProtobuf()
             }
 
             adminKey?.toProtobufInto(&proto.adminKey)
