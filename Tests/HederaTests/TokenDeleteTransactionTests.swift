@@ -20,6 +20,7 @@
 
 import SnapshotTesting
 import XCTest
+import HederaProtobufs
 
 @testable import Hedera
 
@@ -45,6 +46,21 @@ internal final class TokenDeleteTransactionTests: XCTestCase {
         let tx2 = try Transaction.fromBytes(tx.toBytes())
 
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
+    }
+
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_TokenDeleteTransactionBody.with { proto in
+            proto.token = TokenId(shard: 1, realm: 2, num: 3).toProtobuf()
+        }
+
+        let protoBody = Proto_TransactionBody.with { proto in
+            proto.tokenDeletion = protoData
+            proto.transactionID = Resources.txId.toProtobuf()
+        }
+
+        let tx = try TokenDeleteTransaction(protobuf: protoBody, protoData)
+
+        XCTAssertEqual(tx.tokenId, "1.2.3")
     }
 
     internal func testGetSetTokenId() {
