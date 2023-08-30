@@ -25,13 +25,17 @@ import XCTest
 @testable import Hedera
 
 internal final class SystemDeleteTransactionTests: XCTestCase {
+    private static let contractId: ContractId = 444
+    private static let fileId: FileId = 444
+    private static let expirationTime = Resources.validStart
+
     internal static func makeTransactionFile() throws -> SystemDeleteTransaction {
         try SystemDeleteTransaction()
             .nodeAccountIds(Resources.nodeAccountIds)
             .transactionId(Resources.txId)
             .sign(Resources.privateKey)
-            .fileId(444)
-            .expirationTime(Resources.validStart)
+            .fileId(fileId)
+            .expirationTime(expirationTime)
             .freeze()
     }
 
@@ -73,24 +77,42 @@ internal final class SystemDeleteTransactionTests: XCTestCase {
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }
 
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_SystemDeleteTransactionBody.with { proto in
+            proto.fileID = Self.fileId.toProtobuf()
+            proto.expirationTime = .with { $0.seconds = Self.expirationTime.toProtobuf().seconds }
+        }
+
+        let protoBody = Proto_TransactionBody.with { proto in
+            proto.systemDelete = protoData
+            proto.transactionID = Resources.txId.toProtobuf()
+        }
+
+        let tx = try SystemDeleteTransaction(protobuf: protoBody, protoData)
+
+        XCTAssertEqual(tx.fileId, Self.fileId)
+        XCTAssertEqual(tx.expirationTime, Self.expirationTime)
+        XCTAssertEqual(tx.contractId, nil)
+    }
+
     internal func testGetSetFileId() {
         let tx = SystemDeleteTransaction()
-        tx.fileId(444)
+        tx.fileId(Self.fileId)
 
-        XCTAssertEqual(tx.fileId, 444)
+        XCTAssertEqual(tx.fileId, Self.fileId)
     }
 
     internal func testGetSetContractId() throws {
         let tx = SystemDeleteTransaction()
-        tx.contractId(444)
+        tx.contractId(Self.contractId)
 
-        XCTAssertEqual(tx.contractId, 444)
+        XCTAssertEqual(tx.contractId, Self.contractId)
     }
 
     internal func testGetSetExpirationTime() throws {
         let tx = SystemDeleteTransaction()
-        tx.expirationTime(Resources.validStart)
+        tx.expirationTime(Self.expirationTime)
 
-        XCTAssertEqual(tx.expirationTime, Resources.validStart)
+        XCTAssertEqual(tx.expirationTime, Self.expirationTime)
     }
 }
