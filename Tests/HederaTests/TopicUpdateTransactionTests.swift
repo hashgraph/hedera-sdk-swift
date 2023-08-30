@@ -112,7 +112,6 @@ internal final class TopicUpdateTransactionTests: XCTestCase {
 
         tx.clearAdminKey()
         XCTAssertEqual(tx.adminKey, .keyList([]))
-
     }
 
     internal func testGetSetClearSubmitKey() {

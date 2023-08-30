@@ -153,7 +153,7 @@ internal final class TokenUpdateTransactionTests: XCTestCase {
         XCTAssertEqual(tx.treasuryAccountId, Self.testTreasuryAccountId)
     }
 
-    internal func testGetSet_adminKey() {
+    internal func testGetSetAdminKey() {
         let tx = TokenUpdateTransaction()
         tx.adminKey(.single(Self.testAdminKey.publicKey))
         XCTAssertEqual(tx.adminKey, .single(Self.testAdminKey.publicKey))
