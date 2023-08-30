@@ -25,12 +25,15 @@ import XCTest
 @testable import Hedera
 
 internal final class SystemUndeleteTransactionTests: XCTestCase {
+    private static let contractId: ContractId = 444
+    private static let fileId: FileId = 444
+
     internal static func makeTransactionFile() throws -> SystemUndeleteTransaction {
         try SystemUndeleteTransaction()
             .nodeAccountIds(Resources.nodeAccountIds)
             .transactionId(Resources.txId)
             .sign(Resources.privateKey)
-            .fileId(444)
+            .fileId(fileId)
             .freeze()
     }
 
@@ -39,7 +42,7 @@ internal final class SystemUndeleteTransactionTests: XCTestCase {
             .nodeAccountIds(Resources.nodeAccountIds)
             .transactionId(Resources.txId)
             .sign(Resources.privateKey)
-            .contractId(444)
+            .contractId(contractId)
             .freeze()
     }
 
@@ -71,17 +74,33 @@ internal final class SystemUndeleteTransactionTests: XCTestCase {
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }
 
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_SystemUndeleteTransactionBody.with { proto in
+            proto.fileID = Self.fileId.toProtobuf()
+        }
+
+        let protoBody = Proto_TransactionBody.with { proto in
+            proto.systemUndelete = protoData
+            proto.transactionID = Resources.txId.toProtobuf()
+        }
+
+        let tx = try SystemUndeleteTransaction(protobuf: protoBody, protoData)
+
+        XCTAssertEqual(tx.fileId, Self.fileId)
+        XCTAssertEqual(tx.contractId, nil)
+    }
+
     internal func testGetSetFileId() {
         let tx = SystemUndeleteTransaction()
-        tx.fileId(444)
+        tx.fileId(Self.fileId)
 
-        XCTAssertEqual(tx.fileId, 444)
+        XCTAssertEqual(tx.fileId, Self.fileId)
     }
 
     internal func testGetSetContractId() throws {
         let tx = SystemUndeleteTransaction()
-        tx.contractId(444)
+        tx.contractId(Self.contractId)
 
-        XCTAssertEqual(tx.contractId, 444)
+        XCTAssertEqual(tx.contractId, Self.contractId)
     }
 }
