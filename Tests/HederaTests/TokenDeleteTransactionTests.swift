@@ -18,9 +18,9 @@
  * ‍
  */
 
+import HederaProtobufs
 import SnapshotTesting
 import XCTest
-import HederaProtobufs
 
 @testable import Hedera
 
