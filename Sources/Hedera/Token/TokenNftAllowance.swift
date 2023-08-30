@@ -47,7 +47,7 @@ extension TokenNftAllowance: TryProtobufCodable {
     }
 }
 
-public struct NftRemoveAllowance: ValidateChecksums {
+public struct NftRemoveAllowance: Equatable, ValidateChecksums {
     public let tokenId: TokenId
     public let ownerAccountId: AccountId
     public var serials: [UInt64]
