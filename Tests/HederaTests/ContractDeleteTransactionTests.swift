@@ -49,4 +49,41 @@ internal class ContractDeleteTransactionTests: XCTestCase {
 
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }
+
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_ContractDeleteTransactionBody.with { proto in
+            proto.contractID = ContractId(num: 5007).toProtobuf()
+            proto.transferAccountID = AccountId(num: 9).toProtobuf()
+        }
+
+        let protoBody = Proto_TransactionBody.with { proto in
+            proto.contractDeleteInstance = protoData
+            proto.transactionID = Resources.txId.toProtobuf()
+        }
+
+        let tx = try ContractDeleteTransaction(protobuf: protoBody, protoData)
+
+        XCTAssertEqual(tx.contractId, 5007)
+        XCTAssertEqual(tx.transferAccountId, 9)
+        XCTAssertEqual(tx.transferContractId, nil)
+    }
+
+    internal func testGetSetContractId() {
+        let tx = ContractDeleteTransaction()
+        tx.contractId(5007)
+
+        XCTAssertEqual(tx.contractId, 5007)
+    }
+    internal func testGetSetTransferAccountId() {
+        let tx = ContractDeleteTransaction()
+        tx.transferAccountId(9)
+
+        XCTAssertEqual(tx.transferAccountId, 9)
+    }
+    internal func testGetSetTransferContractId() {
+        let tx = ContractDeleteTransaction()
+        tx.transferContractId(5008)
+
+        XCTAssertEqual(tx.transferContractId, 5008)
+    }
 }
