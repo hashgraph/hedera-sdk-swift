@@ -51,4 +51,11 @@ internal class AccountRecordsQueryTests: XCTestCase {
 
         assertSnapshot(matching: query, as: .description)
     }
+
+    internal func testGetSetAccountId() {
+        let query = AccountRecordsQuery()
+        query.accountId(5005)
+
+        XCTAssertEqual(query.accountId, 5005)
+    }
 }
