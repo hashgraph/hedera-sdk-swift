@@ -25,6 +25,9 @@ import XCTest
 @testable import Hedera
 
 internal class ContractCallQueryTests: XCTestCase {
+    private static let parameters: ContractFunctionParameters = ContractFunctionParameters().addString("hello")
+        .addString("world!")
+
     private static func makeQuery() -> ContractCallQuery {
         ContractCallQuery(contractId: 5005, gas: 1541, senderAccountId: "1.2.3").maxPaymentAmount(100_000)
     }
@@ -36,10 +39,38 @@ internal class ContractCallQueryTests: XCTestCase {
     }
 
     internal func testFunctionParameters() throws {
-        let params = ContractFunctionParameters().addString("hello").addString("world!").toBytes()
         let query = Self.makeQuery()
-            .functionParameters(params).toQueryProtobufWith(.init())
+            .functionParameters(Self.parameters.toBytes())
+            .toQueryProtobufWith(.init())
 
         assertSnapshot(matching: query, as: .description)
+    }
+
+    internal func testGetSetContractId() {
+        let query = ContractCallQuery()
+        query.contractId(5005)
+
+        XCTAssertEqual(query.contractId, 5005)
+    }
+
+    internal func testGetSetGas() {
+        let query = ContractCallQuery()
+        query.gas(1541)
+
+        XCTAssertEqual(query.gas, 1541)
+    }
+
+    internal func testGetSetCallParameters() {
+        let query = ContractCallQuery()
+        query.functionParameters(Self.parameters.toBytes())
+
+        XCTAssertEqual(query.functionParameters, Self.parameters.toBytes())
+    }
+
+    internal func testGetSetSenderAccountId() {
+        let query = ContractCallQuery()
+        query.senderAccountId("1.2.3")
+
+        XCTAssertEqual(query.senderAccountId, "1.2.3")
     }
 }
