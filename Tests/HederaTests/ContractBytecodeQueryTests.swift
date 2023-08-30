@@ -51,4 +51,11 @@ internal class ContractBytecodeQueryTests: XCTestCase {
 
         assertSnapshot(matching: query, as: .description)
     }
+
+    internal func testGetSetContractId() {
+        let query = ContractBytecodeQuery()
+        query.contractId(5005)
+
+        XCTAssertEqual(query.contractId, 5005)
+    }
 }
