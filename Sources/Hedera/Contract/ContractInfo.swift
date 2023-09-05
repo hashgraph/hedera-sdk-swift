@@ -22,39 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// Information about a smart contract instance.
-public final class ContractInfo {
-    internal init(
-        contractId: ContractId,
-        accountId: AccountId,
-        contractAccountId: String,
-        adminKey: Key?,
-        expirationTime: Timestamp?,
-        autoRenewPeriod: Duration?,
-        storage: UInt64,
-        contractMemo: String,
-        balance: Hbar,
-        isDeleted: Bool,
-        autoRenewAccountId: AccountId?,
-        maxAutomaticTokenAssociations: UInt32,
-        ledgerId: LedgerId,
-        stakingInfo: StakingInfo
-    ) {
-        self.contractId = contractId
-        self.accountId = accountId
-        self.contractAccountId = contractAccountId
-        self.adminKey = adminKey
-        self.expirationTime = expirationTime
-        self.autoRenewPeriod = autoRenewPeriod
-        self.storage = storage
-        self.contractMemo = contractMemo
-        self.balance = balance
-        self.isDeleted = isDeleted
-        self.autoRenewAccountId = autoRenewAccountId
-        self.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
-        self.ledgerId = ledgerId
-        self.stakingInfo = stakingInfo
-    }
-
+public struct ContractInfo {
     /// ID of the contract instance, in the format used by transactions.
     public let contractId: ContractId
 
@@ -117,7 +85,7 @@ public final class ContractInfo {
 extension ContractInfo: TryProtobufCodable {
     internal typealias Protobuf = Proto_ContractGetInfoResponse.ContractInfo
 
-    internal convenience init(protobuf proto: Protobuf) throws {
+    internal init(protobuf proto: Protobuf) throws {
         let adminKey = proto.hasAdminKey ? proto.adminKey : nil
         let expirationTime = proto.hasExpirationTime ? proto.expirationTime : nil
         let autoRenewPeriod = proto.hasAutoRenewPeriod ? proto.autoRenewPeriod : nil

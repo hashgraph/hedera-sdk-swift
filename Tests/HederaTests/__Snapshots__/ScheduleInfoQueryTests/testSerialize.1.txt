@@ -1,0 +1,8 @@
+HederaProtobufs.Proto_Query:
+scheduleGetInfo {
+  header {
+  }
+  scheduleID {
+    scheduleNum: 5005
+  }
+}
