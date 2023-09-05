@@ -37,7 +37,7 @@ internal final class TransactionReceiptTests: XCTestCase {
             contractId: ContractId.fromString("3.2.1"),
             topicId: TopicId.fromString("9.8.7"),
             topicSequenceNumber: 3,
-            topicRunningHash: "running hash",
+            topicRunningHash: "running hash".data(using: .utf8),
             topicRunningHashVersion: 0,
             tokenId: TokenId.fromString("6.5.4"),
             totalSupply: 30,
