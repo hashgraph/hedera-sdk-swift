@@ -107,9 +107,9 @@ public struct TransactionReceipt: Sendable {
     public let scheduleId: ScheduleId?
 
     /// The current exchange rate between Hbar and USD-cents.
-    /// 
+    ///
     /// This exists purely for "Well, I expected this name to exist because it exists in JS"
-    /// 
+    ///
     /// This is just a getter property for `current` in ``TransactionReceipt/exchangeRates``
     public var exchangeRate: ExchangeRate? {
         exchangeRates?.currentRate
