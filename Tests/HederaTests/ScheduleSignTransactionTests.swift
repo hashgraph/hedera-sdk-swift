@@ -53,4 +53,18 @@ internal final class ScheduleSignTransactionTests: XCTestCase {
 
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }
+
+    internal func testGetSetScheduleId() throws {
+        let tx = ScheduleSignTransaction.init()
+        tx.scheduleId(Resources.scheduleId)
+
+        XCTAssertEqual(tx.scheduleId, Resources.scheduleId)
+    }
+
+    internal func testClearScheduleId() throws {
+        let tx = ScheduleSignTransaction.init(scheduleId: Resources.scheduleId)
+        tx.clearScheduleId()
+
+        XCTAssertEqual(tx.scheduleId, nil)
+    }
 }

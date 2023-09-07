@@ -28,6 +28,7 @@ internal enum Resources {
     internal static let nodeAccountIds: [AccountId] = [5005, 5006]
     internal static let validStart = Timestamp(seconds: 1_554_158_542, subSecondNanos: 0)
     internal static let txId = TransactionId(accountId: 5006, validStart: validStart)
+    internal static let scheduleId = ScheduleId("0.0.555")
 
     // some unused private key
     internal static let privateKey: PrivateKey =
