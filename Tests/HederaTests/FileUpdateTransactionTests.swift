@@ -31,7 +31,6 @@ internal final class FileUpdateTransactionTests: XCTestCase {
     private static let testMemo = "test Memo"
     private static let testContents: Data = "[swift::unit::fileUpdate::1]".data(using: .utf8)!
 
-
     private static func createTransaction() throws -> FileUpdateTransaction {
         try FileUpdateTransaction()
             .nodeAccountIds([AccountId("0.0.5005"), AccountId("0.0.5006")])
@@ -109,7 +108,6 @@ internal final class FileUpdateTransactionTests: XCTestCase {
     internal func testClearMemo() throws {
         let tx = FileUpdateTransaction.init()
         tx.fileMemo(Self.testMemo)
-        
 
         XCTAssertEqual(tx.fileMemo, Self.testMemo)
     }

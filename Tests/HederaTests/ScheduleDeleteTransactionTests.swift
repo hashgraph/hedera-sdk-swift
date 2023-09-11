@@ -53,13 +53,13 @@ internal final class ScheduleDeleteTransactionTests: XCTestCase {
 
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }
-    
-    internal func testFromProtoBody() throws{
-        let protoData = Proto_ScheduleDeleteTransactionBody.with {proto in
+
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_ScheduleDeleteTransactionBody.with { proto in
             proto.scheduleID = Resources.scheduleId.toProtobuf()
         }
 
-        let protoBody = Proto_TransactionBody.with {proto in
+        let protoBody = Proto_TransactionBody.with { proto in
             proto.transactionID = Resources.txId.toProtobuf()
             proto.scheduleDelete = protoData
         }
@@ -68,7 +68,7 @@ internal final class ScheduleDeleteTransactionTests: XCTestCase {
 
         XCTAssertEqual(tx.scheduleId, Resources.scheduleId)
     }
-    
+
     internal func testGetSetScheduleId() throws {
         let tx = ScheduleDeleteTransaction()
         tx.scheduleId(Resources.scheduleId)

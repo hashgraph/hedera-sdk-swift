@@ -63,8 +63,8 @@ internal final class ScheduleCreateTransactionTests: XCTestCase {
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }
 
-    internal func testFromProtoBody() throws{
-        let protoData = Proto_ScheduleCreateTransactionBody.with {proto in
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_ScheduleCreateTransactionBody.with { proto in
             proto.adminKey = Key.single(Resources.publicKey).toProtobuf()
             proto.expirationTime = Resources.validStart.toProtobuf()
             proto.payerAccountID = Resources.accountId.toProtobuf()
@@ -72,7 +72,7 @@ internal final class ScheduleCreateTransactionTests: XCTestCase {
             proto.waitForExpiry = true
         }
 
-        let protoBody = Proto_TransactionBody.with {proto in
+        let protoBody = Proto_TransactionBody.with { proto in
             proto.scheduleCreate = protoData
             proto.transactionID = Resources.txId.toProtobuf()
         }
