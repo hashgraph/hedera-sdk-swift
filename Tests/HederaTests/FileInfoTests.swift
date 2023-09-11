@@ -27,9 +27,6 @@ import struct HederaProtobufs.Proto_Key
 @testable import Hedera
 
 internal final class FileInfoTests: XCTestCase {
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static let info: Proto_FileGetInfoResponse.FileInfo = .with { proto in
         proto.fileID = FileId(num: 1).toProtobuf()
         proto.size = 2
@@ -38,7 +35,7 @@ internal final class FileInfoTests: XCTestCase {
         }
         proto.deleted = true
         proto.keys = .with { proto in
-            proto.keys = [unusedPrivateKey.publicKey.toProtobuf()]
+            proto.keys = [Resources.publicKey.toProtobuf()]
         }
         proto.ledgerID = LedgerId.testnet.bytes
         proto.memo = "flook"

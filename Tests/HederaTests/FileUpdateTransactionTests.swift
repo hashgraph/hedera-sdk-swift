@@ -25,9 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal final class FileUpdateTransactionTests: XCTestCase {
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static let testMemo = "test Memo"
     private static let testContents: Data = "[swift::unit::fileUpdate::1]".data(using: .utf8)!
 
@@ -41,11 +38,11 @@ internal final class FileUpdateTransactionTests: XCTestCase {
             .fileId("1.2.4")
             .contents(Self.testContents)
             .expirationTime(Timestamp(seconds: 1_554_158_728, subSecondNanos: 0))
-            .keys(.init(keys: [.single(unusedPrivateKey.publicKey)]))
+            .keys(.init(keys: [.single(Resources.publicKey)]))
             .maxTransactionFee(.fromTinybars(100_000))
             .fileMemo("Hello memo")
             .freeze()
-            .sign(unusedPrivateKey)
+            .sign(Resources.privateKey)
     }
 
     internal func testSerialize() throws {

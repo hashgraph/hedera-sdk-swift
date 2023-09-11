@@ -27,9 +27,6 @@ import struct HederaProtobufs.Proto_Key
 @testable import Hedera
 
 internal final class ContractInfoTests: XCTestCase {
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static let info: Proto_ContractGetInfoResponse.ContractInfo = .with { proto in
         proto.contractID = ContractId(num: 1).toProtobuf()
         proto.accountID = AccountId(num: 5006).toProtobuf()

@@ -28,9 +28,6 @@ import struct HederaProtobufs.Proto_Timestamp
 @testable import Hedera
 
 internal final class ScheduleInfoTests: XCTestCase {
-    internal let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private func makeDeleteInfo() throws -> ScheduleInfo {
         let scheduleId = AnySchedulableTransaction.accountDelete(
             AccountDeleteTransaction.init().accountId(AccountId("6.6.6"))
@@ -54,10 +51,10 @@ internal final class ScheduleInfoTests: XCTestCase {
                     proto.transactionFee = 200_000_000
                 }
                 proto.signers = .with { proto in
-                    proto.keys = [unusedPrivateKey.publicKey.toProtobuf()]
+                    proto.keys = [Resources.publicKey.toProtobuf()]
                 }
                 proto.waitForExpiry = true
-                proto.adminKey = unusedPrivateKey.publicKey.toProtobuf()
+                proto.adminKey = Resources.publicKey.toProtobuf()
                 proto.memo = "flook"
                 proto.ledgerID = LedgerId.testnet.bytes
                 proto.deletionTime = Timestamp(seconds: 1_554_158_542, subSecondNanos: 0).toProtobuf()
@@ -89,10 +86,10 @@ internal final class ScheduleInfoTests: XCTestCase {
                     proto.transactionFee = 200_000_000
                 }
                 proto.signers = .with { proto in
-                    proto.keys = [unusedPrivateKey.publicKey.toProtobuf()]
+                    proto.keys = [Resources.publicKey.toProtobuf()]
                 }
                 proto.waitForExpiry = true
-                proto.adminKey = unusedPrivateKey.publicKey.toProtobuf()
+                proto.adminKey = Resources.publicKey.toProtobuf()
                 proto.memo = "flook"
                 proto.ledgerID = LedgerId.testnet.bytes
                 proto.executionTime = Timestamp(seconds: 1_554_158_542, subSecondNanos: 0).toProtobuf()
@@ -112,10 +109,4 @@ internal final class ScheduleInfoTests: XCTestCase {
 
         assertSnapshot(matching: info, as: .description)
     }
-
-    // internal func testFromProtobuf() throws {
-    //     let info = try createInfo()
-
-    //     assertSnapshot(matching: try ScheduleInfo.fromProtobuf(info), as: .description)
-    // }
 }

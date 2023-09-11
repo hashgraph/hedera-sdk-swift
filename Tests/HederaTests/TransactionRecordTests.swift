@@ -24,9 +24,6 @@ import XCTest
 
 @testable import Hedera
 
-let unusedPrivateKey: PrivateKey =
-    "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
 internal final class TransactionRecordTests: XCTestCase {
     private func createReceipt() throws -> TransactionReceipt {
         try TransactionReceipt.init(
@@ -82,7 +79,7 @@ internal final class TransactionRecordTests: XCTestCase {
                 TokenAssociation.init(tokenId: TokenId("5.4.3"), accountId: AccountId("3.6.7"))
             ],
             parentConsensusTimestamp: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0),
-            aliasKey: unusedPrivateKey.publicKey,
+            aliasKey: Resources.publicKey,
             children: [],
             duplicates: [],
             ethereumHash: "flook ethereum".data(using: .utf8)!,

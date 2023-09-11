@@ -25,9 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal final class ScheduleCreateTransactionTests: XCTestCase {
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     internal static let testMemo = "test memo"
 
     private static func makeTransaction() throws -> ScheduleCreateTransaction {
@@ -47,7 +44,7 @@ internal final class ScheduleCreateTransactionTests: XCTestCase {
             .maxTransactionFee(1)
             .expirationTime(Timestamp(seconds: 1_554_158_567, subSecondNanos: 0))
             .freeze()
-            .sign(unusedPrivateKey)
+            .sign(Resources.privateKey)
     }
 
     internal func testSerialize() throws {
