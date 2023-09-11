@@ -51,6 +51,21 @@ internal final class ScheduleSignTransactionTests: XCTestCase {
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }
 
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_ScheduleSignTransactionBody.with { proto in
+            proto.scheduleID = Resources.scheduleId.toProtobuf()
+        }
+
+        let protoBody = Proto_TransactionBody.with { proto in
+            proto.scheduleSign = protoData
+            proto.transactionID = Resources.txId.toProtobuf()
+        }
+
+        let tx = try ScheduleSignTransaction(protobuf: protoBody, protoData)
+
+        XCTAssertEqual(tx.scheduleId, Resources.scheduleId)
+    }
+
     internal func testGetSetScheduleId() throws {
         let tx = ScheduleSignTransaction.init()
         tx.scheduleId(Resources.scheduleId)
