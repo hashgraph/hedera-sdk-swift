@@ -51,6 +51,23 @@ internal final class TokenAssociateTransactionTests: XCTestCase {
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
     }
 
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_TokenAssociateTransactionBody.with { proto in
+            proto.account = Resources.accountId.toProtobuf()
+            proto.tokens = [Resources.tokenId.toProtobuf()]
+        }
+
+        let protoBody = Proto_TransactionBody.with { proto in
+            proto.tokenAssociate = protoData
+            proto.transactionID = Resources.txId.toProtobuf()
+        }
+
+        let tx = try TokenAssociateTransaction(protobuf: protoBody, protoData)
+
+        XCTAssertEqual(tx.accountId, Resources.accountId)
+        XCTAssertEqual(tx.tokenIds, [Resources.tokenId])
+    }
+
     internal func testSetGetAccountId() {
         let tx = TokenAssociateTransaction.init()
 

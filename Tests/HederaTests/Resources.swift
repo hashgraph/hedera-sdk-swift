@@ -31,6 +31,7 @@ internal enum Resources {
     internal static let scheduleId = ScheduleId("0.0.555")
     internal static let accountId = AccountId("0.0.5009")
     internal static let fileId = FileId("1.2.3")
+    internal static let tokenId = TokenId("0.3.5")
 
     // some unused private key
     internal static let privateKey: PrivateKey =
