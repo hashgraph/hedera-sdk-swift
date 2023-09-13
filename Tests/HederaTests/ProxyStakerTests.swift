@@ -25,9 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal final class ProxyStakerTests: XCTestCase {
-    private static let testMemo = "test Memo"
-    private static let testContents: Data = "[swift::unit::fileUpdate::1]".data(using: .utf8)!
-
     private static let proxyStaker: Proto_ProxyStaker = .with { proto in
         proto.accountID = Resources.accountId.toProtobuf()
         proto.amount = 10

@@ -1,0 +1,1 @@
+StakingInfo(declineStakingReward: true, stakePeriodStart: Optional(1554158542000000000), pendingReward: 5 tℏ, stakedToMe: 10 tℏ, stakedAccountId: nil, stakedNodeId: Optional(3))
