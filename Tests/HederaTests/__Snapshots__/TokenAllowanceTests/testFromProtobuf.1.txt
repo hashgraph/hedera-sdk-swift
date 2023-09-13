@@ -1,0 +1,1 @@
+TokenAllowance(tokenId: 0.3.5, ownerAccountId: 0.0.5009, spenderAccountId: 0.2.24, amount: 4)
