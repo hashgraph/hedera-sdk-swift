@@ -25,9 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal final class ScheduleDeleteTransactionTests: XCTestCase {
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static func makeTransaction() throws -> ScheduleDeleteTransaction {
         try ScheduleDeleteTransaction()
             .nodeAccountIds([AccountId("0.0.5005"), AccountId("0.0.5006")])
@@ -38,7 +35,7 @@ internal final class ScheduleDeleteTransactionTests: XCTestCase {
             .scheduleId(ScheduleId("0.0.6006"))
             .maxTransactionFee(.fromTinybars(100_000))
             .freeze()
-            .sign(unusedPrivateKey)
+            .sign(Resources.privateKey)
     }
 
     internal func testSerialize() throws {
@@ -52,5 +49,27 @@ internal final class ScheduleDeleteTransactionTests: XCTestCase {
         let tx2 = try Transaction.fromBytes(tx.toBytes())
 
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
+    }
+
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_ScheduleDeleteTransactionBody.with { proto in
+            proto.scheduleID = Resources.scheduleId.toProtobuf()
+        }
+
+        let protoBody = Proto_TransactionBody.with { proto in
+            proto.transactionID = Resources.txId.toProtobuf()
+            proto.scheduleDelete = protoData
+        }
+
+        let tx = try ScheduleDeleteTransaction(protobuf: protoBody, protoData)
+
+        XCTAssertEqual(tx.scheduleId, Resources.scheduleId)
+    }
+
+    internal func testGetSetScheduleId() throws {
+        let tx = ScheduleDeleteTransaction()
+        tx.scheduleId(Resources.scheduleId)
+
+        XCTAssertEqual(tx.scheduleId, Resources.scheduleId)
     }
 }

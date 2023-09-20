@@ -54,6 +54,8 @@ public final class ScheduleCreateTransaction: Transaction {
         expirationTime = data.hasExpirationTime ? .fromProtobuf(data.expirationTime) : nil
         isWaitForExpiry = data.waitForExpiry
         scheduleMemo = data.memo
+        payerAccountId = data.hasPayerAccountID ? try .fromProtobuf(data.payerAccountID) : nil
+        adminKey = data.hasAdminKey ? try .fromProtobuf(data.adminKey) : nil
 
         try super.init(protobuf: proto)
     }

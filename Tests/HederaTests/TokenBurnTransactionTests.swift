@@ -25,9 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal final class TokenBurnTransactionTests: XCTestCase {
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static func createTransaction() throws -> TokenBurnTransaction {
         try TokenBurnTransaction()
             .nodeAccountIds([AccountId("0.0.5005"), AccountId("0.0.5006")])
@@ -39,7 +36,7 @@ internal final class TokenBurnTransactionTests: XCTestCase {
             .amount(54)
             .maxTransactionFee(1)
             .freeze()
-            .sign(unusedPrivateKey)
+            .sign(Resources.privateKey)
     }
 
     private static func createTransactionNft() throws -> TokenBurnTransaction {
@@ -53,7 +50,7 @@ internal final class TokenBurnTransactionTests: XCTestCase {
             .maxTransactionFee(1)
             .setSerials([1, 2, 3])
             .freeze()
-            .sign(unusedPrivateKey)
+            .sign(Resources.privateKey)
 
     }
 

@@ -1,9 +1,9 @@
 /*
  * ‌
  * Hedera Swift SDK
- *
+ * ​
  * Copyright (C) 2023 - 2023 Hedera Hashgraph, LLC
- *
+ * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,27 +19,20 @@
  */
 
 import HederaProtobufs
-import SnapshotTesting
 import XCTest
 
 @testable import Hedera
 
-internal final class TransactionRecordQueryTests: XCTestCase {
-    internal func testSerialize() throws {
-        let validStart = Timestamp(fromUnixTimestampNanos: 1_641_088_801 * 1_000_000_000 + 2)
+internal final class StatusTests: XCTestCase {
+    internal func testToResponseCode() {
+        for code in Proto_ResponseCodeEnum.allCases {
+            if code == Proto_ResponseCodeEnum.UNRECOGNIZED(-1) {
+                continue
+            }
 
-        let transactionId: TransactionId = TransactionId(
-            accountId: "0.0.31415",
-            validStart: validStart,
-            scheduled: false,
-            nonce: nil
-        )
-        let query = TransactionRecordQuery()
-            .transactionId(transactionId)
-            .includeChildren(true)
-            .includeDuplicates(true)
-            .toQueryProtobufWith(.init())
+            let status = Status.init(rawValue: Int32(code.rawValue))
 
-        assertSnapshot(matching: query, as: .description)
+            XCTAssertEqual(code.rawValue, Int(status.rawValue))
+        }
     }
 }

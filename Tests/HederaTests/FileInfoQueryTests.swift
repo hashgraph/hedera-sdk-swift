@@ -31,4 +31,11 @@ internal final class FileInfoQueryTests: XCTestCase {
 
         assertSnapshot(matching: query, as: .description)
     }
+
+    internal func testGetSetFileId() throws {
+        let query = FileInfoQuery()
+        query.fileId(Resources.fileId)
+
+        XCTAssertEqual(query.fileId, Resources.fileId)
+    }
 }

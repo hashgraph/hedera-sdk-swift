@@ -1,9 +1,9 @@
 /*
  * ‌
  * Hedera Swift SDK
- *
+ * ​
  * Copyright (C) 2023 - 2023 Hedera Hashgraph, LLC
- *
+ * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -24,22 +24,17 @@ import XCTest
 
 @testable import Hedera
 
-internal final class TransactionRecordQueryTests: XCTestCase {
-    internal func testSerialize() throws {
-        let validStart = Timestamp(fromUnixTimestampNanos: 1_641_088_801 * 1_000_000_000 + 2)
+internal final class ProxyStakerTests: XCTestCase {
+    private static let proxyStaker: Proto_ProxyStaker = .with { proto in
+        proto.accountID = Resources.accountId.toProtobuf()
+        proto.amount = 10
+    }
 
-        let transactionId: TransactionId = TransactionId(
-            accountId: "0.0.31415",
-            validStart: validStart,
-            scheduled: false,
-            nonce: nil
-        )
-        let query = TransactionRecordQuery()
-            .transactionId(transactionId)
-            .includeChildren(true)
-            .includeDuplicates(true)
-            .toQueryProtobufWith(.init())
+    internal func testFromProtobuf() throws {
+        assertSnapshot(matching: try ProxyStaker.fromProtobuf(Self.proxyStaker), as: .description)
+    }
 
-        assertSnapshot(matching: query, as: .description)
+    internal func testToProtobuf() throws {
+        assertSnapshot(matching: try ProxyStaker.fromProtobuf(Self.proxyStaker).toProtobuf(), as: .description)
     }
 }

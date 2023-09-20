@@ -25,9 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal final class TokenAssociateTransactionTests: XCTestCase {
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static func createTransaction() throws -> TokenAssociateTransaction {
         try TokenAssociateTransaction()
             .nodeAccountIds([AccountId("0.0.5005"), AccountId("0.0.5006")])
@@ -38,7 +35,7 @@ internal final class TokenAssociateTransactionTests: XCTestCase {
             .accountId(AccountId.fromString("0.0.435"))
             .tokenIds([TokenId.fromString("1.2.3")])
             .freeze()
-            .sign(unusedPrivateKey)
+            .sign(Resources.privateKey)
     }
 
     internal func testSerialize() throws {
@@ -52,6 +49,23 @@ internal final class TokenAssociateTransactionTests: XCTestCase {
         let tx2 = try Transaction.fromBytes(tx.toBytes())
 
         XCTAssertEqual(try tx.makeProtoBody(), try tx2.makeProtoBody())
+    }
+
+    internal func testFromProtoBody() throws {
+        let protoData = Proto_TokenAssociateTransactionBody.with { proto in
+            proto.account = Resources.accountId.toProtobuf()
+            proto.tokens = [Resources.tokenId.toProtobuf()]
+        }
+
+        let protoBody = Proto_TransactionBody.with { proto in
+            proto.tokenAssociate = protoData
+            proto.transactionID = Resources.txId.toProtobuf()
+        }
+
+        let tx = try TokenAssociateTransaction(protobuf: protoBody, protoData)
+
+        XCTAssertEqual(tx.accountId, Resources.accountId)
+        XCTAssertEqual(tx.tokenIds, [Resources.tokenId])
     }
 
     internal func testSetGetAccountId() {

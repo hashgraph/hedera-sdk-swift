@@ -25,9 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal final class TokenCreateTransactionTests: XCTestCase {
-    internal static let unusedPrivateKey: PrivateKey =
-        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
     private static func createTransaction() throws -> TokenCreateTransaction {
         try TokenCreateTransaction()
             .nodeAccountIds([AccountId("0.0.5005"), AccountId("0.0.5006")])
@@ -36,18 +33,18 @@ internal final class TokenCreateTransactionTests: XCTestCase {
                     accountId: 5005, validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0), scheduled: false)
             )
             .initialSupply(30)
-            .feeScheduleKey(.single(unusedPrivateKey.publicKey))
-            .supplyKey(.single(unusedPrivateKey.publicKey))
-            .adminKey(.single(unusedPrivateKey.publicKey))
+            .feeScheduleKey(.single(Resources.publicKey))
+            .supplyKey(.single(Resources.publicKey))
+            .adminKey(.single(Resources.publicKey))
             .autoRenewAccountId(AccountId.fromString("0.0.123"))
             .autoRenewPeriod(Duration.seconds(100))
             .decimals(3)
             .freezeDefault(true)
-            .freezeKey(.single(unusedPrivateKey.publicKey))
-            .wipeKey(.single(unusedPrivateKey.publicKey))
+            .freezeKey(.single(Resources.publicKey))
+            .wipeKey(.single(Resources.publicKey))
             .symbol("F")
-            .kycKey(.single(unusedPrivateKey.publicKey))
-            .pauseKey(.single(unusedPrivateKey.publicKey))
+            .kycKey(.single(Resources.publicKey))
+            .pauseKey(.single(Resources.publicKey))
             .expirationTime(Timestamp(seconds: 1_554_158_557, subSecondNanos: 0))
             .treasuryAccountId(AccountId.fromString("0.0.456"))
             .name("flook")
@@ -61,7 +58,7 @@ internal final class TokenCreateTransactionTests: XCTestCase {
                     ))
             ])
             .freeze()
-            .sign(unusedPrivateKey)
+            .sign(Resources.privateKey)
     }
 
     private static func createTransactionNft() throws -> TokenCreateTransaction {
@@ -71,25 +68,25 @@ internal final class TokenCreateTransactionTests: XCTestCase {
                 TransactionId(
                     accountId: 5006, validStart: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0), scheduled: false)
             )
-            .feeScheduleKey(.single(unusedPrivateKey.publicKey))
-            .supplyKey(.single(unusedPrivateKey.publicKey))
+            .feeScheduleKey(.single(Resources.publicKey))
+            .supplyKey(.single(Resources.publicKey))
             .maxSupply(500)
-            .adminKey(.single(unusedPrivateKey.publicKey))
+            .adminKey(.single(Resources.publicKey))
             .autoRenewAccountId(AccountId.fromString("0.0.123"))
             .autoRenewPeriod(Duration.seconds(100))
             .tokenSupplyType(TokenSupplyType.finite)
             .tokenType(TokenType.nonFungibleUnique)
-            .freezeKey(.single(unusedPrivateKey.publicKey))
-            .wipeKey(.single(unusedPrivateKey.publicKey))
+            .freezeKey(.single(Resources.publicKey))
+            .wipeKey(.single(Resources.publicKey))
             .symbol("F")
-            .kycKey(.single(unusedPrivateKey.publicKey))
-            .pauseKey(.single(unusedPrivateKey.publicKey))
+            .kycKey(.single(Resources.publicKey))
+            .pauseKey(.single(Resources.publicKey))
             .expirationTime(Timestamp(seconds: 1_554_158_557, subSecondNanos: 0))
             .treasuryAccountId(AccountId.fromString("0.0.456"))
             .name("flook")
             .tokenMemo("flook memo")
             .freeze()
-            .sign(unusedPrivateKey)
+            .sign(Resources.privateKey)
     }
 
     internal func testSerialize() throws {
@@ -121,20 +118,17 @@ internal final class TokenCreateTransactionTests: XCTestCase {
     internal func testProperties() throws {
         let tx = try Self.createTransaction()
 
-        let unusedPrivateKey: PrivateKey =
-            "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e10"
-
         XCTAssertEqual(tx.name, "flook")
         XCTAssertEqual(tx.symbol, "F")
         XCTAssertEqual(tx.decimals, 3)
         XCTAssertEqual(tx.initialSupply, 30)
         XCTAssertEqual(tx.treasuryAccountId, "0.0.456")
-        XCTAssertEqual(tx.adminKey, .single(unusedPrivateKey.publicKey))
-        XCTAssertEqual(tx.kycKey, .single(unusedPrivateKey.publicKey))
-        XCTAssertEqual(tx.freezeKey, .single(unusedPrivateKey.publicKey))
-        XCTAssertEqual(tx.wipeKey, .single(unusedPrivateKey.publicKey))
-        XCTAssertEqual(tx.feeScheduleKey, .single(unusedPrivateKey.publicKey))
-        XCTAssertEqual(tx.pauseKey, .single(unusedPrivateKey.publicKey))
+        XCTAssertEqual(tx.adminKey, .single(Resources.publicKey))
+        XCTAssertEqual(tx.kycKey, .single(Resources.publicKey))
+        XCTAssertEqual(tx.freezeKey, .single(Resources.publicKey))
+        XCTAssertEqual(tx.wipeKey, .single(Resources.publicKey))
+        XCTAssertEqual(tx.feeScheduleKey, .single(Resources.publicKey))
+        XCTAssertEqual(tx.pauseKey, .single(Resources.publicKey))
         XCTAssertEqual(tx.freezeDefault, true)
         XCTAssertEqual(tx.expirationTime, Timestamp(seconds: 1_554_158_557, subSecondNanos: 0))
         XCTAssertEqual(tx.autoRenewAccountId, try AccountId.fromString("0.0.123"))

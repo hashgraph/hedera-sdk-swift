@@ -27,9 +27,15 @@ internal final class ScheduleInfoQueryTests: XCTestCase {
     internal func testSerialize() throws {
         let query = try ScheduleInfoQuery()
             .scheduleId(ScheduleId.fromString("0.0.5005"))
-            .maxPaymentAmount(100000)
             .toQueryProtobufWith(.init())
 
         assertSnapshot(matching: query, as: .description)
+    }
+
+    internal func testGetSetScheduleId() throws {
+        let query = ScheduleInfoQuery()
+        query.scheduleId(Resources.scheduleId)
+
+        XCTAssertEqual(query.scheduleId, Resources.scheduleId)
     }
 }
