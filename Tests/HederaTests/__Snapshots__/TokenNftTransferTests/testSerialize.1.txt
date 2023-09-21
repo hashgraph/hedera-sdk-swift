@@ -1,0 +1,1 @@
+TokenNftTransfer(tokenId: 0.3.5, sender: 0.0.5009, receiver: 0.0.5008, serial: 4, isApproved: true)
