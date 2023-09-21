@@ -25,7 +25,6 @@ import XCTest
 @testable import Hedera
 
 internal final class StakingInfoTests: XCTestCase {
-
     private static let stakingInfoAccount: Proto_StakingInfo = .with { proto in
         proto.declineReward = true
         proto.stakePeriodStart = Resources.validStart.toProtobuf()
