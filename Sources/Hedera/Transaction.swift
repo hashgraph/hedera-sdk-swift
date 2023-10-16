@@ -36,7 +36,7 @@ public class Transaction: ValidateChecksums {
     }
 
     internal private(set) final var signers: [Signer] = []
-    internal private(set) final var sources: TransactionSources?
+    internal final var sources: TransactionSources?
     public private(set) final var isFrozen: Bool = false
 
     private final var `operator`: Operator?
@@ -257,6 +257,40 @@ public class Transaction: ValidateChecksums {
         signWithSigner(`operator`.signer)
 
         return self
+    }
+
+    public final func getSignatures() throws -> [AccountId: [PublicKey: Data]] {
+        let sources = try self.makeSources()
+
+        self.sources = sources
+
+        precondition(sources.chunksCount == 1, "called `getSignatures` on a chunked transaction with chunks")
+
+        return try Transaction.getSignaturesAtOffset(chunk: sources.chunks.first!)
+    }
+
+    /// Get the Signatures for this transaction
+    ///
+    internal static func getSignaturesAtOffset(chunk: SourceChunk) throws -> [AccountId: [PublicKey:
+        Data]]
+    {
+        let signaturesPerNode = try zip(chunk.nodeIds, chunk.signedTransactions).lazy.map { nodeId, tx in
+            let sigs = try tx.sigMap.sigPair.lazy.map { sigPair in
+                let key = try PublicKey.fromBytes(sigPair.pubKeyPrefix)
+                let value: Data
+                switch sigPair.signature {
+                case .ed25519(let data),
+                    .ecdsaSecp256K1(let data):
+                    value = data
+                default: value = Data()
+                }
+                return (key, value)
+            }
+
+            return (nodeId, Dictionary(uniqueKeysWithValues: sigs))
+        }
+
+        return Dictionary(uniqueKeysWithValues: signaturesPerNode)
     }
 
     internal final func signWithSigner(_ signer: Signer) {
