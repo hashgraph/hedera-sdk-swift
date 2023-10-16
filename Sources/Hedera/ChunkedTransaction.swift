@@ -102,6 +102,14 @@ public class ChunkedTransaction: Transaction {
         return super.addSignatureSigner(signer)
     }
 
+    public final func getAllSignatures() throws -> [[AccountId: [PublicKey: Data]]] {
+        let sources = try self.makeSources()
+
+        self.sources = sources
+
+        return try sources.chunks.map(Transaction.getSignaturesAtOffset)
+    }
+
     public final override func execute(_ client: Client, _ timeout: TimeInterval? = nil) async throws
         -> TransactionResponse
     {
