@@ -22,7 +22,8 @@ import Hedera
 import XCTest
 
 internal class TransactionRecord: XCTestCase {
-    internal func makeToken(_ testEnv: NonfreeTestEnvironment,_ account: Account) async throws -> Transaction.Response {
+    internal func makeToken(_ testEnv: NonfreeTestEnvironment, _ account: Account) async throws -> Transaction.Response
+    {
         try await TokenCreateTransaction()
             .name("ffff")
             .symbol("F")

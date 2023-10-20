@@ -33,8 +33,8 @@ internal class TransactionReceipt: XCTestCase {
         let txId = try XCTUnwrap(resp.transactionId)
 
         let _ = try await TransactionReceiptQuery()
-                .transactionId(txId)
-                .execute(testEnv.client)
+            .transactionId(txId)
+            .execute(testEnv.client)
     }
 
     internal func testQueryInvalidTxIdFails() async throws {
