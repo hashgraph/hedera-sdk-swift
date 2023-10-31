@@ -53,8 +53,8 @@ internal final class CryptoAesTests: XCTestCase {
         let decrypted = try Crypto.Aes.aes128CbcPadDecrypt(key: password, iv: iv, message: doc.der)
 
         XCTAssertEqual(
-            decrypted.base64EncodedString(),
-            "DZTOu2UR2ka4AD9DJWfpgutyZARbNLa6rwzp+BvBv9et9viNd/UEPlYzWRZh4W2iehbSAjzxYVEKtM78FMHOeAZq6qm+DUOth+vu6cBth2j+pD2R4+BhZWuPLKtC34mixoL2EZ7VazHcwXeNjYKxkyq3doQwsd45bdPKbQdWxbY="
+            decrypted.hexStringEncoded(),
+            "0d94cebb6511da46b8003f432567e982eb7264045b34b6baaf0ce9f81bc1bfd7adf6f88d77f5043e5633591661e16da27a16d2023cf161510ab4cefc14c1ce78066aeaa9be0d43ad87ebeee9c06d8768fea43d91e3e061656b8f2cab42df89a2c682f6119ed56b31dcc1778d8d82b1932ab7768430b1de396dd3ca6d0756c5b6"
         )
     }
 }
