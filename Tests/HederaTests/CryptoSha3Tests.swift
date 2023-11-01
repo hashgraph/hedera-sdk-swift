@@ -23,7 +23,7 @@ import XCTest
 @testable import Hedera
 
 internal final class CryptoSha3Tests: XCTestCase {
-    internal func testKeccak256Encrypt() throws {
+    internal func testKeccak256Hash() throws {
         let input = "testingKeccak256".data(using: .utf8)!
 
         let sha = Crypto.Sha3.keccak256(input)
@@ -32,7 +32,7 @@ internal final class CryptoSha3Tests: XCTestCase {
         XCTAssertEqual(sha.count, 32)
     }
 
-    internal func testKeccak256EncryptDigest() throws {
+    internal func testKeccak256HashDigest() throws {
         let input = "testingKeccak256Digest".data(using: .utf8)!
 
         let sha = Crypto.Sha3.digest(Crypto.Sha3.keccak256, input)

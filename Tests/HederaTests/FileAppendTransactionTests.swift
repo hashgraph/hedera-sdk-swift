@@ -42,6 +42,8 @@ internal final class FileAppendTransactionTests: XCTestCase {
     internal func testSerialize() throws {
         let tx = try Self.makeTransaction()
 
+        // Unlike most transactions, this iteration makes sure the chunked data is properly handled.
+        // NOTE: Without a client, dealing with chunked data is cumbersome.
         let bodyBytes = try tx.makeSources().signedTransactions.makeIterator().map { signed in
             try Proto_TransactionBody.init(contiguousBytes: signed.bodyBytes)
         }
@@ -58,6 +60,7 @@ internal final class FileAppendTransactionTests: XCTestCase {
 
         let tx2 = try Transaction.fromBytes(try tx.toBytes())
 
+        // As stated above, this assignment properly handles the possibilty of the data being chunked.
         let txBody = try tx.makeSources().signedTransactions.makeIterator().map { signed in
             try Proto_TransactionBody.init(contiguousBytes: signed.bodyBytes)
         }

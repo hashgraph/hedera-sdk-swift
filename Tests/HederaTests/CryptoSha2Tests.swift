@@ -23,7 +23,7 @@ import XCTest
 @testable import Hedera
 
 internal final class CryptoSha2Tests: XCTestCase {
-    internal func testSha256Encrypt() throws {
+    internal func testSha256Hash() throws {
         let input = "testingSha256".data(using: .utf8)!
 
         let sha = Crypto.Sha2.sha256(input)
@@ -32,7 +32,7 @@ internal final class CryptoSha2Tests: XCTestCase {
         XCTAssertEqual(sha.count, 32)
     }
 
-    internal func testSha384Encrypt() throws {
+    internal func testSha384Hash() throws {
         let input = "testingSha384".data(using: .utf8)!
 
         let sha = Crypto.Sha2.sha384(input)
@@ -43,7 +43,7 @@ internal final class CryptoSha2Tests: XCTestCase {
         XCTAssertEqual(sha.count, 48)
     }
 
-    internal func testSha256DigestEncrypt() throws {
+    internal func testSha256HashDigest() throws {
         let input = "testingSha256digest".data(using: .utf8)!
 
         let sha = Crypto.Sha2.digest(Crypto.Sha2.sha256, input)
@@ -54,7 +54,7 @@ internal final class CryptoSha2Tests: XCTestCase {
         XCTAssertEqual(sha.count, 32)
     }
 
-    internal func testSha384EncryptDigest() throws {
+    internal func testSha384HashDigest() throws {
         let input = "testingSha384digest".data(using: .utf8)!
 
         let sha = Crypto.Sha2.digest(Crypto.Sha2.sha384, input)
@@ -65,7 +65,7 @@ internal final class CryptoSha2Tests: XCTestCase {
         XCTAssertEqual(sha.count, 48)
     }
 
-    internal func testSha512EncryptDigest() throws {
+    internal func testSha512HashDigest() throws {
         let input = "testingSha512digest".data(using: .utf8)!
 
         let sha = Crypto.Sha2.digest(Crypto.Sha2.sha512, input)
