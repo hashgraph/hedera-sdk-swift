@@ -42,4 +42,22 @@ internal enum Resources {
         privateKey.publicKey
     }
 
+    internal static func checkTransactionBody(body: Proto_TransactionBody) throws -> Proto_TransactionBody.OneOf_Data {
+        let txBody = body
+
+        let nodeAccountId = txBody.nodeAccountID
+
+        XCTAssertEqual(txBody.transactionID, Self.txId.toProtobuf())
+
+        XCTAssert(Resources.nodeAccountIds.contains(try AccountId.fromProtobuf(nodeAccountId)))
+
+        XCTAssertEqual(txBody.transactionFee, UInt64(Hbar(2).toTinybars()))
+
+        XCTAssertEqual(txBody.transactionValidDuration, Duration.seconds(120).toProtobuf())
+        XCTAssertEqual(txBody.generateRecord, false)
+        XCTAssertEqual(txBody.memo, "")
+
+        return txBody.data!
+    }
+
 }
