@@ -59,5 +59,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.swift }}-spm-
 
+      - name: "Create env file"
+        run: |
+            touch .env
+            echo TEST_OPERATOR_KEY="302e020100300506032b65700422042091132178e72057a1d7528025956fe39b0b847f200ab59b2fdd367017f3087137" >> .env
+            echo TEST_OPERATOR_ID="0.0.2" >> .env
+            echo TEST_HEDERA_NETWORK="localhost" >> .env
+            echo TEST_RUN_NONFREE="1" >> .env
+            cat .env
+      
+      - name: Start the local node
+        run: npx @hashgraph/hedera-local@2.13.0 start -d --network local
+
       - name: Test
         run: swift test
+
+      - name: Stop the local node
+        run: npx @hashgraph/hedera-local@2.13.0 stop
