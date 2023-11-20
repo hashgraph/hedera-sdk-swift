@@ -87,6 +87,8 @@ internal actor Ratelimit {
 }
 
 internal struct TestEnvironment {
+    private let defaultLocalNodeAddress: String = "127.0.0.1:50211"
+    private let defaultLocalMirrorNodeAddress: String = "127.0.0.1:5600"
     internal struct Config {
         private static func envBool(env: Environment?, key: String, defaultValue: Bool) -> Bool {
             guard let value = env?[key]?.stringValue else {
@@ -178,11 +180,33 @@ internal struct TestEnvironment {
         config = .init()
         ratelimits = .init()
 
-        // todo: warn when error
-        client = (try? Client.forName(config.network)) ?? Client.forTestnet()
+        do {
+            switch config.network {
+            case "mainnet":
+                self.client = Client.forMainnet()
+            case "testnet":
+                self.client = .forTestnet()
+            case "previewnet":
+                self.client = Client.forPreviewnet()
+            case "localhost":
+                var network: [String: AccountId] = [String: AccountId]()
+
+                network[defaultLocalNodeAddress] = AccountId(num: 3)
+
+                let client = try Client.forNetwork(network)
+
+                self.client = client.setMirrorNetwork([defaultLocalMirrorNodeAddress])
+            default:
+                self.client = Client.forTestnet()
+            }
+        } catch {
+            print("Error creating client: \(config.network); creating one using testnet")
+
+            self.client = Client.forTestnet()
+        }
 
         if let op = config.operator {
-            client.setOperator(op.accountId, op.privateKey)
+            self.client.setOperator(op.accountId, op.privateKey)
         }
     }
 
