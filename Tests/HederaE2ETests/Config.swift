@@ -119,6 +119,12 @@ internal struct TestEnvironment {
 
             `operator` = .init(env: env)
 
+            if network == "localhost" {
+                self.isLocal = true
+            } else {
+                self.isLocal = false
+            }
+
             if `operator` == nil && runNonfree {
                 print("warn: forcing `runNonfree` to false because operator is nil", stderr)
                 self.runNonfreeTests = false
@@ -130,6 +136,7 @@ internal struct TestEnvironment {
         internal let network: String
         internal let `operator`: TestEnvironment.Operator?
         internal let runNonfreeTests: Bool
+        internal let isLocal: Bool
     }
 
     internal struct Operator {
@@ -172,7 +179,7 @@ internal struct TestEnvironment {
     private enum Keys {
         fileprivate static let network = "TEST_NETWORK_NAME"
         fileprivate static let operatorKey = "TEST_OPERATOR_KEY"
-        fileprivate static let operatorAccountId = "TEST_OPERATOR_ACCOUNT_ID"
+        fileprivate static let operatorAccountId = "TEST_OPERATOR_ID"
         fileprivate static let runNonfree = "TEST_RUN_NONFREE"
     }
 
@@ -239,10 +246,12 @@ internal struct NonfreeTestEnvironment {
 
             self.operator = base.`operator`!
             self.network = base.network
+            self.isLocal = base.isLocal
         }
 
         internal let network: String
         internal let `operator`: TestEnvironment.Operator
+        internal let isLocal: Bool
     }
 
     private init?(_ env: TestEnvironment) {
