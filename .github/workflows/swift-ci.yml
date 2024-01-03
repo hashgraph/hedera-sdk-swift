@@ -59,6 +59,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.swift }}-spm-
 
+      - name: Install Local Node
+        run: npm install @hashgraph/hedera-local@2.13.0
+
       - name: "Create env file"
         run: |
             touch .env
@@ -69,10 +72,10 @@ jobs:
             cat .env
       
       - name: Start the local node
-        run: npx @hashgraph/hedera-local@2.13.0 start -d --network local
+        run: npx @hashgraph/hedera-local start -d --network local
 
       - name: Test
         run: swift test
 
       - name: Stop the local node
-        run: npx @hashgraph/hedera-local@2.13.0 stop
+        run: npx @hashgraph/hedera-local stop
