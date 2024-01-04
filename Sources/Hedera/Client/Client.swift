@@ -34,6 +34,7 @@ public final class Client: Sendable {
     private let networkUpdateTask: NetworkUpdateTask
     private let regenerateTransactionIdInner: ManagedAtomic<Bool>
     private let maxTransactionFeeInner: ManagedAtomic<Int64>
+    private let maxQueryPaymentInner: ManagedAtomic<Int64>
     private let networkUpdatePeriodInner: NIOLockedValueBox<UInt64?>
     private let backoffInner: NIOLockedValueBox<Backoff>
 
@@ -50,6 +51,7 @@ public final class Client: Sendable {
         self.autoValidateChecksumsInner = .init(false)
         self.regenerateTransactionIdInner = .init(true)
         self.maxTransactionFeeInner = .init(0)
+        self.maxQueryPaymentInner = .init(0)
         self.networkUpdateTask = NetworkUpdateTask(
             eventLoop: eventLoop,
             managedNetwork: network,
@@ -72,6 +74,16 @@ public final class Client: Sendable {
 
     internal var maxTransactionFee: Hbar? {
         let value = maxTransactionFeeInner.load(ordering: .relaxed)
+
+        guard value != 0 else {
+            return nil
+        }
+
+        return .fromTinybars(value)
+    }
+
+    internal var maxQueryPayment: Hbar? {
+        let value = maxQueryPaymentInner.load(ordering: .relaxed)
 
         guard value != 0 else {
             return nil
@@ -214,6 +226,22 @@ public final class Client: Sendable {
         return self
     }
 
+    /// Sets the account that will, by default, be paying for transactions and queries built with
+    /// this client.
+    ///
+    /// The operator account ID is used to generate the default transaction ID for all transactions
+    /// executed with this client.
+    ///
+    /// The operator signer is used to sign all transactions executed by this client.
+    @discardableResult
+    public func setOperatorWith(
+        _ accountId: AccountId, _ publicKey: PublicKey, using signFunc: @Sendable @escaping (Data) -> Data
+    ) throws -> Self {
+        operatorInner.withLockedValue { $0 = .init(accountId: accountId, signer: Signer.init(publicKey, signFunc)) }
+
+        return self
+    }
+
     public func ping(_ nodeAccountId: AccountId) async throws {
         try await PingQuery(nodeAccountId: nodeAccountId).execute(self)
     }
@@ -306,6 +334,46 @@ public final class Client: Sendable {
         (self.operator?.accountId).map { .generateFrom($0) }
     }
 
+    /// Sets the maximum transaction fee to be used when no explicit max transaction fee is set.
+    ///
+    /// Note: Setting the amount to zero is "unlimited".
+    /// # Panics
+    /// - if amount is negative
+    public func setDefaultMaxTransactionFee(_ amount: Hbar) throws {
+        assert(amount.toTinybars() >= 0, "Default max transaction fee cannot be set to a negative value.")
+
+        self.maxTransactionFeeInner.store(amount.toTinybars(), ordering: .relaxed)
+    }
+
+    /// Gets the maximum transaction fee the paying account is willing to pay.
+    public func defaultMaxTransactionFee() throws -> Hbar? {
+        let val = self.maxTransactionFeeInner.load(ordering: .relaxed)
+
+        let amount = (val > 0) ? Hbar.fromTinybars(val) : nil
+
+        return amount
+    }
+
+    /// Sets the maximum query payment to be used when no explicit max query payment is set.
+    ///
+    /// Note: Setting the amount to zero is "unlimited".
+    /// # Panics
+    /// - if amount is negative
+    public func setDefaultMaxQueryPayment(_ amount: Hbar) throws {
+        assert(amount.toTinybars() < 0, "Default max query payment cannot be set to a negative value.")
+
+        self.maxQueryPaymentInner.store(amount.toTinybars(), ordering: .relaxed)
+    }
+
+    /// Gets the maximum query payment the paying account is willing to pay.
+    public func defaultMaxQueryPayment() throws -> Hbar? {
+        let val = self.maxQueryPaymentInner.load(ordering: .relaxed)
+
+        let amount = (val > 0) ? Hbar.fromTinybars(val) : nil
+
+        return amount
+    }
+
     internal var net: Network {
         networkInner.primary.load(ordering: .relaxed)
     }
@@ -352,6 +420,16 @@ public final class Client: Sendable {
     public func setNetworkUpdatePeriod(nanoseconds: UInt64?) async {
         await self.networkUpdateTask.setUpdatePeriod(nanoseconds)
         self.networkUpdatePeriodInner.withLockedValue { $0 = nanoseconds }
+    }
+
+    /// Returns the Account ID for the operator.
+    public var operatorAccountId: AccountId? {
+        operatorInner.withLockedValue { $0?.accountId }
+    }
+
+    /// Returns the Public Key for the operator.
+    public var operatorPublicKey: PublicKey? {
+        operatorInner.withLockedValue { $0?.signer.publicKey }
     }
 }
 

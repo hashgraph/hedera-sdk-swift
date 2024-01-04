@@ -27,6 +27,8 @@ internal class TopicMessage: XCTestCase {
     internal func testBasic() async throws {
         let testEnv = try TestEnvironment.nonFree
 
+        try XCTSkipIf(testEnv.config.isLocal)
+
         let topic = try await Topic.create(testEnv)
 
         addTeardownBlock {
@@ -85,6 +87,8 @@ internal class TopicMessage: XCTestCase {
 
     internal func testLarge() async throws {
         let testEnv = try TestEnvironment.nonFree
+        try XCTSkipIf(testEnv.config.isLocal)
+
         async let bigContentsFut = Resources.bigContents.data(using: .utf8)!
 
         let topic = try await Topic.create(testEnv)

@@ -59,20 +59,23 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.swift }}-spm-
 
+      - name: Install Local Node
+        run: npm install @hashgraph/hedera-local@2.13.0
+
       - name: "Create env file"
         run: |
             touch .env
-            echo TEST_OPERATOR_KEY="302e020100300506032b65700422042091132178e72057a1d7528025956fe39b0b847f200ab59b2fdd367017f3087137" >> .env
-            echo TEST_OPERATOR_ID="0.0.2" >> .env
-            echo TEST_HEDERA_NETWORK="localhost" >> .env
+            echo TEST_OPERATOR_KEY="302e020100300506032b657004220420a608e2130a0a3cb34f86e757303c862bee353d9ab77ba4387ec084f881d420d4" >> .env
+            echo TEST_OPERATOR_ID="0.0.1022" >> .env
+            echo TEST_NETWORK_NAME="localhost" >> .env
             echo TEST_RUN_NONFREE="1" >> .env
             cat .env
       
       - name: Start the local node
-        run: npx @hashgraph/hedera-local@2.13.0 start -d --network local
+        run: npx @hashgraph/hedera-local start -d --network local
 
       - name: Test
         run: swift test
 
       - name: Stop the local node
-        run: npx @hashgraph/hedera-local@2.13.0 stop
+        run: npx @hashgraph/hedera-local stop

@@ -26,6 +26,9 @@ internal class NodeAddressBook: XCTestCase {
     internal func testAddressBook() async throws {
         let testEnv = TestEnvironment.global
 
+        // Skip if localhost is set in environment variables
+        try XCTSkipIf(testEnv.config.isLocal)
+
         _ = try await NodeAddressBookQuery().execute(testEnv.client)
     }
 }
