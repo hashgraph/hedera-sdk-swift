@@ -312,6 +312,12 @@ public class Transaction: ValidateChecksums {
             return self
         }
 
+        guard let transactionId = self.transactionId ?? client?.operator?.generateTransactionId() else {
+            throw HError(
+                kind: .noPayerAccountOrTransactionId,
+                description: "transaction frozen without client or explicit transaction ID")
+        }
+
         guard let nodeAccountIds = self.nodeAccountIds ?? client?.net.randomNodeIds() else {
             throw HError(
                 kind: .freezeUnsetNodeAccountIds, description: "transaction frozen without client or explicit node IDs")
@@ -321,11 +327,14 @@ public class Transaction: ValidateChecksums {
 
         let `operator` = client?.operator
 
+        self.transactionId = transactionId
         self.nodeAccountIds = nodeAccountIds
         self.maxTransactionFee = maxTransactionFee
         self.`operator` = `operator`
 
         isFrozen = true
+
+        self.sources = try TransactionSources.init(transactions: try self.makeTransactionList())
 
         if client?.isAutoValidateChecksumsEnabled() == true {
             try validateChecksums(on: client!)
@@ -460,7 +469,8 @@ extension Transaction {
         _: Proto_TransactionResponse, _ context: TransactionHash, _ nodeAccountId: AccountId,
         _ transactionId: TransactionId?
     ) -> Response {
-        TransactionResponse(nodeAccountId: nodeAccountId, transactionId: transactionId!, transactionHash: context)
+        return TransactionResponse(
+            nodeAccountId: nodeAccountId, transactionId: transactionId!, transactionHash: context)
     }
 
     internal final func makeErrorPrecheck(_ status: Status, _ transactionId: TransactionId?) -> HError {
@@ -479,9 +489,6 @@ extension Transaction {
 
 extension Transaction {
     fileprivate func makeTransactionList() throws -> [Proto_Transaction] {
-        assert(self.isFrozen)
-
-        // todo: fix this with chunked transactions.
         guard let initialTransactionId = self.transactionId ?? self.operator?.generateTransactionId() else {
             throw HError.noPayerAccountOrTransactionId
         }
@@ -500,11 +507,9 @@ extension Transaction {
             case 0:
                 currentTransactionId = initialTransactionId
             default:
-                guard let `operator` = self.operator else {
-                    throw HError.noPayerAccountOrTransactionId
-                }
-
-                currentTransactionId = `operator`.generateTransactionId()
+                currentTransactionId = TransactionId(
+                    accountId: initialTransactionId.accountId,
+                    validStart: initialTransactionId.validStart.adding(nanos: UInt64(chunk)))
             }
 
             for nodeAccountId in nodeAccountIds {

@@ -134,4 +134,53 @@ internal class TopicMessageSubmit: XCTestCase {
 
         _ = try XCTUnwrap(transaction.transactionId)
     }
+
+    internal func testSubmitMessage() async throws {
+        let testEnv = try TestEnvironment.nonFree
+
+        let topic = try await Topic.create(testEnv)
+
+        addTeardownBlock {
+            try await topic.delete(testEnv)
+        }
+
+        let key = PrivateKey.generateEd25519()
+
+        let receipt = try await AccountCreateTransaction(key: .single(key.publicKey), initialBalance: 50)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        let id = try XCTUnwrap(receipt.accountId)
+
+        let userClient = Client.forTestnet().setOperator(id, key)
+
+        // Set payer account
+        let payerAccountId = testEnv.operator.accountId
+        let payerClient = testEnv.client
+
+        // Transaction attributes
+        let topicId = topic.id  // Previously created HCS topic
+        let message = "12"  // 2 bytes message
+        let chunkSize = 1  // 1 byte chunk size
+        let transactionId = TransactionId.generateFrom(payerAccountId)  // custom transactionId
+
+        // Transaction creation
+        let transaction = TopicMessageSubmitTransaction()
+            .transactionId(transactionId)
+            .topicId(topicId)
+            .message(message.data(using: .utf8)!)
+            .chunkSize(chunkSize)
+
+        // Transaction signature and execution
+        let frozenTx = try transaction.freezeWith(userClient)
+
+        let signedTx = try frozenTx.signWithOperator(userClient)
+
+        let doubleSignedTx = try signedTx.signWithOperator(payerClient)
+
+        let txResponses = try await doubleSignedTx.executeAll(payerClient)
+
+        // Compare the transaction payer accounts with each other
+        XCTAssertEqual(txResponses[0].transactionId.accountId, txResponses[1].transactionId.accountId)
+    }
 }
