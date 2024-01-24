@@ -96,7 +96,7 @@ protoc --grpc-swift_opt=Visibility=Public,FileNaming=PathToUnderscores,Server=fa
 Before running the integration tests, an operator key, operator account id, and a network name must be set in an `.env` file. 
 ```bash
 # Account that will pay query and transaction fees
-TEST_OPERATOR_ACCOUNT_ID=
+TEST_OPERATOR_ID=
 # Default private key to use to sign for all transactions and queries
 TEST_OPERATOR_KEY=
 # Network names: `"localhost"`, `"testnet"`, `"previewnet"`, `"mainnet"`
@@ -115,7 +115,7 @@ https://github.com/hashgraph/hedera-local-node
 
 Once the local node is running in Docker, the appropriate `.env` values must be set:
 ```bash
-TEST_OPERATOR_ACCOUNT_ID=0.0.2
+TEST_OPERATOR_ID=0.0.2
 TEST_OPERATOR_KEY=3030020100300706052b8104000a042204205bc004059ffa2943965d306f2c44d266255318b3775bacfec42a77ca83e998f2
 TEST_NETWORK_NAME=localhost
 ```
