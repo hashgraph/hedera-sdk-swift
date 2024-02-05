@@ -152,35 +152,24 @@ internal class TopicMessageSubmit: XCTestCase {
 
         let id = try XCTUnwrap(receipt.accountId)
 
-        let userClient = Client.forTestnet().setOperator(id, key)
+        let userClient = try Client.forNetwork(testEnv.client.network).setOperator(id, key)
 
         // Set payer account
         let payerAccountId = testEnv.operator.accountId
         let payerClient = testEnv.client
 
-        // Transaction attributes
-        let topicId = topic.id  // Previously created HCS topic
-        let message = "12"  // 2 bytes message
-        let chunkSize = 1  // 1 byte chunk size
-        let transactionId = TransactionId.generateFrom(payerAccountId)  // custom transactionId
+        let transactionId = TransactionId.generateFrom(payerAccountId)
 
         // Transaction creation
-        let transaction = TopicMessageSubmitTransaction()
+        let transaction = try await TopicMessageSubmitTransaction()
             .transactionId(transactionId)
-            .topicId(topicId)
-            .message(message.data(using: .utf8)!)
-            .chunkSize(chunkSize)
+            .topicId(topic.id)
+            .message("12".data(using: .utf8)!)
+            .chunkSize(1)
+            .freezeWith(userClient)
+            .signWithOperator(payerClient)
+            .executeAll(payerClient)
 
-        // Transaction signature and execution
-        let frozenTx = try transaction.freezeWith(userClient)
-
-        let signedTx = try frozenTx.signWithOperator(userClient)
-
-        let doubleSignedTx = try signedTx.signWithOperator(payerClient)
-
-        let txResponses = try await doubleSignedTx.executeAll(payerClient)
-
-        // Compare the transaction payer accounts with each other
-        XCTAssertEqual(txResponses[0].transactionId.accountId, txResponses[1].transactionId.accountId)
+        XCTAssertEqual(transaction[0].transactionId.accountId, transaction[1].transactionId.accountId)
     }
 }

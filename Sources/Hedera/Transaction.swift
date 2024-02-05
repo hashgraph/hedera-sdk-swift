@@ -312,12 +312,6 @@ public class Transaction: ValidateChecksums {
             return self
         }
 
-        guard let transactionId = self.transactionId ?? client?.operator?.generateTransactionId() else {
-            throw HError(
-                kind: .noPayerAccountOrTransactionId,
-                description: "transaction frozen without client or explicit transaction ID")
-        }
-
         guard let nodeAccountIds = self.nodeAccountIds ?? client?.net.randomNodeIds() else {
             throw HError(
                 kind: .freezeUnsetNodeAccountIds, description: "transaction frozen without client or explicit node IDs")
@@ -327,14 +321,11 @@ public class Transaction: ValidateChecksums {
 
         let `operator` = client?.operator
 
-        self.transactionId = transactionId
         self.nodeAccountIds = nodeAccountIds
         self.maxTransactionFee = maxTransactionFee
         self.`operator` = `operator`
 
         isFrozen = true
-
-        self.sources = try TransactionSources.init(transactions: try self.makeTransactionList())
 
         if client?.isAutoValidateChecksumsEnabled() == true {
             try validateChecksums(on: client!)
@@ -489,6 +480,8 @@ extension Transaction {
 
 extension Transaction {
     fileprivate func makeTransactionList() throws -> [Proto_Transaction] {
+        assert(self.isFrozen)
+
         guard let initialTransactionId = self.transactionId ?? self.operator?.generateTransactionId() else {
             throw HError.noPayerAccountOrTransactionId
         }
@@ -530,7 +523,6 @@ extension Transaction {
 
     internal func makeRequestInner(chunkInfo: ChunkInfo) -> (Proto_Transaction, TransactionHash) {
         assert(self.isFrozen)
-
         let body: Proto_TransactionBody = self.toTransactionBodyProtobuf(chunkInfo)
 
         // swiftlint:disable:next force_try
@@ -592,6 +584,10 @@ extension Transaction: Execute {
     }
 
     internal var requiresTransactionId: Bool { true }
+
+    internal var firstTransactionId: TransactionId? { nil }
+
+    internal var index: Int? { nil }
 
     internal var operatorAccountId: AccountId? {
         self.operator?.accountId

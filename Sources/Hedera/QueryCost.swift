@@ -57,6 +57,14 @@ extension QueryCost: Execute {
         false
     }
 
+    internal var firstTransactionId: TransactionId? {
+        nil
+    }
+
+    internal var index: Int? {
+        nil
+    }
+
     internal var requiresTransactionId: Bool { false }
 
     internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (Proto_Query, ()) {

@@ -31,6 +31,21 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
         return Self(accountId: accountId, validStart: validStart)
     }
 
+    /// Generates a new transaction ID for chunks.
+    internal static func generateFromInitial(_ initialTransactionId: TransactionId?, _ index: Int?) -> Self? {
+        guard let initialTransactionId = initialTransactionId else {
+            return nil
+        }
+
+        guard let index = index else {
+            return nil
+        }
+
+        return TransactionId(
+            accountId: initialTransactionId.accountId,
+            validStart: initialTransactionId.validStart.adding(nanos: UInt64(index)))
+    }
+
     /// Creates a new transaction Id with the given account id and valid start.
     public static func withValidStart(_ accountId: AccountId, _ validStart: Timestamp) -> Self {
         Self(accountId: accountId, validStart: validStart)
