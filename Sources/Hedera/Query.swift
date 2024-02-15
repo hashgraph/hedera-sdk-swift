@@ -209,6 +209,14 @@ extension Query: Execute {
         self.payment.regenerateTransactionId
     }
 
+    internal var firstTransactionId: TransactionId? {
+        payment.firstTransactionId
+    }
+
+    internal var index: Int? {
+        payment.index
+    }
+
     internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (Proto_Query, ()) {
         let request = toQueryProtobufWith(
             try .with { proto in

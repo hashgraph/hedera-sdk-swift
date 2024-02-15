@@ -215,7 +215,7 @@ internal enum Program {
 extension Environment {
     /// Account ID for the operator to use in this example.
     internal var operatorAccountId: AccountId {
-        AccountId(self["OPERATOR_ACCOUNT_ID"]!.stringValue)!
+        AccountId(self["OPERATOR_ID"]!.stringValue)!
     }
 
     /// Private key for the operator to use in this example.

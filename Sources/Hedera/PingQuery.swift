@@ -65,6 +65,14 @@ extension PingQuery: Execute {
 
     internal var requiresTransactionId: Bool { false }
 
+    internal var firstTransactionId: TransactionId? {
+        nil
+    }
+
+    internal var index: Int? {
+        nil
+    }
+
     internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (Proto_Query, ()) {
         let header = Proto_QueryHeader.with { $0.responseType = .answerOnly }
 

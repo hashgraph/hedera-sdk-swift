@@ -42,6 +42,14 @@ internal protocol Execute {
     /// Whether or not the transaction ID should be refreshed if a ``Status/transactionExpired`` occurs.
     var regenerateTransactionId: Bool? { get }
 
+    /// The initial transaction Id value (for chunked transaction)
+    /// Note: Used for multi-chunked transactions
+    var firstTransactionId: TransactionId? { get }
+
+    /// The index of each transactions
+    /// Note: Used for multi-chunked transactions
+    var index: Int? { get }
+
     /// Check whether to retry for a given pre-check status.
     func shouldRetryPrecheck(forStatus status: Status) -> Bool
 
@@ -91,7 +99,9 @@ private struct ExecuteContext {
     fileprivate let grpcTimeout: Duration?
 }
 
-internal func executeAny<E: Execute & ValidateChecksums>(_ client: Client, _ executable: E, _ timeout: TimeInterval?)
+internal func executeAny<E: Execute & ValidateChecksums>(
+    _ client: Client, _ executable: E, _ timeout: TimeInterval?
+)
     async throws -> E.Response
 {
     let timeout = timeout ?? LegacyExponentialBackoff.defaultMaxElapsedTime
@@ -101,13 +111,17 @@ internal func executeAny<E: Execute & ValidateChecksums>(_ client: Client, _ exe
     }
 
     let operatorAccountId: AccountId?
+
+    // Where the operatorAccountId is set.
+    // Determines if transactionId regeneration is disabled.
     do {
         if executable.explicitTransactionId != nil
             || !(executable.regenerateTransactionId ?? client.defaultRegenerateTransactionId)
         {
             operatorAccountId = nil
         } else {
-            operatorAccountId = executable.operatorAccountId ?? client.operator?.accountId
+            operatorAccountId =
+                executable.firstTransactionId?.accountId ?? executable.operatorAccountId ?? client.operator?.accountId
         }
     }
 
@@ -141,7 +155,9 @@ internal func executeAny<E: Execute & ValidateChecksums>(_ client: Client, _ exe
         executable: executable)
 }
 
-private func executeAnyInner<E: Execute>(ctx: ExecuteContext, executable: E) async throws -> E.Response {
+private func executeAnyInner<E: Execute>(
+    ctx: ExecuteContext, executable: E
+) async throws -> E.Response {
     let explicitTransactionId = executable.explicitTransactionId
 
     var backoff = ctx.backoffConfig
@@ -149,7 +165,9 @@ private func executeAnyInner<E: Execute>(ctx: ExecuteContext, executable: E) asy
 
     var transactionId =
         executable.requiresTransactionId
-        ? (explicitTransactionId ?? executable.operatorAccountId.map(TransactionId.generateFrom)
+        ? (explicitTransactionId ?? TransactionId.generateFromInitial(executable.firstTransactionId, executable.index)
+            ?? executable
+            .operatorAccountId.map(TransactionId.generateFrom)
             ?? ctx.operatorAccountId.map(TransactionId.generateFrom)) : nil
 
     let explicitNodeIndexes = try executable.nodeAccountIds.map(ctx.network.nodeIndexesForIds)
@@ -216,6 +234,7 @@ private func executeAnyInner<E: Execute>(ctx: ExecuteContext, executable: E) asy
                 && ctx.operatorAccountId != nil:
                 // the transaction that was generated has since expired
                 // re-generate the transaction ID and try again, immediately
+
                 lastError = executable.makeErrorPrecheck(precheckStatus, transactionId)
                 transactionId =
                     executable.operatorAccountId.map(TransactionId.generateFrom)

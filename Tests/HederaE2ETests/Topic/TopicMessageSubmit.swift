@@ -134,4 +134,42 @@ internal class TopicMessageSubmit: XCTestCase {
 
         _ = try XCTUnwrap(transaction.transactionId)
     }
+
+    internal func testSubmitMessage() async throws {
+        let testEnv = try TestEnvironment.nonFree
+
+        let topic = try await Topic.create(testEnv)
+
+        addTeardownBlock {
+            try await topic.delete(testEnv)
+        }
+
+        let key = PrivateKey.generateEd25519()
+
+        let receipt = try await AccountCreateTransaction(key: .single(key.publicKey), initialBalance: 50)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        let id = try XCTUnwrap(receipt.accountId)
+
+        let userClient = try Client.forNetwork(testEnv.client.network).setOperator(id, key)
+
+        // Set payer account
+        let payerAccountId = testEnv.operator.accountId
+        let payerClient = testEnv.client
+
+        let transactionId = TransactionId.generateFrom(payerAccountId)
+
+        // Transaction creation
+        let transaction = try await TopicMessageSubmitTransaction()
+            .transactionId(transactionId)
+            .topicId(topic.id)
+            .message("12".data(using: .utf8)!)
+            .chunkSize(1)
+            .freezeWith(userClient)
+            .signWithOperator(payerClient)
+            .executeAll(payerClient)
+
+        XCTAssertEqual(transaction[0].transactionId.accountId, transaction[1].transactionId.accountId)
+    }
 }
