@@ -93,7 +93,7 @@ public enum Proto_FreezeType: SwiftProtobuf.Enum {
 
 extension Proto_FreezeType: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_FreezeType] = [
+  public static let allCases: [Proto_FreezeType] = [
     .unknownFreezeType,
     .freezeOnly,
     .prepareUpgrade,

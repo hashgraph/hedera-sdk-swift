@@ -1796,7 +1796,7 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
 
 extension Proto_ResponseCodeEnum: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_ResponseCodeEnum] = [
+  public static let allCases: [Proto_ResponseCodeEnum] = [
     .ok,
     .invalidTransaction,
     .payerAccountNotFound,

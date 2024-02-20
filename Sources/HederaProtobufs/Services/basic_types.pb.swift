@@ -67,7 +67,7 @@ public enum Proto_TokenType: SwiftProtobuf.Enum {
 
 extension Proto_TokenType: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_TokenType] = [
+  public static let allCases: [Proto_TokenType] = [
     .fungibleCommon,
     .nonFungibleUnique,
   ]
@@ -149,7 +149,7 @@ public enum Proto_SubType: SwiftProtobuf.Enum {
 
 extension Proto_SubType: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_SubType] = [
+  public static let allCases: [Proto_SubType] = [
     .default,
     .tokenFungibleCommon,
     .tokenNonFungibleUnique,
@@ -203,7 +203,7 @@ public enum Proto_TokenSupplyType: SwiftProtobuf.Enum {
 
 extension Proto_TokenSupplyType: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_TokenSupplyType] = [
+  public static let allCases: [Proto_TokenSupplyType] = [
     .infinite,
     .finite,
   ]
@@ -258,7 +258,7 @@ public enum Proto_TokenFreezeStatus: SwiftProtobuf.Enum {
 
 extension Proto_TokenFreezeStatus: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_TokenFreezeStatus] = [
+  public static let allCases: [Proto_TokenFreezeStatus] = [
     .freezeNotApplicable,
     .frozen,
     .unfrozen,
@@ -313,7 +313,7 @@ public enum Proto_TokenKycStatus: SwiftProtobuf.Enum {
 
 extension Proto_TokenKycStatus: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_TokenKycStatus] = [
+  public static let allCases: [Proto_TokenKycStatus] = [
     .kycNotApplicable,
     .granted,
     .revoked,
@@ -368,7 +368,7 @@ public enum Proto_TokenPauseStatus: SwiftProtobuf.Enum {
 
 extension Proto_TokenPauseStatus: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_TokenPauseStatus] = [
+  public static let allCases: [Proto_TokenPauseStatus] = [
     .pauseNotApplicable,
     .paused,
     .unpaused,
@@ -842,7 +842,7 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
 
 extension Proto_HederaFunctionality: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_HederaFunctionality] = [
+  public static let allCases: [Proto_HederaFunctionality] = [
     .none,
     .cryptoTransfer,
     .cryptoUpdate,
@@ -2192,7 +2192,7 @@ public struct Proto_TransactionFeeSchedule {
 }
 
 ///*
-/// The total fee charged for a transaction. It is composed of three components – a node fee that
+/// The total fee charged for a transaction. It is composed of three components - a node fee that
 /// compensates the specific node that submitted the transaction, a network fee that compensates the
 /// network for assigning the transaction a consensus timestamp, and a service fee that compensates
 /// the network for the ongoing maintenance of the consequences of the transaction.

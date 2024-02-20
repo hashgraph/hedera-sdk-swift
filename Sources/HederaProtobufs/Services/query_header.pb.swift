@@ -77,7 +77,7 @@ public enum Proto_ResponseType: SwiftProtobuf.Enum {
 
 extension Proto_ResponseType: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_ResponseType] = [
+  public static let allCases: [Proto_ResponseType] = [
     .answerOnly,
     .answerStateProof,
     .costAnswer,
