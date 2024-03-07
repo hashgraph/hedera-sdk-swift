@@ -71,7 +71,7 @@ public struct ContractFunctionResult {
 
     /// If not null this field specifies what the value of the signer account nonce is post transaction execution.
     /// For transactions that don't update the signer nonce (like HAPI ContractCall and ContractCreate transactions) this field should be null.
-    public let mSignerNonce: UInt64?
+    public let signerNonce: UInt64?
 
     internal init(
         contractId: ContractId,
@@ -86,7 +86,7 @@ public struct ContractFunctionResult {
         senderAccountId: AccountId? = nil,
         logs: [ContractLogInfo] = [],
         contractNonces: [ContractNonceInfo] = [],
-        mSignerNonce: UInt64? = nil
+        signerNonce: UInt64? = nil
     ) {
         self.contractId = contractId
         self.evmAddress = evmAddress
@@ -100,7 +100,7 @@ public struct ContractFunctionResult {
         self.senderAccountId = senderAccountId
         self.logs = logs
         self.contractNonces = contractNonces
-        self.mSignerNonce = mSignerNonce
+        self.signerNonce = signerNonce
     }
 
     private func getFixedBytesAt(slot: UInt, size: UInt) -> Data? {
@@ -266,7 +266,7 @@ extension ContractFunctionResult: TryFromProtobuf {
             senderAccountId: proto.hasSenderID ? try .fromProtobuf(proto.senderID) : nil,
             logs: try .fromProtobuf(proto.logInfo),
             contractNonces: try .fromProtobuf(proto.contractNonces),
-            mSignerNonce: signerNonce
+            signerNonce: signerNonce
         )
     }
 }

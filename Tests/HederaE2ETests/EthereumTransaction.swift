@@ -40,6 +40,7 @@ internal class Ethereum: XCTestCase {
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
 
+        // Checks if Alias account has been auto-created.
         _ = try await AccountInfoQuery().accountId(aliasAccountId).execute(testEnv.client)
 
         let fileReceipt = try await FileCreateTransaction()
@@ -61,15 +62,15 @@ internal class Ethereum: XCTestCase {
 
         let contractId = try XCTUnwrap(contractReceipt.contractId)
 
-        let chainId = Data.init(hex: "012a")
-        let nonce = Data.init(hex: "00")
-        let maxPriorityGas = Data.init(hex: "00")
-        let maxGas = Data.init(hex: "d1385c7bf0")
-        let gasLimit = Data.init(hex: "0249f0")
-        let to = Data.init(hex: try contractId.toSolidityAddress())
-        let value = Data.init(hex: "00")
+        let chainId = Data(hex: "012a")
+        let nonce = Data(hex: "00")
+        let maxPriorityGas = Data(hex: "00")
+        let maxGas = Data(hex: "d1385c7bf0")
+        let gasLimit = Data(hex: "0249f0")
+        let to = Data(hex: try contractId.toSolidityAddress())
+        let value = Data(hex: "00")
         let callData = ContractFunctionParameters().addString("new message").toBytes("setMessage")
-        let recoveryId = Data.init(hex: "01")
+        let recoveryId = Data(hex: "01")
         let accessList: Data = Data()
         var newData = Data([2])
 
@@ -101,7 +102,7 @@ internal class Ethereum: XCTestCase {
             try await ethereumTransaction
             .getRecord(testEnv.client)
 
-        let signerNonce = try XCTUnwrap(ethereumTransactionRecord.contractFunctionResult?.mSignerNonce)
+        let signerNonce = try XCTUnwrap(ethereumTransactionRecord.contractFunctionResult?.signerNonce)
 
         XCTAssertEqual(signerNonce, 1)
 

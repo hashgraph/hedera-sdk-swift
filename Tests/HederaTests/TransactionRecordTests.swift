@@ -54,7 +54,7 @@ internal final class TransactionRecordTests: XCTestCase {
             consensusTimestamp: Timestamp(seconds: 1_554_158_542, subSecondNanos: 0),
             contractFunctionResult: ContractFunctionResult.init(
                 contractId: ContractId.fromString("1.2.3"), bloom: Data.init(), gasUsed: 0, gas: 0, hbarAmount: 0,
-                contractFunctionParametersBytes: Data.init(), bytes: Data.init(), mSignerNonce: nil),
+                contractFunctionParametersBytes: Data.init(), bytes: Data.init(), signerNonce: nil),
             transfers: [Transfer.init(accountId: AccountId("4.4.4"), amount: 5)],
             tokenTransfers: [TokenId("6.6.6"): [AccountId("1.1.1"): 4]],
             tokenNftTransfers: [
