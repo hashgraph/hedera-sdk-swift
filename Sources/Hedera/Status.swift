@@ -1839,7 +1839,7 @@ extension Status {
             1: "INVALID_TRANSACTION",
             2: "PAYER_ACCOUNT_NOT_FOUND",
             3: "INVALID_NODE_ACCOUNT",
-            4: "Ø",
+            4: "TRANSACTION_EXPIRED",
             5: "INVALID_TRANSACTION_START",
             6: "INVALID_TRANSACTION_DURATION",
             7: "INVALID_SIGNATURE",
