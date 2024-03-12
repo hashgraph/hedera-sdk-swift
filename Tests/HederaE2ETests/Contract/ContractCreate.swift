@@ -29,7 +29,7 @@ internal final class ContractCreate: XCTestCase {
 
         let receipt = try await ContractCreateTransaction()
             .adminKey(.single(testEnv.operator.privateKey.publicKey))
-            .gas(100000)
+            .gas(200000)
             .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
             .bytecodeFileId(bytecode.fileId)
             .contractMemo("[e2e::ContractCreateTransaction]")

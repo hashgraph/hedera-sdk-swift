@@ -1536,7 +1536,7 @@ public enum Status: Equatable {
 
 extension Status: CaseIterable {
     // The compiler won't synthesize support with the UNRECOGNIZED case.
-    public static var allCases: [Status] = [
+    public static let allCases: [Status] = [
         .ok,
         .invalidTransaction,
         .payerAccountNotFound,

@@ -35,7 +35,7 @@ internal final class ContractExecute: XCTestCase {
                 .getReceipt(testEnv.client)
         }
 
-        _ = try await ContractExecuteTransaction(contractId: contractId, gas: 100000)
+        _ = try await ContractExecuteTransaction(contractId: contractId, gas: 200000)
             .function("setMessage", ContractFunctionParameters().addString("new message"))
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
@@ -45,7 +45,7 @@ internal final class ContractExecute: XCTestCase {
         let testEnv = try TestEnvironment.nonFree
 
         await assertThrowsHErrorAsync(
-            try await ContractExecuteTransaction(gas: 100000)
+            try await ContractExecuteTransaction(gas: 200000)
                 .function("setMessage", ContractFunctionParameters().addString("new message"))
                 .execute(testEnv.client)
                 .getReceipt(testEnv.client),
@@ -73,7 +73,7 @@ internal final class ContractExecute: XCTestCase {
         }
 
         await assertThrowsHErrorAsync(
-            try await ContractExecuteTransaction(contractId: contractId, gas: 100000)
+            try await ContractExecuteTransaction(contractId: contractId, gas: 200000)
                 .execute(testEnv.client)
                 .getReceipt(testEnv.client),
             "expected error executing contract"

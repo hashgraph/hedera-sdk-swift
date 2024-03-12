@@ -22,14 +22,14 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Call a function of the given smart contract instance, giving it functionParameters as its inputs.
-/// The call can use at maximum the given amount of gas – the paying account will not be charged for
+/// The call can use at maximum the given amount of gas - the paying account will not be charged for
 /// any unspent gas.
 ///
 /// If this function results in data being stored, an amount of gas is calculated that reflects this
 /// storage burden.
 ///
 /// The amount of gas used, as well as other attributes of the transaction, e.g. size, number of
-/// signatures to be verified, determine the fee for the transaction – which is charged to the paying
+/// signatures to be verified, determine the fee for the transaction - which is charged to the paying
 /// account.
 public struct Proto_ContractCallTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
