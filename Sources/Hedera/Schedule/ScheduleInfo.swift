@@ -111,6 +111,7 @@ public struct ScheduleInfo: Sendable {
                 case .tokenUnpause(let data): proto.data = .tokenUnpause(data)
                 case .scheduleDelete(let data): proto.data = .scheduleDelete(data)
                 case .utilPrng(let data): proto.data = .utilPrng(data)
+                case .tokenUpdateNfts(let data): proto.data = .tokenUpdateNfts(data)
                 case nil: break
                 }
 

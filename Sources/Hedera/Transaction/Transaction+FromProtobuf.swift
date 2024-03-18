@@ -197,6 +197,10 @@ extension Transaction {
         case .prng(let value):
             let value = try intoOnlyValue(value)
             return try PrngTransaction(protobuf: firstBody, value)
+
+        case .tokenUpdateNfts(let value):
+            let value = try intoOnlyValue(value)
+            return try TokenUpdateNftsTransaction(protobuf: firstBody, value)
         }
     }
 }
