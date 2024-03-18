@@ -145,7 +145,7 @@ public struct Proto_FileGetInfoResponse {
     public var memo: String = String()
 
     ///*
-    /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs.
+    /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs. 
     public var ledgerID: Data = Data()
 
     public var unknownFields = SwiftProtobuf.UnknownStorage()

@@ -25,39 +25,39 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// The specified Treasury Account is receiving the initial supply of tokens as-well as the tokens
 /// from the Token Mint operation once executed. The balance of the treasury account is decreased
 /// when the Token Burn operation is executed.
-///
+/// 
 /// The <tt>initialSupply</tt> is the initial supply of the smallest parts of a token (like a
 /// tinybar, not an hbar). These are the smallest units of the token which may be transferred.
-///
+/// 
 /// The supply can change over time. If the total supply at some moment is <i>S</i> parts of tokens,
 /// and the token is using <i>D</i> decimals, then <i>S</i> must be less than or equal to
 /// 2<sup>63</sup>-1, which is 9,223,372,036,854,775,807. The number of whole tokens (not parts) will
 /// be <i>S / 10<sup>D</sup></i>.
-///
+/// 
 /// If decimals is 8 or 11, then the number of whole tokens can be at most a few billions or
 /// millions, respectively. For example, it could match Bitcoin (21 million whole tokens with 8
 /// decimals) or hbars (50 billion whole tokens with 8 decimals). It could even match Bitcoin with
 /// milli-satoshis (21 million whole tokens with 11 decimals).
-///
+/// 
 /// Note that a created token is <i>immutable</i> if the <tt>adminKey</tt> is omitted. No property of
 /// an immutable token can ever change, with the sole exception of its expiry. Anyone can pay to
 /// extend the expiry time of an immutable token.
-///
+/// 
 /// A token can be either <i>FUNGIBLE_COMMON</i> or <i>NON_FUNGIBLE_UNIQUE</i>, based on its
 /// <i>TokenType</i>. If it has been omitted, <i>FUNGIBLE_COMMON</i> type is used.
-///
+/// 
 /// A token can have either <i>INFINITE</i> or <i>FINITE</i> supply type, based on its
 /// <i>TokenType</i>. If it has been omitted, <i>INFINITE</i> type is used.
-///
+/// 
 /// If a <i>FUNGIBLE</i> TokenType is used, <i>initialSupply</i> should explicitly be set to a
 /// non-negative. If not, the transaction will resolve to INVALID_TOKEN_INITIAL_SUPPLY.
-///
+/// 
 /// If a <i>NON_FUNGIBLE_UNIQUE</i> TokenType is used, <i>initialSupply</i> should explicitly be set
 /// to 0. If not, the transaction will resolve to INVALID_TOKEN_INITIAL_SUPPLY.
-///
+/// 
 /// If an <i>INFINITE</i> TokenSupplyType is used, <i>maxSupply</i> should explicitly be set to 0. If
 /// it is not 0, the transaction will resolve to INVALID_TOKEN_MAX_SUPPLY.
-///
+/// 
 /// If a <i>FINITE</i> TokenSupplyType is used, <i>maxSupply</i> should be explicitly set to a
 /// non-negative value. If it is not, the transaction will resolve to INVALID_TOKEN_MAX_SUPPLY.
 public struct Proto_TokenCreateTransactionBody {
@@ -66,7 +66,7 @@ public struct Proto_TokenCreateTransactionBody {
   // methods supported on all messages.
 
   ///*
-  /// The publicly visible name of the token. The token name is specified as a Unicode string.
+  /// The publicly visible name of the token. The token name is specified as a Unicode string. 
   /// Its UTF-8 encoding cannot exceed 100 bytes, and cannot contain the 0 byte (NUL).
   public var name: String {
     get {return _storage._name}
@@ -74,7 +74,7 @@ public struct Proto_TokenCreateTransactionBody {
   }
 
   ///*
-  /// The publicly visible token symbol. The token symbol is specified as a Unicode string.
+  /// The publicly visible token symbol. The token symbol is specified as a Unicode string. 
   /// Its UTF-8 encoding cannot exceed 100 bytes, and cannot contain the 0 byte (NUL).
   public var symbol: String {
     get {return _storage._symbol}
@@ -277,6 +277,25 @@ public struct Proto_TokenCreateTransactionBody {
   /// Clears the value of `pauseKey`. Subsequent reads from it will return its default value.
   public mutating func clearPauseKey() {_uniqueStorage()._pauseKey = nil}
 
+  ///*
+  /// Metadata of the created token definition.
+  public var metadata: Data {
+    get {return _storage._metadata}
+    set {_uniqueStorage()._metadata = newValue}
+  }
+
+  ///*
+  /// The key which can change the metadata of a token
+  /// (token definition, partition definition, and individual NFTs).
+  public var metadataKey: Proto_Key {
+    get {return _storage._metadataKey ?? Proto_Key()}
+    set {_uniqueStorage()._metadataKey = newValue}
+  }
+  /// Returns true if `metadataKey` has been explicitly set.
+  public var hasMetadataKey: Bool {return _storage._metadataKey != nil}
+  /// Clears the value of `metadataKey`. Subsequent reads from it will return its default value.
+  public mutating func clearMetadataKey() {_uniqueStorage()._metadataKey = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -316,6 +335,8 @@ extension Proto_TokenCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
     20: .standard(proto: "fee_schedule_key"),
     21: .standard(proto: "custom_fees"),
     22: .standard(proto: "pause_key"),
+    23: .same(proto: "metadata"),
+    24: .standard(proto: "metadata_key"),
   ]
 
   fileprivate class _StorageClass {
@@ -340,6 +361,8 @@ extension Proto_TokenCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
     var _feeScheduleKey: Proto_Key? = nil
     var _customFees: [Proto_CustomFee] = []
     var _pauseKey: Proto_Key? = nil
+    var _metadata: Data = Data()
+    var _metadataKey: Proto_Key? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -367,6 +390,8 @@ extension Proto_TokenCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
       _feeScheduleKey = source._feeScheduleKey
       _customFees = source._customFees
       _pauseKey = source._pauseKey
+      _metadata = source._metadata
+      _metadataKey = source._metadataKey
     }
   }
 
@@ -406,6 +431,8 @@ extension Proto_TokenCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
         case 20: try { try decoder.decodeSingularMessageField(value: &_storage._feeScheduleKey) }()
         case 21: try { try decoder.decodeRepeatedMessageField(value: &_storage._customFees) }()
         case 22: try { try decoder.decodeSingularMessageField(value: &_storage._pauseKey) }()
+        case 23: try { try decoder.decodeSingularBytesField(value: &_storage._metadata) }()
+        case 24: try { try decoder.decodeSingularMessageField(value: &_storage._metadataKey) }()
         default: break
         }
       }
@@ -481,6 +508,12 @@ extension Proto_TokenCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
       try { if let v = _storage._pauseKey {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 22)
       } }()
+      if !_storage._metadata.isEmpty {
+        try visitor.visitSingularBytesField(value: _storage._metadata, fieldNumber: 23)
+      }
+      try { if let v = _storage._metadataKey {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 24)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -511,6 +544,8 @@ extension Proto_TokenCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
         if _storage._feeScheduleKey != rhs_storage._feeScheduleKey {return false}
         if _storage._customFees != rhs_storage._customFees {return false}
         if _storage._pauseKey != rhs_storage._pauseKey {return false}
+        if _storage._metadata != rhs_storage._metadata {return false}
+        if _storage._metadataKey != rhs_storage._metadataKey {return false}
         return true
       }
       if !storagesAreEqual {return false}

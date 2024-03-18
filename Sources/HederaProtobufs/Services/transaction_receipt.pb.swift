@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// The summary of a transaction's result so far. If the transaction has not reached consensus, this
-/// result will be necessarily incomplete.
+/// result will be necessarily incomplete. 
 public struct Proto_TransactionReceipt {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -104,7 +104,7 @@ public struct Proto_TransactionReceipt {
   /// the message.  This 48-byte field is the output of a particular SHA-384 digest whose input
   /// data are determined by the value of the topicRunningHashVersion below. The bytes of each
   /// uint64 or uint32 are to be in Big-Endian format.
-  ///
+  /// 
   /// IF the topicRunningHashVersion is '0' or '1', then the input data to the SHA-384 digest are,
   /// in order:
   /// ---
@@ -112,13 +112,13 @@ public struct Proto_TransactionReceipt {
   /// 2. The topic's shard (8 bytes)
   /// 3. The topic's realm (8 bytes)
   /// 4. The topic's number (8 bytes)
-  /// 5. The number of seconds since the epoch before the ConsensusSubmitMessage reached
+  /// 5. The number of seconds since the epoch before the ConsensusSubmitMessage reached 
   ///    consensus (8 bytes)
-  /// 6. The number of nanoseconds since 5. before the ConsensusSubmitMessage reached
+  /// 6. The number of nanoseconds since 5. before the ConsensusSubmitMessage reached 
   ///    consensus (4 bytes)
   /// 7. The topicSequenceNumber from above (8 bytes)
   /// 8. The message bytes from the ConsensusSubmitMessage (variable).
-  ///
+  /// 
   /// IF the topicRunningHashVersion is '2', then the input data to the SHA-384 digest are, in
   /// order:
   /// ---
@@ -127,14 +127,14 @@ public struct Proto_TransactionReceipt {
   /// 3. The topic's shard (8 bytes)
   /// 4. The topic's realm (8 bytes)
   /// 5. The topic's number (8 bytes)
-  /// 6. The number of seconds since the epoch before the ConsensusSubmitMessage reached
+  /// 6. The number of seconds since the epoch before the ConsensusSubmitMessage reached 
   ///    consensus (8 bytes)
-  /// 7. The number of nanoseconds since 6. before the ConsensusSubmitMessage reached
+  /// 7. The number of nanoseconds since 6. before the ConsensusSubmitMessage reached 
   ///    consensus (4 bytes)
   /// 8. The topicSequenceNumber from above (8 bytes)
-  /// 9. The output of the SHA-384 digest of the message bytes from the
+  /// 9. The output of the SHA-384 digest of the message bytes from the 
   ///    consensusSubmitMessage (48 bytes)
-  ///
+  /// 
   /// Otherwise, IF the topicRunningHashVersion is '3', then the input data to the SHA-384 digest
   /// are, in order:
   /// ---
@@ -146,12 +146,12 @@ public struct Proto_TransactionReceipt {
   /// 6. The topic's shard (8 bytes)
   /// 7. The topic's realm (8 bytes)
   /// 8. The topic's number (8 bytes)
-  /// 9. The number of seconds since the epoch before the ConsensusSubmitMessage reached
+  /// 9. The number of seconds since the epoch before the ConsensusSubmitMessage reached 
   ///    consensus (8 bytes)
-  /// 10. The number of nanoseconds since 9. before the ConsensusSubmitMessage reached
+  /// 10. The number of nanoseconds since 9. before the ConsensusSubmitMessage reached 
   ///     consensus (4 bytes)
   /// 11. The topicSequenceNumber from above (8 bytes)
-  /// 12. The output of the SHA-384 digest of the message bytes from the
+  /// 12. The output of the SHA-384 digest of the message bytes from the 
   ///     consensusSubmitMessage (48 bytes)
   public var topicRunningHash: Data {
     get {return _storage._topicRunningHash}

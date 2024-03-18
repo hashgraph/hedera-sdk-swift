@@ -21,35 +21,6 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 ///*
-/// Represents an NFT on the Ledger
-public struct Proto_NftID {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  ///*
-  /// The (non-fungible) token of which this NFT is an instance
-  public var tokenID: Proto_TokenID {
-    get {return _tokenID ?? Proto_TokenID()}
-    set {_tokenID = newValue}
-  }
-  /// Returns true if `tokenID` has been explicitly set.
-  public var hasTokenID: Bool {return self._tokenID != nil}
-  /// Clears the value of `tokenID`. Subsequent reads from it will return its default value.
-  public mutating func clearTokenID() {self._tokenID = nil}
-
-  ///*
-  /// The unique identifier of this instance
-  public var serialNumber: Int64 = 0
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-
-  fileprivate var _tokenID: Proto_TokenID? = nil
-}
-
-///*
 /// Applicable only to tokens of type NON_FUNGIBLE_UNIQUE. Gets info on a NFT for a given TokenID (of
 /// type NON_FUNGIBLE_UNIQUE) and serial number
 public struct Proto_TokenGetNftInfoQuery {
@@ -133,7 +104,7 @@ public struct Proto_TokenNftInfo {
   public var metadata: Data = Data()
 
   ///*
-  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs.
+  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs. 
   public var ledgerID: Data = Data()
 
   ///*
@@ -195,7 +166,6 @@ public struct Proto_TokenGetNftInfoResponse {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_NftID: @unchecked Sendable {}
 extension Proto_TokenGetNftInfoQuery: @unchecked Sendable {}
 extension Proto_TokenNftInfo: @unchecked Sendable {}
 extension Proto_TokenGetNftInfoResponse: @unchecked Sendable {}
@@ -204,48 +174,6 @@ extension Proto_TokenGetNftInfoResponse: @unchecked Sendable {}
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "proto"
-
-extension Proto_NftID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + ".NftID"
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .same(proto: "tokenID"),
-    2: .same(proto: "serialNumber"),
-  ]
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularMessageField(value: &self._tokenID) }()
-      case 2: try { try decoder.decodeSingularInt64Field(value: &self.serialNumber) }()
-      default: break
-      }
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._tokenID {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    } }()
-    if self.serialNumber != 0 {
-      try visitor.visitSingularInt64Field(value: self.serialNumber, fieldNumber: 2)
-    }
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Proto_NftID, rhs: Proto_NftID) -> Bool {
-    if lhs._tokenID != rhs._tokenID {return false}
-    if lhs.serialNumber != rhs.serialNumber {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
 
 extension Proto_TokenGetNftInfoQuery: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".TokenGetNftInfoQuery"

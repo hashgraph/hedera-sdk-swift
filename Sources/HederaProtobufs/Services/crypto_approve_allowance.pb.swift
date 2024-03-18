@@ -26,7 +26,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// hbar/token to any other account of the spender's choice. If the owner is not specified in any allowance, the payer
 /// of transaction is considered to be the owner for that particular allowance.
 /// Setting the amount to zero in CryptoAllowance or TokenAllowance will remove the respective allowance for the spender.
-///
+/// 
 /// (So if account <tt>0.0.X</tt> pays for this transaction and owner is not specified in the allowance,
 /// then at consensus each spender account will have new allowances to spend hbar or tokens from <tt>0.0.X</tt>).
 public struct Proto_CryptoApproveAllowanceTransactionBody {

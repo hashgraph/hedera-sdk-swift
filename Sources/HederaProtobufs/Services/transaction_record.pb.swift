@@ -171,14 +171,14 @@ public struct Proto_TransactionRecord {
 
   ///*
   /// In the record of a CryptoCreate transaction triggered by a user transaction with a
-  /// (previously unused) alias, the new account's alias.
+  /// (previously unused) alias, the new account's alias. 
   public var alias: Data {
     get {return _storage._alias}
     set {_uniqueStorage()._alias = newValue}
   }
 
   ///*
-  /// The keccak256 hash of the ethereumData. This field will only be populated for
+  /// The keccak256 hash of the ethereumData. This field will only be populated for 
   /// EthereumTransaction.
   public var ethereumHash: Data {
     get {return _storage._ethereumHash}
