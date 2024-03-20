@@ -21,6 +21,7 @@
 import HederaProtobufs
 import SnapshotTesting
 import XCTest
+import SwiftProtobuf
 
 @testable import Hedera
 
@@ -39,6 +40,9 @@ internal final class TokenUpdateTransactionTests: XCTestCase {
         "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e11"
     private static let testPauseKey: PrivateKey =
         "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e11"
+    private static let testMetadataKey: PrivateKey =
+        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e18"
+
 
     private static let testTreasuryAccountId: AccountId = "7.7.7"
     private static let testAutoRenewAccountId: AccountId = "8.8.8"
@@ -68,6 +72,8 @@ internal final class TokenUpdateTransactionTests: XCTestCase {
             .treasuryAccountId(testTreasuryAccountId)
             .tokenName(testTokenName)
             .tokenMemo(testTokenMemo)
+            .metadata(Resources.metadata)
+            .metadataKey(.single(Resources.publicKey))
             .freeze()
     }
 
@@ -102,6 +108,8 @@ internal final class TokenUpdateTransactionTests: XCTestCase {
             proto.memo = .with { $0.value = Self.testTokenMemo }
             proto.feeScheduleKey = Self.testFeeScheduleKey.publicKey.toProtobuf()
             proto.pauseKey = Self.testPauseKey.publicKey.toProtobuf()
+            proto.metadata = Google_Protobuf_BytesValue(Resources.metadata)
+            proto.metadataKey = Self.testMetadataKey.publicKey.toProtobuf()
         }
 
         let protoBody = Proto_TransactionBody.with { proto in
@@ -126,6 +134,8 @@ internal final class TokenUpdateTransactionTests: XCTestCase {
         XCTAssertEqual(tx.tokenMemo, Self.testTokenMemo)
         XCTAssertEqual(tx.feeScheduleKey, .single(Self.testFeeScheduleKey.publicKey))
         XCTAssertEqual(tx.pauseKey, .single(Self.testPauseKey.publicKey))
+        XCTAssertEqual(tx.metadata, Data([3, 4]))
+        XCTAssertEqual(tx.metadataKey, .single(Resources.publicKey))
     }
 
     internal func testGetSetTokenId() {
@@ -217,5 +227,17 @@ internal final class TokenUpdateTransactionTests: XCTestCase {
         let tx = TokenUpdateTransaction()
         tx.pauseKey(.single(Self.testPauseKey.publicKey))
         XCTAssertEqual(tx.pauseKey, .single(Self.testPauseKey.publicKey))
+    }
+    
+    internal func testGetSetMetadata() {
+        let tx = TokenUpdateTransaction()
+        tx.metadata(Resources.metadata)
+        XCTAssertEqual(tx.metadata, Resources.metadata)
+    }
+    
+    internal func testGetSetMetadataKey() {
+        let tx = TokenUpdateTransaction()
+        tx.metadataKey(.single(Self.testMetadataKey.publicKey))
+        XCTAssertEqual(tx.tokenName, Self.testTokenName)
     }
 }

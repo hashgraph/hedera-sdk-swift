@@ -52,7 +52,6 @@ public final class TokenCreateTransaction: Transaction {
         pauseKey: Key? = nil,
         metadata: Data = .init(),
         metadataKey: Key? = nil
-
     ) {
         self.name = name
         self.symbol = symbol
