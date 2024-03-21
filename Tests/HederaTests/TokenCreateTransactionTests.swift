@@ -57,6 +57,8 @@ internal final class TokenCreateTransactionTests: XCTestCase {
                         feeCollectorAccountId: try AccountId.fromString("0.0.54")
                     ))
             ])
+            .metadata(Resources.metadata)
+            .metadataKey(.single(Resources.publicKey))
             .freeze()
             .sign(Resources.privateKey)
     }
@@ -85,6 +87,8 @@ internal final class TokenCreateTransactionTests: XCTestCase {
             .treasuryAccountId(AccountId.fromString("0.0.456"))
             .name("flook")
             .tokenMemo("flook memo")
+            .metadata(Resources.metadata)
+            .metadataKey(.single(Resources.publicKey))
             .freeze()
             .sign(Resources.privateKey)
     }
@@ -136,5 +140,7 @@ internal final class TokenCreateTransactionTests: XCTestCase {
         XCTAssertEqual(tx.tokenType, TokenType.fungibleCommon)
         XCTAssertEqual(tx.tokenSupplyType, TokenSupplyType.infinite)
         XCTAssertEqual(tx.maxSupply, 0)
+        XCTAssertEqual(tx.metadata, Data([3, 4]))
+        XCTAssertEqual(tx.metadataKey, .single(Resources.publicKey))
     }
 }

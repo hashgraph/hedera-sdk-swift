@@ -241,6 +241,12 @@ public enum RequestType {
     /// Execute a PRNG transaction.
     case utilPrng
 
+    /// Get a record for a transaction.
+    case transactionGetFastRecord
+
+    /// Update a Non-Fungible token.
+    case tokenUpdateNfts
+
     // this literally can't be smaller.
     // swiftlint:disable:next function_body_length
     internal init?(protobuf proto: Proto_HederaFunctionality) throws {
@@ -318,6 +324,9 @@ public enum RequestType {
         case .ethereumTransaction: self = .ethereumTransaction
         case .nodeStakeUpdate: self = .nodeStakeUpdate
         case .utilPrng: self = .utilPrng
+        case .transactionGetFastRecord: self = .tokenUpdateNfts
+
+        case .tokenUpdateNfts: self = .tokenUpdateNfts
         case .UNRECOGNIZED(let code):
             throw HError.fromProtobuf("unrecognized RequestType: `\(code)`")
         }
@@ -397,6 +406,8 @@ public enum RequestType {
         case .ethereumTransaction: return .ethereumTransaction
         case .nodeStakeUpdate: return .nodeStakeUpdate
         case .utilPrng: return .utilPrng
+        case .transactionGetFastRecord: return .transactionGetFastRecord
+        case .tokenUpdateNfts: return .tokenUpdateNfts
         }
     }
 }

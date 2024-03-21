@@ -542,6 +542,16 @@ public struct Proto_TransactionBody {
     set {_uniqueStorage()._data = .utilPrng(newValue)}
   }
 
+  ///*
+  /// Update the metadata of one or more NFT's of a specific token type.
+  public var tokenUpdateNfts: Proto_TokenUpdateNftsTransactionBody {
+    get {
+      if case .tokenUpdateNfts(let v)? = _storage._data {return v}
+      return Proto_TokenUpdateNftsTransactionBody()
+    }
+    set {_uniqueStorage()._data = .tokenUpdateNfts(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   ///*
@@ -682,6 +692,9 @@ public struct Proto_TransactionBody {
     ///*
     /// Generates a pseudorandom number.
     case utilPrng(Proto_UtilPrngTransactionBody)
+    ///*
+    /// Update the metadata of one or more NFT's of a specific token type.
+    case tokenUpdateNfts(Proto_TokenUpdateNftsTransactionBody)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proto_TransactionBody.OneOf_Data, rhs: Proto_TransactionBody.OneOf_Data) -> Bool {
@@ -869,6 +882,10 @@ public struct Proto_TransactionBody {
         guard case .utilPrng(let l) = lhs, case .utilPrng(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
+      case (.tokenUpdateNfts, .tokenUpdateNfts): return {
+        guard case .tokenUpdateNfts(let l) = lhs, case .tokenUpdateNfts(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
@@ -943,6 +960,7 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     44: .same(proto: "scheduleSign"),
     51: .standard(proto: "node_stake_update"),
     52: .standard(proto: "util_prng"),
+    53: .standard(proto: "token_update_nfts"),
   ]
 
   fileprivate class _StorageClass {
@@ -1575,6 +1593,19 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
             _storage._data = .utilPrng(v)
           }
         }()
+        case 53: try {
+          var v: Proto_TokenUpdateNftsTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .tokenUpdateNfts(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .tokenUpdateNfts(v)
+          }
+        }()
         default: break
         }
       }
@@ -1785,6 +1816,10 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case .utilPrng?: try {
         guard case .utilPrng(let v)? = _storage._data else { preconditionFailure() }
         try visitor.visitSingularMessageField(value: v, fieldNumber: 52)
+      }()
+      case .tokenUpdateNfts?: try {
+        guard case .tokenUpdateNfts(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 53)
       }()
       case nil: break
       }

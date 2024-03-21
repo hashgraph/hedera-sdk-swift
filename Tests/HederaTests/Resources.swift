@@ -33,6 +33,7 @@ internal enum Resources {
     internal static let fileId = FileId("1.2.3")
     internal static let tokenId = TokenId("0.3.5")
     internal static let topicId = TopicId("4.4.4")
+    internal static let metadata = Data([3, 4])
 
     // some unused private key
     internal static let privateKey: PrivateKey =

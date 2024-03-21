@@ -311,6 +311,25 @@ public struct Proto_TokenInfo {
     set {_uniqueStorage()._ledgerID = newValue}
   }
 
+  ///*
+  /// Represents the metadata of the token definition.
+  public var metadata: Data {
+    get {return _storage._metadata}
+    set {_uniqueStorage()._metadata = newValue}
+  }
+
+  ///*
+  /// The key which can change the metadata of a token
+  /// (token definition and individual NFTs).
+  public var metadataKey: Proto_Key {
+    get {return _storage._metadataKey ?? Proto_Key()}
+    set {_uniqueStorage()._metadataKey = newValue}
+  }
+  /// Returns true if `metadataKey` has been explicitly set.
+  public var hasMetadataKey: Bool {return _storage._metadataKey != nil}
+  /// Clears the value of `metadataKey`. Subsequent reads from it will return its default value.
+  public mutating func clearMetadataKey() {_uniqueStorage()._metadataKey = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -437,6 +456,8 @@ extension Proto_TokenInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     24: .standard(proto: "pause_key"),
     25: .standard(proto: "pause_status"),
     26: .standard(proto: "ledger_id"),
+    27: .same(proto: "metadata"),
+    28: .standard(proto: "metadata_key"),
   ]
 
   fileprivate class _StorageClass {
@@ -466,6 +487,8 @@ extension Proto_TokenInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     var _pauseKey: Proto_Key? = nil
     var _pauseStatus: Proto_TokenPauseStatus = .pauseNotApplicable
     var _ledgerID: Data = Data()
+    var _metadata: Data = Data()
+    var _metadataKey: Proto_Key? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -498,6 +521,8 @@ extension Proto_TokenInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
       _pauseKey = source._pauseKey
       _pauseStatus = source._pauseStatus
       _ledgerID = source._ledgerID
+      _metadata = source._metadata
+      _metadataKey = source._metadataKey
     }
   }
 
@@ -542,6 +567,8 @@ extension Proto_TokenInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
         case 24: try { try decoder.decodeSingularMessageField(value: &_storage._pauseKey) }()
         case 25: try { try decoder.decodeSingularEnumField(value: &_storage._pauseStatus) }()
         case 26: try { try decoder.decodeSingularBytesField(value: &_storage._ledgerID) }()
+        case 27: try { try decoder.decodeSingularBytesField(value: &_storage._metadata) }()
+        case 28: try { try decoder.decodeSingularMessageField(value: &_storage._metadataKey) }()
         default: break
         }
       }
@@ -632,6 +659,12 @@ extension Proto_TokenInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
       if !_storage._ledgerID.isEmpty {
         try visitor.visitSingularBytesField(value: _storage._ledgerID, fieldNumber: 26)
       }
+      if !_storage._metadata.isEmpty {
+        try visitor.visitSingularBytesField(value: _storage._metadata, fieldNumber: 27)
+      }
+      try { if let v = _storage._metadataKey {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 28)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -667,6 +700,8 @@ extension Proto_TokenInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
         if _storage._pauseKey != rhs_storage._pauseKey {return false}
         if _storage._pauseStatus != rhs_storage._pauseStatus {return false}
         if _storage._ledgerID != rhs_storage._ledgerID {return false}
+        if _storage._metadata != rhs_storage._metadata {return false}
+        if _storage._metadataKey != rhs_storage._metadataKey {return false}
         return true
       }
       if !storagesAreEqual {return false}

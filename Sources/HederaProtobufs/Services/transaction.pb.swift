@@ -34,7 +34,7 @@ public struct Proto_Transaction {
   // methods supported on all messages.
 
   ///*
-  /// the body of the transaction, which needs to be signed
+  /// The body of the transaction, which needs to be signed
   public var body: Proto_TransactionBody {
     get {return _body ?? Proto_TransactionBody()}
     set {_body = newValue}

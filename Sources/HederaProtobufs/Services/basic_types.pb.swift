@@ -672,6 +672,14 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
   ///*
   /// Generates a pseudorandom number.
   case utilPrng // = 86
+
+  ///*
+  /// Get a record for a transaction.
+  case transactionGetFastRecord // = 87
+
+  ///*
+  /// Update the metadata of one or more NFT's of a specific token type.
+  case tokenUpdateNfts // = 88
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -753,6 +761,8 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
     case 84: self = .ethereumTransaction
     case 85: self = .nodeStakeUpdate
     case 86: self = .utilPrng
+    case 87: self = .transactionGetFastRecord
+    case 88: self = .tokenUpdateNfts
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -832,6 +842,8 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
     case .ethereumTransaction: return 84
     case .nodeStakeUpdate: return 85
     case .utilPrng: return 86
+    case .transactionGetFastRecord: return 87
+    case .tokenUpdateNfts: return 88
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -916,6 +928,8 @@ extension Proto_HederaFunctionality: CaseIterable {
     .ethereumTransaction,
     .nodeStakeUpdate,
     .utilPrng,
+    .transactionGetFastRecord,
+    .tokenUpdateNfts,
   ]
 }
 
@@ -1075,6 +1089,36 @@ public struct Proto_AccountID {
   }
 
   public init() {}
+}
+
+///*
+/// Identifier for a unique token (or "NFT"), used by both contract and token services.
+public struct Proto_NftID {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  ///*
+  /// The (non-fungible) token of which this NFT is an instance; uppercase for "ID"
+  /// for backward compatibility with original definition of this field.
+  public var tokenID: Proto_TokenID {
+    get {return _tokenID ?? Proto_TokenID()}
+    set {_tokenID = newValue}
+  }
+  /// Returns true if `tokenID` has been explicitly set.
+  public var hasTokenID: Bool {return self._tokenID != nil}
+  /// Clears the value of `tokenID`. Subsequent reads from it will return its default value.
+  public mutating func clearTokenID() {self._tokenID = nil}
+
+  ///*
+  /// The serial number of this NFT within its token type
+  public var serialNumber: Int64 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _tokenID: Proto_TokenID? = nil
 }
 
 ///*
@@ -2761,6 +2805,7 @@ extension Proto_ShardID: @unchecked Sendable {}
 extension Proto_RealmID: @unchecked Sendable {}
 extension Proto_AccountID: @unchecked Sendable {}
 extension Proto_AccountID.OneOf_Account: @unchecked Sendable {}
+extension Proto_NftID: @unchecked Sendable {}
 extension Proto_FileID: @unchecked Sendable {}
 extension Proto_ContractID: @unchecked Sendable {}
 extension Proto_ContractID.OneOf_Contract: @unchecked Sendable {}
@@ -2931,6 +2976,8 @@ extension Proto_HederaFunctionality: SwiftProtobuf._ProtoNameProviding {
     84: .same(proto: "EthereumTransaction"),
     85: .same(proto: "NodeStakeUpdate"),
     86: .same(proto: "UtilPrng"),
+    87: .same(proto: "TransactionGetFastRecord"),
+    88: .same(proto: "TokenUpdateNfts"),
   ]
 }
 
@@ -3071,6 +3118,48 @@ extension Proto_AccountID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplemen
     if lhs.shardNum != rhs.shardNum {return false}
     if lhs.realmNum != rhs.realmNum {return false}
     if lhs.account != rhs.account {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proto_NftID: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".NftID"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "token_ID"),
+    2: .standard(proto: "serial_number"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._tokenID) }()
+      case 2: try { try decoder.decodeSingularInt64Field(value: &self.serialNumber) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._tokenID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    if self.serialNumber != 0 {
+      try visitor.visitSingularInt64Field(value: self.serialNumber, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proto_NftID, rhs: Proto_NftID) -> Bool {
+    if lhs._tokenID != rhs._tokenID {return false}
+    if lhs.serialNumber != rhs.serialNumber {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

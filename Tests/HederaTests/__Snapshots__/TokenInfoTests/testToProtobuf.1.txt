@@ -72,3 +72,7 @@ pause_key {
 }
 pause_status: Paused
 ledger_id: "\000"
+metadata: "\003\004"
+metadata_key {
+  ed25519: "\024m\354\2222\nnF\353\032Cv{\261\354\225\242\346\300%\032\260\335x\017\343tt\324\272\304\025"
+}
