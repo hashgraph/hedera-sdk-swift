@@ -29,11 +29,13 @@ internal enum Program {
         let client = try Client.forName(env.networkName)
 
         client.setOperator(env.operatorAccountId, env.operatorKey)
-        
+
         let metadataKey = PrivateKey.generateEd25519()
         let nftCount = 4
-        let initialMetadataList = [Data(Array(repeating: [9,1,6], count: (nftCount / [9,1,6].count) + 1).flatMap { $0 }.prefix(nftCount))]
-        let updatedMetadata = Data([3,4])
+        let initialMetadataList = [
+            Data(Array(repeating: [9, 1, 6], count: (nftCount / [9, 1, 6].count) + 1).flatMap { $0 }.prefix(nftCount))
+        ]
+        let updatedMetadata = Data([3, 4])
 
         // Create Token with metadata key included
         let tokenCreateTxReceipt = try await TokenCreateTransaction()
@@ -47,7 +49,7 @@ internal enum Program {
             .expirationTime(.now + .minutes(5))
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
-        
+
         let tokenId = try XCTUnwrap(tokenCreateTxReceipt.tokenId)
 
         // Mint Token
@@ -56,9 +58,9 @@ internal enum Program {
             .tokenId(tokenId)
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
-        
+
         let serials = try XCTUnwrap(tokenMintTxReceipt.serials)
-        
+
         print("Metadata after mint= \(try await getMetadataList(testEnv.client, tokenId, serials))")
 
         // Apply new serials & metadata Nft token
@@ -69,35 +71,37 @@ internal enum Program {
             .sign(metadataKey)
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
-        
+
         let updatedSerials = try XCTUnwrap(updatedNftTxReceipt.serials)
-        
+
         print("Metadata after mint= \(try await getMetadataList(testEnv.client, tokenId, updatedSerials))")
     }
 }
 
 func getMetadataList(_ client: Client, _ tokenId: TokenId, _ serials: [UInt64]) async throws -> [Data] {
     // Use TaskGroup to handle concurrent fetches
-    let metadataList: [Data] = try await withThrowingTaskGroup(of: Data.self, body: { group in
-        var results = [Data]()
+    let metadataList: [Data] = try await withThrowingTaskGroup(
+        of: Data.self,
+        body: { group in
+            var results = [Data]()
 
-        // Iterate over serials, launching a new task for each
-        for serial in serials {
-            group.addTask {
-                let nftId = NftId(tokenId: tokenId, serial: UInt64(serial))
-                // Execute the query and return the result
-                // This assumes an async `execute` function that returns metadata or throws an error
-                return try await TokenNftInfoQuery().nftId(nftId).execute(client).metadata
+            // Iterate over serials, launching a new task for each
+            for serial in serials {
+                group.addTask {
+                    let nftId = NftId(tokenId: tokenId, serial: UInt64(serial))
+                    // Execute the query and return the result
+                    // This assumes an async `execute` function that returns metadata or throws an error
+                    return try await TokenNftInfoQuery().nftId(nftId).execute(client).metadata
+                }
             }
-        }
 
-        // Collect results from all tasks
-        for try await result in group {
-            results.append(result)
-        }
+            // Collect results from all tasks
+            for try await result in group {
+                results.append(result)
+            }
 
-        return results
-    })
+            return results
+        })
 
     return metadataList
 }
@@ -120,4 +124,3 @@ extension Environment {
         self["HEDERA_NETWORK"]?.stringValue ?? "testnet"
     }
 }
-

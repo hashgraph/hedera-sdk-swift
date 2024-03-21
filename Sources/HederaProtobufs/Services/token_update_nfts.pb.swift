@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// At consensus, updates an already created Non Fungible Token to the given values.
-/// 
+///
 /// If no value is given for a field, that field is left unchanged.
 /// Only certain fields such as metadata can be updated.
 ///

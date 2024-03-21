@@ -25,8 +25,8 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// transaction must be signed by the existing key for this account. If the transaction is changing
 /// the key field, then the transaction must be signed by both the old key (from before the change)
 /// and the new key. The old key must sign for security. The new key must sign as a safeguard to
-/// avoid accidentally changing to an invalid key, and then having no way to recover. 
-/// If the update transaction sets the <tt>auto_renew_account</tt> field to anything other 
+/// avoid accidentally changing to an invalid key, and then having no way to recover.
+/// If the update transaction sets the <tt>auto_renew_account</tt> field to anything other
 /// than the sentinel <tt>0.0.0</tt>, the key of the referenced account must sign.
 public struct Proto_CryptoUpdateTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the

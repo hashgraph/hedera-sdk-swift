@@ -83,7 +83,7 @@ public struct Proto_Nft {
   }
 
   ///*
-  /// If the owner of this NFT is not its token treasury, the id of the previous NFT 
+  /// If the owner of this NFT is not its token treasury, the id of the previous NFT
   /// in the owner's "doubly-linked list" of owned NFTs (if any).
   public var ownerPreviousNftID: Proto_NftID {
     get {return _storage._ownerPreviousNftID ?? Proto_NftID()}
@@ -95,7 +95,7 @@ public struct Proto_Nft {
   public mutating func clearOwnerPreviousNftID() {_uniqueStorage()._ownerPreviousNftID = nil}
 
   ///*
-  /// If the owner of this NFT is not its token treasury, the id of the next NFT in 
+  /// If the owner of this NFT is not its token treasury, the id of the next NFT in
   /// the owner's "doubly-linked list" of owned NFTs (if any).
   public var ownerNextNftID: Proto_NftID {
     get {return _storage._ownerNextNftID ?? Proto_NftID()}

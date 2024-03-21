@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Gets information about a schedule in the network's action queue.
-/// 
+///
 /// Responds with <tt>INVALID_SCHEDULE_ID</tt> if the requested schedule doesn't exist.
 public struct Proto_ScheduleGetInfoQuery {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -193,7 +193,7 @@ public struct Proto_ScheduleInfo {
   public mutating func clearScheduledTransactionID() {_uniqueStorage()._scheduledTransactionID = nil}
 
   ///*
-  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs. 
+  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs.
   public var ledgerID: Data {
     get {return _storage._ledgerID}
     set {_uniqueStorage()._ledgerID = newValue}

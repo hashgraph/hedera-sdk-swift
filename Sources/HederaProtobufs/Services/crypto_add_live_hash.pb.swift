@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// A hash---presumably of some kind of credential or certificate---along with a list of keys, each
-/// of which may be either a primitive or a threshold key. 
+/// of which may be either a primitive or a threshold key.
 public struct Proto_LiveHash {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for

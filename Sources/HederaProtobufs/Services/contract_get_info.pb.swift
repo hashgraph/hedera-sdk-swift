@@ -197,9 +197,9 @@ public struct Proto_ContractGetInfoResponse {
     }
 
     ///*
-    /// [DEPRECATED] The metadata of the tokens associated to the contract. This field was 
-    /// deprecated by <a href="https://hips.hedera.com/hip/hip-367">HIP-367</a>, which allowed 
-    /// an account to be associated to an unlimited number of tokens. This scale makes it more 
+    /// [DEPRECATED] The metadata of the tokens associated to the contract. This field was
+    /// deprecated by <a href="https://hips.hedera.com/hip/hip-367">HIP-367</a>, which allowed
+    /// an account to be associated to an unlimited number of tokens. This scale makes it more
     /// efficient for users to consult mirror nodes to review their token associations.
     public var tokenRelationships: [Proto_TokenRelationship] {
       get {return _storage._tokenRelationships}
@@ -207,7 +207,7 @@ public struct Proto_ContractGetInfoResponse {
     }
 
     ///*
-    /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs. 
+    /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs.
     public var ledgerID: Data {
       get {return _storage._ledgerID}
       set {_uniqueStorage()._ledgerID = newValue}

@@ -20,8 +20,8 @@
 
 import HederaProtobufs
 import SnapshotTesting
-import XCTest
 import SwiftProtobuf
+import XCTest
 
 @testable import Hedera
 
@@ -42,7 +42,6 @@ internal final class TokenUpdateTransactionTests: XCTestCase {
         "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e11"
     private static let testMetadataKey: PrivateKey =
         "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e18"
-
 
     private static let testTreasuryAccountId: AccountId = "7.7.7"
     private static let testAutoRenewAccountId: AccountId = "8.8.8"
@@ -228,13 +227,13 @@ internal final class TokenUpdateTransactionTests: XCTestCase {
         tx.pauseKey(.single(Self.testPauseKey.publicKey))
         XCTAssertEqual(tx.pauseKey, .single(Self.testPauseKey.publicKey))
     }
-    
+
     internal func testGetSetMetadata() {
         let tx = TokenUpdateTransaction()
         tx.metadata(Resources.metadata)
         XCTAssertEqual(tx.metadata, Resources.metadata)
     }
-    
+
     internal func testGetSetMetadataKey() {
         let tx = TokenUpdateTransaction()
         tx.metadataKey(.single(Self.testMetadataKey.publicKey))

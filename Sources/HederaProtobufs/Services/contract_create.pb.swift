@@ -23,10 +23,10 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// Start a new smart contract instance. After the instance is created, the ContractID for it is in
 /// the receipt, and can be retrieved by the Record or with a GetByKey query. The instance will run
-/// the bytecode, either stored in a previously created file or in the transaction body itself for 
+/// the bytecode, either stored in a previously created file or in the transaction body itself for
 /// small contracts.
-/// 
-/// 
+///
+///
 /// The constructor will be executed using the given amount of gas, and any unspent gas will be
 /// refunded to the paying account. Constructor inputs come from the given constructorParameters.
 ///  - The instance will exist for autoRenewPeriod seconds. When that is reached, it will renew
@@ -73,7 +73,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///    to the smart contract in the future. The memo field can only be changed using the admin keys.
 ///    If there are no admin keys, then it cannot be changed after the smart contract is created.
 ///
-/// <b>Signing requirements:</b> If an admin key is set, it must sign the transaction. If an 
+/// <b>Signing requirements:</b> If an admin key is set, it must sign the transaction. If an
 /// auto-renew account is set, its key must sign the transaction.
 public struct Proto_ContractCreateTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the

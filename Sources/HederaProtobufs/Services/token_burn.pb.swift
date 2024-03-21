@@ -28,7 +28,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// Token A has 2 decimals. In order to burn 100 tokens, one must provide amount of 10000. In order
 /// to burn 100.55 tokens, one must provide amount of 10055.
 /// For non fungible tokens the transaction body accepts serialNumbers list of integers as a parameter.
-/// 
+///
 /// If the serialNumbers don't get filled for non-fungible token type, a INVALID_TOKEN_BURN_AMOUNT response
 /// code will be returned.
 /// If a zero amount is provided for a fungible token type, it will be treated as a regular transaction.

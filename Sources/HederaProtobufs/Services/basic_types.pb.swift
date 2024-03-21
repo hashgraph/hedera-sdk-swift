@@ -76,12 +76,12 @@ extension Proto_TokenType: CaseIterable {
 #endif  // swift(>=4.2)
 
 ///*
-/// Allows a set of resource prices to be scoped to a certain type of a HAPI operation. 
-/// 
+/// Allows a set of resource prices to be scoped to a certain type of a HAPI operation.
+///
 /// For example, the resource prices for a TokenMint operation are different between minting fungible
 /// and non-fungible tokens. This enum allows us to "mark" a set of prices as applying to one or the
 /// other.
-/// 
+///
 /// Similarly, the resource prices for a basic TokenCreate without a custom fee schedule yield a
 /// total price of $1. The resource prices for a TokenCreate with a custom fee schedule are different
 /// and yield a total base price of $2.
@@ -89,7 +89,7 @@ public enum Proto_SubType: SwiftProtobuf.Enum {
   public typealias RawValue = Int
 
   ///*
-  /// The resource prices have no special scope 
+  /// The resource prices have no special scope
   case `default` // = 0
 
   ///*
@@ -984,7 +984,7 @@ public struct Proto_RealmID {
 }
 
 ///*
-/// The ID for an a cryptocurrency account 
+/// The ID for an a cryptocurrency account
 public struct Proto_AccountID {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -1122,7 +1122,7 @@ public struct Proto_NftID {
 }
 
 ///*
-/// The ID for a file 
+/// The ID for a file
 public struct Proto_FileID {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -1146,7 +1146,7 @@ public struct Proto_FileID {
 }
 
 ///*
-/// The ID for a smart contract instance 
+/// The ID for a smart contract instance
 public struct Proto_ContractID {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -1173,21 +1173,21 @@ public struct Proto_ContractID {
   }
 
   ///*
-  /// The 20-byte EVM address of the contract to call. 
-  /// 
+  /// The 20-byte EVM address of the contract to call.
+  ///
   /// Every contract has an EVM address determined by its <tt>shard.realm.num</tt> id.
   /// This address is as follows:
   ///   <ol>
   ///     <li>The first 4 bytes are the big-endian representation of the shard.</li>
   ///     <li>The next 8 bytes are the big-endian representation of the realm.</li>
   ///     <li>The final 8 bytes are the big-endian representation of the number.</li>
-  ///   </ol>  
-  /// 
-  /// Contracts created via CREATE2 have an <b>additional, primary address</b> that is 
-  /// derived from the <a href="https://eips.ethereum.org/EIPS/eip-1014">EIP-1014</a> 
-  /// specification, and does not have a simple relation to a <tt>shard.realm.num</tt> id. 
-  /// 
-  /// (Please do note that CREATE2 contracts can also be referenced by the three-part 
+  ///   </ol>
+  ///
+  /// Contracts created via CREATE2 have an <b>additional, primary address</b> that is
+  /// derived from the <a href="https://eips.ethereum.org/EIPS/eip-1014">EIP-1014</a>
+  /// specification, and does not have a simple relation to a <tt>shard.realm.num</tt> id.
+  ///
+  /// (Please do note that CREATE2 contracts can also be referenced by the three-part
   /// EVM address described above.)
   public var evmAddress: Data {
     get {
@@ -1204,21 +1204,21 @@ public struct Proto_ContractID {
     /// A nonnegative number unique within a given shard and realm
     case contractNum(Int64)
     ///*
-    /// The 20-byte EVM address of the contract to call. 
-    /// 
+    /// The 20-byte EVM address of the contract to call.
+    ///
     /// Every contract has an EVM address determined by its <tt>shard.realm.num</tt> id.
     /// This address is as follows:
     ///   <ol>
     ///     <li>The first 4 bytes are the big-endian representation of the shard.</li>
     ///     <li>The next 8 bytes are the big-endian representation of the realm.</li>
     ///     <li>The final 8 bytes are the big-endian representation of the number.</li>
-    ///   </ol>  
-    /// 
-    /// Contracts created via CREATE2 have an <b>additional, primary address</b> that is 
-    /// derived from the <a href="https://eips.ethereum.org/EIPS/eip-1014">EIP-1014</a> 
-    /// specification, and does not have a simple relation to a <tt>shard.realm.num</tt> id. 
-    /// 
-    /// (Please do note that CREATE2 contracts can also be referenced by the three-part 
+    ///   </ol>
+    ///
+    /// Contracts created via CREATE2 have an <b>additional, primary address</b> that is
+    /// derived from the <a href="https://eips.ethereum.org/EIPS/eip-1014">EIP-1014</a>
+    /// specification, and does not have a simple relation to a <tt>shard.realm.num</tt> id.
+    ///
+    /// (Please do note that CREATE2 contracts can also be referenced by the three-part
     /// EVM address described above.)
     case evmAddress(Data)
 
@@ -1293,13 +1293,13 @@ public struct Proto_TransactionID {
   public var scheduled: Bool = false
 
   ///*
-  /// The identifier for an internal transaction that was spawned as part 
-  /// of handling a user transaction. (These internal transactions share the 
+  /// The identifier for an internal transaction that was spawned as part
+  /// of handling a user transaction. (These internal transactions share the
   /// transactionValidStart and accountID of the user transaction, so a
   /// nonce is necessary to give them a unique TransactionID.)
-  /// 
-  /// An example is when a "parent" ContractCreate or ContractCall transaction 
-  /// calls one or more HTS precompiled contracts; each of the "child" 
+  ///
+  /// An example is when a "parent" ContractCreate or ContractCall transaction
+  /// calls one or more HTS precompiled contracts; each of the "child"
   /// transactions spawned for a precompile has a id with a different nonce.
   public var nonce: Int32 = 0
 
@@ -1557,15 +1557,15 @@ public struct Proto_ScheduleID {
 /// A Key can be a public key from either the Ed25519 or ECDSA(secp256k1) signature schemes, where
 /// in the ECDSA(secp256k1) case we require the 33-byte compressed form of the public key. We call
 /// these public keys <b>primitive keys</b>.
-/// 
-/// If an account has primitive key associated to it, then the corresponding private key must sign 
-/// any transaction to transfer cryptocurrency out of it. 
 ///
-/// A Key can also be the ID of a smart contract instance, which is then authorized to perform any 
-/// precompiled contract action that requires this key to sign. 
+/// If an account has primitive key associated to it, then the corresponding private key must sign
+/// any transaction to transfer cryptocurrency out of it.
 ///
-/// Note that when a Key is a smart contract ID, it <i>doesn't</i> mean the contract with that ID 
-/// will actually create a cryptographic signature. It only means that when the contract calls a 
+/// A Key can also be the ID of a smart contract instance, which is then authorized to perform any
+/// precompiled contract action that requires this key to sign.
+///
+/// Note that when a Key is a smart contract ID, it <i>doesn't</i> mean the contract with that ID
+/// will actually create a cryptographic signature. It only means that when the contract calls a
 /// precompiled contract, the resulting "child transaction" will be authorized to perform any action
 /// controlled by the Key.
 ///
@@ -1668,10 +1668,10 @@ public struct Proto_Key {
     set {key = .ecdsaSecp256K1(newValue)}
   }
 
-  ///*  
+  ///*
   /// A smart contract that, if the recipient of the active message frame, should be treated
-  /// as having signed. (Note this does not mean the <i>code being executed in the frame</i> 
-  /// will belong to the given contract, since it could be running another contract's code via 
+  /// as having signed. (Note this does not mean the <i>code being executed in the frame</i>
+  /// will belong to the given contract, since it could be running another contract's code via
   /// <tt>delegatecall</tt>. So setting this key is a more permissive version of setting the
   /// contractID key, which also requires the code in the active message frame belong to the
   /// the contract with the given id.)
@@ -1708,10 +1708,10 @@ public struct Proto_Key {
     ///*
     /// Compressed ECDSA(secp256k1) public key bytes
     case ecdsaSecp256K1(Data)
-    ///*  
+    ///*
     /// A smart contract that, if the recipient of the active message frame, should be treated
-    /// as having signed. (Note this does not mean the <i>code being executed in the frame</i> 
-    /// will belong to the given contract, since it could be running another contract's code via 
+    /// as having signed. (Note this does not mean the <i>code being executed in the frame</i>
+    /// will belong to the given contract, since it could be running another contract's code via
     /// <tt>delegatecall</tt>. So setting this key is a more permissive version of setting the
     /// contractID key, which also requires the code in the active message frame belong to the
     /// the contract with the given id.)
@@ -1816,7 +1816,7 @@ public struct Proto_KeyList {
 }
 
 ///*
-/// This message is <b>DEPRECATED</b> and <b>UNUSABLE</b> with network nodes. It is retained 
+/// This message is <b>DEPRECATED</b> and <b>UNUSABLE</b> with network nodes. It is retained
 /// here only for historical reasons.
 ///
 /// Please use the SignaturePair and SignatureMap messages.
@@ -1951,7 +1951,7 @@ public struct Proto_Signature {
 }
 
 ///*
-/// This message is <b>DEPRECATED</b> and <b>UNUSABLE</b> with network nodes. It is retained 
+/// This message is <b>DEPRECATED</b> and <b>UNUSABLE</b> with network nodes. It is retained
 /// here only for historical reasons.
 ///
 /// Please use the SignaturePair and SignatureMap messages.
@@ -1980,7 +1980,7 @@ public struct Proto_ThresholdSignature {
 }
 
 ///*
-/// This message is <b>DEPRECATED</b> and <b>UNUSABLE</b> with network nodes. It is retained 
+/// This message is <b>DEPRECATED</b> and <b>UNUSABLE</b> with network nodes. It is retained
 /// here only for historical reasons.
 ///
 /// Please use the SignaturePair and SignatureMap messages.
@@ -2001,15 +2001,15 @@ public struct Proto_SignatureList {
 ///*
 /// The client may use any number of bytes from zero to the whole length of the public key for
 /// pubKeyPrefix. If zero bytes are used, then it must be that only one primitive key is required
-/// to sign the linked transaction; it will surely resolve to <tt>INVALID_SIGNATURE</tt> otherwise. 
-/// 
-/// <b>IMPORTANT:</b> In the special case that a signature is being provided for a key used to 
-/// authorize a precompiled contract, the <tt>pubKeyPrefix</tt> must contain the <b>entire public 
-/// key</b>! That is, if the key is a Ed25519 key, the <tt>pubKeyPrefix</tt> should be 32 bytes 
-/// long. If the key is a ECDSA(secp256k1) key, the <tt>pubKeyPrefix</tt> should be 33 bytes long, 
-/// since we require the compressed form of the public key. 
-/// 
-/// Only Ed25519 and ECDSA(secp256k1) keys and hence signatures are currently supported. 
+/// to sign the linked transaction; it will surely resolve to <tt>INVALID_SIGNATURE</tt> otherwise.
+///
+/// <b>IMPORTANT:</b> In the special case that a signature is being provided for a key used to
+/// authorize a precompiled contract, the <tt>pubKeyPrefix</tt> must contain the <b>entire public
+/// key</b>! That is, if the key is a Ed25519 key, the <tt>pubKeyPrefix</tt> should be 32 bytes
+/// long. If the key is a ECDSA(secp256k1) key, the <tt>pubKeyPrefix</tt> should be 33 bytes long,
+/// since we require the compressed form of the public key.
+///
+/// Only Ed25519 and ECDSA(secp256k1) keys and hence signatures are currently supported.
 public struct Proto_SignaturePair {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -2387,7 +2387,7 @@ public struct Proto_ServiceEndpoint {
 ///*
 /// The data about a node, including its service endpoints and the Hedera account to be paid for
 /// services provided by the node (that is, queries answered and transactions submitted.)
-/// 
+///
 /// If the <tt>serviceEndpoint</tt> list is not set, or empty, then the endpoint given by the
 /// (deprecated) <tt>ipAddress</tt> and <tt>portno</tt> fields should be used.
 ///
@@ -2413,9 +2413,9 @@ public struct Proto_NodeAddress {
   public var memo: Data = Data()
 
   ///*
-  /// The node's X509 RSA public key used to sign stream files (e.g., record stream 
-  /// files). Precisely, this field is a string of hexadecimal characters which, 
-  /// translated to binary, are the public key's DER encoding.  
+  /// The node's X509 RSA public key used to sign stream files (e.g., record stream
+  /// files). Precisely, this field is a string of hexadecimal characters which,
+  /// translated to binary, are the public key's DER encoding.
   public var rsaPubKey: String = String()
 
   ///*
@@ -2434,9 +2434,9 @@ public struct Proto_NodeAddress {
   public mutating func clearNodeAccountID() {self._nodeAccountID = nil}
 
   ///*
-  /// # Hash of the node's TLS certificate. Precisely, this field is a string of 
-  /// hexadecimal characters which, translated to binary, are the SHA-384 hash of 
-  /// the UTF-8 NFKD encoding of the node's TLS cert in PEM format. Its value can be 
+  /// # Hash of the node's TLS certificate. Precisely, this field is a string of
+  /// hexadecimal characters which, translated to binary, are the SHA-384 hash of
+  /// the UTF-8 NFKD encoding of the node's TLS cert in PEM format. Its value can be
   /// used to verify the node's certificate it presents during TLS negotiations.
   public var nodeCertHash: Data = Data()
 
@@ -2666,7 +2666,7 @@ public struct Proto_TokenBalances {
   public init() {}
 }
 
-/// A token - account association 
+/// A token - account association
 public struct Proto_TokenAssociation {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for

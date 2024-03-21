@@ -52,7 +52,7 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
   case invalidTransactionStart // = 5
 
   ///*
-  /// The given transactionValidDuration was either non-positive, or greater than the maximum 
+  /// The given transactionValidDuration was either non-positive, or greater than the maximum
   /// valid duration of 180 secs.
   case invalidTransactionDuration // = 6
 
@@ -894,7 +894,7 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
   case existingAutomaticAssociationsExceedGivenLimit // = 263
 
   ///*
-  /// Cannot set the number of automatic associations for an account more than the maximum allowed 
+  /// Cannot set the number of automatic associations for an account more than the maximum allowed
   /// token associations <tt>tokens.maxPerAccount</tt>.
   case requestedNumAutomaticAssociationsExceedsAssociationLimit // = 264
 
@@ -910,53 +910,53 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
   /// The provided pause key was invalid
   case invalidPauseKey // = 267
 
-  ///* 
+  ///*
   /// The update file in a freeze transaction body must exist.
   case freezeUpdateFileDoesNotExist // = 268
 
-  ///* 
+  ///*
   /// The hash of the update file in a freeze transaction body must match the in-memory hash.
   case freezeUpdateFileHashDoesNotMatch // = 269
 
-  ///* 
+  ///*
   /// A FREEZE_UPGRADE transaction was handled with no previous update prepared.
   case noUpgradeHasBeenPrepared // = 270
 
-  ///* 
+  ///*
   /// A FREEZE_ABORT transaction was handled with no scheduled freeze.
   case noFreezeIsScheduled // = 271
 
-  ///* 
+  ///*
   /// The update file hash when handling a FREEZE_UPGRADE transaction differs from the file
   /// hash at the time of handling the PREPARE_UPGRADE transaction.
   case updateFileHashChangedSincePrepareUpgrade // = 272
 
-  ///* 
+  ///*
   /// The given freeze start time was in the (consensus) past.
   case freezeStartTimeMustBeFuture // = 273
 
-  ///* 
+  ///*
   /// The prepared update file cannot be updated or appended until either the upgrade has
   /// been completed, or a FREEZE_ABORT has been handled.
   case preparedUpdateFileIsImmutable // = 274
 
-  ///* 
+  ///*
   /// Once a freeze is scheduled, it must be aborted before any other type of freeze can
   /// can be performed.
   case freezeAlreadyScheduled // = 275
 
-  ///* 
+  ///*
   /// If an NMT upgrade has been prepared, the following operation must be a FREEZE_UPGRADE.
   /// (To issue a FREEZE_ONLY, submit a FREEZE_ABORT first.)
   case freezeUpgradeInProgress // = 276
 
-  ///* 
-  /// If an NMT upgrade has been prepared, the subsequent FREEZE_UPGRADE transaction must 
+  ///*
+  /// If an NMT upgrade has been prepared, the subsequent FREEZE_UPGRADE transaction must
   /// confirm the id of the file to be used in the upgrade.
   case updateFileIDDoesNotMatchPrepared // = 277
 
-  ///* 
-  /// If an NMT upgrade has been prepared, the subsequent FREEZE_UPGRADE transaction must 
+  ///*
+  /// If an NMT upgrade has been prepared, the subsequent FREEZE_UPGRADE transaction must
   /// confirm the hash of the file to be used in the upgrade.
   case updateFileHashDoesNotMatchPrepared // = 278
 
@@ -975,12 +975,12 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
 
   ///*
   /// An alias used in a CryptoTransfer transaction is not the serialization of a primitive Key
-  /// message--that is, a Key with a single Ed25519 or ECDSA(secp256k1) public key and no 
+  /// message--that is, a Key with a single Ed25519 or ECDSA(secp256k1) public key and no
   /// unknown protobuf fields.
   case invalidAliasKey // = 282
 
   ///*
-  /// A fungible token transfer expected a different number of decimals than the involved 
+  /// A fungible token transfer expected a different number of decimals than the involved
   /// type actually has.
   case unexpectedTokenDecimals // = 283
 
@@ -1127,12 +1127,12 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
   case contractExpiredAndPendingRemoval // = 317
 
   ///*
-  /// A ContractUpdate requested removal of a contract's auto-renew account, but that contract has  
+  /// A ContractUpdate requested removal of a contract's auto-renew account, but that contract has
   /// no auto-renew account.
   case contractHasNoAutoRenewAccount // = 318
 
   ///*
-  /// A delete transaction submitted via HAPI set permanent_removal=true 
+  /// A delete transaction submitted via HAPI set permanent_removal=true
   case permanentRemovalRequiresSystemInitiation // = 319
 
   ///
@@ -1179,7 +1179,7 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
   case insufficientBalancesForRenewalFees // = 329
 
   ///*
-  /// A transaction's protobuf message includes unknown fields; could mean that a client 
+  /// A transaction's protobuf message includes unknown fields; could mean that a client
   /// expects not-yet-released functionality to be available.
   case transactionHasUnknownFields // = 330
 

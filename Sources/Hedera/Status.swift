@@ -933,20 +933,20 @@ public enum Status: Equatable {
 
     /// An alias that is assigned to an account or contract cannot be assigned to another account or contract.
     case aliasAlreadyAssigned  // = 332
-    
+
     /// A provided metadata key was invalid. Verification includes, for example, checking the size of Ed25519 and ECDSA(secp256k1)
     /// public keys.
-    case invalidMetadataKey // = 333
-    
+    case invalidMetadataKey  // = 333
+
     ///Metadata key is not set on token
-    case tokenHasNoMetadataKey // = 334
-    
+    case tokenHasNoMetadataKey  // = 334
+
     /// Token Metadata is not provided
-    case missingTokenMetadata // = 335
-    
+    case missingTokenMetadata  // = 335
+
     /// NFT serial numbers are missing in the TokenUpdateNftsTransactionBody
-    case missingSerialNumbers // = 336
-    
+    case missingSerialNumbers  // = 336
+
     /// swift-format-ignore: AlwaysUseLowerCamelCase
     case UNRECOGNIZED(Int32)
 
