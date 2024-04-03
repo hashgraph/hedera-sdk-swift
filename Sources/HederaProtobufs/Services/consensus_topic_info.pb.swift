@@ -35,7 +35,7 @@ public struct Proto_ConsensusTopicInfo {
   /// When a topic is created, its running hash is initialized to 48 bytes of binary zeros.
   /// For each submitted message, the topic's running hash is then updated to the output
   /// of a particular SHA-384 digest whose input data include the previous running hash.
-  /// 
+  ///
   /// See the TransactionReceipt.proto documentation for an exact description of the
   /// data included in the SHA-384 digest used for the update.
   public var runningHash: Data = Data()
@@ -103,7 +103,7 @@ public struct Proto_ConsensusTopicInfo {
   public mutating func clearAutoRenewAccount() {self._autoRenewAccount = nil}
 
   ///*
-  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs. 
+  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs.
   public var ledgerID: Data = Data()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()

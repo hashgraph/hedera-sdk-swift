@@ -23,10 +23,10 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// At consensus, marks a contract as deleted and transfers its remaining hBars, if any, to a
 /// designated receiver. After a contract is deleted, it can no longer be called.
-/// 
+///
 /// If the target contract is immutable (that is, was created without an admin key), then this
 /// transaction resolves to MODIFYING_IMMUTABLE_CONTRACT.
-/// 
+///
 /// --- Signing Requirements ---
 /// 1. The admin key of the target contract must sign.
 /// 2. If the transfer account or contract has receiverSigRequired, its associated key must also sign
@@ -69,7 +69,7 @@ public struct Proto_ContractDeleteTransactionBody {
   }
 
   ///*
-  /// If set to true, means this is a "synthetic" system transaction being used to 
+  /// If set to true, means this is a "synthetic" system transaction being used to
   /// alert mirror nodes that the contract is being permanently removed from the ledger.
   /// <b>IMPORTANT:</b> User transactions cannot set this field to true, as permanent
   /// removal is always managed by the ledger itself. Any ContractDeleteTransactionBody

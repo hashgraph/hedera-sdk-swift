@@ -74,7 +74,7 @@ public struct Proto_NodeStakeUpdateTransactionBody {
   }
 
   ///*
-  /// The number of minutes in a staking period. Note for the special case of 1440 minutes, periods are 
+  /// The number of minutes in a staking period. Note for the special case of 1440 minutes, periods are
   /// treated as UTC calendar days, rather than repeating 1440 minute periods left-aligned at the epoch.
   public var stakingPeriod: Int64 {
     get {return _storage._stakingPeriod}
@@ -100,7 +100,7 @@ public struct Proto_NodeStakeUpdateTransactionBody {
   }
 
   ///*
-  /// (DEPRECATED) The maximum total number of tinybars to be distributed as staking rewards in the 
+  /// (DEPRECATED) The maximum total number of tinybars to be distributed as staking rewards in the
   /// ending period. Please consult the max_total_reward field instead.
   public var stakingRewardRate: Int64 {
     get {return _storage._stakingRewardRate}
@@ -108,7 +108,7 @@ public struct Proto_NodeStakeUpdateTransactionBody {
   }
 
   ///*
-  /// The amount of the staking reward funds (account 0.0.800) reserved to pay pending rewards that 
+  /// The amount of the staking reward funds (account 0.0.800) reserved to pay pending rewards that
   /// have been earned but not collected.
   public var reservedStakingRewards: Int64 {
     get {return _storage._reservedStakingRewards}
@@ -116,7 +116,7 @@ public struct Proto_NodeStakeUpdateTransactionBody {
   }
 
   ///*
-  /// The unreserved balance of account 0.0.800 at the close of the just-ending period; this value is 
+  /// The unreserved balance of account 0.0.800 at the close of the just-ending period; this value is
   /// used to compute the HIP-782 balance ratio.
   public var unreservedStakingRewardBalance: Int64 {
     get {return _storage._unreservedStakingRewardBalance}
@@ -124,7 +124,7 @@ public struct Proto_NodeStakeUpdateTransactionBody {
   }
 
   ///*
-  /// The unreserved tinybar balance of account 0.0.800 required to achieve the maximum per-hbar reward 
+  /// The unreserved tinybar balance of account 0.0.800 required to achieve the maximum per-hbar reward
   /// rate in any period; please see HIP-782 for details.
   public var rewardBalanceThreshold: Int64 {
     get {return _storage._rewardBalanceThreshold}
@@ -132,7 +132,7 @@ public struct Proto_NodeStakeUpdateTransactionBody {
   }
 
   ///*
-  /// The maximum amount of tinybar that can be staked for reward while still achieving the maximum 
+  /// The maximum amount of tinybar that can be staked for reward while still achieving the maximum
   /// per-hbar reward rate in any period; please see HIP-782 for details.
   public var maxStakeRewarded: Int64 {
     get {return _storage._maxStakeRewarded}
@@ -140,10 +140,10 @@ public struct Proto_NodeStakeUpdateTransactionBody {
   }
 
   ///*
-  /// The maximum total tinybars that could be paid as staking rewards in the ending period, after 
+  /// The maximum total tinybars that could be paid as staking rewards in the ending period, after
   /// applying the settings for the 0.0.800 balance threshold and the maximum stake rewarded. This
-  /// field replaces the deprecated field staking_reward_rate. It is only for convenience, since a 
-  /// mirror node could also calculate its value by iterating the node_stake list and summing 
+  /// field replaces the deprecated field staking_reward_rate. It is only for convenience, since a
+  /// mirror node could also calculate its value by iterating the node_stake list and summing
   /// stake_rewarded fields; then multiplying this sum by the max_staking_reward_rate_per_hbar.
   public var maxTotalReward: Int64 {
     get {return _storage._maxTotalReward}
@@ -166,13 +166,13 @@ public struct Proto_NodeStake {
 
   ///*
   /// The maximum stake (rewarded or not rewarded) this node can have as consensus weight. If its stake to
-  /// reward is above this maximum at the start of a period, then accounts staking to the node in that 
+  /// reward is above this maximum at the start of a period, then accounts staking to the node in that
   /// period will be rewarded at a lower rate scaled by (maxStake / stakeRewardStart).
   public var maxStake: Int64 = 0
 
   ///*
   /// The minimum stake (rewarded or not rewarded) this node must reach before having non-zero consensus weight.
-  /// If its total stake is below this minimum at the start of a period, then accounts staking to the node in 
+  /// If its total stake is below this minimum at the start of a period, then accounts staking to the node in
   /// that period will receive no rewards.
   public var minStake: Int64 = 0
 
@@ -181,8 +181,8 @@ public struct Proto_NodeStake {
   public var nodeID: Int64 = 0
 
   ///*
-  /// The reward rate _per whole hbar_ that was staked to this node with declineReward=false from the start of 
-  /// the staking period that is ending. 
+  /// The reward rate _per whole hbar_ that was staked to this node with declineReward=false from the start of
+  /// the staking period that is ending.
   public var rewardRate: Int64 = 0
 
   ///*
@@ -190,12 +190,12 @@ public struct Proto_NodeStake {
   public var stake: Int64 = 0
 
   ///*
-  /// Total of (balance + stakedToMe) for all accounts staked to this node with declineReward=true, at the 
+  /// Total of (balance + stakedToMe) for all accounts staked to this node with declineReward=true, at the
   /// beginning of the new staking period.
   public var stakeNotRewarded: Int64 = 0
 
   ///*
-  /// Total of (balance + stakedToMe) for all accounts staked to this node with declineReward=false, at the 
+  /// Total of (balance + stakedToMe) for all accounts staked to this node with declineReward=false, at the
   /// beginning of the new staking period.
   public var stakeRewarded: Int64 = 0
 
