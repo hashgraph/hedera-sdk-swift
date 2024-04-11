@@ -61,7 +61,7 @@ extension FreezeType: TryProtobufCodable {
         case .freezeUpgrade: self = .freezeUpgrade
         case .freezeAbort: self = .freezeAbort
         case .telemetryUpgrade: self = .telemetryUpgrade
-        case .UNRECOGNIZED(let value): throw HError.fromProtobuf("unrecognized FreezeType: `\(value)`")
+        case .unrecognized(let value): throw HError.fromProtobuf("unrecognized FreezeType: `\(value)`")
         }
     }
 

@@ -145,7 +145,7 @@ extension TokenInfo: TryProtobufCodable {
             defaultFreezeStatus = true
         case .unfrozen:
             defaultFreezeStatus = false
-        case .UNRECOGNIZED(let value):
+        case .unrecognized(let value):
             throw HError.fromProtobuf("Unrecognized defaultFreezeStatus: `\(value)`")
         }
 
@@ -157,7 +157,7 @@ extension TokenInfo: TryProtobufCodable {
             defaultKycStatus = true
         case .revoked:
             defaultKycStatus = false
-        case .UNRECOGNIZED(let value):
+        case .unrecognized(let value):
             throw HError.fromProtobuf("Unrecognized defaultKycStatus: `\(value)`")
         }
 
@@ -175,7 +175,7 @@ extension TokenInfo: TryProtobufCodable {
             pauseStatus = true
         case .unpaused:
             pauseStatus = false
-        case .UNRECOGNIZED(let value):
+        case .unrecognized(let value):
             throw HError.fromProtobuf("Unrecognized pauseStatus: `\(value)`")
         }
 

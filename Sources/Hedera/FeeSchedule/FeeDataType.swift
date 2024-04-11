@@ -54,7 +54,7 @@ extension FeeDataType: TryProtobufCodable {
         case .tokenFungibleCommonWithCustomFees: self = .tokenFungibleCommonWithCustomFees
         case .tokenNonFungibleUniqueWithCustomFees: self = .tokenNonFungibleUniqueWithCustomFees
         case .scheduleCreateContractCall: self = .scheduleCreateContractCall
-        case .UNRECOGNIZED(let code):
+        case .unrecognized(let code):
             throw HError.fromProtobuf("unrecognized FeeDataType `\(code)`")
         }
     }

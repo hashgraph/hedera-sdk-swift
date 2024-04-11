@@ -78,9 +78,9 @@ internal final class AccountUpdate: XCTestCase {
         let testEnv = try TestEnvironment.nonFree
 
         await assertThrowsHErrorAsync(
-            try await AccountUpdateTransaction().execute(testEnv.client).getReceipt(testEnv.client)
+            try await AccountUpdateTransaction().execute(testEnv.client)
         ) { error in
-            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.receiptStatus`")
                 return
             }

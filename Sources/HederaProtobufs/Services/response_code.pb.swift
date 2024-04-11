@@ -1206,7 +1206,7 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
   ///*
   /// NFT serial numbers are missing in the TokenUpdateNftsTransactionBody
   case missingSerialNumbers // = 336
-  case UNRECOGNIZED(Int)
+  case unrecognized(Int)
 
   public init() {
     self = .ok
@@ -1509,7 +1509,7 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
     case 334: self = .tokenHasNoMetadataKey
     case 335: self = .missingTokenMetadata
     case 336: self = .missingSerialNumbers
-    default: self = .UNRECOGNIZED(rawValue)
+    default: self = .unrecognized(rawValue)
     }
   }
 
@@ -1810,7 +1810,7 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
     case .tokenHasNoMetadataKey: return 334
     case .missingTokenMetadata: return 335
     case .missingSerialNumbers: return 336
-    case .UNRECOGNIZED(let i): return i
+    case .unrecognized(let i): return i
     }
   }
 
@@ -1819,7 +1819,7 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
 #if swift(>=4.2)
 
 extension Proto_ResponseCodeEnum: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  // The compiler won't synthesize support with the unrecognized case.
   public static let allCases: [Proto_ResponseCodeEnum] = [
     .ok,
     .invalidTransaction,

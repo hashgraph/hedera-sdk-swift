@@ -39,7 +39,7 @@ public enum Proto_TokenType: SwiftProtobuf.Enum {
   /// Unique, not interchangeable with other tokens of the same type as they typically have
   /// different values.  Individually traced and can carry unique properties (e.g. serial number).
   case nonFungibleUnique // = 1
-  case UNRECOGNIZED(Int)
+  case unrecognized(Int)
 
   public init() {
     self = .fungibleCommon
@@ -49,7 +49,7 @@ public enum Proto_TokenType: SwiftProtobuf.Enum {
     switch rawValue {
     case 0: self = .fungibleCommon
     case 1: self = .nonFungibleUnique
-    default: self = .UNRECOGNIZED(rawValue)
+    default: self = .unrecognized(rawValue)
     }
   }
 
@@ -57,7 +57,7 @@ public enum Proto_TokenType: SwiftProtobuf.Enum {
     switch self {
     case .fungibleCommon: return 0
     case .nonFungibleUnique: return 1
-    case .UNRECOGNIZED(let i): return i
+    case .unrecognized(let i): return i
     }
   }
 
@@ -66,7 +66,7 @@ public enum Proto_TokenType: SwiftProtobuf.Enum {
 #if swift(>=4.2)
 
 extension Proto_TokenType: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  // The compiler won't synthesize support with the unrecognized case.
   public static let allCases: [Proto_TokenType] = [
     .fungibleCommon,
     .nonFungibleUnique,
@@ -113,7 +113,7 @@ public enum Proto_SubType: SwiftProtobuf.Enum {
   ///*
   /// The resource prices are scoped to a ScheduleCreate containing a ContractCall.
   case scheduleCreateContractCall // = 5
-  case UNRECOGNIZED(Int)
+  case unrecognized(Int)
 
   public init() {
     self = .default
@@ -127,7 +127,7 @@ public enum Proto_SubType: SwiftProtobuf.Enum {
     case 3: self = .tokenFungibleCommonWithCustomFees
     case 4: self = .tokenNonFungibleUniqueWithCustomFees
     case 5: self = .scheduleCreateContractCall
-    default: self = .UNRECOGNIZED(rawValue)
+    default: self = .unrecognized(rawValue)
     }
   }
 
@@ -139,7 +139,7 @@ public enum Proto_SubType: SwiftProtobuf.Enum {
     case .tokenFungibleCommonWithCustomFees: return 3
     case .tokenNonFungibleUniqueWithCustomFees: return 4
     case .scheduleCreateContractCall: return 5
-    case .UNRECOGNIZED(let i): return i
+    case .unrecognized(let i): return i
     }
   }
 
@@ -148,7 +148,7 @@ public enum Proto_SubType: SwiftProtobuf.Enum {
 #if swift(>=4.2)
 
 extension Proto_SubType: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  // The compiler won't synthesize support with the unrecognized case.
   public static let allCases: [Proto_SubType] = [
     .default,
     .tokenFungibleCommon,
@@ -175,7 +175,7 @@ public enum Proto_TokenSupplyType: SwiftProtobuf.Enum {
   /// Indicates that tokens of that type have an upper bound of maxSupply,
   /// provided on token creation.
   case finite // = 1
-  case UNRECOGNIZED(Int)
+  case unrecognized(Int)
 
   public init() {
     self = .infinite
@@ -185,7 +185,7 @@ public enum Proto_TokenSupplyType: SwiftProtobuf.Enum {
     switch rawValue {
     case 0: self = .infinite
     case 1: self = .finite
-    default: self = .UNRECOGNIZED(rawValue)
+    default: self = .unrecognized(rawValue)
     }
   }
 
@@ -193,7 +193,7 @@ public enum Proto_TokenSupplyType: SwiftProtobuf.Enum {
     switch self {
     case .infinite: return 0
     case .finite: return 1
-    case .UNRECOGNIZED(let i): return i
+    case .unrecognized(let i): return i
     }
   }
 
@@ -202,7 +202,7 @@ public enum Proto_TokenSupplyType: SwiftProtobuf.Enum {
 #if swift(>=4.2)
 
 extension Proto_TokenSupplyType: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  // The compiler won't synthesize support with the unrecognized case.
   public static let allCases: [Proto_TokenSupplyType] = [
     .infinite,
     .finite,
@@ -228,7 +228,7 @@ public enum Proto_TokenFreezeStatus: SwiftProtobuf.Enum {
   ///*
   /// UNDOCUMENTED
   case unfrozen // = 2
-  case UNRECOGNIZED(Int)
+  case unrecognized(Int)
 
   public init() {
     self = .freezeNotApplicable
@@ -239,7 +239,7 @@ public enum Proto_TokenFreezeStatus: SwiftProtobuf.Enum {
     case 0: self = .freezeNotApplicable
     case 1: self = .frozen
     case 2: self = .unfrozen
-    default: self = .UNRECOGNIZED(rawValue)
+    default: self = .unrecognized(rawValue)
     }
   }
 
@@ -248,7 +248,7 @@ public enum Proto_TokenFreezeStatus: SwiftProtobuf.Enum {
     case .freezeNotApplicable: return 0
     case .frozen: return 1
     case .unfrozen: return 2
-    case .UNRECOGNIZED(let i): return i
+    case .unrecognized(let i): return i
     }
   }
 
@@ -257,7 +257,7 @@ public enum Proto_TokenFreezeStatus: SwiftProtobuf.Enum {
 #if swift(>=4.2)
 
 extension Proto_TokenFreezeStatus: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  // The compiler won't synthesize support with the unrecognized case.
   public static let allCases: [Proto_TokenFreezeStatus] = [
     .freezeNotApplicable,
     .frozen,
@@ -283,7 +283,7 @@ public enum Proto_TokenKycStatus: SwiftProtobuf.Enum {
   ///*
   /// UNDOCUMENTED
   case revoked // = 2
-  case UNRECOGNIZED(Int)
+  case unrecognized(Int)
 
   public init() {
     self = .kycNotApplicable
@@ -294,7 +294,7 @@ public enum Proto_TokenKycStatus: SwiftProtobuf.Enum {
     case 0: self = .kycNotApplicable
     case 1: self = .granted
     case 2: self = .revoked
-    default: self = .UNRECOGNIZED(rawValue)
+    default: self = .unrecognized(rawValue)
     }
   }
 
@@ -303,7 +303,7 @@ public enum Proto_TokenKycStatus: SwiftProtobuf.Enum {
     case .kycNotApplicable: return 0
     case .granted: return 1
     case .revoked: return 2
-    case .UNRECOGNIZED(let i): return i
+    case .unrecognized(let i): return i
     }
   }
 
@@ -312,7 +312,7 @@ public enum Proto_TokenKycStatus: SwiftProtobuf.Enum {
 #if swift(>=4.2)
 
 extension Proto_TokenKycStatus: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  // The compiler won't synthesize support with the unrecognized case.
   public static let allCases: [Proto_TokenKycStatus] = [
     .kycNotApplicable,
     .granted,
@@ -338,7 +338,7 @@ public enum Proto_TokenPauseStatus: SwiftProtobuf.Enum {
   ///*
   /// Indicates that a Token is Unpaused.
   case unpaused // = 2
-  case UNRECOGNIZED(Int)
+  case unrecognized(Int)
 
   public init() {
     self = .pauseNotApplicable
@@ -349,7 +349,7 @@ public enum Proto_TokenPauseStatus: SwiftProtobuf.Enum {
     case 0: self = .pauseNotApplicable
     case 1: self = .paused
     case 2: self = .unpaused
-    default: self = .UNRECOGNIZED(rawValue)
+    default: self = .unrecognized(rawValue)
     }
   }
 
@@ -358,7 +358,7 @@ public enum Proto_TokenPauseStatus: SwiftProtobuf.Enum {
     case .pauseNotApplicable: return 0
     case .paused: return 1
     case .unpaused: return 2
-    case .UNRECOGNIZED(let i): return i
+    case .unrecognized(let i): return i
     }
   }
 
@@ -367,7 +367,7 @@ public enum Proto_TokenPauseStatus: SwiftProtobuf.Enum {
 #if swift(>=4.2)
 
 extension Proto_TokenPauseStatus: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  // The compiler won't synthesize support with the unrecognized case.
   public static let allCases: [Proto_TokenPauseStatus] = [
     .pauseNotApplicable,
     .paused,
@@ -680,7 +680,7 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
   ///*
   /// Update the metadata of one or more NFT's of a specific token type.
   case tokenUpdateNfts // = 88
-  case UNRECOGNIZED(Int)
+  case unrecognized(Int)
 
   public init() {
     self = .none
@@ -763,7 +763,7 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
     case 86: self = .utilPrng
     case 87: self = .transactionGetFastRecord
     case 88: self = .tokenUpdateNfts
-    default: self = .UNRECOGNIZED(rawValue)
+    default: self = .unrecognized(rawValue)
     }
   }
 
@@ -844,7 +844,7 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
     case .utilPrng: return 86
     case .transactionGetFastRecord: return 87
     case .tokenUpdateNfts: return 88
-    case .UNRECOGNIZED(let i): return i
+    case .unrecognized(let i): return i
     }
   }
 
@@ -853,7 +853,7 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
 #if swift(>=4.2)
 
 extension Proto_HederaFunctionality: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
+  // The compiler won't synthesize support with the unrecognized case.
   public static let allCases: [Proto_HederaFunctionality] = [
     .none,
     .cryptoTransfer,

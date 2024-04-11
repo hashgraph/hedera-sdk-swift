@@ -230,8 +230,8 @@ internal class TokenMint: XCTestCase {
                 .getReceipt(testEnv.client),
             "expected error minting token"
         ) { error in
-            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
-                XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
                 return
             }
 

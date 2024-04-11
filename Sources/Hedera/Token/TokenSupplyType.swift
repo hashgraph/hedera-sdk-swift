@@ -41,7 +41,7 @@ extension TokenSupplyType: TryProtobufCodable {
             self = .infinite
         case .finite:
             self = .finite
-        case .UNRECOGNIZED(let value):
+        case .unrecognized(let value):
             throw HError.fromProtobuf("unrecognized TokenSupplyType: `\(value)`")
         }
     }

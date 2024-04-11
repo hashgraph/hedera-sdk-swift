@@ -948,7 +948,7 @@ public enum Status: Equatable {
     case missingSerialNumbers  // = 336
 
     /// swift-format-ignore: AlwaysUseLowerCamelCase
-    case UNRECOGNIZED(Int32)
+    case unrecognized(Int32)
 
     // minimal edit from protoc generated: (changed from `init?`)
     // swiftlint:disable:next function_body_length
@@ -1249,7 +1249,7 @@ public enum Status: Equatable {
         case 334: self = .tokenHasNoMetadataKey
         case 335: self = .missingTokenMetadata
         case 336: self = .missingSerialNumbers
-        default: self = .UNRECOGNIZED(rawValue)
+        default: self = .unrecognized(rawValue)
         }
     }
 
@@ -1550,14 +1550,14 @@ public enum Status: Equatable {
         case .tokenHasNoMetadataKey: return 334
         case .missingTokenMetadata: return 335
         case .missingSerialNumbers: return 336
-        case .UNRECOGNIZED(let i): return i
+        case .unrecognized(let i): return i
         }
     }
 
 }
 
 extension Status: CaseIterable {
-    // The compiler won't synthesize support with the UNRECOGNIZED case.
+    // The compiler won't synthesize support with the unrecognized case.
     public static let allCases: [Status] = [
         .ok,
         .invalidTransaction,

@@ -327,7 +327,7 @@ public enum RequestType {
         case .transactionGetFastRecord: self = .tokenUpdateNfts
 
         case .tokenUpdateNfts: self = .tokenUpdateNfts
-        case .UNRECOGNIZED(let code):
+        case .unrecognized(let code):
             throw HError.fromProtobuf("unrecognized RequestType: `\(code)`")
         }
     }

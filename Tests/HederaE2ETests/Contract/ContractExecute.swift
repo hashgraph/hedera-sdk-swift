@@ -47,12 +47,11 @@ internal final class ContractExecute: XCTestCase {
         await assertThrowsHErrorAsync(
             try await ContractExecuteTransaction(gas: 200000)
                 .function("setMessage", ContractFunctionParameters().addString("new message"))
-                .execute(testEnv.client)
-                .getReceipt(testEnv.client),
+                .execute(testEnv.client),
             "expected error executing contract"
         ) { error in
-            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
-                XCTFail("`\(error.kind)` is not `.receiptStatus`")
+            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
                 return
             }
 
