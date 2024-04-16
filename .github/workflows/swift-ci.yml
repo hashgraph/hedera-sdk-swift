@@ -4,11 +4,18 @@ on:
   push: 
     branches: ['main']
 
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
 jobs:
   format:
     runs-on: macos-12
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
       - name: Install swift-format
         run: brew install swift-format
       - name: Format
@@ -22,13 +29,13 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: swift-actions/setup-swift@v1
+      - uses: swift-actions/setup-swift@e1dca7c4a36344146bbc2803f0d538462477bb37 # v2.0.0
         with:
           swift-version: ${{ matrix.swift }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: sdk/swift/.build
           key: ${{ runner.os }}-${{ matrix.swift }}-spm-${{ github.job }}-${{ hashFiles('**/Package.resolved') }}
@@ -47,12 +54,12 @@ jobs:
     needs: [build]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: swift-actions/setup-swift@v1
+      - uses: swift-actions/setup-swift@e1dca7c4a36344146bbc2803f0d538462477bb37 # v2.0.0
         with:
           swift-version: ${{ matrix.swift }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: sdk/swift/.build
           key: ${{ runner.os }}-${{ matrix.swift }}-spm-${{ github.job }}-${{ hashFiles('**/Package.resolved') }}
