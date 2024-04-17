@@ -52,6 +52,7 @@ internal final class TokenUpdate: XCTestCase {
         XCTAssertEqual(info.supplyKey, .single(account.key.publicKey))
         XCTAssertEqual(info.defaultFreezeStatus, false)
         XCTAssertEqual(info.defaultKycStatus, false)
+
     }
 
     internal func testImmutableTokenFails() async throws {

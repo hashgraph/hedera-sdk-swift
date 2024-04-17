@@ -30,6 +30,7 @@ internal struct FungibleToken {
         owner: Account,
         initialSupply: UInt64 = 0
     ) async throws -> Self {
+        let metadataKey = PrivateKey.generateEd25519()
         let ownerKey = Key.single(owner.key.publicKey)
         let receipt = try await TokenCreateTransaction(
             name: "ffff",
@@ -44,7 +45,9 @@ internal struct FungibleToken {
             supplyKey: ownerKey,
             freezeDefault: false,
             expirationTime: .now + .minutes(5),
-            feeScheduleKey: ownerKey
+            feeScheduleKey: ownerKey,
+            pauseKey: ownerKey,
+            metadataKey: Key.single(metadataKey.publicKey)
         )
         .sign(owner.key)
         .execute(testEnv.client)

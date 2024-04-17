@@ -59,6 +59,7 @@ let exampleTargets = [
     "TransferTokens",
     "UpdateAccountPublicKey",
     "ValidateChecksum",
+    "TokenUpdateNfts",
 ].map { name in
     Target.executableTarget(
         name: "\(name)Example",

@@ -31,50 +31,90 @@ internal enum Program {
         client.setOperator(env.operatorAccountId, env.operatorKey)
 
         let metadataKey = PrivateKey.generateEd25519()
-        let nftCount = 4
-        let initialMetadataList = [
-            Data(Array(repeating: [9, 1, 6], count: (nftCount / [9, 1, 6].count) + 1).flatMap { $0 }.prefix(nftCount))
-        ]
-        let updatedMetadata = Data([3, 4])
+        print("Generated metadata key= \(metadataKey)")
+
+        let metadata = Data([1])
+        let newMetadata = Data([1, 2])
 
         // Create Token with metadata key included
         let tokenCreateTxReceipt = try await TokenCreateTransaction()
-            .name("ffff")
-            .symbol("F")
+            .name("Test")
+            .symbol("T")
             .tokenType(TokenType.nonFungibleUnique)
-            .treasuryAccountId(testEnv.operator.accountId)
-            .adminKey(.single(testEnv.operator.privateKey.publicKey))
-            .supplyKey(.single(testEnv.operator.privateKey.publicKey))
+            .treasuryAccountId(env.operatorAccountId)
+            .adminKey(.single(env.operatorKey.publicKey))
+            .supplyKey(.single(env.operatorKey.publicKey))
             .metadataKey(.single(metadataKey.publicKey))
             .expirationTime(.now + .minutes(5))
-            .execute(testEnv.client)
-            .getReceipt(testEnv.client)
+            .execute(client)
+            .getReceipt(client)
 
-        let tokenId = try XCTUnwrap(tokenCreateTxReceipt.tokenId)
+        print("Status of token create transaction= \(tokenCreateTxReceipt.status)")
+
+        // Token ID created for the NFT collection.
+        let tokenId = tokenCreateTxReceipt.tokenId!
+
+        let tokenInfo = try await TokenInfoQuery()
+            .tokenId(tokenId)
+            .execute(client)
+
+        print("Token metadata key= \(tokenInfo.metadataKey!)")
 
         // Mint Token
-        let tokenMintTxReceipt = try await TokenMintTransaction()
-            .metadata(initialMetadataList)
+        let tokenMintTx = TokenMintTransaction()
+            .metadata([metadata])
             .tokenId(tokenId)
-            .execute(testEnv.client)
-            .getReceipt(testEnv.client)
 
-        let serials = try XCTUnwrap(tokenMintTxReceipt.serials)
+        print("Set metadata= \(tokenMintTx.metadata)")
 
-        print("Metadata after mint= \(try await getMetadataList(testEnv.client, tokenId, serials))")
+        let tokenMintResponse = try await tokenMintTx.execute(client)
+
+        // Get receipt for mint token transaction
+        let tokenMintReceipt = try await tokenMintResponse.getReceipt(client)
+
+        print("Status of token mint transaction= \(tokenMintReceipt.status)")
+
+        let nftId = NftId(tokenId: tokenId, serial: tokenMintReceipt.serials!.first!)
+
+        let nftInfo = try await TokenNftInfoQuery()
+            .nftId(nftId)
+            .execute(client)
+
+        print("Current metadata= \(nftInfo)")
+
+        let accountCreateTx = try await AccountCreateTransaction()
+            .key(.single(env.operatorKey.publicKey))
+            .initialBalance(.fromTinybars(1))
+            .execute(client)
+            .getReceipt(client)
+
+        let newAccountId = accountCreateTx.accountId!
+
+        let _ = try await TransferTransaction()
+            .nftTransfer(nftId, env.operatorAccountId, newAccountId)
+            .execute(client)
 
         // Apply new serials & metadata Nft token
-        let updatedNftTxReceipt = try await TokenUpdateNftsTransaction()
+        let tokenUpdateNftsTx = try TokenUpdateNftsTransaction()
             .tokenId(tokenId)
-            .serials(Array(nftSerials.prefix(2)))
-            .metadata(updatedMetadata)
-            .sign(metadataKey)
-            .execute(testEnv.client)
-            .getReceipt(testEnv.client)
+            .serials(tokenMintReceipt.serials!)
+            .metadata(newMetadata)
+            .freezeWith(client)
 
-        let updatedSerials = try XCTUnwrap(updatedNftTxReceipt.serials)
+        let tokenUpdateNftsResponse = try await tokenUpdateNftsTx.sign(metadataKey).execute(
+            client)
 
-        print("Metadata after mint= \(try await getMetadataList(testEnv.client, tokenId, updatedSerials))")
+        // Get receipt for update nfts metadata transaction
+        let tokenUpdateNftsReceipt = try await tokenUpdateNftsResponse.getReceipt(client)
+
+        print("Status of token update nfts metadata transaction= \(tokenUpdateNftsReceipt.status)")
+
+        let newNftInfo = try await TokenNftInfoQuery()
+            .nftId(nftId)
+            .execute(client)
+
+        print("Updated metadata= \(newNftInfo.metadata)")
+
     }
 }
 

@@ -200,6 +200,19 @@ public final class Client: Sendable {
         case "previewnet":
             return .forPreviewnet()
 
+        case "localhost":
+            let network: [String: AccountId] = ["127.0.0.1:50211": AccountId(num: 3)]
+            let eventLoop = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+
+            let client = try Client.forNetwork(network)
+            client.setMirrorNetwork(["127.0.0.1:5600"])
+
+            return Self(
+                network: client.networkInner,
+                ledgerId: nil,
+                eventLoop
+            )
+
         default:
             throw HError.basicParse("Unknown network name \(name)")
         }
