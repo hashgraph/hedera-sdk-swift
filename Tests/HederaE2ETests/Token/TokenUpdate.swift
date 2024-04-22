@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,5 +86,52 @@ internal final class TokenUpdate: XCTestCase {
 
             XCTAssertEqual(status, .tokenIsImmutable)
         }
+    }
+    
+    internal func testUpdateImmutableTokenMetadata() async throws {
+        let testEnv = try TestEnvironment.nonFree
+        
+        let initialMetadata = Data([1])
+        let updatedMetadata = Data([1, 2])
+        let metadataKey = PrivateKey.generateEd25519()
+        
+        // Create fungible token with metadata and metadata key
+        let tokenId = try await TokenCreateTransaction()
+            .name("ffff")
+            .symbol("F")
+            .tokenType(TokenType.fungibleCommon) // The same flow can be executed with a TokenType.NON_FUNGIBLE_UNIQUE (i.e. HIP-765)
+            .treasuryAccountId(testEnv.operator.accountId)
+            .decimals(3)
+            .initialSupply(100000)
+            .expirationTime(Timestamp.now + .hours(2))
+            .metadata(initialMetadata)
+            .adminKey(.single(testEnv.operator.publicKey))
+            .metadataKey(.single(metadataKey.publicKey))
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+            .tokenId!
+        
+
+        let tokenInfoAfterCreation = try await TokenInfoQuery()
+            .tokenId(tokenId)
+            .execute(testEnv.client)
+        
+        XCTAssertEqual(tokenInfoAfterCreation.metadata, initialMetadata)
+        XCTAssertEqual(tokenInfoAfterCreation.metadataKey, .single(metadataKey.publicKey))
+        
+        // Update token's metadata
+        _ = try await TokenUpdateTransaction()
+            .tokenId(tokenId)
+            .metadata(updatedMetadata)
+            .freezeWith(testEnv.client)
+            .sign(metadataKey)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+        
+        let tokenInfoAfterMetadataUpdate = try await TokenInfoQuery()
+            .tokenId(tokenId)
+            .execute(testEnv.client)
+        
+        XCTAssertEqual(tokenInfoAfterMetadataUpdate.metadata, updatedMetadata)
     }
 }
