@@ -2,7 +2,7 @@
 ##### Global Protection Rule ######
 ###################################
 # NOTE: This rule is overriden by the more specific rules below. This is the catch-all rule for all files not covered by the more specific rules below.
-*                                               @hashgraph/release-engineering @hashgraph/release-engineering-managers
+*                                               @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
 
 #########################
 #####  Core Files  ######
@@ -12,9 +12,6 @@
 
 # Protection Rules for Github Configuration Files and Actions Workflows
 /.github/                                       @hashgraph/release-engineering @hashgraph/release-engineering-managers
-
-# Legacy Maven project files
-**/pom.xml                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers
 
 # Swift project files and inline plugins
 **/.swift-format.json                           @hashgraph/release-engineering @hashgraph/release-engineering-managers
@@ -39,7 +36,3 @@
 # Git Ignore definitions
 **/.gitignore                                   @hashgraph/release-engineering @hashgraph/release-engineering-managers
 **/.gitignore.*                                 @hashgraph/release-engineering @hashgraph/release-engineering-managers
-
-# Legacy CircleCI configuration
-.circleci.settings.xml                          @hashgraph/release-engineering @hashgraph/release-engineering-managers
-/.circleci/                                     @hashgraph/release-engineering @hashgraph/release-engineering-managers
