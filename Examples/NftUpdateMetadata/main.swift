@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  *
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,10 +37,10 @@ internal enum Program {
         // by this account and be signed by this key
         client.setOperator(env.operatorAccountId, env.operatorKey)
 
-        // Demonstrate with an immutable token (without admin key)
+        // Demonstrate with an mutable token (with admin key)
         try await updateNftsMetadata(client, env, try getMutableTokenCreateTransaction(client, env))
 
-        // Demonstrate with an immutable token (without admin key)
+        // Demonstrate with an immutable token (with metadata key)
         try await updateNftsMetadata(client, env, try getImmutableTokenCreateTransaction(client, env))
 
     }
@@ -84,15 +84,6 @@ internal enum Program {
         // Create an account to send the NFT to
         let newAccountId = try await accountCreateTransaction.getReceipt(client).accountId!
 
-        // Associate the NFT to the account only if the account does not have any automatic token association slots open. When we created the account in the previous step we set automatic token associations to 10 so I should have 10 slots open to receive a token
-        //        _ = try await TokenAssociateTransaction()
-        //            .accountId(newAccountId)
-        //            .tokenIds([tokenId])
-        //            .freezeWith(client)
-        //            .sign(env.operatorKey)
-        //            .execute(client)
-        //            .getReceipt(client)
-
         // Transfer the Nft to the new account
         _ = try await TransferTransaction()
             .nftTransfer(tokenId.nft(nftSerials.first!), env.operatorAccountId, newAccountId)
@@ -116,7 +107,9 @@ internal enum Program {
         // Check that metadata for the NFT was updated correctly
         let metadataList = try await getMetadataList(client, tokenId, nftSerials)
 
-        print("Metadata after update: \(metadataList)")
+        _ = metadataList.map {
+            print("Metadata after update: \($0.bytes)")
+        }
     }
 
     internal static func getMutableTokenCreateTransaction(_ client: Client, _ env: Environment) throws
@@ -125,8 +118,8 @@ internal enum Program {
         print("Creating a mutable token")
 
         return try TokenCreateTransaction()
-            .name("Mutable")
-            .symbol("MUT")
+            .name("ffff")
+            .symbol("F")
             .tokenType(TokenType.nonFungibleUnique)
             .treasuryAccountId(env.operatorAccountId)
             .adminKey(.single(env.operatorKey.publicKey))
@@ -142,8 +135,8 @@ internal enum Program {
         print("Creating a immutable token")
 
         return try TokenCreateTransaction()
-            .name("Immutable")
-            .symbol("IMMUT")
+            .name("ffff")
+            .symbol("F")
             .tokenType(TokenType.nonFungibleUnique)
             .treasuryAccountId(env.operatorAccountId)
             .supplyKey(.single(env.operatorKey.publicKey))
