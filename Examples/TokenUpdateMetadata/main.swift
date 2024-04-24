@@ -33,8 +33,8 @@ internal enum Program {
         let env = try Dotenv.load()
         let client = try Client.forName(env.networkName)
 
-        // Defaults the operator account ID and key such that all generated transactions will be paid for
-        // by this account and be signed by this key
+        // Defaults the operator account ID and key such that all generated
+        // transactions will be paid for by this account and be signed by this key
         client.setOperator(env.operatorAccountId, env.operatorKey)
 
         // Demonstrate with an mutable token (with admin key)
@@ -48,10 +48,11 @@ internal enum Program {
     internal static func updateMutableTokenMetadata(_ client: Client, _ env: Environment) async throws {
         print("Creating a mutable token")
 
+        // Note: The same flow can be executed with a TokenType.NON_FUNGIBLE_UNIQUE (i.e. HIP-765)
         let tokenId = try await TokenCreateTransaction()
             .name("ffff")
             .symbol("F")
-            .tokenType(TokenType.fungibleCommon)  // The same flow can be executed with a TokenType.NON_FUNGIBLE_UNIQUE (i.e. HIP-765)
+            .tokenType(TokenType.fungibleCommon)
             .decimals(3)
             .initialSupply(1_000_000)
             .treasuryAccountId(env.operatorAccountId)
@@ -90,10 +91,11 @@ internal enum Program {
 
         let metadataKey: PrivateKey = PrivateKey.generateEd25519()
 
+        // Note: The same flow can be executed with a TokenType.NON_FUNGIBLE_UNIQUE (i.e. HIP-765)
         let tokenId = try await TokenCreateTransaction()
             .name("ffff")
             .symbol("F")
-            .tokenType(TokenType.fungibleCommon)  // The same flow can be executed with a TokenType.NON_FUNGIBLE_UNIQUE (i.e. HIP-765)
+            .tokenType(TokenType.fungibleCommon)
             .treasuryAccountId(env.operatorAccountId)
             .decimals(3)
             .initialSupply(100000)
