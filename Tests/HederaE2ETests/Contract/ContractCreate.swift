@@ -60,7 +60,7 @@ internal final class ContractCreate: XCTestCase {
         let bytecode = try await File.forContent(ContractHelpers.bytecode, testEnv)
 
         let receipt = try await ContractCreateTransaction()
-            .gas(100000)
+            .gas(200000)
             .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
             .bytecodeFileId(bytecode.fileId)
             .contractMemo("[e2e::ContractCreateTransaction]")
@@ -80,7 +80,6 @@ internal final class ContractCreate: XCTestCase {
         XCTAssertNotNil(info.adminKey)
         XCTAssertEqual(info.storage, 128)
         XCTAssertEqual(info.contractMemo, "[e2e::ContractCreateTransaction]")
-
     }
 
     internal func testUnsetGasFails() async throws {

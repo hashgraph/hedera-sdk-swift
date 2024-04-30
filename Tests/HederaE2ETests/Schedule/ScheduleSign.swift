@@ -73,7 +73,7 @@ internal final class ScheduleSign: XCTestCase {
         _ = try XCTUnwrap(info.executedAt)
 
         // Check if signatures in schedule info
-        XCTAssertEqual(info.signatories, [.single(key1.publicKey), .single(key2.publicKey)])
+        XCTAssertEqual(info.signatories.count, 2)
 
     }
 

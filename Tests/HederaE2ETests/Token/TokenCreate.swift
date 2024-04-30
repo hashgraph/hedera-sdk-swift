@@ -79,11 +79,11 @@ internal final class TokenCreate: XCTestCase {
                 .symbol("F")
                 .treasuryAccountId(account.id)
                 .expirationTime(.now + .minutes(5))
-                .sign(account.key).execute(testEnv.client),
+                .sign(account.key).execute(testEnv.client).getReceipt(testEnv.client),
             "expected error creating token"
         ) { error in
-            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
-                XCTFail("`\(error.kind)` is not `.missingTokenName`")
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
                 return
             }
 
@@ -101,11 +101,11 @@ internal final class TokenCreate: XCTestCase {
                 .name("ffff")
                 .treasuryAccountId(account.id)
                 .expirationTime(.now + .minutes(5))
-                .sign(account.key).execute(testEnv.client),
+                .sign(account.key).execute(testEnv.client).getReceipt(testEnv.client),
             "expected error creating token"
         ) { error in
-            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
-                XCTFail("`\(error.kind)` is not `transactionPreCheckStatus`")
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `receiptStatus`")
                 return
             }
 
@@ -140,7 +140,7 @@ internal final class TokenCreate: XCTestCase {
 
         await assertThrowsHErrorAsync(
             try await TokenCreateTransaction()
-                .name("ffff")
+                .name("ffff")   
                 .symbol("F")
                 .treasuryAccountId(AccountId(num: 3))
                 .expirationTime(.now + .minutes(5))

@@ -51,8 +51,8 @@ internal final class ContractExecute: XCTestCase {
                 .getReceipt(testEnv.client),
             "expected error executing contract"
         ) { error in
-            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
-                XCTFail("`\(error.kind)` is not `.receiptStatus`")
+            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
                 return
             }
 

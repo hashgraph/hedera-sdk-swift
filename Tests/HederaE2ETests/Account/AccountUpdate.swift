@@ -80,8 +80,8 @@ internal final class AccountUpdate: XCTestCase {
         await assertThrowsHErrorAsync(
             try await AccountUpdateTransaction().execute(testEnv.client).getReceipt(testEnv.client)
         ) { error in
-            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
-                XCTFail("`\(error.kind)` is not `.receiptStatus`")
+            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
                 return
             }
 
