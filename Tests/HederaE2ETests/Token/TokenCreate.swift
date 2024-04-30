@@ -140,7 +140,7 @@ internal final class TokenCreate: XCTestCase {
 
         await assertThrowsHErrorAsync(
             try await TokenCreateTransaction()
-                .name("ffff")   
+                .name("ffff")
                 .symbol("F")
                 .treasuryAccountId(AccountId(num: 3))
                 .expirationTime(.now + .minutes(5))

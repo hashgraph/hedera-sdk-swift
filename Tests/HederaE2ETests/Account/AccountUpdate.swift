@@ -68,8 +68,6 @@ internal final class AccountUpdate: XCTestCase {
         XCTAssertEqual(info.key, .single(key2.publicKey))
         XCTAssertEqual(info.balance, 0)
         XCTAssertEqual(info.autoRenewPeriod, .days(90))
-        // fixme: ensure no warning gets emitted.
-        // XCTAssertNil(info.proxyAccountId)
         XCTAssertEqual(info.proxyReceived, 0)
 
     }
