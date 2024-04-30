@@ -82,8 +82,8 @@ internal class TopicMessageSubmit: XCTestCase {
                 .getReceipt(testEnv.client),
             "expected topic delete to fail"
         ) { error in
-            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
-                XCTFail("`\(error.kind)` is not `.receiptStatus`")
+            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
                 return
             }
 
@@ -103,12 +103,11 @@ internal class TopicMessageSubmit: XCTestCase {
         await assertThrowsHErrorAsync(
             try await TopicMessageSubmitTransaction()
                 .topicId(topic.id)
-                .execute(testEnv.client)
-                .getReceipt(testEnv.client),
+                .execute(testEnv.client),
             "expected topic delete to fail"
         ) { error in
-            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
-                XCTFail("`\(error.kind)` is not `.receiptStatus`")
+            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
                 return
             }
 

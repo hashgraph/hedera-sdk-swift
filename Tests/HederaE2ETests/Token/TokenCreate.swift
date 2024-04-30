@@ -79,8 +79,7 @@ internal final class TokenCreate: XCTestCase {
                 .symbol("F")
                 .treasuryAccountId(account.id)
                 .expirationTime(.now + .minutes(5))
-                .sign(account.key).execute(testEnv.client)
-                .getReceipt(testEnv.client),
+                .sign(account.key).execute(testEnv.client).getReceipt(testEnv.client),
             "expected error creating token"
         ) { error in
             guard case .receiptStatus(let status, transactionId: _) = error.kind else {
@@ -102,8 +101,7 @@ internal final class TokenCreate: XCTestCase {
                 .name("ffff")
                 .treasuryAccountId(account.id)
                 .expirationTime(.now + .minutes(5))
-                .sign(account.key).execute(testEnv.client)
-                .getReceipt(testEnv.client),
+                .sign(account.key).execute(testEnv.client).getReceipt(testEnv.client),
             "expected error creating token"
         ) { error in
             guard case .receiptStatus(let status, transactionId: _) = error.kind else {

@@ -17,18 +17,18 @@ jobs:
   build:
     strategy:
       matrix:
-        swift: ["5.7", "5.8"]
+        swift: ["5.9", "5.10"]
         os: [macos-12, macos-latest]
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: swift-actions/setup-swift@v1
+      - uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ matrix.swift }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: sdk/swift/.build
           key: ${{ runner.os }}-${{ matrix.swift }}-spm-${{ github.job }}-${{ hashFiles('**/Package.resolved') }}
@@ -41,18 +41,18 @@ jobs:
   test:
     strategy:
       matrix:
-        swift: ["5.7", "5.8"]
+        swift: ["5.9", "5.10"]
         os: [macos-12, macos-latest]
 
     needs: [build]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: swift-actions/setup-swift@v1
+      - uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ matrix.swift }}
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: sdk/swift/.build
           key: ${{ runner.os }}-${{ matrix.swift }}-spm-${{ github.job }}-${{ hashFiles('**/Package.resolved') }}

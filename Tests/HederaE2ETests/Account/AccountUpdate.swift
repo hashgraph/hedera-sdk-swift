@@ -81,7 +81,7 @@ internal final class AccountUpdate: XCTestCase {
             try await AccountUpdateTransaction().execute(testEnv.client)
         ) { error in
             guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
-                XCTFail("`\(error.kind)` is not `.receiptStatus`")
+                XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
                 return
             }
 

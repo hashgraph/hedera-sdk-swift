@@ -80,7 +80,6 @@ internal final class ContractCreate: XCTestCase {
         XCTAssertNotNil(info.adminKey)
         XCTAssertEqual(info.storage, 128)
         XCTAssertEqual(info.contractMemo, "[e2e::ContractCreateTransaction]")
-
     }
 
     internal func testUnsetGasFails() async throws {
