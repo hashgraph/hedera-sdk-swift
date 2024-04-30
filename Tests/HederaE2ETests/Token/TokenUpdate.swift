@@ -108,7 +108,6 @@ internal final class TokenUpdate: XCTestCase {
             .initialSupply(100000)
             .expirationTime(Timestamp.now + .hours(2))
             .metadata(initialMetadata)
-            .adminKey(.single(testEnv.operator.privateKey.publicKey))
             .metadataKey(.single(metadataKey.publicKey))
             .execute(testEnv.client)
             .getReceipt(testEnv.client)

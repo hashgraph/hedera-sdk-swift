@@ -39,7 +39,7 @@ public final class TokenUpdateTransaction: Transaction {
         autoRenewAccountId: AccountId? = nil,
         autoRenewPeriod: Duration? = nil,
         expirationTime: Timestamp? = nil,
-        tokenMemo: String = "",
+        tokenMemo: String? = nil,
         feeScheduleKey: Key? = nil,
         pauseKey: Key? = nil,
         metadata: Data = .init(),
@@ -271,7 +271,7 @@ public final class TokenUpdateTransaction: Transaction {
     }
 
     /// The new memo associated with the token (UTF-8 encoding max 100 bytes).
-    public var tokenMemo: String {
+    public var tokenMemo: String? {
         willSet {
             ensureNotFrozen()
         }
@@ -287,7 +287,7 @@ public final class TokenUpdateTransaction: Transaction {
 
     @discardableResult
     public func clearMemo() -> Self {
-        tokenMemo = ""
+        tokenMemo = nil
 
         return self
     }
@@ -376,7 +376,7 @@ extension TokenUpdateTransaction: ToProtobuf {
     internal typealias Protobuf = Proto_TokenUpdateTransactionBody
 
     internal func toProtobuf() -> Protobuf {
-        .with { proto in
+        return .with { proto in
             tokenId?.toProtobufInto(&proto.token)
             proto.name = tokenName
             proto.symbol = tokenSymbol
@@ -389,11 +389,13 @@ extension TokenUpdateTransaction: ToProtobuf {
             autoRenewAccountId?.toProtobufInto(&proto.autoRenewAccount)
             autoRenewPeriod?.toProtobufInto(&proto.autoRenewPeriod)
             expirationTime?.toProtobufInto(&proto.expiry)
-            proto.memo = Google_Protobuf_StringValue(tokenMemo)
             feeScheduleKey?.toProtobufInto(&proto.feeScheduleKey)
             pauseKey?.toProtobufInto(&proto.pauseKey)
             proto.metadata = Google_Protobuf_BytesValue(metadata)
             metadataKey?.toProtobufInto(&proto.metadataKey)
+            if let tokenMemo = tokenMemo {
+                proto.memo = .init(tokenMemo)
+            }
         }
     }
 }
