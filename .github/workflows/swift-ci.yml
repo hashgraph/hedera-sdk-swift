@@ -30,7 +30,7 @@ jobs:
 
       - uses: actions/cache@v4
         with:
-          path: sdk/swift/.build
+          path: .build
           key: ${{ runner.os }}-${{ matrix.swift }}-spm-${{ github.job }}-${{ hashFiles('**/Package.resolved') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.swift }}-spm-
@@ -54,7 +54,7 @@ jobs:
 
       - uses: actions/cache@v4
         with:
-          path: sdk/swift/.build
+          path: .build
           key: ${{ runner.os }}-${{ matrix.swift }}-spm-${{ github.job }}-${{ hashFiles('**/Package.resolved') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.swift }}-spm-
