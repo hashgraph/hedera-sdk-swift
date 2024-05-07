@@ -1,3 +1,5 @@
 .build/
 .vscode/launch.json
 .env
+.idea
+.DS_STORE

@@ -4,31 +4,54 @@ on:
   push: 
     branches: ['main']
 
+defaults:
+  run:
+    shell: bash
+
+permissions:
+  contents: read
+
 jobs:
   format:
     runs-on: macos-12
     steps:
-      - uses: actions/checkout@v3
+      - name: Harden Runner
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
+        with:
+          egress-policy: audit
+
+      - name: Checkout Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
       - name: Install swift-format
         run: brew install swift-format
+
       - name: Format
         run: swift format lint --strict --configuration .swift-format.json --recursive --parallel Sources/ Tests/ Examples/ Package.swift
 
   build:
     strategy:
       matrix:
-        swift: ["5.7", "5.8"]
+        swift: ["5.9", "5.10"]
         os: [macos-12, macos-latest]
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: swift-actions/setup-swift@v1
+      - name: Harden Runner
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
+        with:
+          egress-policy: audit
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@e1dca7c4a36344146bbc2803f0d538462477bb37 # v2.0.0
         with:
           swift-version: ${{ matrix.swift }}
 
-      - uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
 
-      - uses: actions/cache@v3
+      - name: Cache
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: sdk/swift/.build
           key: ${{ runner.os }}-${{ matrix.swift }}-spm-${{ github.job }}-${{ hashFiles('**/Package.resolved') }}
@@ -41,18 +64,27 @@ jobs:
   test:
     strategy:
       matrix:
-        swift: ["5.7", "5.8"]
+        swift: ["5.9", "5.10"]
         os: [macos-12, macos-latest]
 
     needs: [build]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: swift-actions/setup-swift@v1
+      - name: Harden Runner
+        uses: step-security/harden-runner@63c24ba6bd7ba022e95695ff85de572c04a18142 # v2.7.0
+        with:
+          egress-policy: audit
+
+      - name: Setup Swift
+        uses: swift-actions/setup-swift@e1dca7c4a36344146bbc2803f0d538462477bb37 # v2.0.0
         with:
           swift-version: ${{ matrix.swift }}
-      - uses: actions/checkout@v3
 
-      - uses: actions/cache@v3
+      - name: Checkout Code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+
+      - name: Cache Code
+        uses: actions/cache@0c45773b623bea8c8e75f6c82b208c3cf94ea4f9 # v4.0.2
         with:
           path: sdk/swift/.build
           key: ${{ runner.os }}-${{ matrix.swift }}-spm-${{ github.job }}-${{ hashFiles('**/Package.resolved') }}
