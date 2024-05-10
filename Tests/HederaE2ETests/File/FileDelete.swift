@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,18 +40,26 @@ internal final class FileDelete: XCTestCase {
         let testEnv = try TestEnvironment.nonFree
 
         let receipt = try await FileCreateTransaction()
-            .contents("[swift::e2e::fileDelete::2]".data(using: .utf8)!)
+            .contents("[e2e::FileCreateTransaction]".data(using: .utf8)!)
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
 
         let fileId = try XCTUnwrap(receipt.fileId)
 
+        let info = try await FileInfoQuery()
+            .fileId(fileId)
+            .execute(testEnv.client)
+
+        XCTAssertEqual(info.fileId, fileId)
+        XCTAssertEqual(info.size, 28)
+        XCTAssertEqual(info.isDeleted, false)
+        XCTAssertEqual(info.keys, KeyList.init(keys: []))
+
         let file = File(fileId: fileId)
 
         await assertThrowsHErrorAsync(
-            try await FileUpdateTransaction()
+            try await FileDeleteTransaction()
                 .fileId(file.fileId)
-                .contents(Data([0]))
                 .execute(testEnv.client)
                 .getReceipt(testEnv.client),
             "expected file update to fail"

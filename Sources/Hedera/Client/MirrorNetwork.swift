@@ -27,6 +27,7 @@ internal final class MirrorNetwork: AtomicReference, Sendable {
         static let mainnet: Set<HostAndPort> = [.init(host: "mainnet-public.mirrornode.hedera.com", port: 443)]
         static let testnet: Set<HostAndPort> = [.init(host: "testnet.mirrornode.hedera.com", port: 443)]
         static let previewnet: Set<HostAndPort> = [.init(host: "previewnet.mirrornode.hedera.com", port: 443)]
+        static let localhost: Set<HostAndPort> = [.init(host: "127.0.0.1", port: 5600)]
     }
 
     internal let channel: ChannelBalancer
@@ -71,5 +72,9 @@ internal final class MirrorNetwork: AtomicReference, Sendable {
 
     internal static func previewnet(_ eventLoop: NIOCore.EventLoopGroup) -> Self {
         Self(targets: Targets.previewnet, eventLoop: eventLoop)
+    }
+
+    internal static func localhost(_ eventLoop: NIOCore.EventLoopGroup) -> Self {
+        Self(targets: Targets.localhost, eventLoop: eventLoop)
     }
 }

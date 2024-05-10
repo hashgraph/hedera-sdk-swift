@@ -277,6 +277,25 @@ public struct Proto_TokenCreateTransactionBody {
   /// Clears the value of `pauseKey`. Subsequent reads from it will return its default value.
   public mutating func clearPauseKey() {_uniqueStorage()._pauseKey = nil}
 
+  ///*
+  /// Metadata of the created token definition.
+  public var metadata: Data {
+    get {return _storage._metadata}
+    set {_uniqueStorage()._metadata = newValue}
+  }
+
+  ///*
+  /// The key which can change the metadata of a token
+  /// (token definition, partition definition, and individual NFTs).
+  public var metadataKey: Proto_Key {
+    get {return _storage._metadataKey ?? Proto_Key()}
+    set {_uniqueStorage()._metadataKey = newValue}
+  }
+  /// Returns true if `metadataKey` has been explicitly set.
+  public var hasMetadataKey: Bool {return _storage._metadataKey != nil}
+  /// Clears the value of `metadataKey`. Subsequent reads from it will return its default value.
+  public mutating func clearMetadataKey() {_uniqueStorage()._metadataKey = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -316,6 +335,8 @@ extension Proto_TokenCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
     20: .standard(proto: "fee_schedule_key"),
     21: .standard(proto: "custom_fees"),
     22: .standard(proto: "pause_key"),
+    23: .same(proto: "metadata"),
+    24: .standard(proto: "metadata_key"),
   ]
 
   fileprivate class _StorageClass {
@@ -340,6 +361,8 @@ extension Proto_TokenCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
     var _feeScheduleKey: Proto_Key? = nil
     var _customFees: [Proto_CustomFee] = []
     var _pauseKey: Proto_Key? = nil
+    var _metadata: Data = Data()
+    var _metadataKey: Proto_Key? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -367,6 +390,8 @@ extension Proto_TokenCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
       _feeScheduleKey = source._feeScheduleKey
       _customFees = source._customFees
       _pauseKey = source._pauseKey
+      _metadata = source._metadata
+      _metadataKey = source._metadataKey
     }
   }
 
@@ -406,6 +431,8 @@ extension Proto_TokenCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
         case 20: try { try decoder.decodeSingularMessageField(value: &_storage._feeScheduleKey) }()
         case 21: try { try decoder.decodeRepeatedMessageField(value: &_storage._customFees) }()
         case 22: try { try decoder.decodeSingularMessageField(value: &_storage._pauseKey) }()
+        case 23: try { try decoder.decodeSingularBytesField(value: &_storage._metadata) }()
+        case 24: try { try decoder.decodeSingularMessageField(value: &_storage._metadataKey) }()
         default: break
         }
       }
@@ -481,6 +508,12 @@ extension Proto_TokenCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
       try { if let v = _storage._pauseKey {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 22)
       } }()
+      if !_storage._metadata.isEmpty {
+        try visitor.visitSingularBytesField(value: _storage._metadata, fieldNumber: 23)
+      }
+      try { if let v = _storage._metadataKey {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 24)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -511,6 +544,8 @@ extension Proto_TokenCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
         if _storage._feeScheduleKey != rhs_storage._feeScheduleKey {return false}
         if _storage._customFees != rhs_storage._customFees {return false}
         if _storage._pauseKey != rhs_storage._pauseKey {return false}
+        if _storage._metadata != rhs_storage._metadata {return false}
+        if _storage._metadataKey != rhs_storage._metadataKey {return false}
         return true
       }
       if !storagesAreEqual {return false}

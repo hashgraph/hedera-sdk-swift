@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,6 +102,13 @@ public struct TokenInfo {
     /// The ledger ID the response was returned from
     public let ledgerId: LedgerId
 
+    /// Represents the metadata of the token definition.
+    public let metadata: Data
+
+    /// The key which can change the metadata of a token
+    /// (token definition and individual NFTs).
+    public let metadataKey: Key?
+
     /// Decode `Self` from protobuf-encoded `bytes`.
     ///
     /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
@@ -128,6 +135,7 @@ extension TokenInfo: TryProtobufCodable {
         let wipeKey = proto.hasWipeKey ? proto.wipeKey : nil
         let supplyKey = proto.hasSupplyKey ? proto.supplyKey : nil
         let feeScheduleKey = proto.hasFeeScheduleKey ? proto.feeScheduleKey : nil
+        let metadataKey = proto.hasMetadataKey ? proto.metadataKey : nil
 
         let defaultFreezeStatus: Bool?
         switch proto.defaultFreezeStatus {
@@ -137,7 +145,7 @@ extension TokenInfo: TryProtobufCodable {
             defaultFreezeStatus = true
         case .unfrozen:
             defaultFreezeStatus = false
-        case .UNRECOGNIZED(let value):
+        case .unrecognized(let value):
             throw HError.fromProtobuf("Unrecognized defaultFreezeStatus: `\(value)`")
         }
 
@@ -149,7 +157,7 @@ extension TokenInfo: TryProtobufCodable {
             defaultKycStatus = true
         case .revoked:
             defaultKycStatus = false
-        case .UNRECOGNIZED(let value):
+        case .unrecognized(let value):
             throw HError.fromProtobuf("Unrecognized defaultKycStatus: `\(value)`")
         }
 
@@ -167,7 +175,7 @@ extension TokenInfo: TryProtobufCodable {
             pauseStatus = true
         case .unpaused:
             pauseStatus = false
-        case .UNRECOGNIZED(let value):
+        case .unrecognized(let value):
             throw HError.fromProtobuf("Unrecognized pauseStatus: `\(value)`")
         }
 
@@ -197,7 +205,9 @@ extension TokenInfo: TryProtobufCodable {
             customFees: try .fromProtobuf(proto.customFees),
             pauseKey: try .fromProtobuf(pauseKey),
             pauseStatus: pauseStatus,
-            ledgerId: LedgerId(proto.ledgerID)
+            ledgerId: LedgerId(proto.ledgerID),
+            metadata: proto.metadata,
+            metadataKey: try .fromProtobuf(metadataKey)
         )
     }
 
@@ -234,6 +244,10 @@ extension TokenInfo: TryProtobufCodable {
             proto.pauseStatus = pauseStatus.map { $0 ? .paused : .unpaused } ?? .pauseNotApplicable
 
             proto.ledgerID = ledgerId.bytes
+
+            proto.metadata = metadata
+
+            metadataKey?.toProtobufInto(&proto.metadataKey)
         }
     }
 }

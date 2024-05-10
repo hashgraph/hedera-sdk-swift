@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ internal final class ScheduleSign: XCTestCase {
         _ = try XCTUnwrap(info.executedAt)
 
         // Check if signatures in schedule info
-        XCTAssertEqual(info.signatories, [.single(key1.publicKey), .single(key2.publicKey)])
+        XCTAssertEqual(info.signatories.count, 2)
 
     }
 

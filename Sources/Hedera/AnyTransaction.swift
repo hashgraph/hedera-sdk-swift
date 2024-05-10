@@ -63,6 +63,7 @@ internal enum ServicesTransactionDataList {
     case scheduleDelete([Proto_ScheduleDeleteTransactionBody])
     case ethereum([Proto_EthereumTransactionBody])
     case prng([Proto_UtilPrngTransactionBody])
+    case tokenUpdateNfts([Proto_TokenUpdateNftsTransactionBody])
 
     internal mutating func append(_ transaction: Proto_TransactionBody.OneOf_Data) throws {
         switch (self, transaction) {
@@ -230,6 +231,10 @@ internal enum ServicesTransactionDataList {
             array.append(data)
             self = .prng(array)
 
+        case (.tokenUpdateNfts(var array), .tokenUpdateNfts(let data)):
+            array.append(data)
+            self = .tokenUpdateNfts(array)
+
         default:
             throw HError.fromProtobuf("mismatched transaction types")
         }
@@ -289,6 +294,7 @@ extension ServicesTransactionDataList: TryFromProtobuf {
         case .scheduleDelete(let data): value = .scheduleDelete([data])
         case .scheduleSign(let data): value = .scheduleSign([data])
         case .utilPrng(let data): value = .prng([data])
+        case .tokenUpdateNfts(let data): value = .tokenUpdateNfts([data])
 
         case .cryptoAddLiveHash: throw HError.fromProtobuf("Unsupported transaction `AddLiveHashTransaction`")
         case .cryptoDeleteLiveHash: throw HError.fromProtobuf("Unsupported transaction `DeleteLiveHashTransaction`")

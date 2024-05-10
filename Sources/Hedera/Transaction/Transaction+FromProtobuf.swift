@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -197,6 +197,10 @@ extension Transaction {
         case .prng(let value):
             let value = try intoOnlyValue(value)
             return try PrngTransaction(protobuf: firstBody, value)
+
+        case .tokenUpdateNfts(let value):
+            let value = try intoOnlyValue(value)
+            return try TokenUpdateNftsTransaction(protobuf: firstBody, value)
         }
     }
 }

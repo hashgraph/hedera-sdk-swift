@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,8 @@ internal final class TokenInfoTests: XCTestCase {
         "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e16"
     private static let pauseKey: PrivateKey =
         "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e17"
+    private static let metadataKey: PrivateKey =
+        "302e020100300506032b657004220420db484b828e64b2d8f12ce3c0a0e93a0b8cce7af1bb8f39c97732394482538e18"
 
     private static let tokenInfo: TokenInfo = TokenInfo(
         tokenId: "0.6.9",
@@ -72,7 +74,9 @@ internal final class TokenInfoTests: XCTestCase {
         ],
         pauseKey: .single(pauseKey.publicKey),
         pauseStatus: true,
-        ledgerId: .mainnet
+        ledgerId: .mainnet,
+        metadata: Resources.metadata,
+        metadataKey: .single(metadataKey.publicKey)
     )
 
     internal func testSerialize() throws {
