@@ -217,6 +217,31 @@ public struct Proto_TokenUpdateTransactionBody {
   /// Clears the value of `pauseKey`. Subsequent reads from it will return its default value.
   public mutating func clearPauseKey() {_uniqueStorage()._pauseKey = nil}
 
+  ///*
+  /// Metadata of the created token definition
+  public var metadata: SwiftProtobuf.Google_Protobuf_BytesValue {
+    get {return _storage._metadata ?? SwiftProtobuf.Google_Protobuf_BytesValue()}
+    set {_uniqueStorage()._metadata = newValue}
+  }
+  /// Returns true if `metadata` has been explicitly set.
+  public var hasMetadata: Bool {return _storage._metadata != nil}
+  /// Clears the value of `metadata`. Subsequent reads from it will return its default value.
+  public mutating func clearMetadata() {_uniqueStorage()._metadata = nil}
+
+  ///*
+  /// The key which can change the metadata of a token
+  /// (token definition, partition definition, and individual NFTs).
+  /// If the Token does not have currently a Metadata key,
+  /// transaction will resolve to TOKEN_HAS_NO_METADATA_KEY
+  public var metadataKey: Proto_Key {
+    get {return _storage._metadataKey ?? Proto_Key()}
+    set {_uniqueStorage()._metadataKey = newValue}
+  }
+  /// Returns true if `metadataKey` has been explicitly set.
+  public var hasMetadataKey: Bool {return _storage._metadataKey != nil}
+  /// Clears the value of `metadataKey`. Subsequent reads from it will return its default value.
+  public mutating func clearMetadataKey() {_uniqueStorage()._metadataKey = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -250,6 +275,8 @@ extension Proto_TokenUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
     13: .same(proto: "memo"),
     14: .standard(proto: "fee_schedule_key"),
     15: .standard(proto: "pause_key"),
+    16: .same(proto: "metadata"),
+    17: .standard(proto: "metadata_key"),
   ]
 
   fileprivate class _StorageClass {
@@ -268,6 +295,8 @@ extension Proto_TokenUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
     var _memo: SwiftProtobuf.Google_Protobuf_StringValue? = nil
     var _feeScheduleKey: Proto_Key? = nil
     var _pauseKey: Proto_Key? = nil
+    var _metadata: SwiftProtobuf.Google_Protobuf_BytesValue? = nil
+    var _metadataKey: Proto_Key? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -289,6 +318,8 @@ extension Proto_TokenUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
       _memo = source._memo
       _feeScheduleKey = source._feeScheduleKey
       _pauseKey = source._pauseKey
+      _metadata = source._metadata
+      _metadataKey = source._metadataKey
     }
   }
 
@@ -322,6 +353,8 @@ extension Proto_TokenUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
         case 13: try { try decoder.decodeSingularMessageField(value: &_storage._memo) }()
         case 14: try { try decoder.decodeSingularMessageField(value: &_storage._feeScheduleKey) }()
         case 15: try { try decoder.decodeSingularMessageField(value: &_storage._pauseKey) }()
+        case 16: try { try decoder.decodeSingularMessageField(value: &_storage._metadata) }()
+        case 17: try { try decoder.decodeSingularMessageField(value: &_storage._metadataKey) }()
         default: break
         }
       }
@@ -379,6 +412,12 @@ extension Proto_TokenUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
       try { if let v = _storage._pauseKey {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
       } }()
+      try { if let v = _storage._metadata {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 16)
+      } }()
+      try { if let v = _storage._metadataKey {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 17)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -403,6 +442,8 @@ extension Proto_TokenUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
         if _storage._memo != rhs_storage._memo {return false}
         if _storage._feeScheduleKey != rhs_storage._feeScheduleKey {return false}
         if _storage._pauseKey != rhs_storage._pauseKey {return false}
+        if _storage._metadata != rhs_storage._metadata {return false}
+        if _storage._metadataKey != rhs_storage._metadataKey {return false}
         return true
       }
       if !storagesAreEqual {return false}

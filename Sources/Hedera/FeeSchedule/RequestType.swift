@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -241,6 +241,12 @@ public enum RequestType {
     /// Execute a PRNG transaction.
     case utilPrng
 
+    /// Get a record for a transaction.
+    case transactionGetFastRecord
+
+    /// Update a Non-Fungible token.
+    case tokenUpdateNfts
+
     // this literally can't be smaller.
     // swiftlint:disable:next function_body_length
     internal init?(protobuf proto: Proto_HederaFunctionality) throws {
@@ -318,7 +324,10 @@ public enum RequestType {
         case .ethereumTransaction: self = .ethereumTransaction
         case .nodeStakeUpdate: self = .nodeStakeUpdate
         case .utilPrng: self = .utilPrng
-        case .UNRECOGNIZED(let code):
+        case .transactionGetFastRecord: self = .tokenUpdateNfts
+
+        case .tokenUpdateNfts: self = .tokenUpdateNfts
+        case .unrecognized(let code):
             throw HError.fromProtobuf("unrecognized RequestType: `\(code)`")
         }
     }
@@ -397,6 +406,8 @@ public enum RequestType {
         case .ethereumTransaction: return .ethereumTransaction
         case .nodeStakeUpdate: return .nodeStakeUpdate
         case .utilPrng: return .utilPrng
+        case .transactionGetFastRecord: return .transactionGetFastRecord
+        case .tokenUpdateNfts: return .tokenUpdateNfts
         }
     }
 }
