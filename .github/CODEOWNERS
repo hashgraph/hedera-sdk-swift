@@ -12,27 +12,28 @@
 
 # Protection Rules for Github Configuration Files and Actions Workflows
 /.github/                                       @hashgraph/release-engineering @hashgraph/release-engineering-managers
+/.github/workflows/                             @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
 
 # Swift project files and inline plugins
-**/.swift-format.json                           @hashgraph/release-engineering @hashgraph/release-engineering-managers
-**/.swiftlint.yml                               @hashgraph/release-engineering @hashgraph/release-engineering-managers
-**/Package.swift                                @hashgraph/release-engineering @hashgraph/release-engineering-managers
-**/Package.resolved                             @hashgraph/release-engineering @hashgraph/release-engineering-managers
+**/.swift-format.json                           @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
+**/.swiftlint.yml                               @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
+**/Package.swift                                @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
+**/Package.resolved                             @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
 
 # Codacy Tool Configurations
-/config/                                        @hashgraph/release-engineering @hashgraph/release-engineering-managers
-.remarkrc                                       @hashgraph/release-engineering @hashgraph/release-engineering-managers
+/config/                                        @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
+.remarkrc                                       @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
 
 # Self-protection for root CODEOWNERS files (this file should not exist and should definitely require approval)
-/CODEOWNERS                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers
+/CODEOWNERS                                     @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
 
 # Protect the repository root files
-/README.md                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers
+/README.md                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
 **/LICENSE                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers
 
 # CodeCov configuration
-**/codecov.yml                                  @hashgraph/release-engineering @hashgraph/release-engineering-managers
+**/codecov.yml                                  @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
 
 # Git Ignore definitions
-**/.gitignore                                   @hashgraph/release-engineering @hashgraph/release-engineering-managers
-**/.gitignore.*                                 @hashgraph/release-engineering @hashgraph/release-engineering-managers
+**/.gitignore                                   @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
+**/.gitignore.*                                 @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera

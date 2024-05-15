@@ -241,7 +241,7 @@ private func executeAnyInner<E: Execute>(
                     ?? .generateFrom(ctx.operatorAccountId!)
                 continue inner
 
-            case .UNRECOGNIZED(let value):
+            case .unrecognized(let value):
                 throw HError(
                     kind: .responseStatusUnrecognized,
                     description: "response status \(value) unrecognized"

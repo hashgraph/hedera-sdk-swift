@@ -26,7 +26,7 @@ import XCTest
 internal final class StatusTests: XCTestCase {
     internal func testToResponseCode() {
         for code in Proto_ResponseCodeEnum.allCases {
-            if code == Proto_ResponseCodeEnum.UNRECOGNIZED(-1) {
+            if code == Proto_ResponseCodeEnum.unrecognized(-1) {
                 continue
             }
 

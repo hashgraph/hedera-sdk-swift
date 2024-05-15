@@ -3,9 +3,9 @@ tokenGetNftInfo {
   header {
   }
   nftID {
-    tokenID {
+    token_ID {
       tokenNum: 5005
     }
-    serialNumber: 101
+    serial_number: 101
   }
 }

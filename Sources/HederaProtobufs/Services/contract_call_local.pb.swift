@@ -215,7 +215,6 @@ public struct Proto_ContractFunctionResult {
     get {return _storage._signerNonce ?? SwiftProtobuf.Google_Protobuf_Int64Value()}
     set {_uniqueStorage()._signerNonce = newValue}
   }
-
   /// Returns true if `signerNonce` has been explicitly set.
   public var hasSignerNonce: Bool {return _storage._signerNonce != nil}
   /// Clears the value of `signerNonce`. Subsequent reads from it will return its default value.

@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -199,6 +199,19 @@ public final class Client: Sendable {
 
         case "previewnet":
             return .forPreviewnet()
+
+        case "localhost":
+            let network: [String: AccountId] = ["127.0.0.1:50211": AccountId(num: 3)]
+            let eventLoop = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+
+            let client = try Client.forNetwork(network)
+            client.setMirrorNetwork(["127.0.0.1:5600"])
+
+            return Self(
+                network: client.networkInner,
+                ledgerId: nil,
+                eventLoop
+            )
 
         default:
             throw HError.basicParse("Unknown network name \(name)")

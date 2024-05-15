@@ -12,6 +12,6 @@ extension Status: LosslessStringConvertible, CustomStringConvertible, Expressibl
     }
 
     public var description: String {
-        Self.nameMap[rawValue] ?? "UNRECOGNIZED \(rawValue)"
+        Self.nameMap[rawValue] ?? "unrecognized \(rawValue)"
     }
 }
