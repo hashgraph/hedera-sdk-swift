@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -140,7 +140,6 @@ internal struct TransactionSources: Sendable {
         (0..<chunksCount).lazy.map { SourceChunk(map: self.guts, index: $0) }
     }
 }
-
 extension TransactionSources {
     // this is every bit as insane as the rust method I ported it from :/
     // swiftlint:disable:next function_body_length
@@ -239,6 +238,7 @@ extension TransactionSources {
 
             for chunk in chunks {
                 let transactionId = transactionInfo[chunk.startIndex].transactionId
+
                 guard !transactionIdsTmp.contains(transactionId) else {
                     throw HError.fromProtobuf("duplicate transaction ID between chunked transaction chunks")
                 }
@@ -417,6 +417,14 @@ extension SourceTransactionExecuteView: Execute {
     }
 
     internal var operatorAccountId: AccountId? {
+        nil
+    }
+
+    internal var firstTransactionId: TransactionId? {
+        nil
+    }
+
+    internal var index: Int? {
         nil
     }
 

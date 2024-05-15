@@ -30,70 +30,131 @@ public struct Proto_NodeStakeUpdateTransactionBody {
   ///*
   /// Time and date of the end of the staking period that is ending
   public var endOfStakingPeriod: Proto_Timestamp {
-    get {return _endOfStakingPeriod ?? Proto_Timestamp()}
-    set {_endOfStakingPeriod = newValue}
+    get {return _storage._endOfStakingPeriod ?? Proto_Timestamp()}
+    set {_uniqueStorage()._endOfStakingPeriod = newValue}
   }
   /// Returns true if `endOfStakingPeriod` has been explicitly set.
-  public var hasEndOfStakingPeriod: Bool {return self._endOfStakingPeriod != nil}
+  public var hasEndOfStakingPeriod: Bool {return _storage._endOfStakingPeriod != nil}
   /// Clears the value of `endOfStakingPeriod`. Subsequent reads from it will return its default value.
-  public mutating func clearEndOfStakingPeriod() {self._endOfStakingPeriod = nil}
+  public mutating func clearEndOfStakingPeriod() {_uniqueStorage()._endOfStakingPeriod = nil}
 
   ///*
   /// Staking info of each node at the beginning of the new staking period
-  public var nodeStake: [Proto_NodeStake] = []
+  public var nodeStake: [Proto_NodeStake] {
+    get {return _storage._nodeStake}
+    set {_uniqueStorage()._nodeStake = newValue}
+  }
 
   ///*
-  /// The maximum reward rate, in tinybars per whole hbar, that any account can receive in a day.
-  public var maxStakingRewardRatePerHbar: Int64 = 0
+  /// The maximum reward rate, in tinybars per whole hbar, that any account could receive in this
+  /// staking period.
+  public var maxStakingRewardRatePerHbar: Int64 {
+    get {return _storage._maxStakingRewardRatePerHbar}
+    set {_uniqueStorage()._maxStakingRewardRatePerHbar = newValue}
+  }
 
   ///*
   /// The fraction of the network and service fees paid to the node reward account 0.0.801.
   public var nodeRewardFeeFraction: Proto_Fraction {
-    get {return _nodeRewardFeeFraction ?? Proto_Fraction()}
-    set {_nodeRewardFeeFraction = newValue}
+    get {return _storage._nodeRewardFeeFraction ?? Proto_Fraction()}
+    set {_uniqueStorage()._nodeRewardFeeFraction = newValue}
   }
   /// Returns true if `nodeRewardFeeFraction` has been explicitly set.
-  public var hasNodeRewardFeeFraction: Bool {return self._nodeRewardFeeFraction != nil}
+  public var hasNodeRewardFeeFraction: Bool {return _storage._nodeRewardFeeFraction != nil}
   /// Clears the value of `nodeRewardFeeFraction`. Subsequent reads from it will return its default value.
-  public mutating func clearNodeRewardFeeFraction() {self._nodeRewardFeeFraction = nil}
+  public mutating func clearNodeRewardFeeFraction() {_uniqueStorage()._nodeRewardFeeFraction = nil}
 
   ///*
   /// The maximum number of trailing periods for which a user can collect rewards. For example, if this
   /// is 365 with a UTC calendar day period, then users must collect rewards at least once per calendar
   /// year to avoid missing any value.
-  public var stakingPeriodsStored: Int64 = 0
+  public var stakingPeriodsStored: Int64 {
+    get {return _storage._stakingPeriodsStored}
+    set {_uniqueStorage()._stakingPeriodsStored = newValue}
+  }
 
   ///*
   /// The number of minutes in a staking period. Note for the special case of 1440 minutes, periods are
   /// treated as UTC calendar days, rather than repeating 1440 minute periods left-aligned at the epoch.
-  public var stakingPeriod: Int64 = 0
+  public var stakingPeriod: Int64 {
+    get {return _storage._stakingPeriod}
+    set {_uniqueStorage()._stakingPeriod = newValue}
+  }
 
   ///*
   /// The fraction of the network and service fees paid to the staking reward account 0.0.800.
   public var stakingRewardFeeFraction: Proto_Fraction {
-    get {return _stakingRewardFeeFraction ?? Proto_Fraction()}
-    set {_stakingRewardFeeFraction = newValue}
+    get {return _storage._stakingRewardFeeFraction ?? Proto_Fraction()}
+    set {_uniqueStorage()._stakingRewardFeeFraction = newValue}
   }
   /// Returns true if `stakingRewardFeeFraction` has been explicitly set.
-  public var hasStakingRewardFeeFraction: Bool {return self._stakingRewardFeeFraction != nil}
+  public var hasStakingRewardFeeFraction: Bool {return _storage._stakingRewardFeeFraction != nil}
   /// Clears the value of `stakingRewardFeeFraction`. Subsequent reads from it will return its default value.
-  public mutating func clearStakingRewardFeeFraction() {self._stakingRewardFeeFraction = nil}
+  public mutating func clearStakingRewardFeeFraction() {_uniqueStorage()._stakingRewardFeeFraction = nil}
 
   ///*
   /// The minimum balance of staking reward account 0.0.800 required to active rewards.
-  public var stakingStartThreshold: Int64 = 0
+  public var stakingStartThreshold: Int64 {
+    get {return _storage._stakingStartThreshold}
+    set {_uniqueStorage()._stakingStartThreshold = newValue}
+  }
 
   ///*
-  /// The total number of tinybars to be distributed as staking rewards each period.
-  public var stakingRewardRate: Int64 = 0
+  /// (DEPRECATED) The maximum total number of tinybars to be distributed as staking rewards in the
+  /// ending period. Please consult the max_total_reward field instead.
+  public var stakingRewardRate: Int64 {
+    get {return _storage._stakingRewardRate}
+    set {_uniqueStorage()._stakingRewardRate = newValue}
+  }
+
+  ///*
+  /// The amount of the staking reward funds (account 0.0.800) reserved to pay pending rewards that
+  /// have been earned but not collected.
+  public var reservedStakingRewards: Int64 {
+    get {return _storage._reservedStakingRewards}
+    set {_uniqueStorage()._reservedStakingRewards = newValue}
+  }
+
+  ///*
+  /// The unreserved balance of account 0.0.800 at the close of the just-ending period; this value is
+  /// used to compute the HIP-782 balance ratio.
+  public var unreservedStakingRewardBalance: Int64 {
+    get {return _storage._unreservedStakingRewardBalance}
+    set {_uniqueStorage()._unreservedStakingRewardBalance = newValue}
+  }
+
+  ///*
+  /// The unreserved tinybar balance of account 0.0.800 required to achieve the maximum per-hbar reward
+  /// rate in any period; please see HIP-782 for details.
+  public var rewardBalanceThreshold: Int64 {
+    get {return _storage._rewardBalanceThreshold}
+    set {_uniqueStorage()._rewardBalanceThreshold = newValue}
+  }
+
+  ///*
+  /// The maximum amount of tinybar that can be staked for reward while still achieving the maximum
+  /// per-hbar reward rate in any period; please see HIP-782 for details.
+  public var maxStakeRewarded: Int64 {
+    get {return _storage._maxStakeRewarded}
+    set {_uniqueStorage()._maxStakeRewarded = newValue}
+  }
+
+  ///*
+  /// The maximum total tinybars that could be paid as staking rewards in the ending period, after
+  /// applying the settings for the 0.0.800 balance threshold and the maximum stake rewarded. This
+  /// field replaces the deprecated field staking_reward_rate. It is only for convenience, since a
+  /// mirror node could also calculate its value by iterating the node_stake list and summing
+  /// stake_rewarded fields; then multiplying this sum by the max_staking_reward_rate_per_hbar.
+  public var maxTotalReward: Int64 {
+    get {return _storage._maxTotalReward}
+    set {_uniqueStorage()._maxTotalReward = newValue}
+  }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
-  fileprivate var _endOfStakingPeriod: Proto_Timestamp? = nil
-  fileprivate var _nodeRewardFeeFraction: Proto_Fraction? = nil
-  fileprivate var _stakingRewardFeeFraction: Proto_Fraction? = nil
+  fileprivate var _storage = _StorageClass.defaultInstance
 }
 
 ///*
@@ -164,73 +225,161 @@ extension Proto_NodeStakeUpdateTransactionBody: SwiftProtobuf.Message, SwiftProt
     7: .standard(proto: "staking_reward_fee_fraction"),
     8: .standard(proto: "staking_start_threshold"),
     9: .standard(proto: "staking_reward_rate"),
+    10: .standard(proto: "reserved_staking_rewards"),
+    11: .standard(proto: "unreserved_staking_reward_balance"),
+    12: .standard(proto: "reward_balance_threshold"),
+    13: .standard(proto: "max_stake_rewarded"),
+    14: .standard(proto: "max_total_reward"),
   ]
 
+  fileprivate class _StorageClass {
+    var _endOfStakingPeriod: Proto_Timestamp? = nil
+    var _nodeStake: [Proto_NodeStake] = []
+    var _maxStakingRewardRatePerHbar: Int64 = 0
+    var _nodeRewardFeeFraction: Proto_Fraction? = nil
+    var _stakingPeriodsStored: Int64 = 0
+    var _stakingPeriod: Int64 = 0
+    var _stakingRewardFeeFraction: Proto_Fraction? = nil
+    var _stakingStartThreshold: Int64 = 0
+    var _stakingRewardRate: Int64 = 0
+    var _reservedStakingRewards: Int64 = 0
+    var _unreservedStakingRewardBalance: Int64 = 0
+    var _rewardBalanceThreshold: Int64 = 0
+    var _maxStakeRewarded: Int64 = 0
+    var _maxTotalReward: Int64 = 0
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _endOfStakingPeriod = source._endOfStakingPeriod
+      _nodeStake = source._nodeStake
+      _maxStakingRewardRatePerHbar = source._maxStakingRewardRatePerHbar
+      _nodeRewardFeeFraction = source._nodeRewardFeeFraction
+      _stakingPeriodsStored = source._stakingPeriodsStored
+      _stakingPeriod = source._stakingPeriod
+      _stakingRewardFeeFraction = source._stakingRewardFeeFraction
+      _stakingStartThreshold = source._stakingStartThreshold
+      _stakingRewardRate = source._stakingRewardRate
+      _reservedStakingRewards = source._reservedStakingRewards
+      _unreservedStakingRewardBalance = source._unreservedStakingRewardBalance
+      _rewardBalanceThreshold = source._rewardBalanceThreshold
+      _maxStakeRewarded = source._maxStakeRewarded
+      _maxTotalReward = source._maxTotalReward
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let fieldNumber = try decoder.nextFieldNumber() {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch fieldNumber {
-      case 1: try { try decoder.decodeSingularMessageField(value: &self._endOfStakingPeriod) }()
-      case 2: try { try decoder.decodeRepeatedMessageField(value: &self.nodeStake) }()
-      case 3: try { try decoder.decodeSingularInt64Field(value: &self.maxStakingRewardRatePerHbar) }()
-      case 4: try { try decoder.decodeSingularMessageField(value: &self._nodeRewardFeeFraction) }()
-      case 5: try { try decoder.decodeSingularInt64Field(value: &self.stakingPeriodsStored) }()
-      case 6: try { try decoder.decodeSingularInt64Field(value: &self.stakingPeriod) }()
-      case 7: try { try decoder.decodeSingularMessageField(value: &self._stakingRewardFeeFraction) }()
-      case 8: try { try decoder.decodeSingularInt64Field(value: &self.stakingStartThreshold) }()
-      case 9: try { try decoder.decodeSingularInt64Field(value: &self.stakingRewardRate) }()
-      default: break
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        // The use of inline closures is to circumvent an issue where the compiler
+        // allocates stack space for every case branch when no optimizations are
+        // enabled. https://github.com/apple/swift-protobuf/issues/1034
+        switch fieldNumber {
+        case 1: try { try decoder.decodeSingularMessageField(value: &_storage._endOfStakingPeriod) }()
+        case 2: try { try decoder.decodeRepeatedMessageField(value: &_storage._nodeStake) }()
+        case 3: try { try decoder.decodeSingularInt64Field(value: &_storage._maxStakingRewardRatePerHbar) }()
+        case 4: try { try decoder.decodeSingularMessageField(value: &_storage._nodeRewardFeeFraction) }()
+        case 5: try { try decoder.decodeSingularInt64Field(value: &_storage._stakingPeriodsStored) }()
+        case 6: try { try decoder.decodeSingularInt64Field(value: &_storage._stakingPeriod) }()
+        case 7: try { try decoder.decodeSingularMessageField(value: &_storage._stakingRewardFeeFraction) }()
+        case 8: try { try decoder.decodeSingularInt64Field(value: &_storage._stakingStartThreshold) }()
+        case 9: try { try decoder.decodeSingularInt64Field(value: &_storage._stakingRewardRate) }()
+        case 10: try { try decoder.decodeSingularInt64Field(value: &_storage._reservedStakingRewards) }()
+        case 11: try { try decoder.decodeSingularInt64Field(value: &_storage._unreservedStakingRewardBalance) }()
+        case 12: try { try decoder.decodeSingularInt64Field(value: &_storage._rewardBalanceThreshold) }()
+        case 13: try { try decoder.decodeSingularInt64Field(value: &_storage._maxStakeRewarded) }()
+        case 14: try { try decoder.decodeSingularInt64Field(value: &_storage._maxTotalReward) }()
+        default: break
+        }
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    // The use of inline closures is to circumvent an issue where the compiler
-    // allocates stack space for every if/case branch local when no optimizations
-    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-    // https://github.com/apple/swift-protobuf/issues/1182
-    try { if let v = self._endOfStakingPeriod {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    } }()
-    if !self.nodeStake.isEmpty {
-      try visitor.visitRepeatedMessageField(value: self.nodeStake, fieldNumber: 2)
-    }
-    if self.maxStakingRewardRatePerHbar != 0 {
-      try visitor.visitSingularInt64Field(value: self.maxStakingRewardRatePerHbar, fieldNumber: 3)
-    }
-    try { if let v = self._nodeRewardFeeFraction {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
-    } }()
-    if self.stakingPeriodsStored != 0 {
-      try visitor.visitSingularInt64Field(value: self.stakingPeriodsStored, fieldNumber: 5)
-    }
-    if self.stakingPeriod != 0 {
-      try visitor.visitSingularInt64Field(value: self.stakingPeriod, fieldNumber: 6)
-    }
-    try { if let v = self._stakingRewardFeeFraction {
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
-    } }()
-    if self.stakingStartThreshold != 0 {
-      try visitor.visitSingularInt64Field(value: self.stakingStartThreshold, fieldNumber: 8)
-    }
-    if self.stakingRewardRate != 0 {
-      try visitor.visitSingularInt64Field(value: self.stakingRewardRate, fieldNumber: 9)
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every if/case branch local when no optimizations
+      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+      // https://github.com/apple/swift-protobuf/issues/1182
+      try { if let v = _storage._endOfStakingPeriod {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+      } }()
+      if !_storage._nodeStake.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._nodeStake, fieldNumber: 2)
+      }
+      if _storage._maxStakingRewardRatePerHbar != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._maxStakingRewardRatePerHbar, fieldNumber: 3)
+      }
+      try { if let v = _storage._nodeRewardFeeFraction {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+      } }()
+      if _storage._stakingPeriodsStored != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._stakingPeriodsStored, fieldNumber: 5)
+      }
+      if _storage._stakingPeriod != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._stakingPeriod, fieldNumber: 6)
+      }
+      try { if let v = _storage._stakingRewardFeeFraction {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+      } }()
+      if _storage._stakingStartThreshold != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._stakingStartThreshold, fieldNumber: 8)
+      }
+      if _storage._stakingRewardRate != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._stakingRewardRate, fieldNumber: 9)
+      }
+      if _storage._reservedStakingRewards != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._reservedStakingRewards, fieldNumber: 10)
+      }
+      if _storage._unreservedStakingRewardBalance != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._unreservedStakingRewardBalance, fieldNumber: 11)
+      }
+      if _storage._rewardBalanceThreshold != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._rewardBalanceThreshold, fieldNumber: 12)
+      }
+      if _storage._maxStakeRewarded != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._maxStakeRewarded, fieldNumber: 13)
+      }
+      if _storage._maxTotalReward != 0 {
+        try visitor.visitSingularInt64Field(value: _storage._maxTotalReward, fieldNumber: 14)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Proto_NodeStakeUpdateTransactionBody, rhs: Proto_NodeStakeUpdateTransactionBody) -> Bool {
-    if lhs._endOfStakingPeriod != rhs._endOfStakingPeriod {return false}
-    if lhs.nodeStake != rhs.nodeStake {return false}
-    if lhs.maxStakingRewardRatePerHbar != rhs.maxStakingRewardRatePerHbar {return false}
-    if lhs._nodeRewardFeeFraction != rhs._nodeRewardFeeFraction {return false}
-    if lhs.stakingPeriodsStored != rhs.stakingPeriodsStored {return false}
-    if lhs.stakingPeriod != rhs.stakingPeriod {return false}
-    if lhs._stakingRewardFeeFraction != rhs._stakingRewardFeeFraction {return false}
-    if lhs.stakingStartThreshold != rhs.stakingStartThreshold {return false}
-    if lhs.stakingRewardRate != rhs.stakingRewardRate {return false}
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._endOfStakingPeriod != rhs_storage._endOfStakingPeriod {return false}
+        if _storage._nodeStake != rhs_storage._nodeStake {return false}
+        if _storage._maxStakingRewardRatePerHbar != rhs_storage._maxStakingRewardRatePerHbar {return false}
+        if _storage._nodeRewardFeeFraction != rhs_storage._nodeRewardFeeFraction {return false}
+        if _storage._stakingPeriodsStored != rhs_storage._stakingPeriodsStored {return false}
+        if _storage._stakingPeriod != rhs_storage._stakingPeriod {return false}
+        if _storage._stakingRewardFeeFraction != rhs_storage._stakingRewardFeeFraction {return false}
+        if _storage._stakingStartThreshold != rhs_storage._stakingStartThreshold {return false}
+        if _storage._stakingRewardRate != rhs_storage._stakingRewardRate {return false}
+        if _storage._reservedStakingRewards != rhs_storage._reservedStakingRewards {return false}
+        if _storage._unreservedStakingRewardBalance != rhs_storage._unreservedStakingRewardBalance {return false}
+        if _storage._rewardBalanceThreshold != rhs_storage._rewardBalanceThreshold {return false}
+        if _storage._maxStakeRewarded != rhs_storage._maxStakeRewarded {return false}
+        if _storage._maxTotalReward != rhs_storage._maxTotalReward {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

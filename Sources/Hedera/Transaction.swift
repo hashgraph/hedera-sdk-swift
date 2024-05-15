@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -460,7 +460,8 @@ extension Transaction {
         _: Proto_TransactionResponse, _ context: TransactionHash, _ nodeAccountId: AccountId,
         _ transactionId: TransactionId?
     ) -> Response {
-        TransactionResponse(nodeAccountId: nodeAccountId, transactionId: transactionId!, transactionHash: context)
+        return TransactionResponse(
+            nodeAccountId: nodeAccountId, transactionId: transactionId!, transactionHash: context)
     }
 
     internal final func makeErrorPrecheck(_ status: Status, _ transactionId: TransactionId?) -> HError {
@@ -481,7 +482,6 @@ extension Transaction {
     fileprivate func makeTransactionList() throws -> [Proto_Transaction] {
         assert(self.isFrozen)
 
-        // todo: fix this with chunked transactions.
         guard let initialTransactionId = self.transactionId ?? self.operator?.generateTransactionId() else {
             throw HError.noPayerAccountOrTransactionId
         }
@@ -500,11 +500,9 @@ extension Transaction {
             case 0:
                 currentTransactionId = initialTransactionId
             default:
-                guard let `operator` = self.operator else {
-                    throw HError.noPayerAccountOrTransactionId
-                }
-
-                currentTransactionId = `operator`.generateTransactionId()
+                currentTransactionId = TransactionId(
+                    accountId: initialTransactionId.accountId,
+                    validStart: initialTransactionId.validStart.adding(nanos: UInt64(chunk)))
             }
 
             for nodeAccountId in nodeAccountIds {
@@ -525,7 +523,6 @@ extension Transaction {
 
     internal func makeRequestInner(chunkInfo: ChunkInfo) -> (Proto_Transaction, TransactionHash) {
         assert(self.isFrozen)
-
         let body: Proto_TransactionBody = self.toTransactionBodyProtobuf(chunkInfo)
 
         // swiftlint:disable:next force_try
@@ -587,6 +584,10 @@ extension Transaction: Execute {
     }
 
     internal var requiresTransactionId: Bool { true }
+
+    internal var firstTransactionId: TransactionId? { nil }
+
+    internal var index: Int? { nil }
 
     internal var operatorAccountId: AccountId? {
         self.operator?.accountId

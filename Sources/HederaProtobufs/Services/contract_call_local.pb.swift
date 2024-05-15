@@ -208,6 +208,18 @@ public struct Proto_ContractFunctionResult {
     set {_uniqueStorage()._contractNonces = newValue}
   }
 
+  ///*
+  /// If not null this field specifies what the value of the signer account nonce is post transaction execution.
+  /// For transactions that don't update the signer nonce, this field should be null.
+  public var signerNonce: SwiftProtobuf.Google_Protobuf_Int64Value {
+    get {return _storage._signerNonce ?? SwiftProtobuf.Google_Protobuf_Int64Value()}
+    set {_uniqueStorage()._signerNonce = newValue}
+  }
+  /// Returns true if `signerNonce` has been explicitly set.
+  public var hasSignerNonce: Bool {return _storage._signerNonce != nil}
+  /// Clears the value of `signerNonce`. Subsequent reads from it will return its default value.
+  public mutating func clearSignerNonce() {_uniqueStorage()._signerNonce = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -404,6 +416,7 @@ extension Proto_ContractFunctionResult: SwiftProtobuf.Message, SwiftProtobuf._Me
     12: .same(proto: "functionParameters"),
     13: .standard(proto: "sender_id"),
     14: .standard(proto: "contract_nonces"),
+    15: .standard(proto: "signer_nonce"),
   ]
 
   fileprivate class _StorageClass {
@@ -420,6 +433,7 @@ extension Proto_ContractFunctionResult: SwiftProtobuf.Message, SwiftProtobuf._Me
     var _functionParameters: Data = Data()
     var _senderID: Proto_AccountID? = nil
     var _contractNonces: [Proto_ContractNonceInfo] = []
+    var _signerNonce: SwiftProtobuf.Google_Protobuf_Int64Value? = nil
 
     static let defaultInstance = _StorageClass()
 
@@ -439,6 +453,7 @@ extension Proto_ContractFunctionResult: SwiftProtobuf.Message, SwiftProtobuf._Me
       _functionParameters = source._functionParameters
       _senderID = source._senderID
       _contractNonces = source._contractNonces
+      _signerNonce = source._signerNonce
     }
   }
 
@@ -470,6 +485,7 @@ extension Proto_ContractFunctionResult: SwiftProtobuf.Message, SwiftProtobuf._Me
         case 12: try { try decoder.decodeSingularBytesField(value: &_storage._functionParameters) }()
         case 13: try { try decoder.decodeSingularMessageField(value: &_storage._senderID) }()
         case 14: try { try decoder.decodeRepeatedMessageField(value: &_storage._contractNonces) }()
+        case 15: try { try decoder.decodeSingularMessageField(value: &_storage._signerNonce) }()
         default: break
         }
       }
@@ -521,6 +537,9 @@ extension Proto_ContractFunctionResult: SwiftProtobuf.Message, SwiftProtobuf._Me
       if !_storage._contractNonces.isEmpty {
         try visitor.visitRepeatedMessageField(value: _storage._contractNonces, fieldNumber: 14)
       }
+      try { if let v = _storage._signerNonce {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 15)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -543,6 +562,7 @@ extension Proto_ContractFunctionResult: SwiftProtobuf.Message, SwiftProtobuf._Me
         if _storage._functionParameters != rhs_storage._functionParameters {return false}
         if _storage._senderID != rhs_storage._senderID {return false}
         if _storage._contractNonces != rhs_storage._contractNonces {return false}
+        if _storage._signerNonce != rhs_storage._signerNonce {return false}
         return true
       }
       if !storagesAreEqual {return false}

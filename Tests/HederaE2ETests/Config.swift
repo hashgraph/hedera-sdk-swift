@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -172,7 +172,7 @@ internal struct TestEnvironment {
     private enum Keys {
         fileprivate static let network = "TEST_NETWORK_NAME"
         fileprivate static let operatorKey = "TEST_OPERATOR_KEY"
-        fileprivate static let operatorAccountId = "TEST_OPERATOR_ACCOUNT_ID"
+        fileprivate static let operatorAccountId = "TEST_OPERATOR_ID"
         fileprivate static let runNonfree = "TEST_RUN_NONFREE"
     }
 

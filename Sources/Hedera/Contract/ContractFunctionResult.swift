@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +69,10 @@ public struct ContractFunctionResult {
     /// This is always empty in a ContractLocalCallQuery response, since no internal creations can happen in a static EVM call.
     public let contractNonces: [ContractNonceInfo]
 
+    /// If not null this field specifies what the value of the signer account nonce is post transaction execution.
+    /// For transactions that don't update the signer nonce (like HAPI ContractCall and ContractCreate transactions) this field should be null.
+    public let signerNonce: UInt64?
+
     internal init(
         contractId: ContractId,
         evmAddress: ContractId? = nil,
@@ -81,7 +85,8 @@ public struct ContractFunctionResult {
         bytes: Data,
         senderAccountId: AccountId? = nil,
         logs: [ContractLogInfo] = [],
-        contractNonces: [ContractNonceInfo] = []
+        contractNonces: [ContractNonceInfo] = [],
+        signerNonce: UInt64? = nil
     ) {
         self.contractId = contractId
         self.evmAddress = evmAddress
@@ -95,6 +100,7 @@ public struct ContractFunctionResult {
         self.senderAccountId = senderAccountId
         self.logs = logs
         self.contractNonces = contractNonces
+        self.signerNonce = signerNonce
     }
 
     private func getFixedBytesAt(slot: UInt, size: UInt) -> Data? {
@@ -244,6 +250,8 @@ extension ContractFunctionResult: TryFromProtobuf {
 
         let contractId = try ContractId.fromProtobuf(proto.contractID)
 
+        let signerNonce = proto.hasSignerNonce ? UInt64(proto.signerNonce.value) : nil
+
         self.init(
             contractId: contractId,
             evmAddress: proto.hasEvmAddress
@@ -257,7 +265,8 @@ extension ContractFunctionResult: TryFromProtobuf {
             bytes: bytes,
             senderAccountId: proto.hasSenderID ? try .fromProtobuf(proto.senderID) : nil,
             logs: try .fromProtobuf(proto.logInfo),
-            contractNonces: try .fromProtobuf(proto.contractNonces)
+            contractNonces: try .fromProtobuf(proto.contractNonces),
+            signerNonce: signerNonce
         )
     }
 }

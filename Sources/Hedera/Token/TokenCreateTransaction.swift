@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,9 @@ public final class TokenCreateTransaction: Transaction {
         maxSupply: UInt64 = 0,
         feeScheduleKey: Key? = nil,
         customFees: [AnyCustomFee] = [],
-        pauseKey: Key? = nil
+        pauseKey: Key? = nil,
+        metadata: Data = .init(),
+        metadataKey: Key? = nil
     ) {
         self.name = name
         self.symbol = symbol
@@ -72,6 +74,8 @@ public final class TokenCreateTransaction: Transaction {
         self.feeScheduleKey = feeScheduleKey
         self.customFees = customFees
         self.pauseKey = pauseKey
+        self.metadata = metadata
+        self.metadataKey = metadataKey
 
         super.init()
     }
@@ -98,6 +102,8 @@ public final class TokenCreateTransaction: Transaction {
         feeScheduleKey = data.hasFeeScheduleKey ? try .fromProtobuf(data.feeScheduleKey) : nil
         customFees = try .fromProtobuf(data.customFees)
         pauseKey = data.hasPauseKey ? try .fromProtobuf(data.pauseKey) : nil
+        metadata = data.metadata
+        metadataKey = data.hasMetadataKey ? try .fromProtobuf(data.metadataKey) : nil
 
         try super.init(protobuf: proto)
     }
@@ -418,6 +424,36 @@ public final class TokenCreateTransaction: Transaction {
         return self
     }
 
+    /// The metadata of the created token definition.
+    public var metadata: Data {
+        willSet {
+            ensureNotFrozen()
+        }
+    }
+
+    /// Sets metadata of the created token definition.
+    @discardableResult
+    public func metadata(_ metadata: Data) -> Self {
+        self.metadata = metadata
+
+        return self
+    }
+
+    /// Returns the key which can change the metadata of a token.
+    public var metadataKey: Key? {
+        willSet {
+            ensureNotFrozen()
+        }
+    }
+
+    /// Sets the key which can change the metadata of a token.
+    @discardableResult
+    public func metadataKey(_ metadataKey: Key) -> Self {
+        self.metadataKey = metadataKey
+
+        return self
+    }
+
     internal override func validateChecksums(on ledgerId: LedgerId) throws {
         try treasuryAccountId?.validateChecksums(on: ledgerId)
         try autoRenewAccountId?.validateChecksums(on: ledgerId)
@@ -465,6 +501,8 @@ extension TokenCreateTransaction: ToProtobuf {
             feeScheduleKey?.toProtobufInto(&proto.feeScheduleKey)
             proto.customFees = customFees.toProtobuf()
             pauseKey?.toProtobufInto(&proto.pauseKey)
+            proto.metadata = metadata
+            metadataKey?.toProtobufInto(&proto.metadataKey)
         }
     }
 }

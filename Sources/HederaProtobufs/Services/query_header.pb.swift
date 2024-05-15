@@ -45,7 +45,7 @@ public enum Proto_ResponseType: SwiftProtobuf.Enum {
   ///*
   /// (NOT YET SUPPORTED) Response returns the total cost of answer and state proof
   case costAnswerStateProof // = 3
-  case UNRECOGNIZED(Int)
+  case unrecognized(Int)
 
   public init() {
     self = .answerOnly
@@ -57,7 +57,7 @@ public enum Proto_ResponseType: SwiftProtobuf.Enum {
     case 1: self = .answerStateProof
     case 2: self = .costAnswer
     case 3: self = .costAnswerStateProof
-    default: self = .UNRECOGNIZED(rawValue)
+    default: self = .unrecognized(rawValue)
     }
   }
 
@@ -67,7 +67,7 @@ public enum Proto_ResponseType: SwiftProtobuf.Enum {
     case .answerStateProof: return 1
     case .costAnswer: return 2
     case .costAnswerStateProof: return 3
-    case .UNRECOGNIZED(let i): return i
+    case .unrecognized(let i): return i
     }
   }
 
@@ -76,8 +76,8 @@ public enum Proto_ResponseType: SwiftProtobuf.Enum {
 #if swift(>=4.2)
 
 extension Proto_ResponseType: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static var allCases: [Proto_ResponseType] = [
+  // The compiler won't synthesize support with the unrecognized case.
+  public static let allCases: [Proto_ResponseType] = [
     .answerOnly,
     .answerStateProof,
     .costAnswer,

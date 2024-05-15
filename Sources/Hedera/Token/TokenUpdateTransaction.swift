@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,9 +39,11 @@ public final class TokenUpdateTransaction: Transaction {
         autoRenewAccountId: AccountId? = nil,
         autoRenewPeriod: Duration? = nil,
         expirationTime: Timestamp? = nil,
-        tokenMemo: String = "",
+        tokenMemo: String? = nil,
         feeScheduleKey: Key? = nil,
-        pauseKey: Key? = nil
+        pauseKey: Key? = nil,
+        metadata: Data = .init(),
+        metadataKey: Key? = nil
     ) {
         self.tokenId = tokenId
         self.tokenName = tokenName
@@ -58,6 +60,8 @@ public final class TokenUpdateTransaction: Transaction {
         self.tokenMemo = tokenMemo
         self.feeScheduleKey = feeScheduleKey
         self.pauseKey = pauseKey
+        self.metadata = metadata
+        self.metadataKey = metadataKey
 
         super.init()
     }
@@ -78,6 +82,8 @@ public final class TokenUpdateTransaction: Transaction {
         self.tokenMemo = data.hasMemo ? data.memo.value : nil ?? ""
         self.feeScheduleKey = data.hasFeeScheduleKey ? try .fromProtobuf(data.feeScheduleKey) : nil
         self.pauseKey = data.hasPauseKey ? try .fromProtobuf(data.pauseKey) : nil
+        self.metadata = data.hasMetadata ? data.metadata.value : nil ?? Data.init()
+        self.metadataKey = data.hasMetadataKey ? try .fromProtobuf(data.metadataKey) : nil
 
         try super.init(protobuf: proto)
     }
@@ -265,7 +271,7 @@ public final class TokenUpdateTransaction: Transaction {
     }
 
     /// The new memo associated with the token (UTF-8 encoding max 100 bytes).
-    public var tokenMemo: String {
+    public var tokenMemo: String? {
         willSet {
             ensureNotFrozen()
         }
@@ -281,7 +287,7 @@ public final class TokenUpdateTransaction: Transaction {
 
     @discardableResult
     public func clearMemo() -> Self {
-        tokenMemo = ""
+        tokenMemo = nil
 
         return self
     }
@@ -316,6 +322,36 @@ public final class TokenUpdateTransaction: Transaction {
         return self
     }
 
+    /// Returns the new metadata of the created token definition.
+    public var metadata: Data {
+        willSet {
+            ensureNotFrozen()
+        }
+    }
+
+    /// Sets the new metadata of the token definition.
+    @discardableResult
+    public func metadata(_ metadata: Data) -> Self {
+        self.metadata = metadata
+
+        return self
+    }
+
+    /// Returns the new key which can change the metadata of a token.
+    public var metadataKey: Key? {
+        willSet {
+            ensureNotFrozen()
+        }
+    }
+
+    /// Sets the new key which can change the metadata of a token.
+    @discardableResult
+    public func metadataKey(_ metadataKey: Key) -> Self {
+        self.metadataKey = metadataKey
+
+        return self
+    }
+
     internal override func validateChecksums(on ledgerId: LedgerId) throws {
         try tokenId?.validateChecksums(on: ledgerId)
         try treasuryAccountId?.validateChecksums(on: ledgerId)
@@ -340,7 +376,7 @@ extension TokenUpdateTransaction: ToProtobuf {
     internal typealias Protobuf = Proto_TokenUpdateTransactionBody
 
     internal func toProtobuf() -> Protobuf {
-        .with { proto in
+        return .with { proto in
             tokenId?.toProtobufInto(&proto.token)
             proto.name = tokenName
             proto.symbol = tokenSymbol
@@ -353,9 +389,13 @@ extension TokenUpdateTransaction: ToProtobuf {
             autoRenewAccountId?.toProtobufInto(&proto.autoRenewAccount)
             autoRenewPeriod?.toProtobufInto(&proto.autoRenewPeriod)
             expirationTime?.toProtobufInto(&proto.expiry)
-            proto.memo = Google_Protobuf_StringValue(tokenMemo)
             feeScheduleKey?.toProtobufInto(&proto.feeScheduleKey)
             pauseKey?.toProtobufInto(&proto.pauseKey)
+            proto.metadata = Google_Protobuf_BytesValue(metadata)
+            metadataKey?.toProtobufInto(&proto.metadataKey)
+            if let tokenMemo = tokenMemo {
+                proto.memo = .init(tokenMemo)
+            }
         }
     }
 }

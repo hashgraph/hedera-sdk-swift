@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ extension ContractHelpers {
         let receipt = try await ContractCreateTransaction(
             bytecodeFileId: file.fileId,
             adminKey: operatorAdminKey ? .single(testEnv.operator.privateKey.publicKey) : nil,
-            gas: 100000,
+            gas: 200000,
             constructorParameters: ContractFunctionParameters().addString("Hello from Hedera.").toBytes(),
             contractMemo: "[e2e::ContractCreateTransaction]"
         )

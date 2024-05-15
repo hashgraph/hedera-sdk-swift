@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,7 +215,7 @@ internal enum Program {
 extension Environment {
     /// Account ID for the operator to use in this example.
     internal var operatorAccountId: AccountId {
-        AccountId(self["OPERATOR_ACCOUNT_ID"]!.stringValue)!
+        AccountId(self["OPERATOR_ID"]!.stringValue)!
     }
 
     /// Private key for the operator to use in this example.

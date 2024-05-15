@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2022 - 2023 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ internal final class ContractCreateFlow: XCTestCase {
         let receipt = try await Hedera.ContractCreateFlow()
             .bytecode(ContractHelpers.bytecodeString)
             .adminKey(.single(testEnv.operator.privateKey.publicKey))
-            .gas(100000)
+            .gas(200000)
             .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
             .contractMemo("[e2e::ContractCreateFlow]")
             .execute(testEnv.client)
@@ -71,7 +71,7 @@ internal final class ContractCreateFlow: XCTestCase {
             try await Hedera.ContractCreateFlow()
                 .bytecode(ContractHelpers.bytecodeString)
                 .adminKey(.single(adminKey.publicKey))
-                .gas(100000)
+                .gas(200000)
                 .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
                 .contractMemo("[e2e::ContractCreateFlow]")
                 .execute(testEnv.client)
@@ -102,7 +102,7 @@ internal final class ContractCreateFlow: XCTestCase {
         let receipt = try await Hedera.ContractCreateFlow()
             .bytecode(ContractHelpers.bytecodeString)
             .adminKey(.single(adminKey.publicKey))
-            .gas(100000)
+            .gas(200000)
             .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
             .contractMemo("[e2e::ContractCreateFlow]")
             .sign(adminKey)
@@ -142,7 +142,7 @@ internal final class ContractCreateFlow: XCTestCase {
         let receipt = try await Hedera.ContractCreateFlow()
             .bytecode(ContractHelpers.bytecodeString)
             .adminKey(.single(adminKey.publicKey))
-            .gas(100000)
+            .gas(200000)
             .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
             .contractMemo("[e2e::ContractCreateFlow]")
             .signWith(adminKey.publicKey, adminKey.sign(_:))

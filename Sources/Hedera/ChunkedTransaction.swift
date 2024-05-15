@@ -195,6 +195,8 @@ extension ChunkedTransaction.FirstChunkView: Execute {
     internal var nodeAccountIds: [AccountId]? { transaction.nodeAccountIds }
     internal var explicitTransactionId: TransactionId? { transaction.transactionId }
     internal var requiresTransactionId: Bool { true }
+    internal var firstTransactionId: TransactionId? { nil }
+    internal var index: Int? { nil }
 
     internal var operatorAccountId: AccountId? {
         self.transaction.operatorAccountId
@@ -247,6 +249,14 @@ extension ChunkedTransaction.ChunkView: Execute {
     internal var explicitTransactionId: TransactionId? { nil }
     internal var requiresTransactionId: Bool { true }
 
+    internal var firstTransactionId: TransactionId? {
+        return initialTransactionId
+    }
+
+    internal var index: Int? {
+        return currentChunk
+    }
+
     internal var operatorAccountId: AccountId? {
         self.transaction.operatorAccountId
     }
@@ -260,16 +270,18 @@ extension ChunkedTransaction.ChunkView: Execute {
     ) {
         assert(transaction.isFrozen)
 
-        guard let transactionId = transactionId else {
-            throw HError.noPayerAccountOrTransactionId
-        }
+        let currentTransactionId =
+            transactionId
+            ?? TransactionId(
+                accountId: initialTransactionId.accountId,
+                validStart: initialTransactionId.validStart.adding(nanos: UInt64(currentChunk)))
 
         return transaction.makeRequestInner(
             chunkInfo: .init(
                 current: currentChunk,
                 total: totalChunks,
                 initialTransactionId: initialTransactionId,
-                currentTransactionId: transactionId,
+                currentTransactionId: currentTransactionId,
                 nodeAccountId: nodeAccountId
             )
         )
