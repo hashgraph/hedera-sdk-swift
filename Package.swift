@@ -97,6 +97,7 @@ let package = Package(
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.0.0"),
+        .package(url: "https://github.com/swift-server/async-http-client.git", from: "1.21.1"),
     ],
     targets: [
         .target(
@@ -123,6 +124,7 @@ let package = Package(
                 .product(name: "Atomics", package: "swift-atomics"),
                 .product(name: "secp256k1", package: "secp256k1.swift"),
                 "CryptoSwift",
+                .product(name: "AsyncHTTPClient", package: "async-http-client")
             ]
             // todo: find some way to enable these locally.
             // swiftSettings: [
