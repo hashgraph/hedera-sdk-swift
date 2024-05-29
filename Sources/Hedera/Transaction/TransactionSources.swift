@@ -428,7 +428,7 @@ extension SourceTransactionExecuteView: Execute {
         nil
     }
 
-    internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
+    internal func makeRequest(_ client: Client, _ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
         GrpcRequest, Context
     ) {
         assert(transactionId == chunk.transactionId)

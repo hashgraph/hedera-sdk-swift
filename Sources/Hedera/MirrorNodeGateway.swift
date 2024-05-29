@@ -44,7 +44,7 @@ internal struct MirrorNodeGateway {
     }
 
     internal func getAccountInfo(_ idOrAliasOrEvmAddress: String) async throws -> [String: Any] {
-        var fullApiUrl = MirrorNodeRouter.buildApiUrl(
+        let fullApiUrl = MirrorNodeRouter.buildApiUrl(
             self.mirrorNodeUrl, MirrorNodeRouter.ACCOUNTS_ROUTE, idOrAliasOrEvmAddress)
 
         let responseBody = try await queryFromMirrorNode(fullApiUrl)
@@ -65,7 +65,7 @@ internal struct MirrorNodeGateway {
     }
 
     internal func getContractInfo(_ idOrAliasOrEvmAddress: String) async throws -> [String: Any] {
-        var fullApiUrl = MirrorNodeRouter.buildApiUrl(
+        let fullApiUrl = MirrorNodeRouter.buildApiUrl(
             self.mirrorNodeUrl, MirrorNodeRouter.CONTRACTS_ROUTE, idOrAliasOrEvmAddress)
 
         let responseBody = try await queryFromMirrorNode(fullApiUrl)
@@ -86,7 +86,7 @@ internal struct MirrorNodeGateway {
     }
 
     internal func getAccountTokens(_ idOrAliasOrEvmAddress: String) async throws -> [String: Any] {
-        var fullApiUrl = MirrorNodeRouter.buildApiUrl(
+        let fullApiUrl = MirrorNodeRouter.buildApiUrl(
             self.mirrorNodeUrl, MirrorNodeRouter.ACCOUNTS_ROUTE, idOrAliasOrEvmAddress)
 
         let responseBody = try await queryFromMirrorNode(fullApiUrl)

@@ -40,7 +40,9 @@ public final class NetworkVersionInfoQuery: Query<NetworkVersionInfo> {
         try await Proto_NetworkServiceAsyncClient(channel: channel).getVersionInfo(request)
     }
 
-    internal override func makeQueryResponse(_ response: Proto_Response.OneOf_Response) throws -> Response {
+    internal override func makeQueryResponse(_ context: Context, _ response: Proto_Response.OneOf_Response) async throws
+        -> Response
+    {
         guard case .networkGetVersionInfo(let proto) = response else {
             throw HError.fromProtobuf("unexpected \(response) received, expected `networkGetVersionInfo`")
         }

@@ -25,7 +25,7 @@ import HederaProtobufs
 internal final class MirrorNodeService {
     internal var mirrorNodeGateway: MirrorNodeGateway
 
-    private init(mirrorNodeGateway: MirrorNodeGateway) {
+    init(_ mirrorNodeGateway: MirrorNodeGateway) {
         self.mirrorNodeGateway = mirrorNodeGateway
     }
 

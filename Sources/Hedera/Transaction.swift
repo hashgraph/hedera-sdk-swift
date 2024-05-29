@@ -593,7 +593,7 @@ extension Transaction: Execute {
         self.operator?.accountId
     }
 
-    internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
+    internal func makeRequest(_ client: Client, _ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
         GrpcRequest, TransactionHash
     ) {
         assert(isFrozen)

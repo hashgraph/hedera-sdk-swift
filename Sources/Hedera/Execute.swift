@@ -60,7 +60,9 @@ internal protocol Execute {
     ///
     /// A created request is cached per node until any request returns
     /// `TransactionExpired`; in which case, the request cache is cleared.
-    func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (GrpcRequest, Context)
+    func makeRequest(_ client: Client, _ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
+        GrpcRequest, Context
+    )
 
     func execute(_ channel: GRPCChannel, _ request: GrpcRequest) async throws -> GrpcResponse
 
@@ -71,7 +73,7 @@ internal protocol Execute {
         _ context: Context,
         _ nodeAccountId: AccountId,
         _ transactionId: TransactionId?
-    ) throws -> Response
+    ) async throws -> Response
 
     func makeErrorPrecheck(_ status: Status, _ transactionId: TransactionId?) -> HError
 
@@ -95,6 +97,7 @@ private struct ExecuteContext {
     fileprivate let network: Network
     fileprivate let backoffConfig: LegacyExponentialBackoff
     fileprivate let maxAttempts: Int
+    fileprivate let client: Client
     // timeout for a single grpc request.
     fileprivate let grpcTimeout: Duration?
 }
@@ -150,6 +153,7 @@ internal func executeAny<E: Execute & ValidateChecksums>(
             network: client.net,
             backoffConfig: backoffBuilder,
             maxAttempts: backoff.maxAttempts,
+            client: client,
             grpcTimeout: nil
         ),
         executable: executable)
@@ -185,7 +189,7 @@ private func executeAnyInner<E: Execute>(
             }
 
             let (nodeAccountId, channel) = ctx.network.channel(for: nodeIndex)
-            let (request, context) = try executable.makeRequest(transactionId, nodeAccountId)
+            let (request, context) = try executable.makeRequest(ctx.client, transactionId, nodeAccountId)
             let response: E.GrpcResponse
 
             do {
@@ -222,7 +226,7 @@ private func executeAnyInner<E: Execute>(
                 break inner
 
             case .ok:
-                return try executable.makeResponse(response, context, nodeAccountId, transactionId)
+                return try await executable.makeResponse(response, context, nodeAccountId, transactionId)
 
             case .busy, .platformNotActive:
                 // NOTE: this is a "busy" node
@@ -309,6 +313,7 @@ private struct NodeIndexesGeneratorMap: AsyncSequence, AsyncIteratorProtocol {
                     network: ctx.network,
                     backoffConfig: ctx.backoffConfig,
                     maxAttempts: ctx.maxAttempts,
+                    client: ctx.client,
                     grpcTimeout: ctx.grpcTimeout
                 ),
                 executable: request

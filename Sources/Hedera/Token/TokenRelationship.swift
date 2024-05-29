@@ -25,7 +25,7 @@ import HederaProtobufs
 ///
 /// See <a href="https://docs.hedera.com/guides/docs/hedera-api/basic-types/tokenrelationship">Hedera
 /// Documentation</a>
-public struct TokenRelationship {
+public struct TokenRelationship: Sendable {
     /// The ID of the token
     public let tokenId: TokenId
 

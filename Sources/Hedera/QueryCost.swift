@@ -67,7 +67,9 @@ extension QueryCost: Execute {
 
     internal var requiresTransactionId: Bool { false }
 
-    internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (Proto_Query, ()) {
+    internal func makeRequest(_ client: Client, _ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
+        Proto_Query, ()
+    ) {
         let request = query.toQueryProtobufWith(
             .with { proto in
                 proto.responseType = .costAnswer

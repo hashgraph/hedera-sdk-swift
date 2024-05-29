@@ -42,6 +42,7 @@ public final class ContractInfoQuery: Query<ContractInfo> {
     }
 
     internal override func toQueryProtobufWith(_ header: Proto_QueryHeader) -> Proto_Query {
+
         .with { proto in
             proto.contractGetInfo = .with { proto in
                 proto.header = header
@@ -54,8 +55,21 @@ public final class ContractInfoQuery: Query<ContractInfo> {
         try await Proto_SmartContractServiceAsyncClient(channel: channel).getContractInfo(request)
     }
 
-    internal override func makeQueryResponse(_ response: Proto_Response.OneOf_Response) throws -> Response {
-        guard case .contractGetInfo(let proto) = response else {
+    internal override func makeQueryResponse(_ context: MirrorNetworkContext, _ response: Proto_Response.OneOf_Response) async throws
+        -> Response
+    {
+        let mirrorNodeGateway = try MirrorNodeGateway.forNetwork(context.mirrorNetworkNodes, context.ledgerId)
+        let mirrorNodeService = MirrorNodeService.init(mirrorNodeGateway)
+        
+        switch response {
+        case .contractGetInfo(let proto):
+            let contractId = try ContractId(protobuf: proto.contractInfo.contractID)
+            let tokenRelationships = try await mirrorNodeService.getTokenRelationshipsForAccount(String(describing: contractId.num))
+            
+            let consensusProto = proto.contractInfo
+            let updatedProto = consensusProto.
+            
+        default:
             throw HError.fromProtobuf("unexpected \(response) received, expected `contractGetInfo`")
         }
 
@@ -66,5 +80,5 @@ public final class ContractInfoQuery: Query<ContractInfo> {
         try contractId?.validateChecksums(on: ledgerId)
         try super.validateChecksums(on: ledgerId)
     }
-
 }
+

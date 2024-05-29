@@ -59,7 +59,9 @@ public final class AccountInfoQuery: Query<AccountInfo> {
         try await Proto_CryptoServiceAsyncClient(channel: channel).getAccountInfo(request)
     }
 
-    internal override func makeQueryResponse(_ response: Proto_Response.OneOf_Response) throws -> Response {
+    internal override func makeQueryResponse(_ context: Context, _ response: Proto_Response.OneOf_Response) throws
+        -> Response
+    {
         guard case .cryptoGetInfo(let proto) = response else {
             throw HError.fromProtobuf("unexpected \(response) received, expected `cryptoGetInfo`")
         }
