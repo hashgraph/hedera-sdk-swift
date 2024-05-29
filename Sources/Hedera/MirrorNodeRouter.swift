@@ -18,32 +18,33 @@
  *
  */
 
-import Atomics
-import GRPC
-import NIOCore
-import Foundation
-import HederaProtobufs
 import AsyncHTTPClient
+import Atomics
+import Foundation
+import GRPC
+import HederaProtobufs
+import NIOCore
 
-internal final class MirrorNodeRouter {
+internal struct MirrorNodeRouter {
     static let API_VERSION: String = "/api/v1"
-    
+
     static let LOCAL_NODE_PORT = "5551"
-    
+
     public static let ACCOUNTS_ROUTE = "accounts"
     public static let CONTRACTS_ROUTE = "contracts"
     public static let ACCOUNT_TOKENS_ROUTE = "accounts_tokens"
-    
+
     static let routes: [String: String] = [
         ACCOUNTS_ROUTE: "/accounts/%@",
         CONTRACTS_ROUTE: "/contracts/%@",
         ACCOUNT_TOKENS_ROUTE: "/accounts/%@/tokens",
     ]
-    
+
     private func MirrorNodeRouter() {}
-    
+
     static func getMirrorNodeUrl(_ mirrorNetwork: [String], _ ledgerId: LedgerId?) throws -> String {
-        let mirrorNodeAddress: String? = mirrorNetwork
+        let mirrorNodeAddress: String? =
+            mirrorNetwork
             .map { address in
                 address.prefix { $0 != ":" }
             }
@@ -52,21 +53,19 @@ internal final class MirrorNodeRouter {
         if mirrorNodeAddress == nil {
             fatalError("Mirror address not found")
         }
-        
+
         var fullMirrorNodeUrl: String
-        
+
         if ledgerId != nil {
             fullMirrorNodeUrl = String("http://\(mirrorNodeAddress)")
         } else {
             fullMirrorNodeUrl = String("http://\(mirrorNodeAddress):\(LOCAL_NODE_PORT)")
         }
-        
+
         return fullMirrorNodeUrl
     }
-    
+
     static func buildApiUrl(_ mirrorNodeUrl: String, _ route: String, _ id: String) -> String {
         return String("\(mirrorNodeUrl)\(API_VERSION)\(String(format: "\(String(describing: routes[route]))", id))")
     }
 }
-
-

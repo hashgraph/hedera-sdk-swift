@@ -18,80 +18,94 @@
  *
  */
 
-import Atomics
-import GRPC
-import NIO
-import Foundation
-import HederaProtobufs
 import AsyncHTTPClient
+import Foundation
+import GRPC
+import HederaProtobufs
+import NIO
 
-internal final class MirrorNodeGateway {
+internal struct MirrorNodeGateway {
     internal var mirrorNodeUrl: String
 
     private init(mirrorNodeUrl: String) {
         self.mirrorNodeUrl = mirrorNodeUrl
     }
-    
+
     internal static func forClient(client: Client) throws -> MirrorNodeGateway {
         let mirrorNodeUrl = try MirrorNodeRouter.getMirrorNodeUrl(client.mirrorNetwork, client.ledgerId)
-        
+
         return .init(mirrorNodeUrl: mirrorNodeUrl)
     }
-    
+
     internal static func forNetwork(_ mirrorNetwork: [String], _ ledgerId: LedgerId?) throws -> MirrorNodeGateway {
         let mirrorNodeUrl = try MirrorNodeRouter.getMirrorNodeUrl(mirrorNetwork, ledgerId)
-        
+
         return .init(mirrorNodeUrl: mirrorNodeUrl)
     }
-    
+
     internal func getAccountInfo(_ idOrAliasOrEvmAddress: String) async throws -> [String: Any] {
-        var fullApiUrl = MirrorNodeRouter.buildApiUrl(self.mirrorNodeUrl, MirrorNodeRouter.ACCOUNTS_ROUTE, idOrAliasOrEvmAddress)
-        
+        var fullApiUrl = MirrorNodeRouter.buildApiUrl(
+            self.mirrorNodeUrl, MirrorNodeRouter.ACCOUNTS_ROUTE, idOrAliasOrEvmAddress)
+
         let responseBody = try await queryFromMirrorNode(fullApiUrl)
-        
+
         guard let jsonData = responseBody.data(using: .utf8) else {
-            throw NSError(domain: "InvalidResponseError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Response body is not valid UTF-8"])
+            throw NSError(
+                domain: "InvalidResponseError", code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Response body is not valid UTF-8"])
         }
-        
+
         guard let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] else {
-            throw NSError(domain: "InvalidResponseError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Response body is not a valid JSON object"])
+            throw NSError(
+                domain: "InvalidResponseError", code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Response body is not a valid JSON object"])
         }
-        
+
         return jsonObject
     }
-    
+
     internal func getContractInfo(_ idOrAliasOrEvmAddress: String) async throws -> [String: Any] {
-        var fullApiUrl = MirrorNodeRouter.buildApiUrl(self.mirrorNodeUrl, MirrorNodeRouter.CONTRACTS_ROUTE, idOrAliasOrEvmAddress)
-        
+        var fullApiUrl = MirrorNodeRouter.buildApiUrl(
+            self.mirrorNodeUrl, MirrorNodeRouter.CONTRACTS_ROUTE, idOrAliasOrEvmAddress)
+
         let responseBody = try await queryFromMirrorNode(fullApiUrl)
-        
+
         guard let jsonData = responseBody.data(using: .utf8) else {
-            throw NSError(domain: "InvalidResponseError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Response body is not valid UTF-8"])
+            throw NSError(
+                domain: "InvalidResponseError", code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Response body is not valid UTF-8"])
         }
-        
+
         guard let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] else {
-            throw NSError(domain: "InvalidResponseError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Response body is not a valid JSON object"])
+            throw NSError(
+                domain: "InvalidResponseError", code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Response body is not a valid JSON object"])
         }
-        
+
         return jsonObject
     }
-    
+
     internal func getAccountTokens(_ idOrAliasOrEvmAddress: String) async throws -> [String: Any] {
-        var fullApiUrl = MirrorNodeRouter.buildApiUrl(self.mirrorNodeUrl, MirrorNodeRouter.ACCOUNTS_ROUTE, idOrAliasOrEvmAddress)
-        
+        var fullApiUrl = MirrorNodeRouter.buildApiUrl(
+            self.mirrorNodeUrl, MirrorNodeRouter.ACCOUNTS_ROUTE, idOrAliasOrEvmAddress)
+
         let responseBody = try await queryFromMirrorNode(fullApiUrl)
-        
+
         guard let jsonData = responseBody.data(using: .utf8) else {
-            throw NSError(domain: "InvalidResponseError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Response body is not valid UTF-8"])
+            throw NSError(
+                domain: "InvalidResponseError", code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Response body is not valid UTF-8"])
         }
-        
+
         guard let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] else {
-            throw NSError(domain: "InvalidResponseError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Response body is not a valid JSON object"])
+            throw NSError(
+                domain: "InvalidResponseError", code: -1,
+                userInfo: [NSLocalizedDescriptionKey: "Response body is not a valid JSON object"])
         }
-        
+
         return jsonObject
     }
-    
+
     internal func queryFromMirrorNode(_ apiUrl: String) async throws -> String {
         let httpClient = HTTPClient(eventLoopGroupProvider: .singleton)
         defer {
@@ -102,12 +116,10 @@ internal final class MirrorNodeGateway {
         request.method = .GET
 
         let response = try await httpClient.execute(request, timeout: .seconds(30))
-    
+
         let body = try await response.body.collect(upTo: 1024 * 1024)
         let bodyString = String(decoding: body.readableBytesView, as: UTF8.self)
-        
+
         return bodyString
     }
 }
-
-

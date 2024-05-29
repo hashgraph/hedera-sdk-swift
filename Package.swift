@@ -124,7 +124,7 @@ let package = Package(
                 .product(name: "Atomics", package: "swift-atomics"),
                 .product(name: "secp256k1", package: "secp256k1.swift"),
                 "CryptoSwift",
-                .product(name: "AsyncHTTPClient", package: "async-http-client")
+                .product(name: "AsyncHTTPClient", package: "async-http-client"),
             ]
             // todo: find some way to enable these locally.
             // swiftSettings: [
