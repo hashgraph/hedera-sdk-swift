@@ -22,7 +22,7 @@ import Hedera
 import XCTest
 
 internal final class ContractInfo: XCTestCase {
-    internal func testQuery() async throws {
+    internal func testQueryBoo() async throws {
         let testEnv = try TestEnvironment.nonFree
 
         let contractId = try await ContractHelpers.makeContract(testEnv, operatorAdminKey: true)

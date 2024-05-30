@@ -59,14 +59,49 @@ public final class AccountInfoQuery: Query<AccountInfo> {
         try await Proto_CryptoServiceAsyncClient(channel: channel).getAccountInfo(request)
     }
 
-    internal override func makeQueryResponse(_ context: Context, _ response: Proto_Response.OneOf_Response) throws
+    internal override func makeQueryResponse(_ context: Context, _ response: Proto_Response.OneOf_Response) async throws
         -> Response
     {
+        let mirrorNodeGateway = try MirrorNodeGateway.forNetwork(context.mirrorNetworkNodes, context.ledgerId)
+        let mirrorNodeService = MirrorNodeService.init(mirrorNodeGateway)
+
         guard case .cryptoGetInfo(let proto) = response else {
             throw HError.fromProtobuf("unexpected \(response) received, expected `cryptoGetInfo`")
         }
 
-        return try .fromProtobuf(proto.accountInfo)
+        let accountInfoProto = proto.accountInfo
+        let accountId = try AccountId.fromProtobuf(accountInfoProto.accountID)
+        let tokenRelationshipsProto = try await mirrorNodeService.getTokenRelationshipsForAccount(
+            String(describing: accountId.num))
+
+        var tokenRelationships: [TokenId: TokenRelationship] = [:]
+
+        for relationship in tokenRelationshipsProto {
+            tokenRelationships[.fromProtobuf(relationship.tokenID)] = try TokenRelationship.fromProtobuf(relationship)
+        }
+
+        return AccountInfo(
+            accountId: try AccountId.fromProtobuf(accountInfoProto.accountID),
+            contractAccountId: accountInfoProto.contractAccountID,
+            isDeleted: accountInfoProto.deleted,
+            proxyAccountId: try .fromProtobuf(accountInfoProto.proxyAccountID),
+            proxyReceived: Hbar.fromTinybars(accountInfoProto.proxyReceived),
+            key: try .fromProtobuf(accountInfoProto.key),
+            balance: .fromTinybars(Int64(accountInfoProto.balance)),
+            sendRecordThreshold: Hbar.fromTinybars(Int64(accountInfoProto.generateSendRecordThreshold)),
+            receiveRecordThreshold: Hbar.fromTinybars(Int64(accountInfoProto.generateReceiveRecordThreshold)),
+            isReceiverSignatureRequired: accountInfoProto.receiverSigRequired,
+            expirationTime: .fromProtobuf(accountInfoProto.expirationTime),
+            autoRenewPeriod: .fromProtobuf(accountInfoProto.autoRenewPeriod),
+            accountMemo: accountInfoProto.memo,
+            ownedNfts: UInt64(accountInfoProto.ownedNfts),
+            maxAutomaticTokenAssociations: UInt32(accountInfoProto.maxAutomaticTokenAssociations),
+            aliasKey: try .fromAliasBytes(accountInfoProto.alias),
+            ethereumNonce: UInt64(accountInfoProto.ethereumNonce),
+            tokenRelationships: tokenRelationships,
+            ledgerId: .fromBytes(accountInfoProto.ledgerID),
+            staking: try .fromProtobuf(accountInfoProto.stakingInfo)
+        )
     }
 
     internal override func validateChecksums(on ledgerId: LedgerId) throws {

@@ -31,7 +31,7 @@ internal struct MirrorNodeGateway {
         self.mirrorNodeUrl = mirrorNodeUrl
     }
 
-    internal static func forClient(client: Client) throws -> MirrorNodeGateway {
+    internal static func forClient(_ client: Client) throws -> MirrorNodeGateway {
         let mirrorNodeUrl = try MirrorNodeRouter.getMirrorNodeUrl(client.mirrorNetwork, client.ledgerId)
 
         return .init(mirrorNodeUrl: mirrorNodeUrl)
@@ -45,7 +45,7 @@ internal struct MirrorNodeGateway {
 
     internal func getAccountInfo(_ idOrAliasOrEvmAddress: String) async throws -> [String: Any] {
         let fullApiUrl = MirrorNodeRouter.buildApiUrl(
-            self.mirrorNodeUrl, MirrorNodeRouter.ACCOUNTS_ROUTE, idOrAliasOrEvmAddress)
+            self.mirrorNodeUrl, MirrorNodeRouter.accountsRoute, idOrAliasOrEvmAddress)
 
         let responseBody = try await queryFromMirrorNode(fullApiUrl)
 
@@ -66,7 +66,9 @@ internal struct MirrorNodeGateway {
 
     internal func getContractInfo(_ idOrAliasOrEvmAddress: String) async throws -> [String: Any] {
         let fullApiUrl = MirrorNodeRouter.buildApiUrl(
-            self.mirrorNodeUrl, MirrorNodeRouter.CONTRACTS_ROUTE, idOrAliasOrEvmAddress)
+            self.mirrorNodeUrl, MirrorNodeRouter.contractsRoute, idOrAliasOrEvmAddress)
+
+        print("ContractfullApiUrl: \(fullApiUrl)")
 
         let responseBody = try await queryFromMirrorNode(fullApiUrl)
 
@@ -75,7 +77,6 @@ internal struct MirrorNodeGateway {
                 domain: "InvalidResponseError", code: -1,
                 userInfo: [NSLocalizedDescriptionKey: "Response body is not valid UTF-8"])
         }
-
         guard let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: Any] else {
             throw NSError(
                 domain: "InvalidResponseError", code: -1,
@@ -87,10 +88,10 @@ internal struct MirrorNodeGateway {
 
     internal func getAccountTokens(_ idOrAliasOrEvmAddress: String) async throws -> [String: Any] {
         let fullApiUrl = MirrorNodeRouter.buildApiUrl(
-            self.mirrorNodeUrl, MirrorNodeRouter.ACCOUNTS_ROUTE, idOrAliasOrEvmAddress)
-
+            self.mirrorNodeUrl, MirrorNodeRouter.accountTokensRoute, idOrAliasOrEvmAddress)
+        
         let responseBody = try await queryFromMirrorNode(fullApiUrl)
-
+        
         guard let jsonData = responseBody.data(using: .utf8) else {
             throw NSError(
                 domain: "InvalidResponseError", code: -1,

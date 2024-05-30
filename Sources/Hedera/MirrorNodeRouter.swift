@@ -26,46 +26,43 @@ import HederaProtobufs
 import NIOCore
 
 internal struct MirrorNodeRouter {
-    static let API_VERSION: String = "/api/v1"
+    static let apiVersion: String = "/api/v1"
 
-    static let LOCAL_NODE_PORT = "5551"
+    static let localNodePort = "5551"
 
-    public static let ACCOUNTS_ROUTE = "accounts"
-    public static let CONTRACTS_ROUTE = "contracts"
-    public static let ACCOUNT_TOKENS_ROUTE = "accounts_tokens"
+    public static let accountsRoute = "accounts"
+    public static let contractsRoute = "contracts"
+    public static let accountTokensRoute = "account_tokens"
 
     static let routes: [String: String] = [
-        ACCOUNTS_ROUTE: "/accounts/%@",
-        CONTRACTS_ROUTE: "/contracts/%@",
-        ACCOUNT_TOKENS_ROUTE: "/accounts/%@/tokens",
+        accountsRoute: "/accounts/%@",
+        contractsRoute: "/contracts/%@",
+        accountTokensRoute: "/accounts/%@/tokens",
     ]
 
     private func MirrorNodeRouter() {}
 
     static func getMirrorNodeUrl(_ mirrorNetwork: [String], _ ledgerId: LedgerId?) throws -> String {
-        let mirrorNodeAddress: String? =
-            mirrorNetwork
+        var mirrorNodeAddress: String = ""
+
+        mirrorNetwork
             .map { address in
                 address.prefix { $0 != ":" }
             }
-            .first.map { String($0) }
-
-        if mirrorNodeAddress == nil {
-            fatalError("Mirror address not found")
-        }
+            .first.map { mirrorNodeAddress = String($0) }!
 
         var fullMirrorNodeUrl: String
 
         if ledgerId != nil {
-            fullMirrorNodeUrl = String("http://\(mirrorNodeAddress)")
+            fullMirrorNodeUrl = String("https://\(mirrorNodeAddress)")
         } else {
-            fullMirrorNodeUrl = String("http://\(mirrorNodeAddress):\(LOCAL_NODE_PORT)")
+            fullMirrorNodeUrl = String("http://\(mirrorNodeAddress):\(localNodePort)")
         }
 
         return fullMirrorNodeUrl
     }
 
     static func buildApiUrl(_ mirrorNodeUrl: String, _ route: String, _ id: String) -> String {
-        return String("\(mirrorNodeUrl)\(API_VERSION)\(String(format: "\(String(describing: routes[route]))", id))")
+        return String("\(mirrorNodeUrl)\(apiVersion)\(String(format: "\(String(describing: routes[route]))", id))!")
     }
 }
