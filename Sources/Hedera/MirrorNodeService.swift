@@ -64,8 +64,6 @@ internal final class MirrorNodeService {
 
         let contractIdNum = ContractId(String(describing: contractId))?.num
 
-        fatalError("contract id: \(contractIdNum)")
-
         return contractIdNum!
     }
 
@@ -106,7 +104,12 @@ internal final class MirrorNodeService {
         let accountTokensResponse = try await self.mirrorNodeGateway.getAccountTokens(evmAddress)
 
         guard let tokens = accountTokensResponse["tokens"] else {
-            fatalError("Error while processing getTokenRelationshipsForAccount mirror node query: \(accountTokensResponse)")
+            throw NSError(
+                domain: "InvalidResponseError", code: -1,
+                userInfo: [
+                    NSLocalizedDescriptionKey:
+                        "Error while processing getTokenRelationshipsForAccount mirror node query"
+                ])
         }
 
         var tokenBalances: [Proto_TokenRelationship] = []

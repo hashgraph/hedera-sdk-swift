@@ -68,8 +68,6 @@ internal struct MirrorNodeGateway {
         let fullApiUrl = MirrorNodeRouter.buildApiUrl(
             self.mirrorNodeUrl, MirrorNodeRouter.contractsRoute, idOrAliasOrEvmAddress)
 
-        print("ContractfullApiUrl: \(fullApiUrl)")
-
         let responseBody = try await queryFromMirrorNode(fullApiUrl)
 
         guard let jsonData = responseBody.data(using: .utf8) else {
@@ -89,9 +87,9 @@ internal struct MirrorNodeGateway {
     internal func getAccountTokens(_ idOrAliasOrEvmAddress: String) async throws -> [String: Any] {
         let fullApiUrl = MirrorNodeRouter.buildApiUrl(
             self.mirrorNodeUrl, MirrorNodeRouter.accountTokensRoute, idOrAliasOrEvmAddress)
-        
+
         let responseBody = try await queryFromMirrorNode(fullApiUrl)
-        
+
         guard let jsonData = responseBody.data(using: .utf8) else {
             throw NSError(
                 domain: "InvalidResponseError", code: -1,
@@ -113,10 +111,9 @@ internal struct MirrorNodeGateway {
             try? httpClient.syncShutdown()
         }
 
-        var request = HTTPClientRequest(url: apiUrl)
-        request.method = .GET
+        let request = HTTPClientRequest(url: apiUrl)
 
-        let response = try await httpClient.execute(request, timeout: .seconds(30))
+        let response: HTTPClientResponse = try await httpClient.execute(request, timeout: .seconds(30))
 
         let body = try await response.body.collect(upTo: 1024 * 1024)
         let bodyString = String(decoding: body.readableBytesView, as: UTF8.self)

@@ -63,6 +63,6 @@ internal struct MirrorNodeRouter {
     }
 
     static func buildApiUrl(_ mirrorNodeUrl: String, _ route: String, _ id: String) -> String {
-        return String("\(mirrorNodeUrl)\(apiVersion)\(String(format: "\(String(describing: routes[route]))", id))!")
+        return String("\(mirrorNodeUrl)\(apiVersion)\(String(format: "\(String(describing: routes[route]!))", id))")
     }
 }
