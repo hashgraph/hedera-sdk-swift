@@ -125,12 +125,11 @@ public struct ContractId: EntityId {
 
         let mirrorNodeGateway = try MirrorNodeGateway.forClient(client)
         let mirrorNodeService = MirrorNodeService(mirrorNodeGateway)
-        
+
         let contractNum = try await mirrorNodeService.getContractNum(address.toString())
 
         return Self(shard: shard, realm: realm, num: contractNum)
     }
-
 }
 
 #if compiler(>=5.7)
