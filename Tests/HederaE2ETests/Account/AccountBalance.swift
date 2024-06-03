@@ -114,48 +114,46 @@ internal final class AccountBalance: XCTestCase {
         }
     }
 
-    // disabled because swift doesn't have a way to ignore deprecated warnings.
-    // internal func testQueryTokenBalances() async throws {
-    //     let testEnv = try TestEnvironment.nonFree
+    internal func testQueryTokenBalances() async throws {
+        let testEnv = try TestEnvironment.nonFree
 
-    //     let account = try await Account.create(testEnv, balance: 10)
+        let account = try await Account.create(testEnv, balance: 10)
 
-    //     addTeardownBlock { try await account.delete(testEnv) }
+        addTeardownBlock { try await account.delete(testEnv) }
 
-    //     let receipt = try await TokenCreateTransaction()
-    //         .name("ffff")
-    //         .symbol("f")
-    //         .initialSupply(10000)
-    //         .decimals(50)
-    //         .treasuryAccountId(account.id)
-    //         .expirationTime(.now + .minutes(5))
-    //         .adminKey(.single(account.key.publicKey))
-    //         .supplyKey(.single(account.key.publicKey))
-    //         .freezeDefault(false)
-    //         .sign(account.key)
-    //         .execute(testEnv.client)
-    //         .getReceipt(testEnv.client)
+        let receipt = try await TokenCreateTransaction()
+            .name("ffff")
+            .symbol("f")
+            .initialSupply(10000)
+            .decimals(50)
+            .treasuryAccountId(account.id)
+            .expirationTime(.now + .minutes(5))
+            .adminKey(.single(account.key.publicKey))
+            .supplyKey(.single(account.key.publicKey))
+            .freezeDefault(false)
+            .sign(account.key)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
 
-    //     let tokenId = try XCTUnwrap(receipt.tokenId)
+        let tokenId = try XCTUnwrap(receipt.tokenId)
 
-    //     addTeardownBlock {
-    //         _ = try await TokenBurnTransaction()
-    //             .tokenId(tokenId)
-    //             .amount(10000)
-    //             .sign(account.key)
-    //             .execute(testEnv.client)
-    //             .getReceipt(testEnv.client)
+        addTeardownBlock {
+            _ = try await TokenBurnTransaction()
+                .tokenId(tokenId)
+                .amount(10000)
+                .sign(account.key)
+                .execute(testEnv.client)
+                .getReceipt(testEnv.client)
 
-    //         _ = try await TokenDeleteTransaction()
-    //             .tokenId(tokenId)
-    //             .sign(account.key)
-    //             .execute(testEnv.client)
-    //             .getReceipt(testEnv.client)
-    //     }
+            _ = try await TokenDeleteTransaction()
+                .tokenId(tokenId)
+                .sign(account.key)
+                .execute(testEnv.client)
+                .getReceipt(testEnv.client)
+        }
 
-    //     let _ = try await AccountBalanceQuery().accountId(account.id).execute(testEnv.client)
+        let balance = try await AccountBalanceQuery().accountId(account.id).execute(testEnv.client)
 
-    //     // XCTAssertEqual(balance.tokenBalances[tokenId], 10000)
-    //     // XCTAssertEqual(balance.tokenDecimals[tokenId], 50)
-    // }
+        XCTAssertEqual(balance.hbars, 10)
+    }
 }

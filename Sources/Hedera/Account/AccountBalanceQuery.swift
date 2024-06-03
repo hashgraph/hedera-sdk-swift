@@ -98,12 +98,6 @@ public final class AccountBalanceQuery: Query<AccountBalance> {
         let accountId = try AccountId.fromProtobuf(proto.accountID)
         let tokenBalanceProto = try await mirrorNodeService.getTokenBalancesForAccount(String(accountId.num))
 
-        // var tokenBalances: [TokenId: UInt64] = [:]
-
-        // for balance in tokenBalanceProto {
-        //     tokenBalances[.fromProtobuf(balance.tokenID)] = balance.balance
-        // }
-
         return AccountBalance(
             accountId: accountId, hbars: .fromTinybars(Int64(proto.balance)),
             tokensInner: .fromProtobuf(tokenBalanceProto))
