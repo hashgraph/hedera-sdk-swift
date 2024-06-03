@@ -88,11 +88,25 @@ public final class AccountBalanceQuery: Query<AccountBalance> {
     internal override func makeQueryResponse(_ context: Context, _ response: Proto_Response.OneOf_Response) async throws
         -> Response
     {
+        let mirrorNodeGateway = try MirrorNodeGateway.forNetwork(context.mirrorNetworkNodes, context.ledgerId)
+        let mirrorNodeService = MirrorNodeService.init(mirrorNodeGateway)
+
         guard case .cryptogetAccountBalance(let proto) = response else {
             throw HError.fromProtobuf("unexpected \(response) received, expected `cryptogetAccountBalance`")
         }
 
-        return try .fromProtobuf(proto)
+        let accountId = try AccountId.fromProtobuf(proto.accountID)
+        let tokenBalanceProto = try await mirrorNodeService.getTokenBalancesForAccount(String(accountId.num))
+
+        // var tokenBalances: [TokenId: UInt64] = [:]
+
+        // for balance in tokenBalanceProto {
+        //     tokenBalances[.fromProtobuf(balance.tokenID)] = balance.balance
+        // }
+
+        return AccountBalance(
+            accountId: accountId, hbars: .fromTinybars(Int64(proto.balance)),
+            tokensInner: .fromProtobuf(tokenBalanceProto))
     }
 
     public override func validateChecksums(on ledgerId: LedgerId) throws {

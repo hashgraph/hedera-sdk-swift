@@ -21,7 +21,7 @@
 import Foundation
 import HederaProtobufs
 
-private struct TokenBalance {
+internal struct TokenBalance {
     fileprivate let id: TokenId
     fileprivate let balance: UInt64
     fileprivate let decimals: UInt32
@@ -58,6 +58,16 @@ public struct AccountBalance: Sendable {
     public let hbars: Hbar
 
     private let tokensInner: [TokenBalance]
+
+    internal init(
+        accountId: AccountId,
+        hbars: Hbar,
+        tokensInner: [TokenBalance]
+    ) {
+        self.accountId = accountId
+        self.hbars = hbars
+        self.tokensInner = tokensInner
+    }
 
     // hack to work around deprecated warning
     private var tokenBalancesInner: [TokenId: UInt64] {

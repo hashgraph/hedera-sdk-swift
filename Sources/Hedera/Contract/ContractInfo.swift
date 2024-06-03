@@ -104,7 +104,7 @@ extension ContractInfo: TryProtobufCodable {
 
         self.init(
             contractId: try .fromProtobuf(proto.contractID),
-            accountId: try .fromProtobuf(proto.accountID),
+            accountId: try AccountId.fromProtobuf(proto.accountID),
             contractAccountId: proto.contractAccountID,
             adminKey: try .fromProtobuf(adminKey),
             expirationTime: .fromProtobuf(expirationTime),

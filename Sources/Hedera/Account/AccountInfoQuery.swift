@@ -69,10 +69,9 @@ public final class AccountInfoQuery: Query<AccountInfo> {
             throw HError.fromProtobuf("unexpected \(response) received, expected `cryptoGetInfo`")
         }
 
-        let accountInfoProto = proto.accountInfo
-        let accountId = try AccountId.fromProtobuf(accountInfoProto.accountID)
+        let accountInfo = try AccountInfo.fromProtobuf(proto.accountInfo)
         let tokenRelationshipsProto = try await mirrorNodeService.getTokenRelationshipsForAccount(
-            String(describing: accountId.num))
+            String(describing: accountInfo.accountId.num))
 
         var tokenRelationships: [TokenId: TokenRelationship] = [:]
 
@@ -81,26 +80,26 @@ public final class AccountInfoQuery: Query<AccountInfo> {
         }
 
         return AccountInfo(
-            accountId: try AccountId.fromProtobuf(accountInfoProto.accountID),
-            contractAccountId: accountInfoProto.contractAccountID,
-            isDeleted: accountInfoProto.deleted,
-            proxyAccountId: try .fromProtobuf(accountInfoProto.proxyAccountID),
-            proxyReceived: Hbar.fromTinybars(accountInfoProto.proxyReceived),
-            key: try .fromProtobuf(accountInfoProto.key),
-            balance: .fromTinybars(Int64(accountInfoProto.balance)),
-            sendRecordThreshold: Hbar.fromTinybars(Int64(accountInfoProto.generateSendRecordThreshold)),
-            receiveRecordThreshold: Hbar.fromTinybars(Int64(accountInfoProto.generateReceiveRecordThreshold)),
-            isReceiverSignatureRequired: accountInfoProto.receiverSigRequired,
-            expirationTime: .fromProtobuf(accountInfoProto.expirationTime),
-            autoRenewPeriod: .fromProtobuf(accountInfoProto.autoRenewPeriod),
-            accountMemo: accountInfoProto.memo,
-            ownedNfts: UInt64(accountInfoProto.ownedNfts),
-            maxAutomaticTokenAssociations: UInt32(accountInfoProto.maxAutomaticTokenAssociations),
-            aliasKey: try .fromAliasBytes(accountInfoProto.alias),
-            ethereumNonce: UInt64(accountInfoProto.ethereumNonce),
+            accountId: accountInfo.accountId,
+            contractAccountId: accountInfo.contractAccountId,
+            isDeleted: accountInfo.isDeleted,
+            proxyAccountId: accountInfo.proxyAccountId,
+            proxyReceived: accountInfo.proxyReceived,
+            key: accountInfo.key,
+            balance: accountInfo.balance,
+            sendRecordThreshold: accountInfo.sendRecordThreshold,
+            receiveRecordThreshold: accountInfo.receiveRecordThreshold,
+            isReceiverSignatureRequired: accountInfo.isReceiverSignatureRequired,
+            expirationTime: accountInfo.expirationTime,
+            autoRenewPeriod: accountInfo.autoRenewPeriod,
+            accountMemo: accountInfo.accountMemo,
+            ownedNfts: accountInfo.ownedNfts,
+            maxAutomaticTokenAssociations: accountInfo.maxAutomaticTokenAssociations,
+            aliasKey: accountInfo.aliasKey,
+            ethereumNonce: accountInfo.ethereumNonce,
             tokenRelationships: tokenRelationships,
-            ledgerId: .fromBytes(accountInfoProto.ledgerID),
-            staking: try .fromProtobuf(accountInfoProto.stakingInfo)
+            ledgerId: accountInfo.ledgerId,
+            staking: accountInfo.staking
         )
     }
 

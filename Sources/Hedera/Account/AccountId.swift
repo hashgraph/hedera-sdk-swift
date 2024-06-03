@@ -135,6 +135,15 @@ public struct AccountId: Sendable, EntityId, ValidateChecksums {
     public func toBytes() -> Data {
         toProtobufBytes()
     }
+
+    public func populateAccountIdNum(_ client: Client) async throws -> Self {
+        let mirrorNodeGateway = try MirrorNodeGateway.forClient(client)
+        let mirrorNodeService = MirrorNodeService(mirrorNodeGateway)
+
+        let accountNumFromMirror = try await mirrorNodeService.getAccountNum(self.evmAddress!.toString())
+
+        return Self(shard: shard, realm: realm, num: accountNumFromMirror)
+    }
 }
 
 extension AccountId: TryProtobufCodable {
