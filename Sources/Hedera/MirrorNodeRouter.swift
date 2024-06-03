@@ -32,12 +32,12 @@ internal struct MirrorNodeRouter {
 
     public static let accountsRoute = "accounts"
     public static let contractsRoute = "contracts"
-    public static let accountTokensRoute = "account_tokens"
+    public static let tokensAccountRoute = "account_tokens"
 
     static let routes: [String: String] = [
         accountsRoute: "/accounts/%@",
         contractsRoute: "/contracts/%@",
-        accountTokensRoute: "/accounts/%@/tokens",
+        tokensAccountRoute: "/accounts/%@/tokens",
     ]
 
     private func MirrorNodeRouter() {}

@@ -56,10 +56,14 @@ internal final class MirrorNodeService {
     }
 
     internal func getContractNum(_ evmAddress: String) async throws -> UInt64 {
-        let accountInfoResponse = try await self.mirrorNodeGateway.getContractInfo(evmAddress)
+        let contractInfoResponse = try await self.mirrorNodeGateway.getContractInfo(evmAddress)
 
-        guard let contractId = accountInfoResponse["contract_id"] else {
-            fatalError("Error while processing getContractNum mirror node query")
+        guard let contractId = contractInfoResponse["contract_id"] else {
+            throw NSError(
+                domain: "InvalidResponseError", code: -1,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Error while processing getContractNum mirror node query"
+                ])
         }
 
         let contractIdNum = ContractId(String(describing: contractId))?.num
@@ -71,12 +75,16 @@ internal final class MirrorNodeService {
         let accountTokensResponse = try await self.mirrorNodeGateway.getAccountTokens(evmAddress)
 
         guard let tokens = accountTokensResponse["tokens"] else {
-            fatalError("Error while processing getTokenBalancesForAccount mirror node query")
+            throw NSError(
+                domain: "InvalidResponseError", code: -1,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Error while processing getAccountTokens mirror node query"
+                ])
         }
 
         var tokenBalances: [Proto_TokenBalance] = []
 
-        guard let tokensList = tokens as? [[String: Any]] else {
+        guard let tokensList: [[String: Any]] = tokens as? [[String: Any]] else {
             throw NSError(
                 domain: "InvalidResponseError", code: -1,
                 userInfo: [
@@ -84,14 +92,26 @@ internal final class MirrorNodeService {
                 ])
         }
         tokensList.forEach { token in
-            let tokenId = TokenId(String(describing: token["token_id"]))?.toProtobuf()
-            let balance = UInt64(String(describing: token["balance"]))
-            let decimals = UInt32(String(describing: token["decimals"]))
+            var tokenId: String = ""
+            var balance: UInt64 = 0
+            var decimals: UInt32 = 0
+
+            if let id = token["token_id"] as? String {
+                tokenId = id
+            }
+
+            if let hbar = token["balance"] as? String {
+                balance = UInt64(hbar)!
+            }
+
+            if let dec = token["decimals"] as? String {
+                decimals = UInt32(dec)!
+            }
 
             let tokenBalanceProto = Proto_TokenBalance.with { proto in
-                proto.tokenID = tokenId!
-                proto.balance = balance!
-                proto.decimals = decimals!
+                proto.tokenID = TokenId(tokenId)!.toProtobuf()
+                proto.balance = balance
+                proto.decimals = decimals
             }
 
             tokenBalances.append(tokenBalanceProto)
@@ -114,28 +134,54 @@ internal final class MirrorNodeService {
 
         var tokenBalances: [Proto_TokenRelationship] = []
 
-        if let tokensList = tokens as? [[String: Any]] {
-            try tokensList.forEach { token in
-                let tokenId = TokenId(String(describing: token["token_id"]))?.toProtobuf()
-                let balance = UInt64(String(describing: token["balance"]))
-                let decimals = UInt32(String(describing: token["decimals"]))
-                let kycStatus = String(describing: token["kyc_status"])
-                let freezeStatus = String(describing: token["freeze_status"])
-                let automaticAssociation = Bool(String(describing: token["automatic_assocation"]))
-
-                let tokenRelationshipsProto = try Proto_TokenRelationship.with { proto in
-                    proto.tokenID = tokenId!
-                    proto.balance = balance!
-                    proto.decimals = decimals!
-                    proto.kycStatus = try getTokenKycStatusFromString(kycStatus)
-                    proto.freezeStatus = try getTokenFreezeStatusFromString(freezeStatus)
-                    proto.automaticAssociation = automaticAssociation!
-                }
-
-                tokenBalances.append(tokenRelationshipsProto)
+        guard let tokensList: [[String: Any]] = tokens as? [[String: Any]] else {
+            throw NSError(
+                domain: "InvalidResponseError", code: -1,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Error while processing getTokenBalancesForAccount mirror node query"
+                ])
+        }
+        try tokensList.forEach { token in
+            var tokenId: String = ""
+            var balance: UInt64 = 0
+            var decimals: UInt32 = 0
+            var kycStatus: String = ""
+            var freezeStatus: String = ""
+            var automaticAssociation: Bool = false
+            if let id = token["token_id"] as? String {
+                tokenId = id
             }
-        } else {
-            fatalError("Error while processing getTokenRelationshipsForAccount mirror node query")
+
+            if let hbar = token["balance"] as? String {
+                balance = UInt64(hbar)!
+            }
+
+            if let dec = token["decimals"] as? String {
+                decimals = UInt32(dec)!
+            }
+
+            if let kyc = token["kyc_status"] as? String {
+                kycStatus = kyc
+            }
+
+            if let freeze = token["freeze_status"] as? String {
+                freezeStatus = freeze
+            }
+
+            if let auto = token["automatic_association"] as? String {
+                automaticAssociation = Bool(auto)!
+            }
+
+            let tokenRelationshipsProto = try Proto_TokenRelationship.with { proto in
+                proto.tokenID = TokenId(tokenId)!.toProtobuf()
+                proto.balance = balance
+                proto.decimals = decimals
+                proto.kycStatus = try getTokenKycStatusFromString(kycStatus)
+                proto.freezeStatus = try getTokenFreezeStatusFromString(freezeStatus)
+                proto.automaticAssociation = automaticAssociation
+            }
+
+            tokenBalances.append(tokenRelationshipsProto)
         }
 
         return tokenBalances
