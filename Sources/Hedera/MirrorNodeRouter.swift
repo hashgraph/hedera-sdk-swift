@@ -40,7 +40,7 @@ internal struct MirrorNodeRouter {
         tokensAccountRoute: "/accounts/%@/tokens",
     ]
 
-    private func MirrorNodeRouter() {}
+    private func mirrorNodeRouter() {}
 
     static func getMirrorNodeUrl(_ mirrorNetwork: [String], _ ledgerId: LedgerId?) throws -> String {
         var mirrorNodeAddress: String = ""
