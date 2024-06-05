@@ -24,11 +24,17 @@ import GRPC
 import HederaProtobufs
 import NIO
 
-internal struct MirrorNodeGateway {
+internal class MirrorNodeGateway {
     internal var mirrorNodeUrl: String
+    private let httpClient: HTTPClient
 
     private init(mirrorNodeUrl: String) {
         self.mirrorNodeUrl = mirrorNodeUrl
+        self.httpClient = HTTPClient(eventLoopGroupProvider: .singleton)
+    }
+
+    deinit {
+        try? httpClient.syncShutdown()
     }
 
     internal static func forClient(_ client: Client) throws -> MirrorNodeGateway {
@@ -77,11 +83,6 @@ internal struct MirrorNodeGateway {
     }
 
     private func queryFromMirrorNode(_ apiUrl: String) async throws -> String {
-        let httpClient = HTTPClient(eventLoopGroupProvider: .singleton)
-        defer {
-            try? httpClient.syncShutdown()
-        }
-
         // Delay is needed to fetch data from the mirror node.
         if apiUrl.contains("127.0.0.1:5551") {
             try await Task.sleep(nanoseconds: 1_000_000_000 * 3)
