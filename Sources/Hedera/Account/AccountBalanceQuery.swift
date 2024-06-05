@@ -91,16 +91,16 @@ public final class AccountBalanceQuery: Query<AccountBalance> {
         let mirrorNodeGateway = try MirrorNodeGateway.forNetwork(context.mirrorNetworkNodes, context.ledgerId)
         let mirrorNodeService = MirrorNodeService.init(mirrorNodeGateway)
 
-        guard case .cryptogetAccountBalance(let proto) = response else {
+        guard case .cryptogetAccountBalance(var proto) = response else {
             throw HError.fromProtobuf("unexpected \(response) received, expected `cryptogetAccountBalance`")
         }
 
-        let accountId = try AccountId.fromProtobuf(proto.accountID)
-        let tokenBalanceProto = try await mirrorNodeService.getTokenBalancesForAccount(String(accountId.num))
+        let tokenBalanceProto = try await mirrorNodeService.getTokenBalancesForAccount(
+            String(proto.accountID.accountNum))
 
-        return AccountBalance(
-            accountId: accountId, hbars: .fromTinybars(Int64(proto.balance)),
-            tokensInner: .fromProtobuf(tokenBalanceProto))
+        proto.tokenBalances = tokenBalanceProto
+
+        return try .fromProtobuf(proto)
     }
 
     public override func validateChecksums(on ledgerId: LedgerId) throws {

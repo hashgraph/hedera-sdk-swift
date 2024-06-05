@@ -32,6 +32,7 @@ public struct HError: Error, CustomStringConvertible {
         case queryPaymentPreCheckStatus(status: Status, transactionId: TransactionId)
         case queryNoPaymentPreCheckStatus(status: Status)
         case basicParse
+        case mirrorNodeQuery
         case keyParse
         case keyDerive
         case noPayerAccountOrTransactionId
@@ -84,6 +85,10 @@ public struct HError: Error, CustomStringConvertible {
 
     internal static func basicParse(_ description: String) -> Self {
         Self(kind: .basicParse, description: description)
+    }
+
+    internal static func mirrorNodeQuery(_ description: String) -> Self {
+        Self(kind: .mirrorNodeQuery, description: description)
     }
 
     internal static func keyParse(_ description: String) -> Self {

@@ -119,17 +119,6 @@ public struct ContractId: EntityId {
     public func toBytes() -> Data {
         toProtobufBytes()
     }
-
-    public func populateContractNum(_ client: Client) async throws -> Self {
-        let address = try EvmAddress.fromBytes(self.evmAddress!)
-
-        let mirrorNodeGateway = try MirrorNodeGateway.forClient(client)
-        let mirrorNodeService = MirrorNodeService(mirrorNodeGateway)
-
-        let contractNum = try await mirrorNodeService.getContractNum(address.toString())
-
-        return Self(shard: shard, realm: realm, num: contractNum)
-    }
 }
 
 #if compiler(>=5.7)

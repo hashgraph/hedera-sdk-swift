@@ -42,7 +42,6 @@ public final class ContractInfoQuery: Query<ContractInfo> {
     }
 
     internal override func toQueryProtobufWith(_ header: Proto_QueryHeader) -> Proto_Query {
-
         .with { proto in
             proto.contractGetInfo = .with { proto in
                 proto.header = header
@@ -62,37 +61,16 @@ public final class ContractInfoQuery: Query<ContractInfo> {
         let mirrorNodeGateway = try MirrorNodeGateway.forNetwork(context.mirrorNetworkNodes, context.ledgerId)
         let mirrorNodeService = MirrorNodeService.init(mirrorNodeGateway)
 
-        guard case .contractGetInfo(let proto) = response else {
+        guard case .contractGetInfo(var proto) = response else {
             throw HError.fromProtobuf("unexpected \(response) received, expected `contractGetInfo`")
         }
 
-        let contractInfo = try ContractInfo.fromProtobuf(proto.contractInfo)
         let tokenRelationshipsProto = try await mirrorNodeService.getTokenRelationshipsForAccount(
-            String(describing: contractInfo.contractId.num))
+            String(describing: proto.contractInfo.accountID.accountNum))
 
-        var tokenRelationships: [TokenId: TokenRelationship] = [:]
+        proto.contractInfo.tokenRelationships = tokenRelationshipsProto
 
-        for relationship in tokenRelationshipsProto {
-            tokenRelationships[.fromProtobuf(relationship.tokenID)] = try TokenRelationship.fromProtobuf(relationship)
-        }
-
-        return ContractInfo(
-            contractId: contractInfo.contractId,
-            accountId: contractInfo.accountId,
-            contractAccountId: contractInfo.contractAccountId,
-            adminKey: contractInfo.adminKey,
-            expirationTime: contractInfo.expirationTime,
-            autoRenewPeriod: contractInfo.autoRenewPeriod,
-            storage: contractInfo.storage,
-            contractMemo: contractInfo.contractMemo,
-            balance: contractInfo.balance,
-            isDeleted: contractInfo.isDeleted,
-            autoRenewAccountId: contractInfo.autoRenewAccountId,
-            maxAutomaticTokenAssociations: contractInfo.maxAutomaticTokenAssociations,
-            tokenRelationships: tokenRelationships,
-            ledgerId: contractInfo.ledgerId,
-            stakingInfo: contractInfo.stakingInfo
-        )
+        return try ContractInfo.fromProtobuf(proto.contractInfo)
     }
 
     internal override func validateChecksums(on ledgerId: LedgerId) throws {

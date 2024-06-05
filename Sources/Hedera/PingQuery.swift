@@ -73,7 +73,10 @@ extension PingQuery: Execute {
         nil
     }
 
-    internal func makeRequest(_ client: Client, _ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
+    internal func makeRequest(
+        _ ledgerId: LedgerId?, _ mirrorNodeNetworks: [String], _ transactionId: TransactionId?,
+        _ nodeAccountId: AccountId
+    ) throws -> (
         Proto_Query, ()
     ) {
         let header = Proto_QueryHeader.with { $0.responseType = .answerOnly }

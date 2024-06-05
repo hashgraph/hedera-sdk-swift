@@ -156,7 +156,7 @@ public struct AccountInfo: Sendable {
     /// Staking metadata for this account.
     public let staking: StakingInfo?
 
-    /// Staking metadata for this account.
+    /// Token relationships for this account.
     public let tokenRelationships: [TokenId: TokenRelationship]
 
     /// Decode `Self` from protobuf-encoded `bytes`.

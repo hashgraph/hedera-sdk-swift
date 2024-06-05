@@ -65,42 +65,16 @@ public final class AccountInfoQuery: Query<AccountInfo> {
         let mirrorNodeGateway = try MirrorNodeGateway.forNetwork(context.mirrorNetworkNodes, context.ledgerId)
         let mirrorNodeService = MirrorNodeService.init(mirrorNodeGateway)
 
-        guard case .cryptoGetInfo(let proto) = response else {
+        guard case .cryptoGetInfo(var proto) = response else {
             throw HError.fromProtobuf("unexpected \(response) received, expected `cryptoGetInfo`")
         }
 
-        let accountInfo = try AccountInfo.fromProtobuf(proto.accountInfo)
         let tokenRelationshipsProto = try await mirrorNodeService.getTokenRelationshipsForAccount(
-            String(describing: accountInfo.accountId.num))
+            String(describing: try AccountId.fromProtobuf(proto.accountInfo.accountID).num))
 
-        var tokenRelationships: [TokenId: TokenRelationship] = [:]
+        proto.accountInfo.tokenRelationships = tokenRelationshipsProto
 
-        for relationship in tokenRelationshipsProto {
-            tokenRelationships[.fromProtobuf(relationship.tokenID)] = try TokenRelationship.fromProtobuf(relationship)
-        }
-
-        return AccountInfo(
-            accountId: accountInfo.accountId,
-            contractAccountId: accountInfo.contractAccountId,
-            isDeleted: accountInfo.isDeleted,
-            proxyAccountId: accountInfo.proxyAccountId,
-            proxyReceived: accountInfo.proxyReceived,
-            key: accountInfo.key,
-            balance: accountInfo.balance,
-            sendRecordThreshold: accountInfo.sendRecordThreshold,
-            receiveRecordThreshold: accountInfo.receiveRecordThreshold,
-            isReceiverSignatureRequired: accountInfo.isReceiverSignatureRequired,
-            expirationTime: accountInfo.expirationTime,
-            autoRenewPeriod: accountInfo.autoRenewPeriod,
-            accountMemo: accountInfo.accountMemo,
-            ownedNfts: accountInfo.ownedNfts,
-            maxAutomaticTokenAssociations: accountInfo.maxAutomaticTokenAssociations,
-            aliasKey: accountInfo.aliasKey,
-            ethereumNonce: accountInfo.ethereumNonce,
-            tokenRelationships: tokenRelationships,
-            ledgerId: accountInfo.ledgerId,
-            staking: accountInfo.staking
-        )
+        return try .fromProtobuf(proto.accountInfo)
     }
 
     internal override func validateChecksums(on ledgerId: LedgerId) throws {

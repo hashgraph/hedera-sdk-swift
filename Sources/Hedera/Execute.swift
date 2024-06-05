@@ -60,7 +60,10 @@ internal protocol Execute {
     ///
     /// A created request is cached per node until any request returns
     /// `TransactionExpired`; in which case, the request cache is cleared.
-    func makeRequest(_ client: Client, _ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
+    func makeRequest(
+        _ ledgerId: LedgerId?, _ mirrorNodeNetworks: [String], _ transactionId: TransactionId?,
+        _ nodeAccountId: AccountId
+    ) throws -> (
         GrpcRequest, Context
     )
 
@@ -97,7 +100,8 @@ private struct ExecuteContext {
     fileprivate let network: Network
     fileprivate let backoffConfig: LegacyExponentialBackoff
     fileprivate let maxAttempts: Int
-    fileprivate let client: Client
+    fileprivate let ledgerId: LedgerId?
+    fileprivate let mirrorNodeNetworks: [String]
     // timeout for a single grpc request.
     fileprivate let grpcTimeout: Duration?
 }
@@ -153,7 +157,8 @@ internal func executeAny<E: Execute & ValidateChecksums>(
             network: client.net,
             backoffConfig: backoffBuilder,
             maxAttempts: backoff.maxAttempts,
-            client: client,
+            ledgerId: client.ledgerId,
+            mirrorNodeNetworks: client.mirrorNetwork,
             grpcTimeout: nil
         ),
         executable: executable)
@@ -189,7 +194,8 @@ private func executeAnyInner<E: Execute>(
             }
 
             let (nodeAccountId, channel) = ctx.network.channel(for: nodeIndex)
-            let (request, context) = try executable.makeRequest(ctx.client, transactionId, nodeAccountId)
+            let (request, context) = try executable.makeRequest(
+                ctx.ledgerId, ctx.mirrorNodeNetworks, transactionId, nodeAccountId)
             let response: E.GrpcResponse
 
             do {
@@ -313,7 +319,8 @@ private struct NodeIndexesGeneratorMap: AsyncSequence, AsyncIteratorProtocol {
                     network: ctx.network,
                     backoffConfig: ctx.backoffConfig,
                     maxAttempts: ctx.maxAttempts,
-                    client: ctx.client,
+                    ledgerId: ctx.ledgerId,
+                    mirrorNodeNetworks: ctx.mirrorNodeNetworks,
                     grpcTimeout: ctx.grpcTimeout
                 ),
                 executable: request

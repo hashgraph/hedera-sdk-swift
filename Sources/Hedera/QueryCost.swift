@@ -67,7 +67,10 @@ extension QueryCost: Execute {
 
     internal var requiresTransactionId: Bool { false }
 
-    internal func makeRequest(_ client: Client, _ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
+    internal func makeRequest(
+        _ ledgerId: LedgerId?, _ mirrorNodeNetworks: [String], _ transactionId: TransactionId?,
+        _ nodeAccountId: AccountId
+    ) throws -> (
         Proto_Query, ()
     ) {
         let request = query.toQueryProtobufWith(

@@ -30,17 +30,11 @@ internal struct MirrorNodeRouter {
 
     static let localNodePort = "5551"
 
-    public static let accountsRoute = "accounts"
-    public static let contractsRoute = "contracts"
-    public static let tokensAccountRoute = "account_tokens"
-
-    static let routes: [String: String] = [
-        accountsRoute: "/accounts/%@",
-        contractsRoute: "/contracts/%@",
-        tokensAccountRoute: "/accounts/%@/tokens",
-    ]
-
-    private func mirrorNodeRouter() {}
+    public enum MirrorNodeRoute: String {
+        case accountInfoRoute = "/accounts/%@"
+        case contractInfoRoute = "/contracts/%@"
+        case tokenRelationshipsRoute = "/accounts/%@/tokens"
+    }
 
     static func getMirrorNodeUrl(_ mirrorNetwork: [String], _ ledgerId: LedgerId?) throws -> String {
         var mirrorNodeAddress: String = ""
@@ -62,7 +56,7 @@ internal struct MirrorNodeRouter {
         return fullMirrorNodeUrl
     }
 
-    static func buildApiUrl(_ mirrorNodeUrl: String, _ route: String, _ id: String) -> String {
-        return String("\(mirrorNodeUrl)\(apiVersion)\(String(format: "\(String(describing: routes[route]!))", id))")
+    static func buildApiUrl(_ mirrorNodeUrl: String, _ route: MirrorNodeRoute, _ id: String) -> String {
+        return String("\(mirrorNodeUrl)\(apiVersion)\(route.rawValue.replacingOccurrences(of: "%@", with: id))")
     }
 }

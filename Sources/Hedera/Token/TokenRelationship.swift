@@ -41,12 +41,12 @@ public struct TokenRelationship: Sendable {
     /// The KYC status of the account (KycNotApplicable, Granted or Revoked).
     ///
     /// If the token does not have KYC key, KycNotApplicable is returned
-    public let kycStatus: Bool?
+    public let kycStatus: UInt32
 
     /// The Freeze status of the account (FreezeNotApplicable, Frozen or Unfrozen).
     ///
     /// If the token does not have Freeze key, FreezeNotApplicable is returned
-    public let freezeStatus: Bool?
+    public let freezeStatus: UInt32
 
     /// Specifies if the relationship is created implicitly.
     ///
@@ -55,7 +55,7 @@ public struct TokenRelationship: Sendable {
     public let automaticAssociation: Bool
 
     public init(
-        tokenId: TokenId, symbol: String, balance: UInt64, kycStatus: Bool?, freezeStatus: Bool?,
+        tokenId: TokenId, symbol: String, balance: UInt64, kycStatus: UInt32, freezeStatus: UInt32,
         automaticAssociation: Bool
     ) {
         self.tokenId = tokenId
@@ -72,29 +72,29 @@ extension TokenRelationship: TryProtobufCodable {
     internal typealias Protobuf = Proto_TokenRelationship
 
     internal init(protobuf proto: Protobuf) throws {
-        var freezeStatus: Bool?
-        var kycStatus: Bool?
+        var freezeStatus: UInt32
+        var kycStatus: UInt32
 
         switch proto.freezeStatus {
         case .freezeNotApplicable:
-            freezeStatus = nil
+            freezeStatus = 0
         case .frozen:
-            freezeStatus = true
+            freezeStatus = 1
         case .unfrozen:
-            freezeStatus = false
+            freezeStatus = 2
         case .unrecognized(_):
-            fatalError("Unrecognized Freeze Status from Protobuf: \(proto.freezeStatus)")
+            throw HError.fromProtobuf("invalid freeze status from protobuf: \(proto.freezeStatus)")
         }
 
         switch proto.kycStatus {
         case .kycNotApplicable:
-            kycStatus = nil
+            kycStatus = 0
         case .granted:
-            kycStatus = true
+            kycStatus = 1
         case .revoked:
-            kycStatus = false
+            kycStatus = 2
         case .unrecognized(_):
-            fatalError("Unrecognized KYC Status from protobuf: \(proto.kycStatus)")
+            throw HError.fromProtobuf("invalid kyc status from protobuf: \(proto.kycStatus)")
         }
 
         self.init(
@@ -109,24 +109,24 @@ extension TokenRelationship: TryProtobufCodable {
             var protoKycStatus: Proto_TokenKycStatus
 
             switch freezeStatus {
-            case true:
-                protoFreezeStatus = Proto_TokenFreezeStatus.frozen
-            case false:
-                protoFreezeStatus = Proto_TokenFreezeStatus.unfrozen
-            case nil:
-                protoFreezeStatus = Proto_TokenFreezeStatus.freezeNotApplicable
-            case .some(_):
+            case 0:
+                protoFreezeStatus = .freezeNotApplicable
+            case 1:
+                protoFreezeStatus = .frozen
+            case 2:
+                protoFreezeStatus = .unfrozen
+            default:
                 fatalError("Unrecognized Freeze Status")
             }
 
             switch kycStatus {
-            case true:
-                protoKycStatus = Proto_TokenKycStatus.granted
-            case false:
-                protoKycStatus = Proto_TokenKycStatus.revoked
-            case nil:
-                protoKycStatus = Proto_TokenKycStatus.kycNotApplicable
-            case .some(_):
+            case 0:
+                protoKycStatus = .kycNotApplicable
+            case 1:
+                protoKycStatus = .granted
+            case 2:
+                protoKycStatus = .revoked
+            default:
                 fatalError("Unrecognized KYC Status")
             }
 

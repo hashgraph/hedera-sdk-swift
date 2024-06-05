@@ -224,7 +224,10 @@ extension Query: Execute {
         payment.index
     }
 
-    internal func makeRequest(_ client: Client, _ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
+    internal func makeRequest(
+        _ ledgerId: LedgerId?, _ mirrorNodeNetworks: [String], _ transactionId: TransactionId?,
+        _ nodeAccountId: AccountId
+    ) throws -> (
         Proto_Query, Context
     ) {
         let request = toQueryProtobufWith(
@@ -232,13 +235,14 @@ extension Query: Execute {
                 proto.responseType = .answerOnly
 
                 if requiresPayment {
-                    proto.payment = try payment.makeRequest(client, transactionId, nodeAccountId).0
+                    proto.payment = try payment.makeRequest(ledgerId, mirrorNodeNetworks, transactionId, nodeAccountId)
+                        .0
                 }
             })
 
         let context = MirrorNetworkContext(
-            ledgerId: client.ledgerId,
-            mirrorNetworkNodes: client.mirrorNetwork
+            ledgerId: ledgerId,
+            mirrorNetworkNodes: mirrorNodeNetworks
         )
 
         return (request, context)

@@ -63,7 +63,7 @@ public struct ContractInfo {
 
     /// The tokens associated to the contract
     ///
-    /// Query mirror node
+    /// Note: Query mirror node for token relationships.
     public let tokenRelationships: [TokenId: TokenRelationship]
 
     /// Ledger ID for the network the response was returned from.
@@ -104,7 +104,7 @@ extension ContractInfo: TryProtobufCodable {
 
         self.init(
             contractId: try .fromProtobuf(proto.contractID),
-            accountId: try AccountId.fromProtobuf(proto.accountID),
+            accountId: try .fromProtobuf(proto.accountID),
             contractAccountId: proto.contractAccountID,
             adminKey: try .fromProtobuf(adminKey),
             expirationTime: .fromProtobuf(expirationTime),

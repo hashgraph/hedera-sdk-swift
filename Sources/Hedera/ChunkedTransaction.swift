@@ -206,7 +206,10 @@ extension ChunkedTransaction.FirstChunkView: Execute {
         self.transaction.regenerateTransactionId
     }
 
-    internal func makeRequest(_ client: Client, _ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
+    internal func makeRequest(
+        _ ledgerId: LedgerId?, _ mirrorNodeNetworks: [String], _ transactionId: TransactionId?,
+        _ nodeAccountId: AccountId
+    ) throws -> (
         GrpcRequest, Context
     ) {
         assert(transaction.isFrozen)
@@ -265,7 +268,10 @@ extension ChunkedTransaction.ChunkView: Execute {
         self.transaction.regenerateTransactionId
     }
 
-    internal func makeRequest(_ client: Client, _ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (
+    internal func makeRequest(
+        _ ledgerId: LedgerId?, _ mirrorNodeNetworks: [String], _ transactionId: TransactionId?,
+        _ nodeAccountId: AccountId
+    ) throws -> (
         GrpcRequest, Context
     ) {
         assert(transaction.isFrozen)

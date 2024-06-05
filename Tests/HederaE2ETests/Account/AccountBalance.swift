@@ -22,7 +22,7 @@ import Hedera
 import XCTest
 
 internal final class AccountBalance: XCTestCase {
-    internal func testQuery() async throws {
+    internal func testQueryBoo() async throws {
         let testEnv = TestEnvironment.global
 
         guard let op = testEnv.operator else {

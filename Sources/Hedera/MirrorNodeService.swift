@@ -29,162 +29,87 @@ internal final class MirrorNodeService {
         self.mirrorNodeGateway = mirrorNodeGateway
     }
 
-    internal func getAccountNum(_ evmAddress: String) async throws -> UInt64 {
-        let accountInfoResponse = try await self.mirrorNodeGateway.getAccountInfo(evmAddress)
-
-        guard let accountId = accountInfoResponse["account"] else {
-            throw NSError(
-                domain: "InvalidResponseError", code: -1,
-                userInfo: [NSLocalizedDescriptionKey: "Error while processing getAccountInfo mirror node query"])
-        }
-
-        let accountNum = AccountId(String(describing: accountId))?.num
-
-        return accountNum!
-    }
-
-    internal func getAccountEvmAddress(_ num: UInt64) async throws -> EvmAddress {
-        let accountInfoResponse = try await self.mirrorNodeGateway.getAccountInfo(String(describing: num))
-
-        guard let addressAny = accountInfoResponse["evm_address"] else {
-            fatalError("Error while processing getAccountEvmAddress mirror node query")
-        }
-
-        let evmAddress = AccountId(String(describing: addressAny))?.evmAddress
-
-        return evmAddress!
-    }
-
-    internal func getContractNum(_ evmAddress: String) async throws -> UInt64 {
-        let contractInfoResponse = try await self.mirrorNodeGateway.getContractInfo(evmAddress)
-
-        guard let contractId = contractInfoResponse["contract_id"] else {
-            throw NSError(
-                domain: "InvalidResponseError", code: -1,
-                userInfo: [
-                    NSLocalizedDescriptionKey: "Error while processing getContractNum mirror node query"
-                ])
-        }
-
-        let contractIdNum = ContractId(String(describing: contractId))?.num
-
-        return contractIdNum!
-    }
-
-    internal func getTokenBalancesForAccount(_ evmAddress: String) async throws -> [Proto_TokenBalance] {
-        let accountTokensResponse = try await self.mirrorNodeGateway.getAccountTokens(evmAddress)
+    internal func getTokenBalancesForAccount(_ idNumOrEvmAddress: String) async throws -> [Proto_TokenBalance] {
+        let accountTokensResponse = try await self.mirrorNodeGateway.getAccountTokens(idNumOrEvmAddress)
 
         guard let tokens = accountTokensResponse["tokens"] else {
-            throw NSError(
-                domain: "InvalidResponseError", code: -1,
-                userInfo: [
-                    NSLocalizedDescriptionKey: "Error while processing getAccountTokens mirror node query"
-                ])
+            throw HError.mirrorNodeQuery("Error in fetching token relationships for account")
         }
-
-        var tokenBalances: [Proto_TokenBalance] = []
 
         guard let tokensList: [[String: Any]] = tokens as? [[String: Any]] else {
-            throw NSError(
-                domain: "InvalidResponseError", code: -1,
-                userInfo: [
-                    NSLocalizedDescriptionKey: "Error while processing getTokenBalancesForAccount mirror node query"
-                ])
+            throw HError.mirrorNodeQuery("Error in converting tokens to array")
         }
-        tokensList.forEach { token in
-            var tokenId: String = ""
-            var balance: UInt64 = 0
-            var decimals: UInt32 = 0
 
-            if let id = token["token_id"] as? String {
-                tokenId = id
+        let tokenBalances = try tokensList.map { token in
+            guard let id = token["token_id"] as? String, let tokenId = TokenId(id) else {
+                throw HError.mirrorNodeQuery("Error while converting `token id` to TokenId")
             }
 
-            if let hbar = token["balance"] as? String {
-                balance = UInt64(hbar)!
+            guard let balance = token["balance"] as? UInt64 else {
+                throw HError.mirrorNodeQuery("Error while converting `balance` to unsigned int")
             }
 
-            if let dec = token["decimals"] as? String {
-                decimals = UInt32(dec)!
+            guard let decimals = token["decimals"] as? UInt32 else {
+                throw HError.mirrorNodeQuery("Error while converting `decimals` to unsigned int")
             }
 
-            let tokenBalanceProto = Proto_TokenBalance.with { proto in
-                proto.tokenID = TokenId(tokenId)!.toProtobuf()
+            return Proto_TokenBalance.with { proto in
+                proto.tokenID = tokenId.toProtobuf()
                 proto.balance = balance
                 proto.decimals = decimals
             }
-
-            tokenBalances.append(tokenBalanceProto)
         }
 
         return tokenBalances
     }
 
-    internal func getTokenRelationshipsForAccount(_ evmAddress: String) async throws -> [Proto_TokenRelationship] {
-        let accountTokensResponse = try await self.mirrorNodeGateway.getAccountTokens(evmAddress)
+    internal func getTokenRelationshipsForAccount(_ idNumOrEvmAddress: String) async throws -> [Proto_TokenRelationship] {
+        let accountTokensResponse = try await self.mirrorNodeGateway.getAccountTokens(idNumOrEvmAddress)
 
         guard let tokens = accountTokensResponse["tokens"] else {
-            throw NSError(
-                domain: "InvalidResponseError", code: -1,
-                userInfo: [
-                    NSLocalizedDescriptionKey:
-                        "Error while processing getTokenRelationshipsForAccount mirror node query"
-                ])
+            throw HError.mirrorNodeQuery("Error in fetching token relationships for account")
         }
-
-        var tokenBalances: [Proto_TokenRelationship] = []
 
         guard let tokensList: [[String: Any]] = tokens as? [[String: Any]] else {
-            throw NSError(
-                domain: "InvalidResponseError", code: -1,
-                userInfo: [
-                    NSLocalizedDescriptionKey: "Error while processing getTokenBalancesForAccount mirror node query"
-                ])
+            throw HError.mirrorNodeQuery("Error in converting tokens to array")
         }
-        try tokensList.forEach { token in
-            var tokenId: String = ""
-            var balance: UInt64 = 0
-            var decimals: UInt32 = 0
-            var kycStatus: String = ""
-            var freezeStatus: String = ""
-            var automaticAssociation: Bool = false
-            if let id = token["token_id"] as? String {
-                tokenId = id
+
+        let tokenRelationships = try tokensList.map { token in
+            guard let id = token["token_id"] as? String, let tokenId = TokenId(id) else {
+                throw HError.mirrorNodeQuery("Error while converting `token id` to TokenId")
             }
 
-            if let hbar = token["balance"] as? String {
-                balance = UInt64(hbar)!
+            guard let balance = token["balance"] as? UInt64 else {
+                throw HError.mirrorNodeQuery("Error while converting `balance` to unsigned int")
             }
 
-            if let dec = token["decimals"] as? String {
-                decimals = UInt32(dec)!
+            guard let decimals = token["decimals"] as? UInt32 else {
+                throw HError.mirrorNodeQuery("Error while converting `decimals` to unsigned int")
             }
 
-            if let kyc = token["kyc_status"] as? String {
-                kycStatus = kyc
+            guard let kycStatus = token["kyc_status"] as? String else {
+                throw HError.mirrorNodeQuery("Error while converting `kyc status` to string")
             }
 
-            if let freeze = token["freeze_status"] as? String {
-                freezeStatus = freeze
+            guard let freezeStatus = token["freeze_status"] as? String else {
+                throw HError.mirrorNodeQuery("Error while processing freeze status as string")
             }
 
-            if let auto = token["automatic_association"] as? String {
-                automaticAssociation = Bool(auto)!
+            guard let automaticAssociation = token["automatic_association"] as? Bool else {
+                throw HError.mirrorNodeQuery("Error while processing automatic association from token relationship")
             }
 
-            let tokenRelationshipsProto = try Proto_TokenRelationship.with { proto in
-                proto.tokenID = TokenId(tokenId)!.toProtobuf()
+            return try Proto_TokenRelationship.with { proto in
+                proto.tokenID = tokenId.toProtobuf()
                 proto.balance = balance
                 proto.decimals = decimals
                 proto.kycStatus = try getTokenKycStatusFromString(kycStatus)
                 proto.freezeStatus = try getTokenFreezeStatusFromString(freezeStatus)
                 proto.automaticAssociation = automaticAssociation
             }
-
-            tokenBalances.append(tokenRelationshipsProto)
         }
 
-        return tokenBalances
+        return tokenRelationships
     }
 
     internal func getTokenKycStatusFromString(_ tokenKycStatusString: String) throws -> Proto_TokenKycStatus {
@@ -192,7 +117,7 @@ internal final class MirrorNodeService {
         case "NOT_APPLICABLE": return Proto_TokenKycStatus.kycNotApplicable
         case "GRANTED": return Proto_TokenKycStatus.granted
         case "REVOKED": return Proto_TokenKycStatus.revoked
-        case _: fatalError("Invalid token KYC status: \(tokenKycStatusString)")
+        case _: throw HError.mirrorNodeQuery("Error while processing kyc status from token relationship")
         }
     }
 
@@ -201,7 +126,7 @@ internal final class MirrorNodeService {
         case "NOT_APPLICABLE": return Proto_TokenFreezeStatus.freezeNotApplicable
         case "FROZEN": return Proto_TokenFreezeStatus.frozen
         case "UNFROZEN": return Proto_TokenFreezeStatus.unfrozen
-        case _: fatalError("Invalid token Freeze status: \(tokenFreezeStatusString)")
+        case _: throw HError.mirrorNodeQuery("Error while processing freeze status from token relationship")
         }
     }
 
