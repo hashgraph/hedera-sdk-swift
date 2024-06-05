@@ -63,7 +63,8 @@ internal final class MirrorNodeService {
         return tokenBalances
     }
 
-    internal func getTokenRelationshipsForAccount(_ idNumOrEvmAddress: String) async throws -> [Proto_TokenRelationship] {
+    internal func getTokenRelationshipsForAccount(_ idNumOrEvmAddress: String) async throws -> [Proto_TokenRelationship]
+    {
         let accountTokensResponse = try await self.mirrorNodeGateway.getAccountTokens(idNumOrEvmAddress)
 
         guard let tokens = accountTokensResponse["tokens"] else {
