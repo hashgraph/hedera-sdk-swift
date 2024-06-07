@@ -97,6 +97,7 @@ let package = Package(
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.0.0"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
     ],
     targets: [
         .target(
@@ -128,6 +129,13 @@ let package = Package(
             // swiftSettings: [
             //     .unsafeFlags(["-Xfrontend", "-warn-concurrency", "-Xfrontend", "-enable-actor-data-race-checks"])
             // ]
+        ),
+        .target(
+            name: "HederaTCK",
+            dependencies: [
+                "Hedera",
+                .product(name: "Vapor", package: "vapor")
+            ]
         ),
         .testTarget(
             name: "HederaTests",
