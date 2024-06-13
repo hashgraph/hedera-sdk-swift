@@ -79,8 +79,7 @@ struct TCKServer {
                 throw JSONError.methodNotFound("\(request.method) not implemented.")
             }
         } catch let error as JSONError {
-            let response = JSONResponse(id: request.id, error: error)
-            return response
+            return JSONResponse(id: request.id, error: error)
         } catch let error as HError {
             return JSONResponse(id: request.id, error: JSONError.hederaError(error.description))
         } catch let error {
