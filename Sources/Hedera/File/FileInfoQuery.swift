@@ -54,7 +54,9 @@ public final class FileInfoQuery: Query<FileInfo> {
         try await Proto_FileServiceAsyncClient(channel: channel).getFileInfo(request)
     }
 
-    internal override func makeQueryResponse(_ response: Proto_Response.OneOf_Response) throws -> Response {
+    internal override func makeQueryResponse(_ context: Context, _ response: Proto_Response.OneOf_Response) async throws
+        -> Response
+    {
         guard case .fileGetInfo(let proto) = response else {
             throw HError.fromProtobuf("unexpected \(response) received, expected `fileGetInfo`")
         }

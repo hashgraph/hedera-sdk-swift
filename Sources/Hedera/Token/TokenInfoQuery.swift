@@ -54,7 +54,9 @@ public final class TokenInfoQuery: Query<TokenInfo> {
         try await Proto_TokenServiceAsyncClient(channel: channel).getTokenInfo(request)
     }
 
-    internal override func makeQueryResponse(_ response: Proto_Response.OneOf_Response) throws -> Response {
+    internal override func makeQueryResponse(_ context: Context, _ response: Proto_Response.OneOf_Response) async throws
+        -> Response
+    {
         guard case .tokenGetInfo(let proto) = response else {
             throw HError.fromProtobuf("unexpected \(response) received, expected `tokenGetInfo`")
         }

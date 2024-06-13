@@ -92,12 +92,11 @@ internal final class ContractCreate: XCTestCase {
                 .constructorParameters(ContractFunctionParameters().addString("Hello from Hedera."))
                 .bytecodeFileId(bytecode.fileId)
                 .contractMemo("[e2e::ContractCreateTransaction]")
-                .execute(testEnv.client)
-                .getReceipt(testEnv.client),
+                .execute(testEnv.client),
             "expected error creating contract"
         ) { error in
-            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
-                XCTFail("`\(error.kind)` is not `.receiptStatus`")
+            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
                 return
             }
 

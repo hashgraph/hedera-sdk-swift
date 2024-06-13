@@ -61,6 +61,11 @@ public struct ContractInfo {
     /// The maximum number of tokens that a contract can be implicitly associated with.
     public let maxAutomaticTokenAssociations: UInt32
 
+    /// The tokens associated to the contract
+    ///
+    /// Note: Query mirror node for token relationships.
+    public let tokenRelationships: [TokenId: TokenRelationship]
+
     /// Ledger ID for the network the response was returned from.
     public let ledgerId: LedgerId
 
@@ -91,6 +96,12 @@ extension ContractInfo: TryProtobufCodable {
         let autoRenewPeriod = proto.hasAutoRenewPeriod ? proto.autoRenewPeriod : nil
         let autoRenewAccountId = proto.hasAutoRenewAccountID ? proto.autoRenewAccountID : nil
 
+        var tokenRelationships: [TokenId: TokenRelationship] = [:]
+
+        for relationship in proto.tokenRelationships {
+            tokenRelationships[.fromProtobuf(relationship.tokenID)] = try TokenRelationship.fromProtobuf(relationship)
+        }
+
         self.init(
             contractId: try .fromProtobuf(proto.contractID),
             accountId: try .fromProtobuf(proto.accountID),
@@ -104,6 +115,7 @@ extension ContractInfo: TryProtobufCodable {
             isDeleted: proto.deleted,
             autoRenewAccountId: try .fromProtobuf(autoRenewAccountId),
             maxAutomaticTokenAssociations: UInt32(proto.maxAutomaticTokenAssociations),
+            tokenRelationships: tokenRelationships,
             ledgerId: .fromBytes(proto.ledgerID),
             stakingInfo: try .fromProtobuf(proto.stakingInfo)
         )

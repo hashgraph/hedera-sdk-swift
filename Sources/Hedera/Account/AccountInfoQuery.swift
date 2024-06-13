@@ -59,10 +59,20 @@ public final class AccountInfoQuery: Query<AccountInfo> {
         try await Proto_CryptoServiceAsyncClient(channel: channel).getAccountInfo(request)
     }
 
-    internal override func makeQueryResponse(_ response: Proto_Response.OneOf_Response) throws -> Response {
-        guard case .cryptoGetInfo(let proto) = response else {
+    internal override func makeQueryResponse(_ context: Context, _ response: Proto_Response.OneOf_Response) async throws
+        -> Response
+    {
+        let mirrorNodeGateway = try MirrorNodeGateway.forNetwork(context.mirrorNetworkNodes, context.ledgerId)
+        let mirrorNodeService = MirrorNodeService.init(mirrorNodeGateway)
+
+        guard case .cryptoGetInfo(var proto) = response else {
             throw HError.fromProtobuf("unexpected \(response) received, expected `cryptoGetInfo`")
         }
+
+        let tokenRelationshipsProto = try await mirrorNodeService.getTokenRelationshipsForAccount(
+            String(describing: try AccountId.fromProtobuf(proto.accountInfo.accountID).num))
+
+        proto.accountInfo.tokenRelationships = tokenRelationshipsProto
 
         return try .fromProtobuf(proto.accountInfo)
     }

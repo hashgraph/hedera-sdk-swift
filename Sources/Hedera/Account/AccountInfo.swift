@@ -47,6 +47,7 @@ public struct AccountInfo: Sendable {
         maxAutomaticTokenAssociations: UInt32,
         aliasKey: PublicKey?,
         ethereumNonce: UInt64,
+        tokenRelationships: [TokenId: TokenRelationship],
         ledgerId: LedgerId,
         staking: StakingInfo?
     ) {
@@ -66,6 +67,7 @@ public struct AccountInfo: Sendable {
         self.ethereumNonce = ethereumNonce
         self.ledgerId = ledgerId
         self.staking = staking
+        self.tokenRelationships = tokenRelationships
         self.guts = DeprecatedGuts(
             proxyAccountId: proxyAccountId,
             sendRecordThreshold: sendRecordThreshold,
@@ -154,6 +156,9 @@ public struct AccountInfo: Sendable {
     /// Staking metadata for this account.
     public let staking: StakingInfo?
 
+    /// Token relationships for this account.
+    public let tokenRelationships: [TokenId: TokenRelationship]
+
     /// Decode `Self` from protobuf-encoded `bytes`.
     ///
     /// - Throws: ``HError/ErrorKind/fromProtobuf`` if:
@@ -178,6 +183,11 @@ extension AccountInfo: TryProtobufCodable {
         let staking = proto.hasStakingInfo ? proto.stakingInfo : nil
         let proxyAccountId = proto.hasProxyAccountID ? proto.proxyAccountID : nil
 
+        var tokenRelationships: [TokenId: TokenRelationship] = [:]
+        for relationship in proto.tokenRelationships {
+            tokenRelationships[.fromProtobuf(relationship.tokenID)] = try TokenRelationship.fromProtobuf(relationship)
+        }
+
         self.init(
             accountId: try .fromProtobuf(proto.accountID),
             contractAccountId: proto.contractAccountID,
@@ -196,6 +206,7 @@ extension AccountInfo: TryProtobufCodable {
             maxAutomaticTokenAssociations: UInt32(proto.maxAutomaticTokenAssociations),
             aliasKey: try .fromAliasBytes(proto.alias),
             ethereumNonce: UInt64(proto.ethereumNonce),
+            tokenRelationships: tokenRelationships,
             ledgerId: .fromBytes(proto.ledgerID),
             staking: try .fromProtobuf(staking)
         )

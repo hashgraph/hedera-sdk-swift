@@ -43,7 +43,9 @@ public class Query<Response>: ValidateChecksums {
         fatalError("Method `Query.queryExecute` must be overridden by `\(type(of: self))`")
     }
 
-    internal func makeQueryResponse(_ response: Proto_Response.OneOf_Response) throws -> Response {
+    internal func makeQueryResponse(_ context: MirrorNetworkContext, _ response: Proto_Response.OneOf_Response)
+        async throws -> Response
+    {
         fatalError("Method `Query.makeQueryResponse` must be overridden by `\(type(of: self))`")
     }
 
@@ -186,12 +188,17 @@ public class Query<Response>: ValidateChecksums {
     }
 }
 
+struct MirrorNetworkContext {
+    public let ledgerId: LedgerId?
+    public let mirrorNetworkNodes: [String]
+}
+
 extension Query: Execute {
     internal typealias GrpcRequest = Proto_Query
 
     internal typealias GrpcResponse = Proto_Response
 
-    internal typealias Context = ()
+    internal typealias Context = MirrorNetworkContext
 
     internal var explicitTransactionId: TransactionId? {
         payment.transactionId
@@ -217,17 +224,28 @@ extension Query: Execute {
         payment.index
     }
 
-    internal func makeRequest(_ transactionId: TransactionId?, _ nodeAccountId: AccountId) throws -> (Proto_Query, ()) {
+    internal func makeRequest(
+        _ ledgerId: LedgerId?, _ mirrorNodeNetworks: [String], _ transactionId: TransactionId?,
+        _ nodeAccountId: AccountId
+    ) throws -> (
+        Proto_Query, Context
+    ) {
         let request = toQueryProtobufWith(
             try .with { proto in
                 proto.responseType = .answerOnly
 
                 if requiresPayment {
-                    proto.payment = try payment.makeRequest(transactionId, nodeAccountId).0
+                    proto.payment = try payment.makeRequest(ledgerId, mirrorNodeNetworks, transactionId, nodeAccountId)
+                        .0
                 }
             })
 
-        return (request, ())
+        let context = MirrorNetworkContext(
+            ledgerId: ledgerId,
+            mirrorNetworkNodes: mirrorNodeNetworks
+        )
+
+        return (request, context)
     }
 
     internal func execute(_ channel: GRPC.GRPCChannel, _ request: Proto_Query) async throws -> Proto_Response {
@@ -235,13 +253,14 @@ extension Query: Execute {
     }
 
     internal func makeResponse(
-        _ response: Proto_Response, _ context: (), _ nodeAccountId: AccountId, _ transactionId: TransactionId?
-    ) throws -> Response {
+        _ response: Proto_Response, _ context: MirrorNetworkContext, _ nodeAccountId: AccountId,
+        _ transactionId: TransactionId?
+    ) async throws -> Response {
         guard let response = response.response else {
             throw HError.fromProtobuf("unexpectly missing `response`")
         }
 
-        return try makeQueryResponse(response)
+        return try await makeQueryResponse(context, response)
     }
 
     internal func makeErrorPrecheck(_ status: Status, _ transactionId: TransactionId?) -> HError {

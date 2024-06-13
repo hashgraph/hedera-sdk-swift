@@ -54,7 +54,9 @@ public final class TokenNftInfoQuery: Query<TokenNftInfo> {
         try await Proto_TokenServiceAsyncClient(channel: channel).getTokenNftInfo(request)
     }
 
-    internal override func makeQueryResponse(_ response: Proto_Response.OneOf_Response) throws -> Response {
+    internal override func makeQueryResponse(_ context: Context, _ response: Proto_Response.OneOf_Response) async throws
+        -> Response
+    {
         guard case .tokenGetNftInfo(let proto) = response else {
             throw HError.fromProtobuf("unexpected \(response) received, expected `tokenGetNftInfo`")
         }

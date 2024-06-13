@@ -54,7 +54,9 @@ public final class ScheduleInfoQuery: Query<ScheduleInfo> {
         try await Proto_ScheduleServiceAsyncClient(channel: channel).getScheduleInfo(request)
     }
 
-    internal override func makeQueryResponse(_ response: Proto_Response.OneOf_Response) throws -> Response {
+    internal override func makeQueryResponse(_ context: Context, _ response: Proto_Response.OneOf_Response) async throws
+        -> Response
+    {
         guard case .scheduleGetInfo(let proto) = response else {
             throw HError.fromProtobuf("unexpected \(response) received, expected `scheduleGetInfo`")
         }
