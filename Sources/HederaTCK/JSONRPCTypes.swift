@@ -47,7 +47,7 @@ internal struct JSONRequest: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         guard let jsonrpc = try container.decodeIfPresent(String.self, forKey: .jsonrpc) else {
-            throw JSONError.invalidRequest("missing jsonrpc field set to \"2.0\"")
+            throw JSONError.invalidRequest("jsonrpc field MUST be set to \"2.0\"")
         }
         self.jsonrpc = jsonrpc
 
@@ -57,18 +57,18 @@ internal struct JSONRequest: Decodable {
         } else if let idStr = try container.decodeIfPresent(String.self, forKey: .id), let idInt = Int(idStr) {
             self.id = idInt
         } else {
-            throw JSONError.invalidRequest("id field must exist and be a number or string.")
+            throw JSONError.invalidRequest("id field MUST exist and be a number or string.")
         }
 
         guard let method = try container.decodeIfPresent(String.self, forKey: .method) else {
-            throw JSONError.invalidRequest("method field must exist and be a string")
+            throw JSONError.invalidRequest("method field MUST exist and be a string")
         }
         self.method = method
 
         if let params = try container.decodeIfPresent(JSONObject.self, forKey: .params) {
             self.params = params
         } else if container.contains(.params) {
-            throw JSONError.invalidRequest("params field must be an array, object or null")
+            throw JSONError.invalidRequest("params field MUST be an array, object or null")
         } else {
             self.params = nil
         }
