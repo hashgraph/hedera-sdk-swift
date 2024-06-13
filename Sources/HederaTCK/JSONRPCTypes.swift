@@ -21,105 +21,136 @@ import Foundation
 import Hedera
 import Vapor
 
-private let jsonrpcVersion = "2.0"
+private let jsonRpcVersion = "2.0"
 
-internal struct JSONRequest: Codable {
+internal struct JSONRequest: Decodable {
     let jsonrpc: String
     var id: Int
     var method: String
     var params: JSONObject?
 
+    enum CodingKeys: String, CodingKey {
+        case jsonrpc
+        case id
+        case method
+        case params
+    }
+
     init(id: Int, method: String, params: JSONObject) {
-        self.jsonrpc = jsonrpcVersion
+        self.jsonrpc = jsonRpcVersion
         self.id = id
         self.method = method
         self.params = params
     }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        guard let jsonrpc = try container.decodeIfPresent(String.self, forKey: .jsonrpc) else {
+            throw JSONError.invalidRequest("missing jsonrpc field set to \"2.0\"")
+        }
+        self.jsonrpc = jsonrpc
+
+
+        if let idInt = try container.decodeIfPresent(Int.self, forKey: .id) {
+            self.id = idInt
+        } else if let idStr = try container.decodeIfPresent(String.self, forKey: .id), let idInt = Int(idStr) {
+            self.id = idInt
+        } else {
+            throw JSONError.invalidRequest("id field must exist and be a number or string.")
+        }
+
+        guard let method = try container.decodeIfPresent(String.self, forKey: .method) else {
+            throw JSONError.invalidRequest("method field must exist and be a string")
+        }
+        self.method = method
+
+        if let params = try container.decodeIfPresent(JSONObject.self, forKey: .params) {
+            self.params = params
+        } else if container.contains(.params) {
+            throw JSONError.invalidRequest("params field must be an array, object or null")
+        } else {
+            self.params = nil
+        }
+    }
 }
 
-internal struct JSONResponse: Codable, ResponseEncodable {
+internal struct JSONResponse: Encodable {
     let jsonrpc: String
-    var id: Int
+    var id: Int?
     var result: JSONObject?
     var error: JSONError?
 
     init(id: Int, result: JSONObject) {
-        self.jsonrpc = jsonrpcVersion
+        self.jsonrpc = jsonRpcVersion
         self.id = id
         self.result = result
         self.error = nil
     }
 
-    init(id: Int, error: JSONError) {
-        self.jsonrpc = jsonrpcVersion
+    init(id: Int?, error: JSONError) {
+        self.jsonrpc = jsonRpcVersion
         self.id = id
         self.result = nil
         self.error = error
     }
-
-    init(id: Int, errorCode: JSONErrorCode, error: Error) {
-        self.init(id: id, error: JSONError(code: errorCode, error: error))
-    }
-
-    init(id: Int, result: RPCObject) {
-        self.init(id: id, result: JSONObject(result))
-    }
-
-    init(id: Int, error: RPCError) {
-        self.init(id: id, error: JSONError(error))
-    }
-    
-    func encodeResponse(for request: Request) -> EventLoopFuture<Response> {
-        do {
-            let response = Response(status: .ok)
-            try response.content.encode(self, as: .json)
-            return request.eventLoop.makeSucceededFuture(response)
-        } catch {
-            return request.eventLoop.makeFailedFuture(error)
-        }
-    }
 }
 
-internal struct JSONError: Codable {
-    var code: Int
-    var message: String
-    var data: Dictionary<String, String>?
+internal enum JSONError: Encodable, Error {
+    case hederaError(String, JSONObject? = nil)
+    case invalidRequest(String, JSONObject? = nil)
+    case methodNotFound(String, JSONObject? = nil)
+    case invalidParams(String, JSONObject? = nil)
+    case internalError(String, JSONObject? = nil)
+    case parseError(String, JSONObject? = nil)
 
-    init(code: Int, message: String) {
-        self.code = code
-        self.message = message
-        self.data = nil
+    enum CodingKeys: String, CodingKey {
+        case code
+        case message
+        case data
     }
 
-    init(code: JSONErrorCode, message: String) {
-        self.init(code: code.rawValue, message: message)
-    }
-
-    init(code: JSONErrorCode, error: Error) {
-        self.init(code: code, message: String(describing: error))
-    }
-
-    init(_ error: RPCError) {
-        switch error.kind {
-        case .invalidMethod:
-            self.init(code: .methodNotFound, message: error.description ?? "invalid method")
-        case .invalidParams:
-            self.init(code: .invalidParams, message: error.description ?? "invalid params")
-        case .invalidRequest:
-            self.init(code: .invalidRequest, message: error.description ?? "invalid request")
-        case .applicationError(let description):
-            self.init(code: .other, message: error.description ?? description)
+    var code: Int {
+        switch self {
+        case .hederaError: return -32001
+        case .invalidRequest: return -32600
+        case .methodNotFound: return -32601
+        case .invalidParams: return -32602
+        case .internalError: return -32603
+        case .parseError: return -32700
         }
     }
-}
 
-internal enum JSONErrorCode: Int, Codable {
-    case parseError = -32700
-    case invalidRequest = -32600
-    case methodNotFound = -32601
-    case invalidParams = -32602
-    case internalError = -32603
-    case other = -32000
+    var message: String {
+        switch self {
+        case .hederaError(let message, _),
+             .invalidRequest(let message, _),
+             .methodNotFound(let message, _),
+             .invalidParams(let message, _),
+             .internalError(let message, _),
+             .parseError(let message, _):
+            return message
+        }
+    }
+
+    var data: JSONObject? {
+        switch self {
+        case .hederaError(_, let data),
+             .invalidRequest(_, let data),
+             .methodNotFound(_, let data),
+             .invalidParams(_, let data),
+             .internalError(_, let data),
+             .parseError(_, let data):
+            return data
+        }
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(code, forKey: .code)
+        try container.encode(message, forKey: .message)
+        try container.encodeIfPresent(data, forKey: .data)
+    }
 }
 
 internal enum JSONObject: Codable {
@@ -131,23 +162,41 @@ internal enum JSONObject: Codable {
     case list([JSONObject])
     case dictionary([String: JSONObject])
 
-    init(_ object: RPCObject) {
-        switch object {
-        case .none:
-            self = .none
-        case .string(let value):
-            self = .string(value)
-        case .integer(let value):
-            self = .integer(value)
-        case .double(let value):
-            self = .double(value)
-        case .bool(let value):
-            self = .bool(value)
-        case .list(let value):
-            self = .list(value.map { JSONObject($0) })
-        case .dictionary(let value):
-            self = .dictionary(value.mapValues { JSONObject($0) })
+    var stringValue: String? {
+        if case let .string(value) = self {
+            return value
         }
+        return nil
+    }
+    var intValue: Int? {
+        if case let .integer(value) = self {
+            return value
+        }
+        return nil
+    }
+    var doubleValue: Double? {
+        if case let .double(value) = self {
+            return value
+        }
+        return nil
+    }
+    var boolValue: Bool? {
+        if case let .bool(value) = self {
+            return value
+        }
+        return nil
+    }
+    var listValue: [JSONObject]? {
+        if case let .list(value) = self {
+            return value
+        }
+        return nil
+    }
+    var dictValue: [String: JSONObject]? {
+        if case let .dictionary(value) = self {
+            return value
+        }
+        return nil
     }
 
     init(from decoder: Decoder) throws {
@@ -172,6 +221,7 @@ internal enum JSONObject: Codable {
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
+
         switch self {
         case .none:
             break
@@ -190,86 +240,3 @@ internal enum JSONObject: Codable {
         }
     }
 }
-
-public enum RPCObject: Equatable {
-    case none
-    case string(String)
-    case integer(Int)
-    case double(Double)
-    case bool(Bool)
-    case list([RPCObject])
-    case dictionary([String: RPCObject])
-
-    public init(_ value: String) {
-        self = .string(value)
-    }
-
-    public init(_ value: Int) {
-        self = .integer(value)
-    }
-
-    public init(_ value: Double) {
-        self = .double(value)
-    }
-
-    public init(_ value: Bool) {
-        self = .bool(value)
-    }
-
-    public init(_ value: [String]) {
-        self = .list(value.map { RPCObject($0) })
-    }
-
-    public init(_ value: [Int]) {
-        self = .list(value.map { RPCObject($0) })
-    }
-
-    public init(_ value: [String: String]) {
-        self = .dictionary(value.mapValues { RPCObject($0) })
-    }
-
-    public init(_ value: [String: Int]) {
-        self = .dictionary(value.mapValues { RPCObject($0) })
-    }
-
-    public init(_ value: [RPCObject]) {
-        self = .list(value)
-    }
-
-    internal init(_ object: JSONObject) {
-        switch object {
-        case .none:
-            self = .none
-        case .string(let value):
-            self = .string(value)
-        case .integer(let value):
-            self = .integer(value)
-        case .double(let value):
-            self = .double(value)
-        case .bool(let value):
-            self = .bool(value)
-        case .list(let value):
-            self = .list(value.map { RPCObject($0) })
-        case .dictionary(let value):
-            self = .dictionary(value.mapValues { RPCObject($0) })
-        }
-    }
-}
-
-public struct RPCError {
-    public init(_ kind: Kind, description: String? = nil) {
-        self.kind = kind
-        self.description = description
-    }
-
-    public let kind: Kind
-    public let description: String?
-
-    public enum Kind {
-        case invalidMethod
-        case invalidParams(String)
-        case invalidRequest(String)
-        case applicationError(String)
-    }
-}
-

@@ -24,6 +24,11 @@ import Vapor
 let server = TCKServer(sdkClient: SDKClient())
 try TCKServer.main()
 
+private func encodeJsonRpcResponseToHttpResponse(jsonResponse: JSONResponse) throws -> Response {
+    let responseData = try JSONEncoder().encode(jsonResponse)
+    return Response(status: .ok, headers: ["Content-Type": "application/json"], body: .init(data: responseData))
+}
+
 struct TCKServer {
     var sdkClient: SDKClient
 
@@ -34,43 +39,52 @@ struct TCKServer {
         defer { app.shutdown() }
 
         app.http.server.configuration.port = 80
-        // app.logger.logLevel = .trace
-        app.post { req -> EventLoopFuture<JSONResponse> in
-            let jsonRpcRequest = try req.content.decode(JSONRequest.self)
-            let jsonRpcResponse = try server.processRequest(jsonRpcRequest)
-            return req.eventLoop.makeSucceededFuture(jsonRpcResponse)
+        app.post { req -> Response in
+            var jsonRpcRequest: JSONRequest
+            do {
+                jsonRpcRequest = try req.content.decode(JSONRequest.self)
+            } catch let error as JSONError {
+                return try encodeJsonRpcResponseToHttpResponse(jsonResponse: JSONResponse(id: nil, error: error))
+            }
+
+            /// The request is well-formed, it can be processed.
+            return try encodeJsonRpcResponseToHttpResponse(jsonResponse: server.processRequest(request: jsonRpcRequest))
         }
 
         try app.run()
     }
 
-    func processRequest(_ request: JSONRequest) throws -> JSONResponse {
-        switch request.method {
-        case "setup":
-            if let params = request.params, case .dictionary(let dict) = params,
-            let operatorAccountId = dict["operatorAccountId"], case .string(let accountId) = operatorAccountId,
-            let operatorPrivateKey = dict["operatorPrivateKey"], case .string(let privateKey) = operatorPrivateKey {
-                if let nodeIp = dict["nodeIp"], case .string(let ip) = nodeIp,
-                   let nodeAccountId = dict["nodeAccountId"], case .string(let accountId) = nodeAccountId,
-                   let mirrorNetworkIp = dict["mirrorNetworkIp"], case .string(let mirrorIp) = mirrorNetworkIp {
-                    return JSONResponse(id: request.id, result: try sdkClient.setup(operatorAccountId: accountId,
-                                                                                    operatorPrivateKey: privateKey,
-                                                                                    nodeIp: ip,
-                                                                                    nodeAccountId: accountId,
-                                                                                    mirrorNetworkIp: mirrorIp))
-                   } else {
-                    return JSONResponse(id: request.id, result: try sdkClient.setup(operatorAccountId: accountId,
-                                                                                    operatorPrivateKey: privateKey))
-                   }
-            } else {
-                let error = JSONError(code: -32602, message: "Invalid params")
-                return JSONResponse(id: request.id, error: error)
+    func processRequest(request: JSONRequest) -> JSONResponse {
+        do {
+            switch request.method {
+            ///
+            /// generateKey
+            ///
+            case "generateKey":
+                return JSONResponse(id: request.id, result: try sdkClient.generateKey(parameters: request.params))
+            ///
+            /// reset
+            ///
+            case "reset":
+                return JSONResponse(id: request.id, result: try sdkClient.reset())
+            ///
+            /// setup
+            ///
+            case "setup":
+                return JSONResponse(id: request.id, result: try sdkClient.setup(parameters: request.params))
+            ///
+            /// Method Not Found
+            ///
+            default:
+                throw JSONError.methodNotFound("\(request.method) not implemented.")
             }
-        case "reset":
-            return JSONResponse(id: request.id, result: try sdkClient.reset())
-        default:
-            let error = JSONError(code: -32601, message: "Method not found")
-            return JSONResponse(id: request.id, error: error)
+        } catch let error as JSONError {
+            let response = JSONResponse(id: request.id, error: error)
+            return response
+        } catch let error as HError {
+            return JSONResponse(id: request.id, error: JSONError.hederaError(error.description))
+        } catch let error {
+            return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))
         }
     }
 }
