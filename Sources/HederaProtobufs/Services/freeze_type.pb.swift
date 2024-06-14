@@ -57,7 +57,7 @@ public enum Proto_FreezeType: SwiftProtobuf.Enum {
   /// Performs an immediate upgrade on auxilary services and containers providing
   /// telemetry/metrics. Does not impact network operations.
   case telemetryUpgrade // = 5
-  case unrecognized(Int)
+  case UNRECOGNIZED(Int)
 
   public init() {
     self = .unknownFreezeType
@@ -71,7 +71,7 @@ public enum Proto_FreezeType: SwiftProtobuf.Enum {
     case 3: self = .freezeUpgrade
     case 4: self = .freezeAbort
     case 5: self = .telemetryUpgrade
-    default: self = .unrecognized(rawValue)
+    default: self = .UNRECOGNIZED(rawValue)
     }
   }
 
@@ -83,7 +83,7 @@ public enum Proto_FreezeType: SwiftProtobuf.Enum {
     case .freezeUpgrade: return 3
     case .freezeAbort: return 4
     case .telemetryUpgrade: return 5
-    case .unrecognized(let i): return i
+    case .UNRECOGNIZED(let i): return i
     }
   }
 
@@ -92,7 +92,7 @@ public enum Proto_FreezeType: SwiftProtobuf.Enum {
 #if swift(>=4.2)
 
 extension Proto_FreezeType: CaseIterable {
-  // The compiler won't synthesize support with the unrecognized case.
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
   public static let allCases: [Proto_FreezeType] = [
     .unknownFreezeType,
     .freezeOnly,

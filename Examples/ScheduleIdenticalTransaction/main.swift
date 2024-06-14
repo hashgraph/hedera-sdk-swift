@@ -80,8 +80,6 @@ internal enum Program {
             .getReceipt(client)
             .accountId!
 
-
-
         print("threshold account = \(thresholdAccount)")
 
         var scheduleId: ScheduleId?

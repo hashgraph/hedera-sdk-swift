@@ -218,6 +218,13 @@ public struct Proto_TransactionReceipt {
     set {_uniqueStorage()._serialNumbers = newValue}
   }
 
+  ///*
+  /// In the receipt of a NodeCreate, NodeUpdate, NodeDelete, the id of the newly created node.
+  public var nodeID: UInt64 {
+    get {return _storage._nodeID}
+    set {_uniqueStorage()._nodeID = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -250,6 +257,7 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
     12: .same(proto: "scheduleID"),
     13: .same(proto: "scheduledTransactionID"),
     14: .same(proto: "serialNumbers"),
+    15: .standard(proto: "node_id"),
   ]
 
   fileprivate class _StorageClass {
@@ -267,8 +275,17 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
     var _scheduleID: Proto_ScheduleID? = nil
     var _scheduledTransactionID: Proto_TransactionID? = nil
     var _serialNumbers: [Int64] = []
+    var _nodeID: UInt64 = 0
 
-    static let defaultInstance = _StorageClass()
+    #if swift(>=5.10)
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+    #else
+      static let defaultInstance = _StorageClass()
+    #endif
 
     private init() {}
 
@@ -287,6 +304,7 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
       _scheduleID = source._scheduleID
       _scheduledTransactionID = source._scheduledTransactionID
       _serialNumbers = source._serialNumbers
+      _nodeID = source._nodeID
     }
   }
 
@@ -319,6 +337,7 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
         case 12: try { try decoder.decodeSingularMessageField(value: &_storage._scheduleID) }()
         case 13: try { try decoder.decodeSingularMessageField(value: &_storage._scheduledTransactionID) }()
         case 14: try { try decoder.decodeRepeatedInt64Field(value: &_storage._serialNumbers) }()
+        case 15: try { try decoder.decodeSingularUInt64Field(value: &_storage._nodeID) }()
         default: break
         }
       }
@@ -373,6 +392,9 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
       if !_storage._serialNumbers.isEmpty {
         try visitor.visitPackedInt64Field(value: _storage._serialNumbers, fieldNumber: 14)
       }
+      if _storage._nodeID != 0 {
+        try visitor.visitSingularUInt64Field(value: _storage._nodeID, fieldNumber: 15)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -396,6 +418,7 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
         if _storage._scheduleID != rhs_storage._scheduleID {return false}
         if _storage._scheduledTransactionID != rhs_storage._scheduledTransactionID {return false}
         if _storage._serialNumbers != rhs_storage._serialNumbers {return false}
+        if _storage._nodeID != rhs_storage._nodeID {return false}
         return true
       }
       if !storagesAreEqual {return false}

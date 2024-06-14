@@ -282,6 +282,16 @@ public struct Proto_Query {
     set {query = .accountDetails(newValue)}
   }
 
+  ///*
+  /// Get all information about a node
+  public var nodeGetInfo: Proto_NodeGetInfoQuery {
+    get {
+      if case .nodeGetInfo(let v)? = query {return v}
+      return Proto_NodeGetInfoQuery()
+    }
+    set {query = .nodeGetInfo(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Query: Equatable {
@@ -362,6 +372,9 @@ public struct Proto_Query {
     ///*
     /// Gets all information about an account including allowances granted by the account
     case accountDetails(Proto_GetAccountDetailsQuery)
+    ///*
+    /// Get all information about a node
+    case nodeGetInfo(Proto_NodeGetInfoQuery)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proto_Query.OneOf_Query, rhs: Proto_Query.OneOf_Query) -> Bool {
@@ -469,6 +482,10 @@ public struct Proto_Query {
         guard case .accountDetails(let l) = lhs, case .accountDetails(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
+      case (.nodeGetInfo, .nodeGetInfo): return {
+        guard case .nodeGetInfo(let l) = lhs, case .nodeGetInfo(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
@@ -515,6 +532,7 @@ extension Proto_Query: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     56: .same(proto: "tokenGetNftInfos"),
     57: .same(proto: "networkGetExecutionTime"),
     58: .same(proto: "accountDetails"),
+    59: .same(proto: "nodeGetInfo"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -848,6 +866,19 @@ extension Proto_Query: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
           self.query = .accountDetails(v)
         }
       }()
+      case 59: try {
+        var v: Proto_NodeGetInfoQuery?
+        var hadOneofValue = false
+        if let current = self.query {
+          hadOneofValue = true
+          if case .nodeGetInfo(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.query = .nodeGetInfo(v)
+        }
+      }()
       default: break
       }
     }
@@ -958,6 +989,10 @@ extension Proto_Query: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     case .accountDetails?: try {
       guard case .accountDetails(let v)? = self.query else { preconditionFailure() }
       try visitor.visitSingularMessageField(value: v, fieldNumber: 58)
+    }()
+    case .nodeGetInfo?: try {
+      guard case .nodeGetInfo(let v)? = self.query else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 59)
     }()
     case nil: break
     }
