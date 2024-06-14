@@ -43,7 +43,8 @@ public final class TokenUpdateTransaction: Transaction {
         feeScheduleKey: Key? = nil,
         pauseKey: Key? = nil,
         metadata: Data = .init(),
-        metadataKey: Key? = nil
+        metadataKey: Key? = nil,
+        keyVerificationMode: TokenKeyValidation = .fullValidation
     ) {
         self.tokenId = tokenId
         self.tokenName = tokenName
@@ -62,6 +63,7 @@ public final class TokenUpdateTransaction: Transaction {
         self.pauseKey = pauseKey
         self.metadata = metadata
         self.metadataKey = metadataKey
+        self.keyVerificationMode = keyVerificationMode
 
         super.init()
     }
@@ -84,6 +86,7 @@ public final class TokenUpdateTransaction: Transaction {
         self.pauseKey = data.hasPauseKey ? try .fromProtobuf(data.pauseKey) : nil
         self.metadata = data.hasMetadata ? data.metadata.value : nil ?? Data.init()
         self.metadataKey = data.hasMetadataKey ? try .fromProtobuf(data.metadataKey) : nil
+        self.keyVerificationMode = data.hasKeyVerification ?.fromProtobuf(data.keyVerification) : .fullValidation
 
         try super.init(protobuf: proto)
     }
@@ -351,6 +354,23 @@ public final class TokenUpdateTransaction: Transaction {
 
         return self
     }
+
+    /// Returns the new key which can change the metadata of a token.
+    public var keyVerificationMode: TokenKeyValidation {
+        willSet {
+            ensureNotFrozen()
+        }
+    }
+
+    /// Sets the new key which can change the metadata of a token.
+    @discardableResult
+    public func keyVerificationMode(_ keyVerificationMode: TokenKeyValidation) -> Self {
+        self.keyVerificationMode = keyVerificationMode
+
+        return self
+    }
+
+
 
     internal override func validateChecksums(on ledgerId: LedgerId) throws {
         try tokenId?.validateChecksums(on: ledgerId)
