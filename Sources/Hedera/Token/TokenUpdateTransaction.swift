@@ -42,7 +42,7 @@ public final class TokenUpdateTransaction: Transaction {
         tokenMemo: String? = nil,
         feeScheduleKey: Key? = nil,
         pauseKey: Key? = nil,
-        metadata: Data = .init(),
+        metadata: Data? = nil,
         metadataKey: Key? = nil,
         keyVerificationMode: TokenKeyValidation = .fullValidation
     ) {
@@ -86,7 +86,7 @@ public final class TokenUpdateTransaction: Transaction {
         self.pauseKey = data.hasPauseKey ? try .fromProtobuf(data.pauseKey) : nil
         self.metadata = data.hasMetadata ? data.metadata.value : nil ?? Data.init()
         self.metadataKey = data.hasMetadataKey ? try .fromProtobuf(data.metadataKey) : nil
-        self.keyVerificationMode = data.hasKeyVerification ?.fromProtobuf(data.keyVerification) : .fullValidation
+        self.keyVerificationMode = try .fromProtobuf(data.keyVerificationMode)
 
         try super.init(protobuf: proto)
     }
@@ -326,7 +326,7 @@ public final class TokenUpdateTransaction: Transaction {
     }
 
     /// Returns the new metadata of the created token definition.
-    public var metadata: Data {
+    public var metadata: Data? {
         willSet {
             ensureNotFrozen()
         }
@@ -370,8 +370,6 @@ public final class TokenUpdateTransaction: Transaction {
         return self
     }
 
-
-
     internal override func validateChecksums(on ledgerId: LedgerId) throws {
         try tokenId?.validateChecksums(on: ledgerId)
         try treasuryAccountId?.validateChecksums(on: ledgerId)
@@ -411,11 +409,15 @@ extension TokenUpdateTransaction: ToProtobuf {
             expirationTime?.toProtobufInto(&proto.expiry)
             feeScheduleKey?.toProtobufInto(&proto.feeScheduleKey)
             pauseKey?.toProtobufInto(&proto.pauseKey)
-            proto.metadata = Google_Protobuf_BytesValue(metadata)
             metadataKey?.toProtobufInto(&proto.metadataKey)
+            proto.keyVerificationMode = keyVerificationMode.toProtobuf()
             if let tokenMemo = tokenMemo {
                 proto.memo = .init(tokenMemo)
             }
+            if let metadata = metadata {
+                proto.metadata = Google_Protobuf_BytesValue(metadata)
+            }
+
         }
     }
 }
