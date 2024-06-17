@@ -51,7 +51,6 @@ internal struct JSONRequest: Decodable {
         }
         self.jsonrpc = jsonrpc
 
-
         if let idInt = try container.decodeIfPresent(Int.self, forKey: .id) {
             self.id = idInt
         } else if let idStr = try container.decodeIfPresent(String.self, forKey: .id), let idInt = Int(idStr) {
@@ -124,11 +123,11 @@ internal enum JSONError: Encodable, Error {
     var message: String {
         switch self {
         case .hederaError(let message, _),
-             .invalidRequest(let message, _),
-             .methodNotFound(let message, _),
-             .invalidParams(let message, _),
-             .internalError(let message, _),
-             .parseError(let message, _):
+            .invalidRequest(let message, _),
+            .methodNotFound(let message, _),
+            .invalidParams(let message, _),
+            .internalError(let message, _),
+            .parseError(let message, _):
             return message
         }
     }
@@ -136,11 +135,11 @@ internal enum JSONError: Encodable, Error {
     var data: JSONObject? {
         switch self {
         case .hederaError(_, let data),
-             .invalidRequest(_, let data),
-             .methodNotFound(_, let data),
-             .invalidParams(_, let data),
-             .internalError(_, let data),
-             .parseError(_, let data):
+            .invalidRequest(_, let data),
+            .methodNotFound(_, let data),
+            .invalidParams(_, let data),
+            .internalError(_, let data),
+            .parseError(_, let data):
             return data
         }
     }

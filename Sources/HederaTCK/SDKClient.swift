@@ -19,6 +19,7 @@
  */
 import Foundation
 import HederaProtobufs
+
 @testable import Hedera
 
 class SDKClient {
@@ -38,7 +39,9 @@ class SDKClient {
         case evmAddressKeyType = "evmAddress"
     }
 
-    private func verifyJsonRequestParameters(parameters: JSONObject?, functionName: String) throws -> [String: JSONObject] {
+    private func verifyJsonRequestParameters(parameters: JSONObject?, functionName: String) throws -> [String:
+        JSONObject]
+    {
         /// Parameters MUST be provided.
         guard let paramsJson = parameters else {
             throw JSONError.invalidParams("\(functionName): parameters MUST be provided.")
@@ -52,7 +55,9 @@ class SDKClient {
         return paramsAsDictionary
     }
 
-    private func generateKeyHelper(parameters: [String: JSONObject], privateKeys: inout [JSONObject], isList: Bool = false) throws -> String {
+    private func generateKeyHelper(
+        parameters: [String: JSONObject], privateKeys: inout [JSONObject], isList: Bool = false
+    ) throws -> String {
         /// A type MUST be provided.
         guard let typeJson = parameters["type"] else {
             throw JSONError.invalidParams("generateKey: type MUST be provided.")
@@ -65,14 +70,17 @@ class SDKClient {
 
         /// The type MUST be recognizable.
         guard let type = KeyType(rawValue: typeAsString) else {
-            throw JSONError.invalidParams("generateKey: type MUST be one of the valid types.", JSONObject.string(typeAsString))
+            throw JSONError.invalidParams(
+                "generateKey: type MUST be one of the valid types.", JSONObject.string(typeAsString))
         }
 
         var fromKey: String?
         if let fromKeyJson = parameters["fromKey"] {
             /// fromKey MUST NOT be provided for types that are not ed25519PublicKeyType, ecdsaSecp256k1PublicKeyType, or evmAddressKeyType.
             if type != .ed25519PublicKeyType, type != .ecdsaSecp256k1PublicKeyType, type != .evmAddressKeyType {
-                throw JSONError.invalidParams("generateKey: fromKey MUST NOT be provided for types other than ed25519PublicKey, ecdsaSecp256k1PublicKey, or evmAddress.")
+                throw JSONError.invalidParams(
+                    "generateKey: fromKey MUST NOT be provided for types other than ed25519PublicKey, ecdsaSecp256k1PublicKey, or evmAddress."
+                )
             }
 
             /// If provided, fromKey MUST be a string.
@@ -107,7 +115,8 @@ class SDKClient {
         if let keyListJson = parameters["keys"] {
             /// keys MUST NOT be provided for types that are not listKeyType or thresholdKeyType.
             if type != .listKeyType, type != .thresholdKeyType {
-                throw JSONError.invalidParams("generateKey: keys MUST NOT be provided for types other than keyList or thresholdKey.")
+                throw JSONError.invalidParams(
+                    "generateKey: keys MUST NOT be provided for types other than keyList or thresholdKey.")
             }
 
             /// If keys are provided, it MUST be a list.
@@ -124,10 +133,10 @@ class SDKClient {
         }
 
         switch type {
-        case .ed25519PrivateKeyType:
-            fallthrough
-        case .ecdsaSecp256k1PrivateKeyType:
-            let key = (type == .ed25519PublicKeyType) ? PrivateKey.generateEd25519().toStringDer() : PrivateKey.generateEcdsa().toStringDer()
+        case .ed25519PrivateKeyType, .ecdsaSecp256k1PrivateKeyType:
+            let key =
+                (type == .ed25519PublicKeyType)
+                ? PrivateKey.generateEd25519().toStringDer() : PrivateKey.generateEcdsa().toStringDer()
 
             /// If this private key is being generated as part of a KeyList or ThresholdKey, add it to the privateKeys list.
             if isList {
@@ -135,10 +144,7 @@ class SDKClient {
             }
 
             return key
-
-        case .ed25519PublicKeyType:
-            fallthrough
-        case .ecdsaSecp256k1PublicKeyType:
+        case .ed25519PublicKeyType, .ecdsaSecp256k1PublicKeyType:
             /// Generate the public key from the fromKey if provided.
             if let fromKey = fromKey {
                 return try PrivateKey.fromStringDer(fromKey).publicKey.toStringDer()
@@ -152,10 +158,7 @@ class SDKClient {
             }
 
             return key.publicKey.toStringDer()
-
-        case .listKeyType:
-            fallthrough
-        case .thresholdKeyType:
+        case .listKeyType, .thresholdKeyType:
             var keyList: KeyList = []
 
             /// It's guaranteed at this point that keys is provided, so the unwrap can be safely forced.
@@ -166,7 +169,8 @@ class SDKClient {
                 }
 
                 /// Recursively call to generate the key in the list of keys. Mark that the key is being generated as part of a list.
-                let generatedKeyString = try generateKeyHelper(parameters: keyAsDictionary, privateKeys: &privateKeys, isList: true)
+                let generatedKeyString = try generateKeyHelper(
+                    parameters: keyAsDictionary, privateKeys: &privateKeys, isList: true)
 
                 /// Determine the generated key type and add it to the key list.
                 do {
@@ -175,7 +179,8 @@ class SDKClient {
                     do {
                         keyList.keys.append(Key.single(try PublicKey.fromStringDer(generatedKeyString)))
                     } catch {
-                        keyList.keys.append(try Key(protobuf: try Proto_Key(serializedData: Data(hex: generatedKeyString))))
+                        keyList.keys.append(
+                            try Key(protobuf: try Proto_Key(serializedData: Data(hex: generatedKeyString))))
                     }
                 }
             }
@@ -198,7 +203,8 @@ class SDKClient {
                 do {
                     return try PublicKey.fromStringEcdsa(fromKey).toEvmAddress()!.toString()
                 } catch {
-                    throw JSONError.invalidParams("generateKey: fromKey for evmAddress MUST be an ECDSAsecp256k1 private or public key.")
+                    throw JSONError.invalidParams(
+                        "generateKey: fromKey for evmAddress MUST be an ECDSAsecp256k1 private or public key.")
                 }
             }
         }
@@ -213,15 +219,15 @@ class SDKClient {
 
         /// If private keys were added to the privateKeys list, add the list to the return object.
         if !privateKeys.isEmpty {
-            return JSONObject.dictionary(["key" : JSONObject.string(key), "privateKeys" : JSONObject.list(privateKeys)])
+            return JSONObject.dictionary(["key": JSONObject.string(key), "privateKeys": JSONObject.list(privateKeys)])
         }
 
-        return JSONObject.dictionary(["key" : JSONObject.string(key)])
+        return JSONObject.dictionary(["key": JSONObject.string(key)])
     }
 
     func reset() throws -> JSONObject {
         self.client = try Client.forNetwork([String: AccountId]())
-        return JSONObject.dictionary(["status": JSONObject.string("SUCCESS")])                                              
+        return JSONObject.dictionary(["status": JSONObject.string("SUCCESS")])
     }
 
     func setup(parameters: JSONObject?) throws -> JSONObject {
@@ -277,19 +283,23 @@ class SDKClient {
             }
 
             /// Set the parameters.
-            self.client = try Client.forNetwork([nodeIp : AccountId.fromString(nodeAccountId)])
+            self.client = try Client.forNetwork([nodeIp: AccountId.fromString(nodeAccountId)])
             self.client.setMirrorNetwork([mirrorNetworkIp])
             clientType = "custom"
         } else {
-            throw JSONError.invalidParams("\(#function): all custom network parameters (nodeIp, nodeAccountId, mirrorNetworkIp) MUST or MUST NOT all be provided.")
+            throw JSONError.invalidParams(
+                "\(#function): all custom network parameters (nodeIp, nodeAccountId, mirrorNetworkIp) MUST or MUST NOT all be provided."
+            )
         }
 
         // The operator can be set.
         self.client.setOperator(operatorAccountId, operatorPrivateKey)
 
         /// Client setup successful.
-        return JSONObject.dictionary(["message": JSONObject.string("Successfully setup " + clientType + " client."),
-                                      "success": JSONObject.string("SUCCESS")])
+        return JSONObject.dictionary([
+            "message": JSONObject.string("Successfully setup " + clientType + " client."),
+            "success": JSONObject.string("SUCCESS"),
+        ])
 
     }
 }

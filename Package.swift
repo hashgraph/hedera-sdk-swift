@@ -134,7 +134,7 @@ let package = Package(
             name: "HederaTCK",
             dependencies: [
                 "Hedera",
-                .product(name: "Vapor", package: "vapor")
+                .product(name: "Vapor", package: "vapor"),
             ]
         ),
         .testTarget(
