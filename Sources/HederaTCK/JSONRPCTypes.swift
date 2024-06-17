@@ -162,37 +162,37 @@ internal enum JSONObject: Codable {
     case dictionary([String: JSONObject])
 
     var stringValue: String? {
-        if case let .string(value) = self {
+        if case .string(let value) = self {
             return value
         }
         return nil
     }
     var intValue: Int? {
-        if case let .integer(value) = self {
+        if case .integer(let value) = self {
             return value
         }
         return nil
     }
     var doubleValue: Double? {
-        if case let .double(value) = self {
+        if case .double(let value) = self {
             return value
         }
         return nil
     }
     var boolValue: Bool? {
-        if case let .bool(value) = self {
+        if case .bool(let value) = self {
             return value
         }
         return nil
     }
     var listValue: [JSONObject]? {
-        if case let .list(value) = self {
+        if case .list(let value) = self {
             return value
         }
         return nil
     }
     var dictValue: [String: JSONObject]? {
-        if case let .dictionary(value) = self {
+        if case .dictionary(let value) = self {
             return value
         }
         return nil
