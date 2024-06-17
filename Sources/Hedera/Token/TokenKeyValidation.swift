@@ -38,6 +38,7 @@ extension TokenKeyValidation: TryFromProtobuf {
         case .fullValidation: self = .fullValidation
         case .noValidation: self = .noValidation
         case .UNRECOGNIZED(let value): self = .UNRECOGNIZED(value)
+        }
     }
 
     func toProtobuf() -> Protobuf {
@@ -50,4 +51,4 @@ extension TokenKeyValidation: TryFromProtobuf {
             return .UNRECOGNIZED(value)
         }
     }
-}}
+}

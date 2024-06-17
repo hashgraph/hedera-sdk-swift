@@ -44,6 +44,7 @@ let exampleTargets = [
     "GetAddressBook",
     "GetExchangeRates",
     "GetFileContents",
+    "ModifyTokenKeys",
     "MultiAppTransfer",
     "MultiSigOffline",
     "Prng",
