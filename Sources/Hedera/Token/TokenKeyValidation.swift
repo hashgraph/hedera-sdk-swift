@@ -27,7 +27,7 @@ public enum TokenKeyValidation {
     /// Perform no validations at all for all passed token keys.
     case noValidation
     /// The passed token key is not recognized.
-    case UNRECOGNIZED(Int)
+    case unrecognized(Int)
 }
 
 extension TokenKeyValidation: TryFromProtobuf {
@@ -37,7 +37,7 @@ extension TokenKeyValidation: TryFromProtobuf {
         switch proto {
         case .fullValidation: self = .fullValidation
         case .noValidation: self = .noValidation
-        case .UNRECOGNIZED(let value): self = .UNRECOGNIZED(value)
+        case .UNRECOGNIZED(let value): self = .unrecognized(value)
         }
     }
 
@@ -47,7 +47,7 @@ extension TokenKeyValidation: TryFromProtobuf {
             return .fullValidation
         case .noValidation:
             return .noValidation
-        case .UNRECOGNIZED(let value):
+        case .unrecognized(let value):
             return .UNRECOGNIZED(value)
         }
     }
