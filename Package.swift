@@ -86,7 +86,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/objecthub/swift-numberkit.git", from: "2.4.1"),
         .package(url: "https://github.com/thebarndog/swift-dotenv.git", from: "1.0.0"),
-        .package(url: "https://github.com/grpc/grpc-swift.git", from: "1.16.0"),
+        .package(url: "https://github.com/grpc/grpc-swift.git", from: "1.23.0"),
         .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
         .package(url: "https://github.com/vsanthanam/AnyAsyncSequence.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-atomics.git", from: "1.1.0"),
@@ -97,6 +97,7 @@ let package = Package(
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.0.0"),
+        .package(url: "https://github.com/vapor/vapor.git", from: "4.101.3"),
     ],
     targets: [
         .target(
@@ -128,6 +129,13 @@ let package = Package(
             // swiftSettings: [
             //     .unsafeFlags(["-Xfrontend", "-warn-concurrency", "-Xfrontend", "-enable-actor-data-race-checks"])
             // ]
+        ),
+        .target(
+            name: "HederaTCK",
+            dependencies: [
+                "Hedera",
+                .product(name: "Vapor", package: "vapor"),
+            ]
         ),
         .testTarget(
             name: "HederaTests",
