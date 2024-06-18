@@ -1161,7 +1161,8 @@ internal final class TokenUpdate: XCTestCase {
         // Create the NFT with all of token’s lower-privilege keys.
         let tokenId = try await createTokenWithKeys(testEnv, keys)
 
-        let unusableKey = try PublicKey.fromStringEd25519("0x0000000000000000000000000000000000000000000000000000000000000000")
+        let unusableKey = try PublicKey.fromStringEd25519(
+            "0x0000000000000000000000000000000000000000000000000000000000000000")
 
         // Update all of token’s lower-privilege keys to an unusable key (i.e., all-zeros key)
         // (trying to remove keys one by one to check all errors),
@@ -1265,7 +1266,7 @@ internal final class TokenUpdate: XCTestCase {
                 .freezeWith(testEnv.client)
                 .sign(keys.feeScheduleKey)
                 .execute(testEnv.client)
-                .getReceipt(testEnv.client) 
+                .getReceipt(testEnv.client)
         ) { error in
             guard case .receiptStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.receiptStatus`")
@@ -1302,7 +1303,7 @@ internal final class TokenUpdate: XCTestCase {
     // and setting the key verification mode to FULL_VALIDATION
     internal func testUpdateToUnusableKeyWithOldAndNewKeysAndFullValidationFails() async throws {
         let testEnv: NonfreeTestEnvironment = try TestEnvironment.nonFree
-            
+
         // Freeze, Wipe, Kyc, Supply, Pause, Fee Schedule, and Metadata keys.
         let keys = generateKeys()
 
@@ -1313,13 +1314,14 @@ internal final class TokenUpdate: XCTestCase {
         let tokenId = try await createTokenWithKeys(testEnv, keys)
 
         // Generate an unusable key.
-        let unusableKey = try PublicKey.fromStringEd25519("0x0000000000000000000000000000000000000000000000000000000000000000")
+        let unusableKey = try PublicKey.fromStringEd25519(
+            "0x0000000000000000000000000000000000000000000000000000000000000000")
 
         // Update all of token’s lower-privilege keys to an unusable key (i.e., all-zeros key)
         // (trying to remove keys one by one to check all errors),
         // signing with an old respective lower-privilege key and new respective lower-privilege key,
         // and setting the key verification mode to FULL_VALIDATION
-       await assertThrowsHErrorAsync(
+        await assertThrowsHErrorAsync(
             try await TokenUpdateTransaction()
                 .tokenId(tokenId)
                 .wipeKey(.single(unusableKey))
@@ -1423,7 +1425,7 @@ internal final class TokenUpdate: XCTestCase {
                 .sign(keys.feeScheduleKey)
                 .sign(newKeys.feeScheduleKey)
                 .execute(testEnv.client)
-                .getReceipt(testEnv.client) 
+                .getReceipt(testEnv.client)
         ) { error in
             guard case .receiptStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.receiptStatus`")
@@ -1461,7 +1463,7 @@ internal final class TokenUpdate: XCTestCase {
     // FULL_VALIDATION
     internal func testUpdateToNewKeysWithOldKeysSigAndFullValidation() async throws {
         let testEnv: NonfreeTestEnvironment = try TestEnvironment.nonFree
-            
+
         // Freeze, Wipe, Kyc, Supply, Pause, Fee Schedule, and Metadata keys.
         let keys = generateKeys()
 
@@ -1573,7 +1575,7 @@ internal final class TokenUpdate: XCTestCase {
                 .freezeWith(testEnv.client)
                 .sign(keys.feeScheduleKey)
                 .execute(testEnv.client)
-                .getReceipt(testEnv.client) 
+                .getReceipt(testEnv.client)
         ) { error in
             guard case .receiptStatus(let status, transactionId: _) = error.kind else {
                 XCTFail("`\(error.kind)` is not `.receiptStatus`")
@@ -1602,7 +1604,7 @@ internal final class TokenUpdate: XCTestCase {
         }
 
         let _ = try await TokenDeleteTransaction().tokenId(tokenId).execute(testEnv.client)
-    } 
+    }
 }
 
 struct Keys {
