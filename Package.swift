@@ -131,7 +131,7 @@ let package = Package(
             //     .unsafeFlags(["-Xfrontend", "-warn-concurrency", "-Xfrontend", "-enable-actor-data-race-checks"])
             // ]
         ),
-        .target(
+        .executableTarget(
             name: "HederaTCK",
             dependencies: [
                 "Hedera",
