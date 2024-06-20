@@ -295,11 +295,13 @@ extension ServicesTransactionDataList: TryFromProtobuf {
         case .scheduleSign(let data): value = .scheduleSign([data])
         case .utilPrng(let data): value = .prng([data])
         case .tokenUpdateNfts(let data): value = .tokenUpdateNfts([data])
-
         case .cryptoAddLiveHash: throw HError.fromProtobuf("Unsupported transaction `AddLiveHashTransaction`")
         case .cryptoDeleteLiveHash: throw HError.fromProtobuf("Unsupported transaction `DeleteLiveHashTransaction`")
         case .uncheckedSubmit: throw HError.fromProtobuf("Unsupported transaction `UncheckedSubmitTransaction`")
         case .nodeStakeUpdate: throw HError.fromProtobuf("Unsupported transaction `NodeStakeUpdateTransaction`")
+        case .nodeDelete: throw HError.fromProtobuf("Unsupported transaction `NodeDeleteTransaction`")
+        case .nodeCreate: throw HError.fromProtobuf("Unsupported transaction `NodeCreateTransaction`")
+        case .nodeUpdate: throw HError.fromProtobuf("Unsupported transaction `NodeUpdateTransaction`")
         }
 
         for transaction in iter {

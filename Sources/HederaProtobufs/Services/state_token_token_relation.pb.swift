@@ -33,87 +33,71 @@ public struct Proto_TokenRelation {
   ///*
   /// The token involved in this relation.It takes only positive
   public var tokenID: Proto_TokenID {
-    get {return _storage._tokenID ?? Proto_TokenID()}
-    set {_uniqueStorage()._tokenID = newValue}
+    get {return _tokenID ?? Proto_TokenID()}
+    set {_tokenID = newValue}
   }
   /// Returns true if `tokenID` has been explicitly set.
-  public var hasTokenID: Bool {return _storage._tokenID != nil}
+  public var hasTokenID: Bool {return self._tokenID != nil}
   /// Clears the value of `tokenID`. Subsequent reads from it will return its default value.
-  public mutating func clearTokenID() {_uniqueStorage()._tokenID = nil}
+  public mutating func clearTokenID() {self._tokenID = nil}
 
   ///*
   /// The account involved in this association.
   public var accountID: Proto_AccountID {
-    get {return _storage._accountID ?? Proto_AccountID()}
-    set {_uniqueStorage()._accountID = newValue}
+    get {return _accountID ?? Proto_AccountID()}
+    set {_accountID = newValue}
   }
   /// Returns true if `accountID` has been explicitly set.
-  public var hasAccountID: Bool {return _storage._accountID != nil}
+  public var hasAccountID: Bool {return self._accountID != nil}
   /// Clears the value of `accountID`. Subsequent reads from it will return its default value.
-  public mutating func clearAccountID() {_uniqueStorage()._accountID = nil}
+  public mutating func clearAccountID() {self._accountID = nil}
 
   ///*
   /// The balance of the token relationship.
-  public var balance: Int64 {
-    get {return _storage._balance}
-    set {_uniqueStorage()._balance = newValue}
-  }
+  public var balance: Int64 = 0
 
   ///*
   /// The flags specifying the token relationship is frozen or not.
-  public var frozen: Bool {
-    get {return _storage._frozen}
-    set {_uniqueStorage()._frozen = newValue}
-  }
+  public var frozen: Bool = false
 
   ///*
   /// The flag indicating if the token relationship has been granted KYC.
-  public var kycGranted: Bool {
-    get {return _storage._kycGranted}
-    set {_uniqueStorage()._kycGranted = newValue}
-  }
-
-  ///*
-  /// The flag indicating if the token relationship was deleted.
-  public var deleted: Bool {
-    get {return _storage._deleted}
-    set {_uniqueStorage()._deleted = newValue}
-  }
+  public var kycGranted: Bool = false
 
   ///*
   /// The flag indicating if the token relationship was created using automatic association.
-  public var automaticAssociation: Bool {
-    get {return _storage._automaticAssociation}
-    set {_uniqueStorage()._automaticAssociation = newValue}
-  }
+  public var automaticAssociation: Bool = false
 
   ///*
   /// The previous token id of account's association linked list
   public var previousToken: Proto_TokenID {
-    get {return _storage._previousToken ?? Proto_TokenID()}
-    set {_uniqueStorage()._previousToken = newValue}
+    get {return _previousToken ?? Proto_TokenID()}
+    set {_previousToken = newValue}
   }
   /// Returns true if `previousToken` has been explicitly set.
-  public var hasPreviousToken: Bool {return _storage._previousToken != nil}
+  public var hasPreviousToken: Bool {return self._previousToken != nil}
   /// Clears the value of `previousToken`. Subsequent reads from it will return its default value.
-  public mutating func clearPreviousToken() {_uniqueStorage()._previousToken = nil}
+  public mutating func clearPreviousToken() {self._previousToken = nil}
 
   ///*
   /// The next token id of account's association linked list
   public var nextToken: Proto_TokenID {
-    get {return _storage._nextToken ?? Proto_TokenID()}
-    set {_uniqueStorage()._nextToken = newValue}
+    get {return _nextToken ?? Proto_TokenID()}
+    set {_nextToken = newValue}
   }
   /// Returns true if `nextToken` has been explicitly set.
-  public var hasNextToken: Bool {return _storage._nextToken != nil}
+  public var hasNextToken: Bool {return self._nextToken != nil}
   /// Clears the value of `nextToken`. Subsequent reads from it will return its default value.
-  public mutating func clearNextToken() {_uniqueStorage()._nextToken = nil}
+  public mutating func clearNextToken() {self._nextToken = nil}
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
-  fileprivate var _storage = _StorageClass.defaultInstance
+  fileprivate var _tokenID: Proto_TokenID? = nil
+  fileprivate var _accountID: Proto_AccountID? = nil
+  fileprivate var _previousToken: Proto_TokenID? = nil
+  fileprivate var _nextToken: Proto_TokenID? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
@@ -132,125 +116,71 @@ extension Proto_TokenRelation: SwiftProtobuf.Message, SwiftProtobuf._MessageImpl
     3: .same(proto: "balance"),
     4: .same(proto: "frozen"),
     5: .standard(proto: "kyc_granted"),
-    6: .same(proto: "deleted"),
-    7: .standard(proto: "automatic_association"),
-    8: .standard(proto: "previous_token"),
-    9: .standard(proto: "next_token"),
+    6: .standard(proto: "automatic_association"),
+    7: .standard(proto: "previous_token"),
+    8: .standard(proto: "next_token"),
   ]
 
-  fileprivate class _StorageClass {
-    var _tokenID: Proto_TokenID? = nil
-    var _accountID: Proto_AccountID? = nil
-    var _balance: Int64 = 0
-    var _frozen: Bool = false
-    var _kycGranted: Bool = false
-    var _deleted: Bool = false
-    var _automaticAssociation: Bool = false
-    var _previousToken: Proto_TokenID? = nil
-    var _nextToken: Proto_TokenID? = nil
-
-    static let defaultInstance = _StorageClass()
-
-    private init() {}
-
-    init(copying source: _StorageClass) {
-      _tokenID = source._tokenID
-      _accountID = source._accountID
-      _balance = source._balance
-      _frozen = source._frozen
-      _kycGranted = source._kycGranted
-      _deleted = source._deleted
-      _automaticAssociation = source._automaticAssociation
-      _previousToken = source._previousToken
-      _nextToken = source._nextToken
-    }
-  }
-
-  fileprivate mutating func _uniqueStorage() -> _StorageClass {
-    if !isKnownUniquelyReferenced(&_storage) {
-      _storage = _StorageClass(copying: _storage)
-    }
-    return _storage
-  }
-
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    _ = _uniqueStorage()
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      while let fieldNumber = try decoder.nextFieldNumber() {
-        // The use of inline closures is to circumvent an issue where the compiler
-        // allocates stack space for every case branch when no optimizations are
-        // enabled. https://github.com/apple/swift-protobuf/issues/1034
-        switch fieldNumber {
-        case 1: try { try decoder.decodeSingularMessageField(value: &_storage._tokenID) }()
-        case 2: try { try decoder.decodeSingularMessageField(value: &_storage._accountID) }()
-        case 3: try { try decoder.decodeSingularInt64Field(value: &_storage._balance) }()
-        case 4: try { try decoder.decodeSingularBoolField(value: &_storage._frozen) }()
-        case 5: try { try decoder.decodeSingularBoolField(value: &_storage._kycGranted) }()
-        case 6: try { try decoder.decodeSingularBoolField(value: &_storage._deleted) }()
-        case 7: try { try decoder.decodeSingularBoolField(value: &_storage._automaticAssociation) }()
-        case 8: try { try decoder.decodeSingularMessageField(value: &_storage._previousToken) }()
-        case 9: try { try decoder.decodeSingularMessageField(value: &_storage._nextToken) }()
-        default: break
-        }
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._tokenID) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._accountID) }()
+      case 3: try { try decoder.decodeSingularInt64Field(value: &self.balance) }()
+      case 4: try { try decoder.decodeSingularBoolField(value: &self.frozen) }()
+      case 5: try { try decoder.decodeSingularBoolField(value: &self.kycGranted) }()
+      case 6: try { try decoder.decodeSingularBoolField(value: &self.automaticAssociation) }()
+      case 7: try { try decoder.decodeSingularMessageField(value: &self._previousToken) }()
+      case 8: try { try decoder.decodeSingularMessageField(value: &self._nextToken) }()
+      default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every if/case branch local when no optimizations
-      // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
-      // https://github.com/apple/swift-protobuf/issues/1182
-      try { if let v = _storage._tokenID {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-      } }()
-      try { if let v = _storage._accountID {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
-      } }()
-      if _storage._balance != 0 {
-        try visitor.visitSingularInt64Field(value: _storage._balance, fieldNumber: 3)
-      }
-      if _storage._frozen != false {
-        try visitor.visitSingularBoolField(value: _storage._frozen, fieldNumber: 4)
-      }
-      if _storage._kycGranted != false {
-        try visitor.visitSingularBoolField(value: _storage._kycGranted, fieldNumber: 5)
-      }
-      if _storage._deleted != false {
-        try visitor.visitSingularBoolField(value: _storage._deleted, fieldNumber: 6)
-      }
-      if _storage._automaticAssociation != false {
-        try visitor.visitSingularBoolField(value: _storage._automaticAssociation, fieldNumber: 7)
-      }
-      try { if let v = _storage._previousToken {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
-      } }()
-      try { if let v = _storage._nextToken {
-        try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
-      } }()
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._tokenID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._accountID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    if self.balance != 0 {
+      try visitor.visitSingularInt64Field(value: self.balance, fieldNumber: 3)
     }
+    if self.frozen != false {
+      try visitor.visitSingularBoolField(value: self.frozen, fieldNumber: 4)
+    }
+    if self.kycGranted != false {
+      try visitor.visitSingularBoolField(value: self.kycGranted, fieldNumber: 5)
+    }
+    if self.automaticAssociation != false {
+      try visitor.visitSingularBoolField(value: self.automaticAssociation, fieldNumber: 6)
+    }
+    try { if let v = self._previousToken {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    } }()
+    try { if let v = self._nextToken {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Proto_TokenRelation, rhs: Proto_TokenRelation) -> Bool {
-    if lhs._storage !== rhs._storage {
-      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
-        let _storage = _args.0
-        let rhs_storage = _args.1
-        if _storage._tokenID != rhs_storage._tokenID {return false}
-        if _storage._accountID != rhs_storage._accountID {return false}
-        if _storage._balance != rhs_storage._balance {return false}
-        if _storage._frozen != rhs_storage._frozen {return false}
-        if _storage._kycGranted != rhs_storage._kycGranted {return false}
-        if _storage._deleted != rhs_storage._deleted {return false}
-        if _storage._automaticAssociation != rhs_storage._automaticAssociation {return false}
-        if _storage._previousToken != rhs_storage._previousToken {return false}
-        if _storage._nextToken != rhs_storage._nextToken {return false}
-        return true
-      }
-      if !storagesAreEqual {return false}
-    }
+    if lhs._tokenID != rhs._tokenID {return false}
+    if lhs._accountID != rhs._accountID {return false}
+    if lhs.balance != rhs.balance {return false}
+    if lhs.frozen != rhs.frozen {return false}
+    if lhs.kycGranted != rhs.kycGranted {return false}
+    if lhs.automaticAssociation != rhs.automaticAssociation {return false}
+    if lhs._previousToken != rhs._previousToken {return false}
+    if lhs._nextToken != rhs._nextToken {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

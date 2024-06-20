@@ -552,6 +552,36 @@ public struct Proto_TransactionBody {
     set {_uniqueStorage()._data = .tokenUpdateNfts(newValue)}
   }
 
+  ///*
+  /// A transaction body for a `createNode` request.
+  public var nodeCreate: Proto_NodeCreateTransactionBody {
+    get {
+      if case .nodeCreate(let v)? = _storage._data {return v}
+      return Proto_NodeCreateTransactionBody()
+    }
+    set {_uniqueStorage()._data = .nodeCreate(newValue)}
+  }
+
+  ///*
+  /// A transaction body for an `updateNode` request.
+  public var nodeUpdate: Proto_NodeUpdateTransactionBody {
+    get {
+      if case .nodeUpdate(let v)? = _storage._data {return v}
+      return Proto_NodeUpdateTransactionBody()
+    }
+    set {_uniqueStorage()._data = .nodeUpdate(newValue)}
+  }
+
+  ///*
+  /// A transaction body for a `deleteNode` request.
+  public var nodeDelete: Proto_NodeDeleteTransactionBody {
+    get {
+      if case .nodeDelete(let v)? = _storage._data {return v}
+      return Proto_NodeDeleteTransactionBody()
+    }
+    set {_uniqueStorage()._data = .nodeDelete(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   ///*
@@ -695,6 +725,15 @@ public struct Proto_TransactionBody {
     ///*
     /// Update the metadata of one or more NFT's of a specific token type.
     case tokenUpdateNfts(Proto_TokenUpdateNftsTransactionBody)
+    ///*
+    /// A transaction body for a `createNode` request.
+    case nodeCreate(Proto_NodeCreateTransactionBody)
+    ///*
+    /// A transaction body for an `updateNode` request.
+    case nodeUpdate(Proto_NodeUpdateTransactionBody)
+    ///*
+    /// A transaction body for a `deleteNode` request.
+    case nodeDelete(Proto_NodeDeleteTransactionBody)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proto_TransactionBody.OneOf_Data, rhs: Proto_TransactionBody.OneOf_Data) -> Bool {
@@ -886,6 +925,18 @@ public struct Proto_TransactionBody {
         guard case .tokenUpdateNfts(let l) = lhs, case .tokenUpdateNfts(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
+      case (.nodeCreate, .nodeCreate): return {
+        guard case .nodeCreate(let l) = lhs, case .nodeCreate(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.nodeUpdate, .nodeUpdate): return {
+        guard case .nodeUpdate(let l) = lhs, case .nodeUpdate(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.nodeDelete, .nodeDelete): return {
+        guard case .nodeDelete(let l) = lhs, case .nodeDelete(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
@@ -961,6 +1012,9 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     51: .standard(proto: "node_stake_update"),
     52: .standard(proto: "util_prng"),
     53: .standard(proto: "token_update_nfts"),
+    54: .same(proto: "nodeCreate"),
+    55: .same(proto: "nodeUpdate"),
+    56: .same(proto: "nodeDelete"),
   ]
 
   fileprivate class _StorageClass {
@@ -972,7 +1026,15 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     var _memo: String = String()
     var _data: Proto_TransactionBody.OneOf_Data?
 
-    static let defaultInstance = _StorageClass()
+    #if swift(>=5.10)
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+    #else
+      static let defaultInstance = _StorageClass()
+    #endif
 
     private init() {}
 
@@ -1606,6 +1668,45 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
             _storage._data = .tokenUpdateNfts(v)
           }
         }()
+        case 54: try {
+          var v: Proto_NodeCreateTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .nodeCreate(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .nodeCreate(v)
+          }
+        }()
+        case 55: try {
+          var v: Proto_NodeUpdateTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .nodeUpdate(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .nodeUpdate(v)
+          }
+        }()
+        case 56: try {
+          var v: Proto_NodeDeleteTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .nodeDelete(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .nodeDelete(v)
+          }
+        }()
         default: break
         }
       }
@@ -1820,6 +1921,18 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case .tokenUpdateNfts?: try {
         guard case .tokenUpdateNfts(let v)? = _storage._data else { preconditionFailure() }
         try visitor.visitSingularMessageField(value: v, fieldNumber: 53)
+      }()
+      case .nodeCreate?: try {
+        guard case .nodeCreate(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 54)
+      }()
+      case .nodeUpdate?: try {
+        guard case .nodeUpdate(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 55)
+      }()
+      case .nodeDelete?: try {
+        guard case .nodeDelete(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 56)
       }()
       case nil: break
       }

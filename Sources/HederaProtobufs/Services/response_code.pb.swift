@@ -1206,7 +1206,43 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
   ///*
   /// NFT serial numbers are missing in the TokenUpdateNftsTransactionBody
   case missingSerialNumbers // = 336
-  case unrecognized(Int)
+
+  ///*
+  /// Admin key is not set on token
+  case tokenHasNoAdminKey // = 337
+
+  ///*
+  /// The node has been marked as deleted
+  case nodeDeleted // = 338
+
+  ///*
+  /// A node is not found during update and delete node transaction
+  case invalidNodeID // = 339
+
+  ///*
+  /// gossip_endpoint has a fully qualified domain name instead of ip
+  case invalidGossipEndpoint // = 340
+
+  ///*
+  /// The node account_id is invalid
+  case invalidNodeAccountID // = 341
+
+  ///*
+  /// The node description is invalid
+  case invalidNodeDescription // = 342
+
+  ///*
+  /// service_endpoint is invalid
+  case invalidServiceEndpoint // = 343
+
+  ///*
+  /// gossip_ca_certificate is invalid
+  case invalidGossipCaeCertificate // = 344
+
+  ///*
+  /// grpc_certificate_hash is invalid
+  case invalidGrpcCertificate // = 345
+  case UNRECOGNIZED(Int)
 
   public init() {
     self = .ok
@@ -1509,7 +1545,16 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
     case 334: self = .tokenHasNoMetadataKey
     case 335: self = .missingTokenMetadata
     case 336: self = .missingSerialNumbers
-    default: self = .unrecognized(rawValue)
+    case 337: self = .tokenHasNoAdminKey
+    case 338: self = .nodeDeleted
+    case 339: self = .invalidNodeID
+    case 340: self = .invalidGossipEndpoint
+    case 341: self = .invalidNodeAccountID
+    case 342: self = .invalidNodeDescription
+    case 343: self = .invalidServiceEndpoint
+    case 344: self = .invalidGossipCaeCertificate
+    case 345: self = .invalidGrpcCertificate
+    default: self = .UNRECOGNIZED(rawValue)
     }
   }
 
@@ -1810,7 +1855,16 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
     case .tokenHasNoMetadataKey: return 334
     case .missingTokenMetadata: return 335
     case .missingSerialNumbers: return 336
-    case .unrecognized(let i): return i
+    case .tokenHasNoAdminKey: return 337
+    case .nodeDeleted: return 338
+    case .invalidNodeID: return 339
+    case .invalidGossipEndpoint: return 340
+    case .invalidNodeAccountID: return 341
+    case .invalidNodeDescription: return 342
+    case .invalidServiceEndpoint: return 343
+    case .invalidGossipCaeCertificate: return 344
+    case .invalidGrpcCertificate: return 345
+    case .UNRECOGNIZED(let i): return i
     }
   }
 
@@ -1819,7 +1873,7 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
 #if swift(>=4.2)
 
 extension Proto_ResponseCodeEnum: CaseIterable {
-  // The compiler won't synthesize support with the unrecognized case.
+  // The compiler won't synthesize support with the UNRECOGNIZED case.
   public static let allCases: [Proto_ResponseCodeEnum] = [
     .ok,
     .invalidTransaction,
@@ -2116,6 +2170,15 @@ extension Proto_ResponseCodeEnum: CaseIterable {
     .tokenHasNoMetadataKey,
     .missingTokenMetadata,
     .missingSerialNumbers,
+    .tokenHasNoAdminKey,
+    .nodeDeleted,
+    .invalidNodeID,
+    .invalidGossipEndpoint,
+    .invalidNodeAccountID,
+    .invalidNodeDescription,
+    .invalidServiceEndpoint,
+    .invalidGossipCaeCertificate,
+    .invalidGrpcCertificate,
   ]
 }
 
@@ -2424,5 +2487,14 @@ extension Proto_ResponseCodeEnum: SwiftProtobuf._ProtoNameProviding {
     334: .same(proto: "TOKEN_HAS_NO_METADATA_KEY"),
     335: .same(proto: "MISSING_TOKEN_METADATA"),
     336: .same(proto: "MISSING_SERIAL_NUMBERS"),
+    337: .same(proto: "TOKEN_HAS_NO_ADMIN_KEY"),
+    338: .same(proto: "NODE_DELETED"),
+    339: .same(proto: "INVALID_NODE_ID"),
+    340: .same(proto: "INVALID_GOSSIP_ENDPOINT"),
+    341: .same(proto: "INVALID_NODE_ACCOUNT_ID"),
+    342: .same(proto: "INVALID_NODE_DESCRIPTION"),
+    343: .same(proto: "INVALID_SERVICE_ENDPOINT"),
+    344: .same(proto: "INVALID_GOSSIP_CAE_CERTIFICATE"),
+    345: .same(proto: "INVALID_GRPC_CERTIFICATE"),
   ]
 }
