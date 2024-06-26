@@ -32,7 +32,7 @@ public final class ContractUpdateTransaction: Transaction {
         adminKey: Key? = nil,
         autoRenewPeriod: Duration? = nil,
         contractMemo: String? = nil,
-        maxAutomaticTokenAssociations: UInt32? = nil,
+        maxAutomaticTokenAssociations: Int32? = nil,
         autoRenewAccountId: AccountId? = nil,
         proxyAccountId: AccountId? = nil,
         stakedAccountId: AccountId? = nil,
@@ -87,7 +87,7 @@ public final class ContractUpdateTransaction: Transaction {
         self.autoRenewPeriod = data.hasAutoRenewPeriod ? .fromProtobuf(data.autoRenewPeriod) : nil
         self.contractMemo = memo
         self.maxAutomaticTokenAssociations =
-            data.hasMaxAutomaticTokenAssociations ? UInt32(data.maxAutomaticTokenAssociations.value) : nil
+            data.hasMaxAutomaticTokenAssociations ? data.maxAutomaticTokenAssociations.value : nil
         self.autoRenewAccountId = data.hasAutoRenewAccountID ? try .fromProtobuf(data.autoRenewAccountID) : nil
         self.proxyAccountId = data.hasProxyAccountID ? try .fromProtobuf(data.proxyAccountID) : nil
         self.stakedAccountId = stakedAccountId
@@ -180,7 +180,7 @@ public final class ContractUpdateTransaction: Transaction {
     }
 
     /// The maximum number of tokens that this contract can be automatically associated with.
-    public var maxAutomaticTokenAssociations: UInt32? {
+    public var maxAutomaticTokenAssociations: Int32? {
         willSet {
             ensureNotFrozen()
         }
@@ -188,7 +188,7 @@ public final class ContractUpdateTransaction: Transaction {
 
     /// Sets the maximum number of tokens that this contract can be automatically associated with.
     @discardableResult
-    public func maxAutomaticTokenAssociations(_ maxAutomaticTokenAssociations: UInt32?) -> Self {
+    public func maxAutomaticTokenAssociations(_ maxAutomaticTokenAssociations: Int32?) -> Self {
         self.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
 
         return self

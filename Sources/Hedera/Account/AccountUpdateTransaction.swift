@@ -73,7 +73,7 @@ public final class AccountUpdateTransaction: Transaction {
         self.accountMemo = data.hasMemo ? data.memo.value : nil
         self.maxAutomaticTokenAssociations =
             data.hasMaxAutomaticTokenAssociations
-            ? UInt32(data.maxAutomaticTokenAssociations.value) : nil
+            ? data.maxAutomaticTokenAssociations.value : nil
         self.stakedAccountId = stakedAccountId
         self.stakedNodeId = stakedNodeId
         self.declineStakingReward = data.hasDeclineReward ? data.declineReward.value : nil
@@ -227,7 +227,7 @@ public final class AccountUpdateTransaction: Transaction {
     }
 
     /// The maximum number of tokens that an Account can be implicitly associated with.
-    public var maxAutomaticTokenAssociations: UInt32? {
+    public var maxAutomaticTokenAssociations: Int32? {
         willSet {
             ensureNotFrozen()
         }
@@ -235,7 +235,7 @@ public final class AccountUpdateTransaction: Transaction {
 
     /// Sets the maximum number of tokens that an Account can be implicitly associated with.
     @discardableResult
-    public func maxAutomaticTokenAssociations(_ maxAutomaticTokenAssociations: UInt32) -> Self {
+    public func maxAutomaticTokenAssociations(_ maxAutomaticTokenAssociations: Int32) -> Self {
         self.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
 
         return self
@@ -350,7 +350,7 @@ extension AccountUpdateTransaction: ToProtobuf {
 
             if let maxAutomaticTokenAssociations = maxAutomaticTokenAssociations {
                 proto.maxAutomaticTokenAssociations = Google_Protobuf_Int32Value(
-                    Int32(maxAutomaticTokenAssociations))
+                    maxAutomaticTokenAssociations)
             }
 
             if let stakedAccountId = stakedAccountId {

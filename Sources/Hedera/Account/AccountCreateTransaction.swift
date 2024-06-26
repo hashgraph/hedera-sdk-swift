@@ -32,7 +32,7 @@ public final class AccountCreateTransaction: Transaction {
         autoRenewPeriod: Duration? = .days(90),
         autoRenewAccountId: AccountId? = nil,
         accountMemo: String = "",
-        maxAutomaticTokenAssociations: UInt32 = 0,
+        maxAutomaticTokenAssociations: Int32 = 0,
         alias: EvmAddress? = nil,
         stakedAccountId: AccountId? = nil,
         stakedNodeId: UInt64? = nil,
@@ -59,7 +59,7 @@ public final class AccountCreateTransaction: Transaction {
         self.receiverSignatureRequired = data.receiverSigRequired
         self.autoRenewPeriod = data.hasAutoRenewPeriod ? .fromProtobuf(data.autoRenewPeriod) : nil
         self.accountMemo = data.memo
-        self.maxAutomaticTokenAssociations = UInt32(data.maxAutomaticTokenAssociations)
+        self.maxAutomaticTokenAssociations = data.maxAutomaticTokenAssociations
 
         if let id = data.stakedID {
             switch id {
@@ -175,7 +175,7 @@ public final class AccountCreateTransaction: Transaction {
     }
 
     /// The maximum number of tokens that an Account can be implicitly associated with.
-    public var maxAutomaticTokenAssociations: UInt32 {
+    public var maxAutomaticTokenAssociations: Int32 {
         willSet {
             ensureNotFrozen()
         }
@@ -183,7 +183,7 @@ public final class AccountCreateTransaction: Transaction {
 
     /// Sets the maximum number of tokens that an Account can be implicitly associated with.
     @discardableResult
-    public func maxAutomaticTokenAssociations(_ maxAutomaticTokenAssociations: UInt32) -> Self {
+    public func maxAutomaticTokenAssociations(_ maxAutomaticTokenAssociations: Int32) -> Self {
         self.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
 
         return self
@@ -288,7 +288,7 @@ extension AccountCreateTransaction: ToProtobuf {
             autoRenewPeriod?.toProtobufInto(&proto.autoRenewPeriod)
             // autoRenewAccountId?.toProtobufInto(&proto.autoRenewAccount)
             proto.memo = accountMemo
-            proto.maxAutomaticTokenAssociations = Int32(maxAutomaticTokenAssociations)
+            proto.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
 
             if let alias = alias {
                 proto.alias = alias.data

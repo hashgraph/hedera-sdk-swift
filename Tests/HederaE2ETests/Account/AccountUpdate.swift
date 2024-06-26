@@ -88,4 +88,56 @@ internal final class AccountUpdate: XCTestCase {
             XCTAssertEqual(status, .accountIDDoesNotExist)
         }
     }
+
+    internal func testCannotUpdateTokenMaxAssociationToLowerValueFails() async throws {
+        let testEnv = try TestEnvironment.nonFree
+
+        let accountKey = PrivateKey.generateEd25519()
+
+        // Create account with max token associations of 1
+        let accountCreateReceipt = try await AccountCreateTransaction()
+            .key(.single(accountKey.publicKey))
+            .maxAutomaticTokenAssociations(1)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        let accountId = try XCTUnwrap(accountCreateReceipt.accountId)
+
+        // Create token
+        let tokenCreateReceipt = try await TokenCreateTransaction()
+            .name("ffff")
+            .symbol("F")
+            .initialSupply(100_000)
+            .treasuryAccountId(testEnv.operator.accountId)
+            .adminKey(.single(testEnv.operator.privateKey.publicKey))
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        let tokenId = try XCTUnwrap(tokenCreateReceipt.tokenId)
+
+        // Associate token with account
+        let _ = try await TransferTransaction()
+            .tokenTransfer(tokenId, testEnv.operator.accountId, -10)
+            .tokenTransfer(tokenId, accountId, 10)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        await assertThrowsHErrorAsync(
+            // Update account max token associations to 0
+            try await AccountUpdateTransaction()
+                .accountId(accountId)
+                .maxAutomaticTokenAssociations(0)
+                .freezeWith(testEnv.client)
+                .sign(accountKey)
+                .execute(testEnv.client)
+                .getReceipt(testEnv.client)
+        ) { error in
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
+                return
+            }
+
+            XCTAssertEqual(status, .existingAutomaticAssociationsExceedGivenLimit)
+        }
+    }
 }
