@@ -115,6 +115,7 @@ public struct ScheduleInfo: Sendable {
                 case .nodeCreate(let data): proto.data = .nodeCreate(data)
                 case .nodeUpdate(let data): proto.data = .nodeUpdate(data)
                 case .nodeDelete(let data): proto.data = .nodeDelete(data)
+                case .tokenReject(let data): proto.data = .tokenReject(data)
                 case nil: break
                 }
 
