@@ -106,7 +106,7 @@ public final class TokenRejectTransaction: Transaction {
 
     /// Append an NFT to the list of tokens to be rejected.
     @discardableResult
-    public func addNftsId(_ nftId: NftId) -> Self {
+    public func addNftId(_ nftId: NftId) -> Self {
         self.nftIds.append(nftId)
 
         return self
