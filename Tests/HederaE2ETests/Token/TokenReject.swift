@@ -649,8 +649,8 @@ internal class TokenReject: XCTestCase {
                 .execute(testEnv.client)
                 .getReceipt(testEnv.client)
         ) { error in
-            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
-                XCTFail("`\(error.kind)` is not `.receiptStatus`")
+            guard case .transactionPreCheckStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.transactionPreCheckStatus`")
                 return
             }
 
@@ -664,7 +664,7 @@ internal class TokenReject: XCTestCase {
         let ft = try await FungibleToken.create(testEnv, initialSupply: 1_000_000)
         let nft = try await Nft.create(testEnv)
         let receiverAccountKey = PrivateKey.generateEd25519()
-        let receiverAccount = try await Account.create(testEnv, Key.single(receiverAccountKey.publicKey), 100)
+        let receiverAccount = try await Account.create(testEnv, Key.single(receiverAccountKey.publicKey), -1)
 
         let mintReceipt = try await TokenMintTransaction()
             .tokenId(nft.id)
