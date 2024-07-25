@@ -67,7 +67,6 @@ public struct AccountBalance: Sendable {
     /// Token balances for the referenced account.
     ///
     /// This access is *`O(n)`*.
-    @available(*, deprecated, message: "use a mirror query")
     public var tokenBalances: [TokenId: UInt64] { tokenBalancesInner }
 
     // hack to work around deprecated warning

@@ -25,8 +25,8 @@ internal class TokenReject: XCTestCase {
     internal func testBasicFtReject() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let ft1 = try await FungibleToken.create(testEnv, initialSupply: 1_000_000)
-        let ft2 = try await FungibleToken.create(testEnv, initialSupply: 1_000_000)
+        let ft1 = try await FungibleToken.create(testEnv, decimals: 3)
+        let ft2 = try await FungibleToken.create(testEnv, decimals: 3)
         let receiverAccountKey = PrivateKey.generateEd25519()
         let receiverAccount = try await Account.create(testEnv, Key.single(receiverAccountKey.publicKey), 100)
 
@@ -125,8 +125,8 @@ internal class TokenReject: XCTestCase {
     internal func testFtAndNftReject() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let ft1 = try await FungibleToken.create(testEnv, initialSupply: 1_000_000)
-        let ft2 = try await FungibleToken.create(testEnv, initialSupply: 1_000_000)
+        let ft1 = try await FungibleToken.create(testEnv, decimals: 3)
+        let ft2 = try await FungibleToken.create(testEnv, decimals: 3)
         let nft1 = try await Nft.create(testEnv)
         let nft2 = try await Nft.create(testEnv)
         let receiverAccountKey = PrivateKey.generateEd25519()
@@ -210,8 +210,8 @@ internal class TokenReject: XCTestCase {
     internal func testFtAndNftFreeze() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let ft1 = try await FungibleToken.create(testEnv, initialSupply: 1_000_000)
-        let ft2 = try await FungibleToken.create(testEnv, initialSupply: 1_000_000)
+        let ft1 = try await FungibleToken.create(testEnv, decimals: 3)
+        let ft2 = try await FungibleToken.create(testEnv, decimals: 3)
         let nft1 = try await Nft.create(testEnv)
         let nft2 = try await Nft.create(testEnv)
         let receiverAccountKey = PrivateKey.generateEd25519()
@@ -295,7 +295,7 @@ internal class TokenReject: XCTestCase {
     internal func testFtAndNftPaused() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let ft = try await FungibleToken.create(testEnv, initialSupply: 1_000_000)
+        let ft = try await FungibleToken.create(testEnv, decimals: 3)
         let nft = try await Nft.create(testEnv)
         let receiverAccountKey = PrivateKey.generateEd25519()
         let receiverAccount = try await Account.create(testEnv, Key.single(receiverAccountKey.publicKey), 100)
@@ -368,7 +368,7 @@ internal class TokenReject: XCTestCase {
     internal func testRemoveAllowance() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let ft = try await FungibleToken.create(testEnv, initialSupply: 1_000_000)
+        let ft = try await FungibleToken.create(testEnv, decimals: 3)
         let receiverAccountKey = PrivateKey.generateEd25519()
         let receiverAccount = try await Account.create(testEnv, Key.single(receiverAccountKey.publicKey), 100)
 
@@ -561,7 +561,7 @@ internal class TokenReject: XCTestCase {
     internal func testTreasuryFail() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let ft = try await FungibleToken.create(testEnv, initialSupply: 1_000_000)
+        let ft = try await FungibleToken.create(testEnv, decimals: 3)
 
         await assertThrowsHErrorAsync(
             try await TokenRejectTransaction()
@@ -607,7 +607,7 @@ internal class TokenReject: XCTestCase {
     internal func testInvalidSigFail() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let ft = try await FungibleToken.create(testEnv, initialSupply: 1_000_000)
+        let ft = try await FungibleToken.create(testEnv, decimals: 3)
         let randomKey = PrivateKey.generateEd25519()
         let receiverAccountKey = PrivateKey.generateEd25519()
         let receiverAccount = try await Account.create(testEnv, Key.single(receiverAccountKey.publicKey), 100)
@@ -661,7 +661,7 @@ internal class TokenReject: XCTestCase {
     internal func testTokenReferenceListSizeExceededFail() async throws {
         let testEnv = try TestEnvironment.nonFree
 
-        let ft = try await FungibleToken.create(testEnv, initialSupply: 1_000_000)
+        let ft = try await FungibleToken.create(testEnv, decimals: 3)
         let nft = try await Nft.create(testEnv)
         let receiverAccountKey = PrivateKey.generateEd25519()
         let receiverAccount = try await Account.create(testEnv, Key.single(receiverAccountKey.publicKey), -1)
