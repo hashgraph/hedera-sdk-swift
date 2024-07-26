@@ -51,6 +51,7 @@ internal enum ServicesTransactionDataList {
     case tokenMint([Proto_TokenMintTransactionBody])
     case tokenPause([Proto_TokenPauseTransactionBody])
     case tokenRevokeKyc([Proto_TokenRevokeKycTransactionBody])
+    case tokenReject([Proto_TokenRejectTransactionBody])
     case tokenUnfreeze([Proto_TokenUnfreezeAccountTransactionBody])
     case tokenUnpause([Proto_TokenUnpauseTransactionBody])
     case tokenUpdate([Proto_TokenUpdateTransactionBody])
@@ -235,6 +236,10 @@ internal enum ServicesTransactionDataList {
             array.append(data)
             self = .tokenUpdateNfts(array)
 
+        case (.tokenReject(var array), .tokenReject(let data)):
+            array.append(data)
+            self = .tokenReject(array)
+
         default:
             throw HError.fromProtobuf("mismatched transaction types")
         }
@@ -302,6 +307,7 @@ extension ServicesTransactionDataList: TryFromProtobuf {
         case .nodeDelete: throw HError.fromProtobuf("Unsupported transaction `NodeDeleteTransaction`")
         case .nodeCreate: throw HError.fromProtobuf("Unsupported transaction `NodeCreateTransaction`")
         case .nodeUpdate: throw HError.fromProtobuf("Unsupported transaction `NodeUpdateTransaction`")
+        case .tokenReject(let data): value = .tokenReject([data])
         }
 
         for transaction in iter {

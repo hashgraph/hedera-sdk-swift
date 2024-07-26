@@ -21,7 +21,7 @@
 import Foundation
 import HederaProtobufs
 
-private struct TokenBalance {
+private struct TokenBalance: Sendable {
     fileprivate let id: TokenId
     fileprivate let balance: UInt64
     fileprivate let decimals: UInt32
@@ -67,11 +67,10 @@ public struct AccountBalance: Sendable {
     /// Token balances for the referenced account.
     ///
     /// This access is *`O(n)`*.
-    @available(*, deprecated, message: "use a mirror query")
     public var tokenBalances: [TokenId: UInt64] { tokenBalancesInner }
 
     // hack to work around deprecated warning
-    private var tokenDecimalsInner: [TokenId: UInt32] {
+    public var tokenDecimalsInner: [TokenId: UInt32] {
         Dictionary(uniqueKeysWithValues: tokensInner.map { ($0.id, $0.decimals) })
     }
 

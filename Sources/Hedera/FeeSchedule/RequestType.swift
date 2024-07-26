@@ -256,8 +256,8 @@ public enum RequestType {
     /// Delete a node
     case nodeDelete
 
-    /// Get the info for a node
-    case nodeGetInfo
+    /// Reject a Token
+    case tokenReject
 
     // this literally can't be smaller.
     // swiftlint:disable:next function_body_length
@@ -341,7 +341,7 @@ public enum RequestType {
         case .nodeCreate: self = .nodeCreate
         case .nodeDelete: self = .nodeDelete
         case .nodeUpdate: self = .nodeUpdate
-        case .nodeGetInfo: self = .nodeGetInfo
+        case .tokenReject: self = .tokenReject
 
         case .UNRECOGNIZED(let code):
             throw HError.fromProtobuf("unrecognized RequestType: `\(code)`")
@@ -427,7 +427,7 @@ public enum RequestType {
         case .nodeCreate: return .nodeCreate
         case .nodeUpdate: return .nodeUpdate
         case .nodeDelete: return .nodeDelete
-        case .nodeGetInfo: return .nodeGetInfo
+        case .tokenReject: return .tokenReject
         }
     }
 }

@@ -742,8 +742,8 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
   case nodeDelete // = 91
 
   ///*
-  /// Get Node information
-  case nodeGetInfo // = 92
+  /// Transfer one or more token balances held by the requesting account to the treasury for each token type.
+  case tokenReject // = 92
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -830,7 +830,7 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
     case 89: self = .nodeCreate
     case 90: self = .nodeUpdate
     case 91: self = .nodeDelete
-    case 92: self = .nodeGetInfo
+    case 92: self = .tokenReject
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -915,7 +915,7 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
     case .nodeCreate: return 89
     case .nodeUpdate: return 90
     case .nodeDelete: return 91
-    case .nodeGetInfo: return 92
+    case .tokenReject: return 92
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -1005,7 +1005,7 @@ extension Proto_HederaFunctionality: CaseIterable {
     .nodeCreate,
     .nodeUpdate,
     .nodeDelete,
-    .nodeGetInfo,
+    .tokenReject,
   ]
 }
 
@@ -2439,26 +2439,35 @@ public struct Proto_CurrentAndNextFeeSchedule {
 }
 
 ///*
-/// Contains the IP address and the port representing a service endpoint of a Node in a network. Used
-/// to reach the Hedera API and submit transactions to the network.
+/// Contains the IP address and the port representing a service endpoint of
+/// a Node in a network. Used to reach the Hedera API and submit transactions
+/// to the network.
+///
+/// When the `domain_name` field is set, the `ipAddressV4` field
+/// MUST NOT be set.<br/>
+/// When the `ipAddressV4` field is set, the `domain_name` field
+/// MUST NOT be set.
 public struct Proto_ServiceEndpoint {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///*
-  /// The 32-bit IPv4 address of the node encoded in left to right order (e.g.  127.0.0.1 has 127
-  /// as its first byte)
+  /// The 4-byte IPv4 address of the endpoint encoded in left to right order
+  /// (e.g. 127.0.0.1 has bytes [127, 0, 0, 1])
   public var ipAddressV4: Data = Data()
 
   ///*
-  /// The port of the node
+  /// The port of the service endpoint
   public var port: Int32 = 0
 
   ///*
-  /// A node domain name
-  /// This MUST be the fully qualified domain name of the node.
+  /// A node domain name.<br/>
+  /// This MUST be the fully qualified domain(DNS) name of the node.<br/>
   /// This value MUST NOT be more than 253 characters.
+  /// domain_name and ipAddressV4 are mutually exclusive.
+  /// When the `domain_name` field is set, the `ipAddressV4` field MUST NOT be set.<br/>
+  /// When the `ipAddressV4` field is set, the `domain_name` field MUST NOT be set.
   public var domainName: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -2470,8 +2479,8 @@ public struct Proto_ServiceEndpoint {
 /// The data about a node, including its service endpoints and the Hedera account to be paid for
 /// services provided by the node (that is, queries answered and transactions submitted.)
 ///
-/// If the <tt>serviceEndpoint</tt> list is not set, or empty, then the endpoint given by the
-/// (deprecated) <tt>ipAddress</tt> and <tt>portno</tt> fields should be used.
+/// If the `serviceEndpoint` list is not set, or empty, then the endpoint given by the
+/// (deprecated) `ipAddress` and `portno` fields should be used.
 ///
 /// All fields are populated in the 0.0.102 address book file while only fields that start with # are
 /// populated in the 0.0.101 address book file.
@@ -3071,7 +3080,7 @@ extension Proto_HederaFunctionality: SwiftProtobuf._ProtoNameProviding {
     89: .same(proto: "NodeCreate"),
     90: .same(proto: "NodeUpdate"),
     91: .same(proto: "NodeDelete"),
-    92: .same(proto: "NodeGetInfo"),
+    92: .same(proto: "TokenReject"),
   ]
 }
 

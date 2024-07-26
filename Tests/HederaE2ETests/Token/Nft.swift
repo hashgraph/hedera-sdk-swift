@@ -25,20 +25,23 @@ internal struct Nft {
     internal let id: TokenId
     internal let owner: Account
 
-    internal static func create(_ testEnv: NonfreeTestEnvironment, owner: Account) async throws -> Self {
-        let ownerKey = Key.single(owner.key.publicKey)
+    internal static func create(_ testEnv: NonfreeTestEnvironment, owner: Account? = nil) async throws -> Self {
+        let owner = owner ?? Account(id: testEnv.operator.accountId, key: testEnv.operator.privateKey)
+
         let receipt = try await TokenCreateTransaction(
             name: "ffff",
             symbol: "f",
             treasuryAccountId: owner.id,
-            adminKey: ownerKey,
-            freezeKey: ownerKey,
-            wipeKey: ownerKey,
-            supplyKey: ownerKey,
+            adminKey: Key.single(owner.key.publicKey),
+            freezeKey: Key.single(owner.key.publicKey),
+            wipeKey: Key.single(owner.key.publicKey),
+            supplyKey: Key.single(owner.key.publicKey),
             freezeDefault: false,
             expirationTime: .now + .minutes(5),
             tokenType: .nonFungibleUnique,
-            feeScheduleKey: ownerKey
+            feeScheduleKey: Key.single(owner.key.publicKey),
+            pauseKey: Key.single(owner.key.publicKey),
+            metadataKey: Key.single(owner.key.publicKey)
         )
         .sign(owner.key)
         .execute(testEnv.client)

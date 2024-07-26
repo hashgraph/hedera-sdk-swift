@@ -27,31 +27,63 @@ internal struct FungibleToken {
 
     internal static func create(
         _ testEnv: NonfreeTestEnvironment,
-        owner: Account,
+        owner: Account? = nil,
         initialSupply: UInt64 = 0
     ) async throws -> Self {
-        let metadataKey = PrivateKey.generateEd25519()
-        let ownerKey = Key.single(owner.key.publicKey)
-        let receipt = try await TokenCreateTransaction(
-            name: "ffff",
-            symbol: "f",
-            decimals: 3,
-            initialSupply: initialSupply,
-            treasuryAccountId: owner.id,
-            adminKey: ownerKey,
-            kycKey: ownerKey,
-            freezeKey: ownerKey,
-            wipeKey: ownerKey,
-            supplyKey: ownerKey,
-            freezeDefault: false,
-            expirationTime: .now + .minutes(5),
-            feeScheduleKey: ownerKey,
-            pauseKey: ownerKey,
-            metadataKey: Key.single(metadataKey.publicKey)
-        )
-        .sign(owner.key)
-        .execute(testEnv.client)
-        .getReceipt(testEnv.client)
+        let privateKey = owner?.key ?? testEnv.operator.privateKey
+        let owner = owner ?? Account(id: testEnv.operator.accountId, key: testEnv.operator.privateKey)
+
+        let receipt = try await TokenCreateTransaction()
+            .name("ffff")
+            .symbol("f")
+            .tokenMemo("e2e test")
+            .expirationTime(.now + .minutes(5))
+            .decimals(3)
+            .initialSupply(initialSupply)
+            .treasuryAccountId(owner.id)
+            .adminKey(.single(privateKey.publicKey))
+            .freezeKey(.single(privateKey.publicKey))
+            .wipeKey(.single(privateKey.publicKey))
+            .supplyKey(.single(privateKey.publicKey))
+            .metadataKey(.single(privateKey.publicKey))
+            .pauseKey(.single(privateKey.publicKey))
+            .kycKey(.single(privateKey.publicKey))
+            .feeScheduleKey(.single(privateKey.publicKey))
+            .freezeDefault(false)
+            .freezeWith(testEnv.client)
+            .sign(privateKey)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        let id = try XCTUnwrap(receipt.tokenId)
+
+        return Self(id: id, owner: owner)
+    }
+
+    internal static func create(
+        _ testEnv: NonfreeTestEnvironment,
+        decimals: UInt32
+    ) async throws -> Self {
+        let owner = Account(id: testEnv.operator.accountId, key: testEnv.operator.privateKey)
+
+        let receipt = try await TokenCreateTransaction()
+            .name("ffff")
+            .symbol("f")
+            .tokenMemo("e2e test")
+            .expirationTime(.now + .minutes(5))
+            .decimals(decimals)
+            .initialSupply(1_000_000)
+            .maxSupply(1_000_000)
+            .treasuryAccountId(testEnv.operator.accountId)
+            .tokenSupplyType(.finite)
+            .adminKey(.single(testEnv.operator.privateKey.publicKey))
+            .freezeKey(.single(testEnv.operator.privateKey.publicKey))
+            .wipeKey(.single(testEnv.operator.privateKey.publicKey))
+            .supplyKey(.single(testEnv.operator.privateKey.publicKey))
+            .metadataKey(.single(testEnv.operator.privateKey.publicKey))
+            .pauseKey(.single(testEnv.operator.privateKey.publicKey))
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
 
         let id = try XCTUnwrap(receipt.tokenId)
 
