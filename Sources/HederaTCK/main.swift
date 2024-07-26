@@ -18,7 +18,7 @@
  * ‍
  */
 import Foundation
-import Hedera
+@testable import Hedera
 import Vapor
 
 let server = TCKServer(sdkClient: SDKClient())
@@ -47,21 +47,37 @@ struct TCKServer {
                 return try encodeJsonRpcResponseToHttpResponse(jsonResponse: JSONResponse(id: nil, error: error))
             }
 
-            /// The request is well-formed, it can be processed.
-            return try encodeJsonRpcResponseToHttpResponse(jsonResponse: server.processRequest(request: jsonRpcRequest))
+            let response = await server.processRequest(request: jsonRpcRequest)
+            print("RESPONSE:")
+            print(response)
+            return try encodeJsonRpcResponseToHttpResponse(
+                jsonResponse: response)
         }
 
         try app.run()
     }
 
-    func processRequest(request: JSONRequest) -> JSONResponse {
+    func processRequest(request: JSONRequest) async -> JSONResponse {
+        print("REQUEST:")
+        print(request.toDict())
         do {
             switch request.method {
+            ///
+            /// createAccount
+            ///
+            case "createAccount":
+                return JSONResponse(
+                    id: request.id,
+                    result: try await sdkClient.createAccount(
+                        getOptionalDictParameter("params", request.toDict(), request.method)))
             ///
             /// generateKey
             ///
             case "generateKey":
-                return JSONResponse(id: request.id, result: try sdkClient.generateKey(parameters: request.params))
+                return JSONResponse(
+                    id: request.id,
+                    result: try sdkClient.generateKey(
+                        getRequiredDictParameter("params", request.toDict(), request.method)))
             ///
             /// reset
             ///
@@ -71,7 +87,9 @@ struct TCKServer {
             /// setup
             ///
             case "setup":
-                return JSONResponse(id: request.id, result: try sdkClient.setup(parameters: request.params))
+                return JSONResponse(
+                    id: request.id,
+                    result: try sdkClient.setup(getRequiredDictParameter("params", request.toDict(), request.method)))
             ///
             /// Method Not Found
             ///
@@ -81,7 +99,14 @@ struct TCKServer {
         } catch let error as JSONError {
             return JSONResponse(id: request.id, error: error)
         } catch let error as HError {
-            return JSONResponse(id: request.id, error: JSONError.hederaError(error.description))
+            switch error.kind {
+            case .transactionPreCheckStatus(let status, let _),
+                .queryPreCheckStatus(let status, let _),
+                .receiptStatus(let status, let _):
+                return JSONResponse(id: request.id, error: JSONError.hederaError("Hedera error", JSONObject.dictionary(["status": JSONObject.string(Status.nameMap[status.rawValue]!), "message": JSONObject.string(error.description)])))
+            default:
+                return JSONResponse(id: request.id, error: JSONError.hederaError("Hedera error"))
+            }
         } catch let error {
             return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))
         }

@@ -72,6 +72,20 @@ internal struct JSONRequest: Decodable {
             self.params = nil
         }
     }
+
+    internal func toDict() -> [String: JSONObject] {
+        var dict = [
+            "jsonrpc": JSONObject.string(jsonRpcVersion),
+            "id": JSONObject.int(Int64(self.id)),
+            "method": JSONObject.string(self.method),
+        ]
+
+        if let params = self.params {
+            dict["params"] = params
+        }
+
+        return dict
+    }
 }
 
 internal struct JSONResponse: Encodable {
@@ -155,7 +169,7 @@ internal enum JSONError: Encodable, Error {
 internal enum JSONObject: Codable {
     case none
     case string(String)
-    case integer(Int)
+    case int(Int64)
     case double(Double)
     case bool(Bool)
     case list([JSONObject])
@@ -167,8 +181,8 @@ internal enum JSONObject: Codable {
         }
         return nil
     }
-    var intValue: Int? {
-        if case .integer(let value) = self {
+    var intValue: Int64? {
+        if case .int(let value) = self {
             return value
         }
         return nil
@@ -203,8 +217,8 @@ internal enum JSONObject: Codable {
 
         if let value = try? container.decode(String.self) {
             self = .string(value)
-        } else if let value = try? container.decode(Int.self) {
-            self = .integer(value)
+        } else if let value = try? container.decode(Int64.self) {
+            self = .int(value)
         } else if let value = try? container.decode(Double.self) {
             self = .double(value)
         } else if let value = try? container.decode(Bool.self) {
@@ -226,7 +240,7 @@ internal enum JSONObject: Codable {
             break
         case .string(let value):
             try container.encode(value)
-        case .integer(let value):
+        case .int(let value):
             try container.encode(value)
         case .double(let value):
             try container.encode(value)
