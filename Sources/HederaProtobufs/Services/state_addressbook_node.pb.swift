@@ -20,82 +20,35 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public enum Proto_NodeStatus: SwiftProtobuf.Enum {
-  public typealias RawValue = Int
-
-  ///*
-  /// node in this state is deleted
-  case deleted // = 0
-
-  ///*
-  /// node in this state is waiting to be added by consensus roster
-  case pendingAddition // = 1
-
-  ///*
-  ///  node in this state is waiting to be deleted by consensus roster
-  case pendingDeletion // = 2
-
-  ///*
-  /// node in this state is active on the network and participating
-  /// in network consensus.
-  case inConsensus // = 3
-  case UNRECOGNIZED(Int)
-
-  public init() {
-    self = .deleted
-  }
-
-  public init?(rawValue: Int) {
-    switch rawValue {
-    case 0: self = .deleted
-    case 1: self = .pendingAddition
-    case 2: self = .pendingDeletion
-    case 3: self = .inConsensus
-    default: self = .UNRECOGNIZED(rawValue)
-    }
-  }
-
-  public var rawValue: Int {
-    switch self {
-    case .deleted: return 0
-    case .pendingAddition: return 1
-    case .pendingDeletion: return 2
-    case .inConsensus: return 3
-    case .UNRECOGNIZED(let i): return i
-    }
-  }
-
-}
-
-#if swift(>=4.2)
-
-extension Proto_NodeStatus: CaseIterable {
-  // The compiler won't synthesize support with the UNRECOGNIZED case.
-  public static let allCases: [Proto_NodeStatus] = [
-    .deleted,
-    .pendingAddition,
-    .pendingDeletion,
-    .inConsensus,
-  ]
-}
-
-#endif  // swift(>=4.2)
-
 ///*
-/// Representation of a Node in the network Merkle tree
+/// A single address book node in the network state.
 ///
-/// A Node is identified by a single uint64 number, which is unique among all nodes.
-public struct Proto_Node {
+/// Each node in the network address book SHALL represent a single actual
+/// consensus node that is eligible to participate in network consensus.
+///
+/// Address book nodes SHALL NOT be _globally_ uniquely identified. A given node
+/// is only valid within a single realm and shard combination, so the identifier
+/// for a network node SHALL only be unique within a single realm and shard
+/// combination.
+public struct Com_Hedera_Hapi_Node_State_Addressbook_Node {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///*
-  /// The unique id of the Node.
+  /// A consensus node identifier.
+  /// <p>
+  /// Node identifiers SHALL be unique _within_ a shard and realm,
+  /// but a node SHALL NOT, ever, serve multiple shards or realms,
+  /// therefore the node identifier MAY be repeated _between_ shards and realms.
   public var nodeID: UInt64 = 0
 
   ///*
-  /// The account is charged for transactions submitted by the node that fail due diligence
+  /// An account identifier.
+  /// <p>
+  /// This account SHALL be owned by the entity responsible for the node.<br/>
+  /// This account SHALL be charged transaction fees for any transactions that
+  /// are submitted to the network by this node and fail due diligence checks.
   public var accountID: Proto_AccountID {
     get {return _accountID ?? Proto_AccountID()}
     set {_accountID = newValue}
@@ -106,59 +59,114 @@ public struct Proto_Node {
   public mutating func clearAccountID() {self._accountID = nil}
 
   ///*
-  /// A description of the node, with UTF-8 encoding up to 100 bytes
+  /// A short description of the node.
+  /// <p>
+  /// This value, if set, SHALL NOT exceed 100 bytes when encoded as UTF-8.
   public var description_p: String = String()
 
   ///*
-  /// Node Gossip Endpoints, ip address or FQDN and port
+  /// A list of service endpoints for gossip.
+  /// <p>
+  /// These endpoints SHALL represent the published endpoints to which other
+  /// consensus nodes may _gossip_ transactions.<br/>
+  /// If the network configuration value `gossipFqdnRestricted` is set, then
+  /// all endpoints in this list SHALL supply only IP address.<br/>
+  /// If the network configuration value `gossipFqdnRestricted` is _not_ set,
+  /// then endpoints in this list MAY supply either IP address or FQDN, but
+  /// SHALL NOT supply both values for the same endpoint.<br/>
+  /// This list SHALL NOT be empty.<br/>
+  /// This list SHALL NOT contain more than `10` entries.<br/>
+  /// The first two entries in this list SHALL be the endpoints published to
+  /// all consensus nodes.<br/>
+  /// All other entries SHALL be reserved for future use.
   public var gossipEndpoint: [Proto_ServiceEndpoint] = []
 
   ///*
-  /// A node's service Endpoints, ip address or FQDN and port
+  /// A list of service endpoints for gRPC calls.
+  /// <p>
+  /// These endpoints SHALL represent the published endpoints to which clients
+  /// may submit transactions.<br/>
+  /// These endpoints SHALL specify a port.<br/>
+  /// Endpoints in this list MAY supply either IP address or FQDN, but SHALL
+  /// NOT supply both values for the same endpoint.<br/>
+  /// This list SHALL NOT be empty.<br/>
+  /// This list SHALL NOT contain more than `8` entries.
   public var serviceEndpoint: [Proto_ServiceEndpoint] = []
 
   ///*
-  /// The node's X509 certificate used to sign stream files (e.g., record stream
-  /// files). Precisely, this field is the DER encoding of gossip X509 certificate.
+  /// A certificate used to sign gossip events.
+  /// <p>
+  /// This value SHALL be a certificate of a type permitted for gossip
+  /// signatures.<br/>
+  /// This value SHALL be the DER encoding of the certificate presented.<br/>
+  /// This field is REQUIRED and MUST NOT be empty.
   public var gossipCaCertificate: Data = Data()
 
   ///*
-  /// node x509 certificate hash. Hash of the node's TLS certificate. Precisely, this field is a string of
-  /// hexadecimal characters which, translated to binary, are the SHA-384 hash of
-  /// the UTF-8 NFKD encoding of the node's TLS cert in PEM format. Its value can be
-  /// used to verify the node's certificate it presents during TLS negotiations.
+  /// A hash of the node gRPC certificate.
+  /// <p>
+  /// This value MAY be used to verify the certificate presented by the node
+  /// during TLS negotiation for gRPC.<br/>
+  /// This value SHALL be a SHA-384 hash.<br/>
+  /// The TLS certificate to be hashed SHALL first be in PEM format and SHALL
+  /// be encoded with UTF-8 NFKD encoding to a stream of bytes provided to
+  /// the hash algorithm.<br/>
+  /// This field is OPTIONAL.
   public var grpcCertificateHash: Data = Data()
 
   ///*
-  /// The consensus weight of this node in the network.
+  /// A consensus weight.
+  /// <p>
+  /// Each node SHALL have a weight in consensus calculations.<br/>
+  /// The consensus weight of a node SHALL be calculated based on the amount
+  /// of HBAR staked to that node.<br/>
+  /// Consensus SHALL be calculated based on agreement of greater than `2/3`
+  /// of the total `weight` value of all nodes on the network.
   public var weight: UInt64 = 0
+
+  ///*
+  /// A flag indicating this node is deleted.
+  /// <p>
+  /// If this field is set, then this node SHALL NOT be included in the next
+  /// update of the network address book.<br/>
+  /// If this field is set, then this node SHALL be immutable and SHALL NOT
+  /// be modified.<br/>
+  /// If this field is set, then any `nodeUpdate` transaction to modify this
+  /// node SHALL fail.
+  public var deleted: Bool = false
+
+  ///*
+  /// An administrative key controlled by the node operator.
+  /// <p>
+  /// This key MUST sign each transaction to update this node.<br/>
+  /// This field MUST contain a valid `Key` value.<br/>
+  /// This field is REQUIRED and MUST NOT be set to an empty `KeyList`.
+  public var adminKey: Proto_Key {
+    get {return _adminKey ?? Proto_Key()}
+    set {_adminKey = newValue}
+  }
+  /// Returns true if `adminKey` has been explicitly set.
+  public var hasAdminKey: Bool {return self._adminKey != nil}
+  /// Clears the value of `adminKey`. Subsequent reads from it will return its default value.
+  public mutating func clearAdminKey() {self._adminKey = nil}
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
   fileprivate var _accountID: Proto_AccountID? = nil
+  fileprivate var _adminKey: Proto_Key? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_NodeStatus: @unchecked Sendable {}
-extension Proto_Node: @unchecked Sendable {}
+extension Com_Hedera_Hapi_Node_State_Addressbook_Node: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
-fileprivate let _protobuf_package = "proto"
+fileprivate let _protobuf_package = "com.hedera.hapi.node.state.addressbook"
 
-extension Proto_NodeStatus: SwiftProtobuf._ProtoNameProviding {
-  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "DELETED"),
-    1: .same(proto: "PENDING_ADDITION"),
-    2: .same(proto: "PENDING_DELETION"),
-    3: .same(proto: "IN_CONSENSUS"),
-  ]
-}
-
-extension Proto_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+extension Com_Hedera_Hapi_Node_State_Addressbook_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".Node"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "node_id"),
@@ -169,6 +177,8 @@ extension Proto_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     6: .standard(proto: "gossip_ca_certificate"),
     7: .standard(proto: "grpc_certificate_hash"),
     8: .same(proto: "weight"),
+    9: .same(proto: "deleted"),
+    10: .standard(proto: "admin_key"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -185,6 +195,8 @@ extension Proto_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
       case 6: try { try decoder.decodeSingularBytesField(value: &self.gossipCaCertificate) }()
       case 7: try { try decoder.decodeSingularBytesField(value: &self.grpcCertificateHash) }()
       case 8: try { try decoder.decodeSingularUInt64Field(value: &self.weight) }()
+      case 9: try { try decoder.decodeSingularBoolField(value: &self.deleted) }()
+      case 10: try { try decoder.decodeSingularMessageField(value: &self._adminKey) }()
       default: break
       }
     }
@@ -219,10 +231,16 @@ extension Proto_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     if self.weight != 0 {
       try visitor.visitSingularUInt64Field(value: self.weight, fieldNumber: 8)
     }
+    if self.deleted != false {
+      try visitor.visitSingularBoolField(value: self.deleted, fieldNumber: 9)
+    }
+    try { if let v = self._adminKey {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 10)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_Node, rhs: Proto_Node) -> Bool {
+  public static func ==(lhs: Com_Hedera_Hapi_Node_State_Addressbook_Node, rhs: Com_Hedera_Hapi_Node_State_Addressbook_Node) -> Bool {
     if lhs.nodeID != rhs.nodeID {return false}
     if lhs._accountID != rhs._accountID {return false}
     if lhs.description_p != rhs.description_p {return false}
@@ -231,6 +249,8 @@ extension Proto_Node: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementatio
     if lhs.gossipCaCertificate != rhs.gossipCaCertificate {return false}
     if lhs.grpcCertificateHash != rhs.grpcCertificateHash {return false}
     if lhs.weight != rhs.weight {return false}
+    if lhs.deleted != rhs.deleted {return false}
+    if lhs._adminKey != rhs._adminKey {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

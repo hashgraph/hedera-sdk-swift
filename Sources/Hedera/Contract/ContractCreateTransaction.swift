@@ -56,7 +56,7 @@ public final class ContractCreateTransaction: Transaction {
         autoRenewPeriod: Duration? = .days(90),
         constructorParameters: Data? = nil,
         contractMemo: String = "",
-        maxAutomaticTokenAssociations: UInt32 = 0,
+        maxAutomaticTokenAssociations: Int32 = 0,
         autoRenewAccountId: AccountId? = nil,
         stakedAccountId: AccountId? = nil,
         stakedNodeId: UInt64? = nil,
@@ -117,7 +117,7 @@ public final class ContractCreateTransaction: Transaction {
         self.autoRenewPeriod = .fromProtobuf(data.autoRenewPeriod)
         self.constructorParameters = !data.constructorParameters.isEmpty ? data.constructorParameters : nil
         self.contractMemo = data.memo
-        self.maxAutomaticTokenAssociations = UInt32(data.maxAutomaticTokenAssociations)
+        self.maxAutomaticTokenAssociations = data.maxAutomaticTokenAssociations
         self.autoRenewAccountId = data.hasAutoRenewAccountID ? try .fromProtobuf(data.autoRenewAccountID) : nil
         self.stakedAccountId = stakedAccountId
         self.stakedNodeId = stakedNodeId
@@ -285,7 +285,7 @@ public final class ContractCreateTransaction: Transaction {
     }
 
     /// The maximum number of tokens that this contract can be automatically associated with.
-    public var maxAutomaticTokenAssociations: UInt32 {
+    public var maxAutomaticTokenAssociations: Int32 {
         willSet {
             ensureNotFrozen()
         }
@@ -293,7 +293,7 @@ public final class ContractCreateTransaction: Transaction {
 
     /// Sets the maximum number of tokens that this contract can be automatically associated with.
     @discardableResult
-    public func maxAutomaticTokenAssociations(_ maxAutomaticTokenAssociations: UInt32) -> Self {
+    public func maxAutomaticTokenAssociations(_ maxAutomaticTokenAssociations: Int32) -> Self {
         self.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
 
         return self

@@ -44,7 +44,7 @@ public struct AccountInfo: Sendable {
         autoRenewPeriod: Duration?,
         accountMemo: String,
         ownedNfts: UInt64,
-        maxAutomaticTokenAssociations: UInt32,
+        maxAutomaticTokenAssociations: Int32,
         aliasKey: PublicKey?,
         ethereumNonce: UInt64,
         ledgerId: LedgerId,
@@ -140,7 +140,7 @@ public struct AccountInfo: Sendable {
     public let ownedNfts: UInt64
 
     /// The maximum number of tokens that an Account can be implicitly associated with.
-    public let maxAutomaticTokenAssociations: UInt32
+    public let maxAutomaticTokenAssociations: Int32
 
     /// The public key which aliases to this account.
     public let aliasKey: PublicKey?
@@ -193,7 +193,7 @@ extension AccountInfo: TryProtobufCodable {
             autoRenewPeriod: .fromProtobuf(autoRenewPeriod),
             accountMemo: proto.memo,
             ownedNfts: UInt64(proto.ownedNfts),
-            maxAutomaticTokenAssociations: UInt32(proto.maxAutomaticTokenAssociations),
+            maxAutomaticTokenAssociations: proto.maxAutomaticTokenAssociations,
             aliasKey: try .fromAliasBytes(proto.alias),
             ethereumNonce: UInt64(proto.ethereumNonce),
             ledgerId: .fromBytes(proto.ledgerID),
@@ -217,7 +217,7 @@ extension AccountInfo: TryProtobufCodable {
             autoRenewPeriod?.toProtobufInto(&proto.autoRenewPeriod)
             proto.memo = accountMemo
             proto.ownedNfts = Int64(ownedNfts)
-            proto.maxAutomaticTokenAssociations = Int32(maxAutomaticTokenAssociations)
+            proto.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
             proto.alias = aliasKey?.toProtobufBytes() ?? Data()
             proto.ethereumNonce = Int64(ethereumNonce)
             proto.ledgerID = ledgerId.bytes
