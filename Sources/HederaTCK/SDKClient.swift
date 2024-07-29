@@ -214,8 +214,8 @@ internal class SDKClient {
             if let maxAutoTokenAssociations = try getOptionalIntParameter(
                 "maxAutoTokenAssociations", params, #function)
             {
-                accountCreateTransaction.maxAutomaticTokenAssociations = UInt32(
-                    truncatingIfNeeded: maxAutoTokenAssociations)
+                accountCreateTransaction.maxAutomaticTokenAssociations = 
+                    Int32(truncatingIfNeeded: maxAutoTokenAssociations)
             }
 
             if let stakedAccountId = try getOptionalStringParameter(
