@@ -24,26 +24,26 @@ import Vapor
 private let jsonRpcVersion = "2.0"
 
 internal struct JSONRequest: Decodable {
-    let jsonrpc: String
-    var id: Int
-    var method: String
-    var params: JSONObject?
+    internal let jsonrpc: String
+    internal var id: Int
+    internal var method: String
+    internal var params: JSONObject?
 
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case jsonrpc
         case id
         case method
         case params
     }
 
-    init(id: Int, method: String, params: JSONObject) {
+    internal init(id: Int, method: String, params: JSONObject) {
         self.jsonrpc = jsonRpcVersion
         self.id = id
         self.method = method
         self.params = params
     }
 
-    init(from decoder: Decoder) throws {
+    internal init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         guard let jsonrpc = try container.decodeIfPresent(String.self, forKey: .jsonrpc) else {
@@ -89,19 +89,19 @@ internal struct JSONRequest: Decodable {
 }
 
 internal struct JSONResponse: Encodable {
-    let jsonrpc: String
-    var id: Int?
-    var result: JSONObject?
-    var error: JSONError?
+    internal let jsonrpc: String
+    internal var id: Int?
+    internal var result: JSONObject?
+    internal var error: JSONError?
 
-    init(id: Int, result: JSONObject) {
+    internal init(id: Int, result: JSONObject) {
         self.jsonrpc = jsonRpcVersion
         self.id = id
         self.result = result
         self.error = nil
     }
 
-    init(id: Int?, error: JSONError) {
+    internal init(id: Int?, error: JSONError) {
         self.jsonrpc = jsonRpcVersion
         self.id = id
         self.result = nil
@@ -117,13 +117,13 @@ internal enum JSONError: Encodable, Error {
     case internalError(String, JSONObject? = nil)
     case parseError(String, JSONObject? = nil)
 
-    enum CodingKeys: String, CodingKey {
+    private enum CodingKeys: String, CodingKey {
         case code
         case message
         case data
     }
 
-    var code: Int {
+    internal var code: Int {
         switch self {
         case .hederaError: return -32001
         case .invalidRequest: return -32600
@@ -134,7 +134,7 @@ internal enum JSONError: Encodable, Error {
         }
     }
 
-    var message: String {
+    internal var message: String {
         switch self {
         case .hederaError(let message, _),
             .invalidRequest(let message, _),
@@ -146,7 +146,7 @@ internal enum JSONError: Encodable, Error {
         }
     }
 
-    var data: JSONObject? {
+    internal var data: JSONObject? {
         switch self {
         case .hederaError(_, let data),
             .invalidRequest(_, let data),
@@ -158,7 +158,7 @@ internal enum JSONError: Encodable, Error {
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    internal func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(code, forKey: .code)
         try container.encode(message, forKey: .message)
@@ -167,7 +167,6 @@ internal enum JSONError: Encodable, Error {
 }
 
 internal enum JSONObject: Codable {
-    case none
     case string(String)
     case int(Int64)
     case double(Double)
@@ -175,44 +174,44 @@ internal enum JSONObject: Codable {
     case list([JSONObject])
     case dictionary([String: JSONObject])
 
-    var stringValue: String? {
+    internal var stringValue: String? {
         if case .string(let value) = self {
             return value
         }
         return nil
     }
-    var intValue: Int64? {
+    internal var intValue: Int64? {
         if case .int(let value) = self {
             return value
         }
         return nil
     }
-    var doubleValue: Double? {
+    internal var doubleValue: Double? {
         if case .double(let value) = self {
             return value
         }
         return nil
     }
-    var boolValue: Bool? {
+    internal var boolValue: Bool? {
         if case .bool(let value) = self {
             return value
         }
         return nil
     }
-    var listValue: [JSONObject]? {
+    internal var listValue: [JSONObject]? {
         if case .list(let value) = self {
             return value
         }
         return nil
     }
-    var dictValue: [String: JSONObject]? {
+    internal var dictValue: [String: JSONObject]? {
         if case .dictionary(let value) = self {
             return value
         }
         return nil
     }
 
-    init(from decoder: Decoder) throws {
+    internal init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
 
         if let value = try? container.decode(String.self) {
@@ -228,16 +227,14 @@ internal enum JSONObject: Codable {
         } else if let value = try? container.decode([String: JSONObject].self) {
             self = .dictionary(value)
         } else {
-            self = .none
+            throw JSONError.invalidParams("param type not recognized")
         }
     }
 
-    func encode(to encoder: Encoder) throws {
+    internal func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
 
         switch self {
-        case .none:
-            break
         case .string(let value):
             try container.encode(value)
         case .int(let value):

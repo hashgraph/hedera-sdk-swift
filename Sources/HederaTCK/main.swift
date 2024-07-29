@@ -22,7 +22,7 @@ import Vapor
 
 @testable import Hedera
 
-let server = TCKServer(sdkClient: SDKClient())
+private let server = TCKServer(sdkClient: SDKClient())
 try TCKServer.main()
 
 private func encodeJsonRpcResponseToHttpResponse(jsonResponse: JSONResponse) throws -> Response {
@@ -30,10 +30,10 @@ private func encodeJsonRpcResponseToHttpResponse(jsonResponse: JSONResponse) thr
     return Response(status: .ok, headers: ["Content-Type": "application/json"], body: .init(data: responseData))
 }
 
-struct TCKServer {
-    var sdkClient: SDKClient
+private struct TCKServer {
+    internal var sdkClient: SDKClient
 
-    static func main() throws {
+    internal static func main() throws {
         var env = try Environment.detect()
         try LoggingSystem.bootstrap(from: &env)
         let app = Application(env)
@@ -49,8 +49,6 @@ struct TCKServer {
             }
 
             let response = await server.processRequest(request: jsonRpcRequest)
-            print("RESPONSE:")
-            print(response)
             return try encodeJsonRpcResponseToHttpResponse(
                 jsonResponse: response)
         }
@@ -58,9 +56,7 @@ struct TCKServer {
         try app.run()
     }
 
-    func processRequest(request: JSONRequest) async -> JSONResponse {
-        print("REQUEST:")
-        print(request.toDict())
+    private func processRequest(request: JSONRequest) async -> JSONResponse {
         do {
             switch request.method {
             ///

@@ -22,10 +22,10 @@ import HederaProtobufs
 
 @testable import Hedera
 
-class SDKClient {
+internal class SDKClient {
     private var client: Client
 
-    public init() {
+    internal init() {
         self.client = Client.forTestnet()
     }
 
@@ -70,7 +70,8 @@ class SDKClient {
 
         let threshold = try getOptionalIntParameter("threshold", parameters, "generateKey")
         if threshold != nil, type != .thresholdKeyType {
-            throw JSONError.invalidParams("generateKey: threshold MUST be provided for thresholdKey types.")
+            throw JSONError.invalidParams(
+                "generateKey: threshold MUST NOT be provided for types other than thresholdKey.")
         } else if threshold == nil, type == .thresholdKeyType {
             throw JSONError.invalidParams("generateKey: threshold MUST be provided for thresholdKey types.")
         }
@@ -179,7 +180,7 @@ class SDKClient {
         }
     }
 
-    public func createAccount(_ parameters: [String: JSONObject]?) async throws -> JSONObject {
+    internal func createAccount(_ parameters: [String: JSONObject]?) async throws -> JSONObject {
         var accountCreateTransaction = AccountCreateTransaction()
 
         if let params = parameters {
@@ -213,7 +214,7 @@ class SDKClient {
             if let maxAutoTokenAssociations = try getOptionalIntParameter(
                 "maxAutoTokenAssociations", params, #function)
             {
-                accountCreateTransaction.maxAutomaticTokenAssociations = UInt32(maxAutoTokenAssociations)
+                accountCreateTransaction.maxAutomaticTokenAssociations = UInt32(truncatingIfNeeded: maxAutoTokenAssociations)
             }
 
             if let stakedAccountId = try getOptionalStringParameter(
@@ -254,7 +255,7 @@ class SDKClient {
         ])
     }
 
-    public func generateKey(_ parameters: [String: JSONObject]) throws -> JSONObject {
+    internal func generateKey(_ parameters: [String: JSONObject]) throws -> JSONObject {
         var privateKeys = [JSONObject]()
         let key = try generateKeyHelper(parameters: parameters, privateKeys: &privateKeys)
 
@@ -265,12 +266,12 @@ class SDKClient {
         return JSONObject.dictionary(["key": JSONObject.string(key)])
     }
 
-    public func reset() throws -> JSONObject {
+    internal func reset() throws -> JSONObject {
         self.client = try Client.forNetwork([String: AccountId]())
         return JSONObject.dictionary(["status": JSONObject.string("SUCCESS")])
     }
 
-    public func setup(_ parameters: [String: JSONObject]) throws -> JSONObject {
+    internal func setup(_ parameters: [String: JSONObject]) throws -> JSONObject {
         let operatorAccountId = try AccountId.fromString(
             getRequiredStringParameter("operatorAccountId", parameters, #function))
         let operatorPrivateKey = try PrivateKey.fromStringDer(
