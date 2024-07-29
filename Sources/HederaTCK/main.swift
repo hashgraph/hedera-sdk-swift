@@ -105,7 +105,7 @@ struct TCKServer {
                 .receiptStatus(let status, let _):
                 return JSONResponse(id: request.id, error: JSONError.hederaError("Hedera error", JSONObject.dictionary(["status": JSONObject.string(Status.nameMap[status.rawValue]!), "message": JSONObject.string(error.description)])))
             default:
-                return JSONResponse(id: request.id, error: JSONError.hederaError("Hedera error"))
+                return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))
             }
         } catch let error {
             return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))

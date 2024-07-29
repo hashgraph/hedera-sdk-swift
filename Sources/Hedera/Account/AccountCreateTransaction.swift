@@ -283,7 +283,7 @@ extension AccountCreateTransaction: ToProtobuf {
     internal func toProtobuf() -> Protobuf {
         .with { proto in
             key?.toProtobufInto(&proto.key)
-            proto.initialBalance = UInt64(initialBalance.toTinybars())
+            proto.initialBalance = UInt64(truncatingIfNeeded: initialBalance.toTinybars())
             proto.receiverSigRequired = receiverSignatureRequired
             autoRenewPeriod?.toProtobufInto(&proto.autoRenewPeriod)
             // autoRenewAccountId?.toProtobufInto(&proto.autoRenewAccount)
@@ -295,7 +295,7 @@ extension AccountCreateTransaction: ToProtobuf {
             }
 
             if let stakedNodeId = stakedNodeId {
-                proto.stakedNodeID = Int64(stakedNodeId)
+                proto.stakedNodeID = Int64(truncatingIfNeeded: stakedNodeId)
             }
 
             if let stakedAccountId = stakedAccountId {

@@ -199,7 +199,7 @@ class SDKClient {
             if let autoRenewPeriod = try getOptionalIntParameter(
                 "autoRenewPeriod", params, #function)
             {
-                accountCreateTransaction.autoRenewPeriod = Duration(seconds: UInt64(autoRenewPeriod))
+                accountCreateTransaction.autoRenewPeriod = Duration(seconds: UInt64(truncatingIfNeeded: autoRenewPeriod))
             }
 
             if let memo = try getOptionalStringParameter("memo", params, #function) {
@@ -221,7 +221,7 @@ class SDKClient {
             if let stakedNodeId = try getOptionalIntParameter(
                 "stakedNodeId", params, #function)
             {
-                accountCreateTransaction.stakedNodeId = UInt64(stakedNodeId)
+                accountCreateTransaction.stakedNodeId = UInt64(truncatingIfNeeded: stakedNodeId)
             }
 
             if let declineStakingReward = try getOptionalBooleanParameter(
