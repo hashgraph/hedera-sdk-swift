@@ -139,8 +139,12 @@ public struct Proto_ContractUpdateTransactionBody {
   }
 
   ///*
-  /// If set, the new maximum number of tokens that this contract can be
-  /// automatically associated with (i.e., receive air-drops from).
+  /// If set, modify the maximum number of tokens that can be auto-associated with the
+  /// contract.<br/>
+  /// If this is set and less than or equal to `used_auto_associations`, or 0, then this contract
+  /// MUST manually associate with a token before transacting in that token.<br/>
+  /// This value MAY also be `-1` to indicate no limit.<br/>
+  /// This value MUST NOT be less than `-1`.
   public var maxAutomaticTokenAssociations: SwiftProtobuf.Google_Protobuf_Int32Value {
     get {return _storage._maxAutomaticTokenAssociations ?? SwiftProtobuf.Google_Protobuf_Int32Value()}
     set {_uniqueStorage()._maxAutomaticTokenAssociations = newValue}

@@ -21,28 +21,42 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 ///*
-/// A transaction body to add a new node to the network.
-/// After the node is created, the node_id for it is in the receipt.
+/// A transaction body to add a new consensus node to the network address book.
 ///
 /// This transaction body SHALL be considered a "privileged transaction".
 ///
-/// This message supports a transaction to create a new node in the network.
-/// The transaction, once complete, enables a new consensus node
+/// This message supports a transaction to create a new node in the network
+/// address book. The transaction, once complete, enables a new consensus node
 /// to join the network, and requires governing council authorization.
 ///
-/// A `NodeCreateTransactionBody` MUST be signed by the governing council.<br/>
-/// The newly created node information will be used to generate config.txt and
-/// a-pulbic-NodeAlias.pem file per each node during phase 2,<br>
-/// not active until next freeze upgrade.
-public struct Proto_NodeCreateTransactionBody {
+/// - A `NodeCreateTransactionBody` MUST be signed by the governing council.
+/// - A `NodeCreateTransactionBody` MUST be signed by the `Key` assigned to the
+///   `admin_key` field.
+/// - The newly created node information SHALL be added to the network address
+///   book information in the network state.
+/// - The new entry SHALL be created in "state" but SHALL NOT participate in
+///   network consensus and SHALL NOT be present in network "configuration"
+///   until the next "upgrade" transaction (as noted below).
+/// - All new address book entries SHALL be added to the active network
+///   configuration during the next `freeze` transaction with the field
+///   `freeze_type` set to `PREPARE_UPGRADE`.
+///
+/// ### Record Stream Effects
+/// Upon completion the newly assigned `node_id` SHALL be in the transaction
+/// receipt.
+public struct Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///*
-  /// Node account id, mandatory field, ALIAS is not allowed, only ACCOUNT_NUM.
-  /// If account_id does not exist, it will reject the transaction.
-  /// Multiple nodes can have the same account_id.
+  /// A Node account identifier.
+  /// <p>
+  /// This account identifier MUST be in the "account number" form.<br/>
+  /// This account identifier MUST NOT use the alias field.<br/>
+  /// If the identified account does not exist, this transaction SHALL fail.<br/>
+  /// Multiple nodes MAY share the same node account.<br/>
+  /// This field is REQUIRED.
   public var accountID: Proto_AccountID {
     get {return _accountID ?? Proto_AccountID()}
     set {_accountID = newValue}
@@ -53,52 +67,100 @@ public struct Proto_NodeCreateTransactionBody {
   public mutating func clearAccountID() {self._accountID = nil}
 
   ///*
-  /// Description of the node with UTF-8 encoding up to 100 bytes, optional field.
+  /// A short description of the node.
+  /// <p>
+  /// This value, if set, MUST NOT exceed 100 bytes when encoded as UTF-8.<br/>
+  /// This field is OPTIONAL.
   public var description_p: String = String()
 
   ///*
-  /// Ip address and port, mandatory field. Fully qualified domain name is
-  /// not allowed here. Maximum number of these endpoints is 10.
-  /// The first in the list is used as the Internal IP address in config.txt,
-  /// the second in the list is used as the External IP address in config.txt,
-  /// the rest of IP addresses are ignored for DAB phase 2.
+  /// A list of service endpoints for gossip.
+  /// <p>
+  /// These endpoints SHALL represent the published endpoints to which other
+  /// consensus nodes may _gossip_ transactions.<br/>
+  /// These endpoints MUST specify a port.<br/>
+  /// This list MUST NOT be empty.<br/>
+  /// This list MUST NOT contain more than `10` entries.<br/>
+  /// The first two entries in this list SHALL be the endpoints published to
+  /// all consensus nodes.<br/>
+  /// All other entries SHALL be reserved for future use.
+  /// <p>
+  /// Each network may have additional requirements for these endpoints.
+  /// A client MUST check network-specific documentation for those
+  /// details.<br/>
+  /// If the network configuration value `gossipFqdnRestricted` is set, then
+  /// all endpoints in this list MUST supply only IP address.<br/>
+  /// If the network configuration value `gossipFqdnRestricted` is _not_ set,
+  /// then endpoints in this list MAY supply either IP address or FQDN, but
+  /// MUST NOT supply both values for the same endpoint.
   public var gossipEndpoint: [Proto_ServiceEndpoint] = []
 
   ///*
-  /// A node's grpc service IP addresses and ports, IP:Port is mandatory,
-  /// fully qualified domain name is optional. Maximum number of these endpoints is 8.
+  /// A list of service endpoints for gRPC calls.
+  /// <p>
+  /// These endpoints SHALL represent the published gRPC endpoints to which
+  /// clients may submit transactions.<br/>
+  /// These endpoints MUST specify a port.<br/>
+  /// Endpoints in this list MAY supply either IP address or FQDN, but MUST
+  /// NOT supply both values for the same endpoint.<br/>
+  /// This list MUST NOT be empty.<br/>
+  /// This list MUST NOT contain more than `8` entries.
   public var serviceEndpoint: [Proto_ServiceEndpoint] = []
 
   ///*
-  /// The node's X509 certificate used to sign stream files (e.g., record stream
-  /// files). Precisely, this field is the DER encoding of gossip X509 certificate.
-  /// This is a mandatory field.
+  /// A certificate used to sign gossip events.
+  /// <p>
+  /// This value MUST be a certificate of a type permitted for gossip
+  /// signatures.<br/>
+  /// This value MUST be the DER encoding of the certificate presented.<br/>
+  /// This field is REQUIRED and MUST NOT be empty.
   public var gossipCaCertificate: Data = Data()
 
   ///*
-  /// Hash of the node's TLS certificate. Precisely, this field is a string of
-  /// hexadecimal characters which translated to binary, are the SHA-384 hash of
-  /// the UTF-8 NFKD encoding of the node's TLS cert in PEM format.
-  /// Its value can be used to verify the node's certificate it presents
-  /// during TLS negotiations.node x509 certificate hash, optional field.
+  /// A hash of the node gRPC TLS certificate.
+  /// <p>
+  /// This value MAY be used to verify the certificate presented by the node
+  /// during TLS negotiation for gRPC.<br/>
+  /// This value MUST be a SHA-384 hash.<br/>
+  /// The TLS certificate to be hashed MUST first be in PEM format and MUST be
+  /// encoded with UTF-8 NFKD encoding to a stream of bytes provided to
+  /// the hash algorithm.<br/>
+  /// This field is OPTIONAL.
   public var grpcCertificateHash: Data = Data()
+
+  ///*
+  /// An administrative key controlled by the node operator.
+  /// <p>
+  /// This key MUST sign this transaction.<br/>
+  /// This key MUST sign each transaction to update this node.<br/>
+  /// This field MUST contain a valid `Key` value.<br/>
+  /// This field is REQUIRED and MUST NOT be set to an empty `KeyList`.
+  public var adminKey: Proto_Key {
+    get {return _adminKey ?? Proto_Key()}
+    set {_adminKey = newValue}
+  }
+  /// Returns true if `adminKey` has been explicitly set.
+  public var hasAdminKey: Bool {return self._adminKey != nil}
+  /// Clears the value of `adminKey`. Subsequent reads from it will return its default value.
+  public mutating func clearAdminKey() {self._adminKey = nil}
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
   fileprivate var _accountID: Proto_AccountID? = nil
+  fileprivate var _adminKey: Proto_Key? = nil
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_NodeCreateTransactionBody: @unchecked Sendable {}
+extension Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
-fileprivate let _protobuf_package = "proto"
+fileprivate let _protobuf_package = "com.hedera.hapi.node.addressbook"
 
-extension Proto_NodeCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+extension Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".NodeCreateTransactionBody"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "account_id"),
@@ -107,6 +169,7 @@ extension Proto_NodeCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
     4: .standard(proto: "service_endpoint"),
     5: .standard(proto: "gossip_ca_certificate"),
     6: .standard(proto: "grpc_certificate_hash"),
+    7: .standard(proto: "admin_key"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -121,6 +184,7 @@ extension Proto_NodeCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
       case 4: try { try decoder.decodeRepeatedMessageField(value: &self.serviceEndpoint) }()
       case 5: try { try decoder.decodeSingularBytesField(value: &self.gossipCaCertificate) }()
       case 6: try { try decoder.decodeSingularBytesField(value: &self.grpcCertificateHash) }()
+      case 7: try { try decoder.decodeSingularMessageField(value: &self._adminKey) }()
       default: break
       }
     }
@@ -149,16 +213,20 @@ extension Proto_NodeCreateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
     if !self.grpcCertificateHash.isEmpty {
       try visitor.visitSingularBytesField(value: self.grpcCertificateHash, fieldNumber: 6)
     }
+    try { if let v = self._adminKey {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_NodeCreateTransactionBody, rhs: Proto_NodeCreateTransactionBody) -> Bool {
+  public static func ==(lhs: Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody, rhs: Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody) -> Bool {
     if lhs._accountID != rhs._accountID {return false}
     if lhs.description_p != rhs.description_p {return false}
     if lhs.gossipEndpoint != rhs.gossipEndpoint {return false}
     if lhs.serviceEndpoint != rhs.serviceEndpoint {return false}
     if lhs.gossipCaCertificate != rhs.gossipCaCertificate {return false}
     if lhs.grpcCertificateHash != rhs.grpcCertificateHash {return false}
+    if lhs._adminKey != rhs._adminKey {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

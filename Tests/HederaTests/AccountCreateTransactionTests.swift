@@ -26,7 +26,7 @@ import XCTest
 
 internal class AccountCreateTransactionTests: XCTestCase {
     private static let testKey = Key.single(Resources.publicKey)
-    private static let testMaxAutomaticTokenAssociations: UInt32 = 101
+    private static let testMaxAutomaticTokenAssociations: Int32 = 101
     private static let testAutoRenewPeriod = Duration.hours(10)
     private static let testAutoRenewAccountId: AccountId = 30
     private static let testStakedAccountId: AccountId = 3
@@ -126,7 +126,7 @@ internal class AccountCreateTransactionTests: XCTestCase {
             proto.key = Self.testKey.toProtobuf()
             proto.stakedNodeID = Int64(Self.testStakedNodeId)
             proto.stakedAccountID = Self.testStakedAccountId.toProtobuf()
-            proto.maxAutomaticTokenAssociations = Int32(Self.testMaxAutomaticTokenAssociations)
+            proto.maxAutomaticTokenAssociations = Self.testMaxAutomaticTokenAssociations
         }
 
         let protoBody = Proto_TransactionBody.with { proto in

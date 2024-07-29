@@ -201,6 +201,10 @@ extension Transaction {
         case .tokenUpdateNfts(let value):
             let value = try intoOnlyValue(value)
             return try TokenUpdateNftsTransaction(protobuf: firstBody, value)
+
+        case .tokenReject(let value):
+            let value = try intoOnlyValue(value)
+            return try TokenRejectTransaction(protobuf: firstBody, value)
         }
     }
 }

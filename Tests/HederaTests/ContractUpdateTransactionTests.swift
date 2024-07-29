@@ -27,7 +27,7 @@ import XCTest
 internal final class ContractUpdateTransactionTests: XCTestCase {
     private static let contractId: ContractId = "0.0.5007"
     private static let adminKey = Key.single(Resources.publicKey)
-    private static let maxAutomaticTokenAssociations: UInt32 = 101
+    private static let maxAutomaticTokenAssociations: Int32 = 101
     private static let autoRenewPeriod = Duration.days(1)
     private static let contractMemo = "3"
     private static let expirationTime = Timestamp(seconds: 1_554_158_543, subSecondNanos: 0)
@@ -102,7 +102,7 @@ internal final class ContractUpdateTransactionTests: XCTestCase {
         let protoData = Proto_ContractUpdateTransactionBody.with { proto in
             proto.contractID = Self.contractId.toProtobuf()
             proto.adminKey = Self.adminKey.toProtobuf()
-            proto.maxAutomaticTokenAssociations = .init(Int32(Self.maxAutomaticTokenAssociations))
+            proto.maxAutomaticTokenAssociations = .init(Self.maxAutomaticTokenAssociations)
             proto.autoRenewPeriod = Self.autoRenewPeriod.toProtobuf()
             proto.memoWrapper = .init(Self.contractMemo)
             proto.expirationTime = Self.expirationTime.toProtobuf()
