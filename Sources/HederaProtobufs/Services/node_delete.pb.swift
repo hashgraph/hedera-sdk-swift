@@ -21,21 +21,33 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 ///*
-/// Delete the given node. After deletion, it will be marked as deleted.
-/// But information about it will continue to exist for a year.
-/// For phase 2, this marks the node to be deleted in the merkle tree and will be used to write config.txt and
-/// a-pulbic-NodeAlias.pem file per each node during prepare freeze.
-/// The deleted node will not be deleted until the network is upgraded.
-/// Such a deleted node can never be reused.
-/// The council has to sign this transaction. This is a privileged transaction.
-public struct Proto_NodeDeleteTransactionBody {
+/// A transaction body to delete a node from the network address book.
+///
+/// This transaction body SHALL be considered a "privileged transaction".
+///
+/// - A `NodeDeleteTransactionBody` MUST be signed by the governing council.
+/// - Upon success, the address book entry SHALL enter a "pending delete"
+///   state.
+/// - All address book entries pending deletion SHALL be removed from the
+///   active network configuration during the next `freeze` transaction with
+///   the field `freeze_type` set to `PREPARE_UPGRADE`.<br/>
+/// - A deleted address book node SHALL be removed entirely from network state.
+/// - A deleted address book node identifier SHALL NOT be reused.
+///
+/// ### Record Stream Effects
+/// Upon completion the "deleted" `node_id` SHALL be in the transaction
+/// receipt.
+public struct Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
   ///*
-  /// The unique id of the node to be deleted. If invalid node is specified, transaction will
-  /// result in INVALID_NODE_ID.
+  /// A consensus node identifier in the network state.
+  /// <p>
+  /// The node identified MUST exist in the network address book.<br/>
+  /// The node identified MUST NOT be deleted.<br/>
+  /// This value is REQUIRED.
   public var nodeID: UInt64 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -44,14 +56,14 @@ public struct Proto_NodeDeleteTransactionBody {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_NodeDeleteTransactionBody: @unchecked Sendable {}
+extension Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
-fileprivate let _protobuf_package = "proto"
+fileprivate let _protobuf_package = "com.hedera.hapi.node.addressbook"
 
-extension Proto_NodeDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+extension Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + ".NodeDeleteTransactionBody"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "node_id"),
@@ -76,7 +88,7 @@ extension Proto_NodeDeleteTransactionBody: SwiftProtobuf.Message, SwiftProtobuf.
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: Proto_NodeDeleteTransactionBody, rhs: Proto_NodeDeleteTransactionBody) -> Bool {
+  public static func ==(lhs: Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody, rhs: Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody) -> Bool {
     if lhs.nodeID != rhs.nodeID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true

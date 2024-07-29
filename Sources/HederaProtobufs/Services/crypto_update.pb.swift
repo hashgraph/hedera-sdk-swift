@@ -196,8 +196,12 @@ public struct Proto_CryptoUpdateTransactionBody {
   public mutating func clearMemo() {_uniqueStorage()._memo = nil}
 
   ///*
-  /// The maximum number of tokens that an Account can be implicitly associated with. Up to a 1000
-  /// including implicit and explicit associations.
+  /// If set, modify the maximum number of tokens that can be auto-associated with the
+  /// account.<br/>
+  /// If this is set and less than or equal to `used_auto_associations`, or 0, then this account
+  /// MUST manually associate with a token before transacting in that token.<br/>
+  /// This value MAY also be `-1` to indicate no limit.<br/>
+  /// This value MUST NOT be less than `-1`.
   public var maxAutomaticTokenAssociations: SwiftProtobuf.Google_Protobuf_Int32Value {
     get {return _storage._maxAutomaticTokenAssociations ?? SwiftProtobuf.Google_Protobuf_Int32Value()}
     set {_uniqueStorage()._maxAutomaticTokenAssociations = newValue}

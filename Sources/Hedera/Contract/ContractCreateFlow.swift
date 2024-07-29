@@ -52,7 +52,7 @@ public final class ContractCreateFlow {
             constructorParameters: Data = Data(),
             gas: UInt64 = 0,
             initialBalance: Hbar = .zero,
-            maxAutomaticTokenAssociations: UInt32 = 0,
+            maxAutomaticTokenAssociations: Int32 = 0,
             declineStakingReward: Bool = false,
             adminKey: Key? = nil,
             autoRenewAccountId: AccountId? = nil,
@@ -79,7 +79,7 @@ public final class ContractCreateFlow {
         fileprivate var constructorParameters: Data
         fileprivate var gas: UInt64
         fileprivate var initialBalance: Hbar
-        fileprivate var maxAutomaticTokenAssociations: UInt32
+        fileprivate var maxAutomaticTokenAssociations: Int32
         fileprivate var declineStakingReward: Bool
         fileprivate var adminKey: Key?
         // fileprivate var proxyAccountId: AccountId?
@@ -220,7 +220,7 @@ public final class ContractCreateFlow {
     }
 
     /// The maximum number of tokens that the contract can be automatically associated with.
-    public var maxAutomaticTokenAssociations: UInt32 {
+    public var maxAutomaticTokenAssociations: Int32 {
         get { contractCreateData.maxAutomaticTokenAssociations }
         set(value) { contractCreateData.maxAutomaticTokenAssociations = value }
     }
@@ -229,7 +229,7 @@ public final class ContractCreateFlow {
     ///
     /// - Returns: `self`
     @discardableResult
-    public func maxAutomaticTokenAssociations(_ maxAutomaticTokenAssociations: UInt32) -> Self {
+    public func maxAutomaticTokenAssociations(_ maxAutomaticTokenAssociations: Int32) -> Self {
         self.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
 
         return self

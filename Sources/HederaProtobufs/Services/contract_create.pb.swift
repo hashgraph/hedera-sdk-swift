@@ -215,8 +215,12 @@ public struct Proto_ContractCreateTransactionBody {
   }
 
   ///*
-  /// The maximum number of tokens that this contract can be automatically associated
-  /// with (i.e., receive air-drops from).
+  /// The maximum number of tokens that can be auto-associated with the contract.<br/>
+  /// If this is less than or equal to `used_auto_associations`, or 0, then this contract
+  /// MUST manually associate with a token before transacting in that token.<br/>
+  /// This value MAY also be `-1` to indicate no limit.<br/>
+  /// This value MUST NOT be less than `-1`.<br/>
+  /// By default this value is 0 for contracts.
   public var maxAutomaticTokenAssociations: Int32 {
     get {return _storage._maxAutomaticTokenAssociations}
     set {_uniqueStorage()._maxAutomaticTokenAssociations = newValue}

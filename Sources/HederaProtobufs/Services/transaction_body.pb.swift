@@ -123,26 +123,6 @@ public struct Proto_TransactionBody {
   }
 
   ///*
-  /// Delete contract and transfer remaining balance into specified account
-  public var contractDeleteInstance: Proto_ContractDeleteTransactionBody {
-    get {
-      if case .contractDeleteInstance(let v)? = _storage._data {return v}
-      return Proto_ContractDeleteTransactionBody()
-    }
-    set {_uniqueStorage()._data = .contractDeleteInstance(newValue)}
-  }
-
-  ///*
-  /// An Ethereum encoded transaction.
-  public var ethereumTransaction: Proto_EthereumTransactionBody {
-    get {
-      if case .ethereumTransaction(let v)? = _storage._data {return v}
-      return Proto_EthereumTransactionBody()
-    }
-    set {_uniqueStorage()._data = .ethereumTransaction(newValue)}
-  }
-
-  ///*
   /// Attach a new livehash to an account
   public var cryptoAddLiveHash: Proto_CryptoAddLiveHashTransactionBody {
     get {
@@ -150,26 +130,6 @@ public struct Proto_TransactionBody {
       return Proto_CryptoAddLiveHashTransactionBody()
     }
     set {_uniqueStorage()._data = .cryptoAddLiveHash(newValue)}
-  }
-
-  ///*
-  /// Adds one or more approved allowances for spenders to transfer the paying account's hbar or tokens.
-  public var cryptoApproveAllowance: Proto_CryptoApproveAllowanceTransactionBody {
-    get {
-      if case .cryptoApproveAllowance(let v)? = _storage._data {return v}
-      return Proto_CryptoApproveAllowanceTransactionBody()
-    }
-    set {_uniqueStorage()._data = .cryptoApproveAllowance(newValue)}
-  }
-
-  ///*
-  /// Deletes one or more of the specific approved NFT serial numbers on an owner account.
-  public var cryptoDeleteAllowance: Proto_CryptoDeleteAllowanceTransactionBody {
-    get {
-      if case .cryptoDeleteAllowance(let v)? = _storage._data {return v}
-      return Proto_CryptoDeleteAllowanceTransactionBody()
-    }
-    set {_uniqueStorage()._data = .cryptoDeleteAllowance(newValue)}
   }
 
   ///*
@@ -280,6 +240,16 @@ public struct Proto_TransactionBody {
       return Proto_SystemUndeleteTransactionBody()
     }
     set {_uniqueStorage()._data = .systemUndelete(newValue)}
+  }
+
+  ///*
+  /// Delete contract and transfer remaining balance into specified account
+  public var contractDeleteInstance: Proto_ContractDeleteTransactionBody {
+    get {
+      if case .contractDeleteInstance(let v)? = _storage._data {return v}
+      return Proto_ContractDeleteTransactionBody()
+    }
+    set {_uniqueStorage()._data = .contractDeleteInstance(newValue)}
   }
 
   ///*
@@ -463,6 +433,36 @@ public struct Proto_TransactionBody {
   }
 
   ///*
+  /// Creates a schedule in the network's action queue
+  public var scheduleCreate: Proto_ScheduleCreateTransactionBody {
+    get {
+      if case .scheduleCreate(let v)? = _storage._data {return v}
+      return Proto_ScheduleCreateTransactionBody()
+    }
+    set {_uniqueStorage()._data = .scheduleCreate(newValue)}
+  }
+
+  ///*
+  /// Deletes a schedule from the network's action queue
+  public var scheduleDelete: Proto_ScheduleDeleteTransactionBody {
+    get {
+      if case .scheduleDelete(let v)? = _storage._data {return v}
+      return Proto_ScheduleDeleteTransactionBody()
+    }
+    set {_uniqueStorage()._data = .scheduleDelete(newValue)}
+  }
+
+  ///*
+  /// Adds one or more Ed25519 keys to the affirmed signers of a scheduled transaction
+  public var scheduleSign: Proto_ScheduleSignTransactionBody {
+    get {
+      if case .scheduleSign(let v)? = _storage._data {return v}
+      return Proto_ScheduleSignTransactionBody()
+    }
+    set {_uniqueStorage()._data = .scheduleSign(newValue)}
+  }
+
+  ///*
   /// Updates a token's custom fee schedule
   public var tokenFeeScheduleUpdate: Proto_TokenFeeScheduleUpdateTransactionBody {
     get {
@@ -493,33 +493,33 @@ public struct Proto_TransactionBody {
   }
 
   ///*
-  /// Creates a schedule in the network's action queue
-  public var scheduleCreate: Proto_ScheduleCreateTransactionBody {
+  /// Adds one or more approved allowances for spenders to transfer the paying account's hbar or tokens.
+  public var cryptoApproveAllowance: Proto_CryptoApproveAllowanceTransactionBody {
     get {
-      if case .scheduleCreate(let v)? = _storage._data {return v}
-      return Proto_ScheduleCreateTransactionBody()
+      if case .cryptoApproveAllowance(let v)? = _storage._data {return v}
+      return Proto_CryptoApproveAllowanceTransactionBody()
     }
-    set {_uniqueStorage()._data = .scheduleCreate(newValue)}
+    set {_uniqueStorage()._data = .cryptoApproveAllowance(newValue)}
   }
 
   ///*
-  /// Deletes a schedule from the network's action queue
-  public var scheduleDelete: Proto_ScheduleDeleteTransactionBody {
+  /// Deletes one or more of the specific approved NFT serial numbers on an owner account.
+  public var cryptoDeleteAllowance: Proto_CryptoDeleteAllowanceTransactionBody {
     get {
-      if case .scheduleDelete(let v)? = _storage._data {return v}
-      return Proto_ScheduleDeleteTransactionBody()
+      if case .cryptoDeleteAllowance(let v)? = _storage._data {return v}
+      return Proto_CryptoDeleteAllowanceTransactionBody()
     }
-    set {_uniqueStorage()._data = .scheduleDelete(newValue)}
+    set {_uniqueStorage()._data = .cryptoDeleteAllowance(newValue)}
   }
 
   ///*
-  /// Adds one or more Ed25519 keys to the affirmed signers of a scheduled transaction
-  public var scheduleSign: Proto_ScheduleSignTransactionBody {
+  /// An Ethereum encoded transaction.
+  public var ethereumTransaction: Proto_EthereumTransactionBody {
     get {
-      if case .scheduleSign(let v)? = _storage._data {return v}
-      return Proto_ScheduleSignTransactionBody()
+      if case .ethereumTransaction(let v)? = _storage._data {return v}
+      return Proto_EthereumTransactionBody()
     }
-    set {_uniqueStorage()._data = .scheduleSign(newValue)}
+    set {_uniqueStorage()._data = .ethereumTransaction(newValue)}
   }
 
   ///*
@@ -554,32 +554,65 @@ public struct Proto_TransactionBody {
 
   ///*
   /// A transaction body for a `createNode` request.
-  public var nodeCreate: Proto_NodeCreateTransactionBody {
+  /// <p>
+  /// This transaction SHALL create a new consensus node record and add
+  /// that record to the network address book.
+  public var nodeCreate: Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody {
     get {
       if case .nodeCreate(let v)? = _storage._data {return v}
-      return Proto_NodeCreateTransactionBody()
+      return Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody()
     }
     set {_uniqueStorage()._data = .nodeCreate(newValue)}
   }
 
   ///*
   /// A transaction body for an `updateNode` request.
-  public var nodeUpdate: Proto_NodeUpdateTransactionBody {
+  /// <p>
+  /// This transaction SHALL update an existing consensus node record in
+  /// the network address book.
+  public var nodeUpdate: Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody {
     get {
       if case .nodeUpdate(let v)? = _storage._data {return v}
-      return Proto_NodeUpdateTransactionBody()
+      return Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody()
     }
     set {_uniqueStorage()._data = .nodeUpdate(newValue)}
   }
 
   ///*
   /// A transaction body for a `deleteNode` request.
-  public var nodeDelete: Proto_NodeDeleteTransactionBody {
+  /// <p>
+  /// This transaction SHALL remove an existing consensus node record from
+  /// the network address book.
+  public var nodeDelete: Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody {
     get {
       if case .nodeDelete(let v)? = _storage._data {return v}
-      return Proto_NodeDeleteTransactionBody()
+      return Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody()
     }
     set {_uniqueStorage()._data = .nodeDelete(newValue)}
+  }
+
+  ///*
+  /// A transaction body to "reject" undesired tokens.<br/>
+  /// This transaction will transfer one or more tokens or token
+  /// balances held by the requesting account to the treasury
+  /// for each token type.
+  /// <p>
+  /// Each transfer MUST be one of the following:
+  /// <ul>
+  ///   <li>A single non-fungible/unique token.</li>
+  ///   <li>The full balance held for a fungible/common
+  ///       token type.</li>
+  /// </ul>
+  /// When complete, the requesting account SHALL NOT hold the
+  /// rejected tokens.<br/>
+  /// Custom fees and royalties defined for the tokens rejected
+  /// SHALL NOT be charged for this transaction.
+  public var tokenReject: Proto_TokenRejectTransactionBody {
+    get {
+      if case .tokenReject(let v)? = _storage._data {return v}
+      return Proto_TokenRejectTransactionBody()
+    }
+    set {_uniqueStorage()._data = .tokenReject(newValue)}
   }
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -597,20 +630,8 @@ public struct Proto_TransactionBody {
     /// Updates a contract
     case contractUpdateInstance(Proto_ContractUpdateTransactionBody)
     ///*
-    /// Delete contract and transfer remaining balance into specified account
-    case contractDeleteInstance(Proto_ContractDeleteTransactionBody)
-    ///*
-    /// An Ethereum encoded transaction.
-    case ethereumTransaction(Proto_EthereumTransactionBody)
-    ///*
     /// Attach a new livehash to an account
     case cryptoAddLiveHash(Proto_CryptoAddLiveHashTransactionBody)
-    ///*
-    /// Adds one or more approved allowances for spenders to transfer the paying account's hbar or tokens.
-    case cryptoApproveAllowance(Proto_CryptoApproveAllowanceTransactionBody)
-    ///*
-    /// Deletes one or more of the specific approved NFT serial numbers on an owner account.
-    case cryptoDeleteAllowance(Proto_CryptoDeleteAllowanceTransactionBody)
     ///*
     /// Create a new cryptocurrency account
     case cryptoCreateAccount(Proto_CryptoCreateTransactionBody)
@@ -644,6 +665,9 @@ public struct Proto_TransactionBody {
     ///*
     /// To undelete an entity deleted by SystemDelete
     case systemUndelete(Proto_SystemUndeleteTransactionBody)
+    ///*
+    /// Delete contract and transfer remaining balance into specified account
+    case contractDeleteInstance(Proto_ContractDeleteTransactionBody)
     ///*
     /// Freeze the nodes
     case freeze(Proto_FreezeTransactionBody)
@@ -699,6 +723,15 @@ public struct Proto_TransactionBody {
     /// Dissociate tokens from an account
     case tokenDissociate(Proto_TokenDissociateTransactionBody)
     ///*
+    /// Creates a schedule in the network's action queue
+    case scheduleCreate(Proto_ScheduleCreateTransactionBody)
+    ///*
+    /// Deletes a schedule from the network's action queue
+    case scheduleDelete(Proto_ScheduleDeleteTransactionBody)
+    ///*
+    /// Adds one or more Ed25519 keys to the affirmed signers of a scheduled transaction
+    case scheduleSign(Proto_ScheduleSignTransactionBody)
+    ///*
     /// Updates a token's custom fee schedule
     case tokenFeeScheduleUpdate(Proto_TokenFeeScheduleUpdateTransactionBody)
     ///*
@@ -708,14 +741,14 @@ public struct Proto_TransactionBody {
     /// Unpauses the Token
     case tokenUnpause(Proto_TokenUnpauseTransactionBody)
     ///*
-    /// Creates a schedule in the network's action queue
-    case scheduleCreate(Proto_ScheduleCreateTransactionBody)
+    /// Adds one or more approved allowances for spenders to transfer the paying account's hbar or tokens.
+    case cryptoApproveAllowance(Proto_CryptoApproveAllowanceTransactionBody)
     ///*
-    /// Deletes a schedule from the network's action queue
-    case scheduleDelete(Proto_ScheduleDeleteTransactionBody)
+    /// Deletes one or more of the specific approved NFT serial numbers on an owner account.
+    case cryptoDeleteAllowance(Proto_CryptoDeleteAllowanceTransactionBody)
     ///*
-    /// Adds one or more Ed25519 keys to the affirmed signers of a scheduled transaction
-    case scheduleSign(Proto_ScheduleSignTransactionBody)
+    /// An Ethereum encoded transaction.
+    case ethereumTransaction(Proto_EthereumTransactionBody)
     ///*
     /// Updates the staking info at the end of staking period to indicate new staking period has started.
     case nodeStakeUpdate(Proto_NodeStakeUpdateTransactionBody)
@@ -727,13 +760,39 @@ public struct Proto_TransactionBody {
     case tokenUpdateNfts(Proto_TokenUpdateNftsTransactionBody)
     ///*
     /// A transaction body for a `createNode` request.
-    case nodeCreate(Proto_NodeCreateTransactionBody)
+    /// <p>
+    /// This transaction SHALL create a new consensus node record and add
+    /// that record to the network address book.
+    case nodeCreate(Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody)
     ///*
     /// A transaction body for an `updateNode` request.
-    case nodeUpdate(Proto_NodeUpdateTransactionBody)
+    /// <p>
+    /// This transaction SHALL update an existing consensus node record in
+    /// the network address book.
+    case nodeUpdate(Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody)
     ///*
     /// A transaction body for a `deleteNode` request.
-    case nodeDelete(Proto_NodeDeleteTransactionBody)
+    /// <p>
+    /// This transaction SHALL remove an existing consensus node record from
+    /// the network address book.
+    case nodeDelete(Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody)
+    ///*
+    /// A transaction body to "reject" undesired tokens.<br/>
+    /// This transaction will transfer one or more tokens or token
+    /// balances held by the requesting account to the treasury
+    /// for each token type.
+    /// <p>
+    /// Each transfer MUST be one of the following:
+    /// <ul>
+    ///   <li>A single non-fungible/unique token.</li>
+    ///   <li>The full balance held for a fungible/common
+    ///       token type.</li>
+    /// </ul>
+    /// When complete, the requesting account SHALL NOT hold the
+    /// rejected tokens.<br/>
+    /// Custom fees and royalties defined for the tokens rejected
+    /// SHALL NOT be charged for this transaction.
+    case tokenReject(Proto_TokenRejectTransactionBody)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proto_TransactionBody.OneOf_Data, rhs: Proto_TransactionBody.OneOf_Data) -> Bool {
@@ -753,24 +812,8 @@ public struct Proto_TransactionBody {
         guard case .contractUpdateInstance(let l) = lhs, case .contractUpdateInstance(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
-      case (.contractDeleteInstance, .contractDeleteInstance): return {
-        guard case .contractDeleteInstance(let l) = lhs, case .contractDeleteInstance(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.ethereumTransaction, .ethereumTransaction): return {
-        guard case .ethereumTransaction(let l) = lhs, case .ethereumTransaction(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
       case (.cryptoAddLiveHash, .cryptoAddLiveHash): return {
         guard case .cryptoAddLiveHash(let l) = lhs, case .cryptoAddLiveHash(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.cryptoApproveAllowance, .cryptoApproveAllowance): return {
-        guard case .cryptoApproveAllowance(let l) = lhs, case .cryptoApproveAllowance(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.cryptoDeleteAllowance, .cryptoDeleteAllowance): return {
-        guard case .cryptoDeleteAllowance(let l) = lhs, case .cryptoDeleteAllowance(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       case (.cryptoCreateAccount, .cryptoCreateAccount): return {
@@ -815,6 +858,10 @@ public struct Proto_TransactionBody {
       }()
       case (.systemUndelete, .systemUndelete): return {
         guard case .systemUndelete(let l) = lhs, case .systemUndelete(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.contractDeleteInstance, .contractDeleteInstance): return {
+        guard case .contractDeleteInstance(let l) = lhs, case .contractDeleteInstance(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       case (.freeze, .freeze): return {
@@ -889,6 +936,18 @@ public struct Proto_TransactionBody {
         guard case .tokenDissociate(let l) = lhs, case .tokenDissociate(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
+      case (.scheduleCreate, .scheduleCreate): return {
+        guard case .scheduleCreate(let l) = lhs, case .scheduleCreate(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.scheduleDelete, .scheduleDelete): return {
+        guard case .scheduleDelete(let l) = lhs, case .scheduleDelete(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.scheduleSign, .scheduleSign): return {
+        guard case .scheduleSign(let l) = lhs, case .scheduleSign(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       case (.tokenFeeScheduleUpdate, .tokenFeeScheduleUpdate): return {
         guard case .tokenFeeScheduleUpdate(let l) = lhs, case .tokenFeeScheduleUpdate(let r) = rhs else { preconditionFailure() }
         return l == r
@@ -901,16 +960,16 @@ public struct Proto_TransactionBody {
         guard case .tokenUnpause(let l) = lhs, case .tokenUnpause(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
-      case (.scheduleCreate, .scheduleCreate): return {
-        guard case .scheduleCreate(let l) = lhs, case .scheduleCreate(let r) = rhs else { preconditionFailure() }
+      case (.cryptoApproveAllowance, .cryptoApproveAllowance): return {
+        guard case .cryptoApproveAllowance(let l) = lhs, case .cryptoApproveAllowance(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
-      case (.scheduleDelete, .scheduleDelete): return {
-        guard case .scheduleDelete(let l) = lhs, case .scheduleDelete(let r) = rhs else { preconditionFailure() }
+      case (.cryptoDeleteAllowance, .cryptoDeleteAllowance): return {
+        guard case .cryptoDeleteAllowance(let l) = lhs, case .cryptoDeleteAllowance(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
-      case (.scheduleSign, .scheduleSign): return {
-        guard case .scheduleSign(let l) = lhs, case .scheduleSign(let r) = rhs else { preconditionFailure() }
+      case (.ethereumTransaction, .ethereumTransaction): return {
+        guard case .ethereumTransaction(let l) = lhs, case .ethereumTransaction(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       case (.nodeStakeUpdate, .nodeStakeUpdate): return {
@@ -935,6 +994,10 @@ public struct Proto_TransactionBody {
       }()
       case (.nodeDelete, .nodeDelete): return {
         guard case .nodeDelete(let l) = lhs, case .nodeDelete(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.tokenReject, .tokenReject): return {
+        guard case .tokenReject(let l) = lhs, case .tokenReject(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
       default: return false
@@ -969,11 +1032,7 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     7: .same(proto: "contractCall"),
     8: .same(proto: "contractCreateInstance"),
     9: .same(proto: "contractUpdateInstance"),
-    22: .same(proto: "contractDeleteInstance"),
-    50: .same(proto: "ethereumTransaction"),
     10: .same(proto: "cryptoAddLiveHash"),
-    48: .same(proto: "cryptoApproveAllowance"),
-    49: .same(proto: "cryptoDeleteAllowance"),
     11: .same(proto: "cryptoCreateAccount"),
     12: .same(proto: "cryptoDelete"),
     13: .same(proto: "cryptoDeleteLiveHash"),
@@ -985,6 +1044,7 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     19: .same(proto: "fileUpdate"),
     20: .same(proto: "systemDelete"),
     21: .same(proto: "systemUndelete"),
+    22: .same(proto: "contractDeleteInstance"),
     23: .same(proto: "freeze"),
     24: .same(proto: "consensusCreateTopic"),
     25: .same(proto: "consensusUpdateTopic"),
@@ -1003,18 +1063,22 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     39: .same(proto: "tokenWipe"),
     40: .same(proto: "tokenAssociate"),
     41: .same(proto: "tokenDissociate"),
-    45: .standard(proto: "token_fee_schedule_update"),
-    46: .standard(proto: "token_pause"),
-    47: .standard(proto: "token_unpause"),
     42: .same(proto: "scheduleCreate"),
     43: .same(proto: "scheduleDelete"),
     44: .same(proto: "scheduleSign"),
+    45: .standard(proto: "token_fee_schedule_update"),
+    46: .standard(proto: "token_pause"),
+    47: .standard(proto: "token_unpause"),
+    48: .same(proto: "cryptoApproveAllowance"),
+    49: .same(proto: "cryptoDeleteAllowance"),
+    50: .same(proto: "ethereumTransaction"),
     51: .standard(proto: "node_stake_update"),
     52: .standard(proto: "util_prng"),
     53: .standard(proto: "token_update_nfts"),
     54: .same(proto: "nodeCreate"),
     55: .same(proto: "nodeUpdate"),
     56: .same(proto: "nodeDelete"),
+    57: .same(proto: "tokenReject"),
   ]
 
   fileprivate class _StorageClass {
@@ -1669,7 +1733,7 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
           }
         }()
         case 54: try {
-          var v: Proto_NodeCreateTransactionBody?
+          var v: Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody?
           var hadOneofValue = false
           if let current = _storage._data {
             hadOneofValue = true
@@ -1682,7 +1746,7 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
           }
         }()
         case 55: try {
-          var v: Proto_NodeUpdateTransactionBody?
+          var v: Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody?
           var hadOneofValue = false
           if let current = _storage._data {
             hadOneofValue = true
@@ -1695,7 +1759,7 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
           }
         }()
         case 56: try {
-          var v: Proto_NodeDeleteTransactionBody?
+          var v: Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody?
           var hadOneofValue = false
           if let current = _storage._data {
             hadOneofValue = true
@@ -1705,6 +1769,19 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
           if let v = v {
             if hadOneofValue {try decoder.handleConflictingOneOf()}
             _storage._data = .nodeDelete(v)
+          }
+        }()
+        case 57: try {
+          var v: Proto_TokenRejectTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .tokenReject(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .tokenReject(v)
           }
         }()
         default: break
@@ -1933,6 +2010,10 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case .nodeDelete?: try {
         guard case .nodeDelete(let v)? = _storage._data else { preconditionFailure() }
         try visitor.visitSingularMessageField(value: v, fieldNumber: 56)
+      }()
+      case .tokenReject?: try {
+        guard case .tokenReject(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 57)
       }()
       case nil: break
       }

@@ -168,8 +168,12 @@ public struct Proto_CryptoCreateTransactionBody {
   }
 
   ///*
-  /// The maximum number of tokens that an Account can be implicitly associated with. Defaults to 0
-  /// and up to a maximum value of 1000.
+  /// The maximum number of tokens that can be auto-associated with the account.<br/>
+  /// If this is less than or equal to `used_auto_associations`, or 0, then this account
+  /// MUST manually associate with a token before transacting in that token.<br/>
+  /// This value MAY also be `-1` to indicate no limit.<br/>
+  /// This value MUST NOT be less than `-1`.<br/>
+  /// By default this value is 0 for accounts except for auto-created accounts which default -1.
   public var maxAutomaticTokenAssociations: Int32 {
     get {return _storage._maxAutomaticTokenAssociations}
     set {_uniqueStorage()._maxAutomaticTokenAssociations = newValue}
