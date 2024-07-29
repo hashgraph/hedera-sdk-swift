@@ -43,7 +43,7 @@ jobs:
           egress-policy: audit
 
       - name: Setup Swift
-        uses: swift-actions/setup-swift@e1dca7c4a36344146bbc2803f0d538462477bb37 # v2.0.0
+        uses: swift-actions/setup-swift@3aed395c5397f62deb91d8fe7af1418a9ae4d16f # v2.1.0
         with:
           swift-version: ${{ matrix.swift }}
 
@@ -76,7 +76,7 @@ jobs:
           egress-policy: audit
 
       - name: Setup Swift
-        uses: swift-actions/setup-swift@e1dca7c4a36344146bbc2803f0d538462477bb37 # v2.0.0
+        uses: swift-actions/setup-swift@3aed395c5397f62deb91d8fe7af1418a9ae4d16f # v2.1.0
         with:
           swift-version: ${{ matrix.swift }}
 
