@@ -18,8 +18,9 @@
  * ‍
  */
 import Foundation
-@testable import Hedera
 import Vapor
+
+@testable import Hedera
 
 let server = TCKServer(sdkClient: SDKClient())
 try TCKServer.main()
@@ -103,7 +104,14 @@ struct TCKServer {
             case .transactionPreCheckStatus(let status, let _),
                 .queryPreCheckStatus(let status, let _),
                 .receiptStatus(let status, let _):
-                return JSONResponse(id: request.id, error: JSONError.hederaError("Hedera error", JSONObject.dictionary(["status": JSONObject.string(Status.nameMap[status.rawValue]!), "message": JSONObject.string(error.description)])))
+                return JSONResponse(
+                    id: request.id,
+                    error: JSONError.hederaError(
+                        "Hedera error",
+                        JSONObject.dictionary([
+                            "status": JSONObject.string(Status.nameMap[status.rawValue]!),
+                            "message": JSONObject.string(error.description),
+                        ])))
             default:
                 return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))
             }

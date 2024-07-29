@@ -60,7 +60,9 @@ class SDKClient {
         }
 
         let fromKey = try getOptionalStringParameter("fromKey", parameters, "generateKey")
-        if fromKey != nil, type != .ed25519PublicKeyType, type != .ecdsaSecp256k1PublicKeyType, type != .evmAddressKeyType {
+        if fromKey != nil, type != .ed25519PublicKeyType, type != .ecdsaSecp256k1PublicKeyType,
+            type != .evmAddressKeyType
+        {
             throw JSONError.invalidParams(
                 "generateKey: fromKey MUST NOT be provided for types other than ed25519PublicKey, ecdsaSecp256k1PublicKey, or evmAddress."
             )
@@ -75,7 +77,8 @@ class SDKClient {
 
         let keys = try getOptionalListParameter("keys", parameters, "generateKey")
         if keys != nil, type != .listKeyType, type != .thresholdKeyType {
-            throw JSONError.invalidParams("generateKey: keys MUST NOT be provided for types other than keyList or thresholdKey.")
+            throw JSONError.invalidParams(
+                "generateKey: keys MUST NOT be provided for types other than keyList or thresholdKey.")
         } else if keys == nil, type == .listKeyType || type == .thresholdKeyType {
             throw JSONError.invalidParams("generateKey: keys MUST be provided for keyList and thresholdKey types.")
         }
@@ -199,7 +202,8 @@ class SDKClient {
             if let autoRenewPeriod = try getOptionalIntParameter(
                 "autoRenewPeriod", params, #function)
             {
-                accountCreateTransaction.autoRenewPeriod = Duration(seconds: UInt64(truncatingIfNeeded: autoRenewPeriod))
+                accountCreateTransaction.autoRenewPeriod = Duration(
+                    seconds: UInt64(truncatingIfNeeded: autoRenewPeriod))
             }
 
             if let memo = try getOptionalStringParameter("memo", params, #function) {
