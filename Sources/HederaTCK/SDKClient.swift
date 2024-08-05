@@ -54,12 +54,15 @@ internal class SDKClient {
     private func generateKeyHelper(
         parameters: [String: JSONObject], privateKeys: inout [JSONObject], isList: Bool = false
     ) throws -> String {
-        guard let type = KeyType(rawValue: try getRequiredStringParameter("type", parameters, "generateKey")) else {
+        guard
+            let type = KeyType(
+                rawValue: try getRequiredJsonParameter("type", parameters, "generateKey"))
+        else {
             throw JSONError.invalidParams(
                 "generateKey: type is NOT a valid value.")
         }
 
-        let fromKey = try getOptionalStringParameter("fromKey", parameters, "generateKey")
+        let fromKey: String? = try getOptionalJsonParameter("fromKey", parameters, "generateKey")
         if fromKey != nil, type != .ed25519PublicKeyType, type != .ecdsaSecp256k1PublicKeyType,
             type != .evmAddressKeyType
         {
@@ -68,7 +71,7 @@ internal class SDKClient {
             )
         }
 
-        let threshold = try getOptionalIntParameter("threshold", parameters, "generateKey")
+        let threshold: Int? = try getOptionalJsonParameter("threshold", parameters, "generateKey")
         if threshold != nil, type != .thresholdKeyType {
             throw JSONError.invalidParams(
                 "generateKey: threshold MUST NOT be provided for types other than thresholdKey.")
@@ -76,7 +79,7 @@ internal class SDKClient {
             throw JSONError.invalidParams("generateKey: threshold MUST be provided for thresholdKey types.")
         }
 
-        let keys = try getOptionalListParameter("keys", parameters, "generateKey")
+        let keys: [JSONObject]? = try getOptionalJsonParameter("keys", parameters, "generateKey")
         if keys != nil, type != .listKeyType, type != .thresholdKeyType {
             throw JSONError.invalidParams(
                 "generateKey: keys MUST NOT be provided for types other than keyList or thresholdKey.")
@@ -117,7 +120,7 @@ internal class SDKClient {
                 keyList.keys.append(
                     try getHederaKey(
                         generateKeyHelper(
-                            parameters: getJsonAsDict(keyJson, "keys list key", "generateKey"),
+                            parameters: getJson(keyJson, "keys list key", "generateKey"),
                             privateKeys: &privateKeys, isList: true)))
             }
 
@@ -151,31 +154,34 @@ internal class SDKClient {
     )
         throws
     {
-        if let transactionId = try getOptionalStringParameter("transactionId", params, function) {
+        if let transactionId: String = try getOptionalJsonParameter("transactionId", params, function) {
             transaction.transactionId = try TransactionId.fromString(transactionId)
         }
 
-        if let maxTransactionFee = try getOptionalIntParameter("maxTransactionFee", params, function) {
+        if let maxTransactionFee: Int64 = try getOptionalJsonParameter("maxTransactionFee", params, function) {
             transaction.maxTransactionFee = Hbar.fromTinybars(maxTransactionFee)
         }
 
-        if let validTransactionDuration = try getOptionalIntParameter("validTransactionDuration", params, function) {
-            transaction.transactionValidDuration = Duration(seconds: UInt64(validTransactionDuration))
+        if let validTransactionDuration: UInt64 = try getOptionalJsonParameter(
+            "validTransactionDuration", params, function)
+        {
+            transaction.transactionValidDuration = Duration(seconds: validTransactionDuration)
         }
 
-        if let memo = try getOptionalStringParameter("memo", params, function) {
+        if let memo: String = try getOptionalJsonParameter("memo", params, function) {
             transaction.transactionMemo = memo
         }
 
-        if let regenerateTransactionId = try getOptionalBooleanParameter("regenerateTransactionId", params, function) {
+        if let regenerateTransactionId: Bool = try getOptionalJsonParameter("regenerateTransactionId", params, function)
+        {
             transaction.regenerateTransactionId = regenerateTransactionId
         }
 
-        if let signers = try getOptionalListParameter("signers", params, function) {
+        if let signers: [JSONObject] = try getOptionalJsonParameter("signers", params, function) {
             try transaction.freezeWith(client)
             for signer in signers {
                 transaction.sign(
-                    try PrivateKey.fromStringDer(getJsonAsString(signer, "signers list element", "generateKey")))
+                    try PrivateKey.fromStringDer(getJson(signer, "signers list element", "generateKey") as String))
             }
         }
     }
@@ -184,63 +190,63 @@ internal class SDKClient {
         var accountCreateTransaction = AccountCreateTransaction()
 
         if let params = parameters {
-            if let key = try getOptionalStringParameter("key", params, #function) {
+            if let key: String = try getOptionalJsonParameter("key", params, #function) {
                 accountCreateTransaction.key = try getHederaKey(key)
             }
 
-            if let initialBalance = try getOptionalIntParameter(
+            if let initialBalance: Int64 = try getOptionalJsonParameter(
                 "initialBalance", params, #function)
             {
                 accountCreateTransaction.initialBalance = Hbar.fromTinybars(initialBalance)
             }
 
-            if let receiverSignatureRequired = try getOptionalBooleanParameter(
+            if let receiverSignatureRequired: Bool = try getOptionalJsonParameter(
                 "receiverSignatureRequired", params, #function)
             {
                 accountCreateTransaction.receiverSignatureRequired = receiverSignatureRequired
             }
 
-            if let autoRenewPeriod = try getOptionalIntParameter(
+            if let autoRenewPeriod: Int64 = try getOptionalJsonParameter(
                 "autoRenewPeriod", params, #function)
             {
                 accountCreateTransaction.autoRenewPeriod = Duration(
                     seconds: UInt64(truncatingIfNeeded: autoRenewPeriod))
             }
 
-            if let memo = try getOptionalStringParameter("memo", params, #function) {
+            if let memo: String = try getOptionalJsonParameter("memo", params, #function) {
                 accountCreateTransaction.accountMemo = memo
             }
 
-            if let maxAutoTokenAssociations = try getOptionalIntParameter(
+            if let maxAutoTokenAssociations: Int64 = try getOptionalJsonParameter(
                 "maxAutoTokenAssociations", params, #function)
             {
                 accountCreateTransaction.maxAutomaticTokenAssociations =
                     Int32(truncatingIfNeeded: maxAutoTokenAssociations)
             }
 
-            if let stakedAccountId = try getOptionalStringParameter(
+            if let stakedAccountId: String = try getOptionalJsonParameter(
                 "stakedAccountId", params, #function)
             {
                 accountCreateTransaction.stakedAccountId = try AccountId.fromString(stakedAccountId)
             }
 
-            if let stakedNodeId = try getOptionalIntParameter(
+            if let stakedNodeId: Int64 = try getOptionalJsonParameter(
                 "stakedNodeId", params, #function)
             {
                 accountCreateTransaction.stakedNodeId = UInt64(truncatingIfNeeded: stakedNodeId)
             }
 
-            if let declineStakingReward = try getOptionalBooleanParameter(
+            if let declineStakingReward: Bool = try getOptionalJsonParameter(
                 "declineStakingReward", params, #function)
             {
                 accountCreateTransaction.declineStakingReward = declineStakingReward
             }
 
-            if let alias = try getOptionalStringParameter("alias", params, #function) {
+            if let alias: String = try getOptionalJsonParameter("alias", params, #function) {
                 accountCreateTransaction.alias = try EvmAddress.fromString(alias)
             }
 
-            if let commonTransactionParams = try getOptionalDictParameter(
+            if let commonTransactionParams: [String: JSONObject] = try getOptionalJsonParameter(
                 "commonTransactionParams", params, #function)
             {
                 try fillOutCommonTransactionParameters(
@@ -274,14 +280,14 @@ internal class SDKClient {
 
     internal func setup(_ parameters: [String: JSONObject]) throws -> JSONObject {
         let operatorAccountId = try AccountId.fromString(
-            getRequiredStringParameter("operatorAccountId", parameters, #function))
+            getRequiredJsonParameter("operatorAccountId", parameters, #function) as String)
         let operatorPrivateKey = try PrivateKey.fromStringDer(
-            getRequiredStringParameter("operatorPrivateKey", parameters, #function))
+            getRequiredJsonParameter("operatorPrivateKey", parameters, #function) as String)
 
         var clientType: String
-        let nodeIp = try getOptionalStringParameter("nodeIp", parameters, #function)
-        let nodeAccountId = try getOptionalStringParameter("nodeAccountId", parameters, #function)
-        let mirrorNetworkIp = try getOptionalStringParameter("mirrorNetworkIp", parameters, #function)
+        let nodeIp: String? = try getOptionalJsonParameter("nodeIp", parameters, #function)
+        let nodeAccountId: String? = try getOptionalJsonParameter("nodeAccountId", parameters, #function)
+        let mirrorNetworkIp: String? = try getOptionalJsonParameter("mirrorNetworkIp", parameters, #function)
 
         if nodeIp == nil, nodeAccountId == nil, mirrorNetworkIp == nil {
             self.client = Client.forTestnet()

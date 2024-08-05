@@ -66,7 +66,7 @@ private struct TCKServer {
                 return JSONResponse(
                     id: request.id,
                     result: try await sdkClient.createAccount(
-                        getOptionalDictParameter("params", request.toDict(), request.method)))
+                        getOptionalJsonParameter("params", request.toDict(), request.method)))
             ///
             /// generateKey
             ///
@@ -74,7 +74,7 @@ private struct TCKServer {
                 return JSONResponse(
                     id: request.id,
                     result: try sdkClient.generateKey(
-                        getRequiredDictParameter("params", request.toDict(), request.method)))
+                        getRequiredJsonParameter("params", request.toDict(), request.method)))
             ///
             /// reset
             ///
@@ -86,7 +86,7 @@ private struct TCKServer {
             case "setup":
                 return JSONResponse(
                     id: request.id,
-                    result: try sdkClient.setup(getRequiredDictParameter("params", request.toDict(), request.method)))
+                    result: try sdkClient.setup(getRequiredJsonParameter("params", request.toDict(), request.method)))
             ///
             /// Method Not Found
             ///

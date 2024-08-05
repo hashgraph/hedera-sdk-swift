@@ -17,128 +17,66 @@
  * limitations under the License.
  * ‍
  */
-internal func getJsonAsString(_ json: JSONObject, _ paramName: String, _ functionName: String) throws -> String {
-    guard let str = json.stringValue else {
-        throw JSONError.invalidParams("\(functionName): \(paramName) MUST be a string.")
-    }
-    return str
-}
-
-internal func getJsonAsInt(_ json: JSONObject, _ paramName: String, _ functionName: String) throws -> Int64 {
-    guard let param = json.intValue else {
-        throw JSONError.invalidParams("\(functionName): \(paramName) MUST be an integer.")
-    }
-    return param
-}
-
-internal func getJsonAsDouble(_ json: JSONObject, _ paramName: String, _ functionName: String) throws -> Double {
-    guard let param = json.doubleValue else {
-        throw JSONError.invalidParams("\(functionName): \(paramName) MUST be a double.")
-    }
-    return param
-}
-
-internal func getJsonAsBoolean(_ json: JSONObject, _ paramName: String, _ functionName: String) throws -> Bool {
-    guard let param = json.boolValue else {
-        throw JSONError.invalidParams("\(functionName): \(paramName) MUST be a boolean.")
-    }
-    return param
-}
-
-internal func getJsonAsList(_ json: JSONObject, _ paramName: String, _ functionName: String) throws -> [JSONObject] {
-    guard let param = json.listValue else {
-        throw JSONError.invalidParams("\(functionName): \(paramName) MUST be a list.")
-    }
-    return param
-}
-
-internal func getJsonAsDict(_ json: JSONObject, _ paramName: String, _ functionName: String) throws -> [String:
-    JSONObject]
+internal func getJson<T>(_ json: JSONObject, _ paramName: String, _ functionName: String) throws
+    -> T
 {
-    guard let param = json.dictValue else {
-        throw JSONError.invalidParams("\(functionName): \(paramName) MUST be a dictionary.")
+    if T.self == String.self {
+        guard let val = json.stringValue else {
+            throw JSONError.invalidParams("\(functionName): \(paramName) MUST be a string.")
+        }
+        return val as! T
     }
-    return param
+    if T.self == Int.self || T.self == Int32.self || T.self == UInt32.self || T.self == Int64.self
+        || T.self == UInt64.self
+    {
+        guard let val = json.intValue else {
+            throw JSONError.invalidParams("\(functionName): \(paramName) MUST be an integer.")
+        }
+        return val as! T
+    }
+    if T.self == Double.self || T.self == Float.self {
+        guard let val = json.doubleValue else {
+            throw JSONError.invalidParams("\(functionName): \(paramName) MUST be a double.")
+        }
+        return val as! T
+    }
+    if T.self == Bool.self {
+        guard let val = json.boolValue else {
+            throw JSONError.invalidParams("\(functionName): \(paramName) MUST be a boolean.")
+        }
+        return val as! T
+    }
+    if T.self == [JSONObject].self {
+        guard let val = json.listValue else {
+            throw JSONError.invalidParams("\(functionName): \(paramName) MUST be a list.")
+        }
+        return val as! T
+    }
+    if T.self == [String: JSONObject].self {
+        guard let val = json.dictValue else {
+            throw JSONError.invalidParams("\(functionName): \(paramName) MUST be a dictionary.")
+        }
+        return val as! T
+    }
+
+    throw JSONError.invalidParams("\(functionName): \(paramName) is NOT a valid type.")
 }
 
 internal func getParam(_ json: JSONObject?, _ paramName: String, _ functionName: String) throws -> JSONObject {
     return try json ?? { throw JSONError.invalidParams("\(functionName): \(paramName) MUST be provided.") }()
 }
 
-internal func getOptionalStringParameter(_ name: String, _ parameters: [String: JSONObject], _ functionName: String)
-    throws
-    -> String?
-{
-    return parameters[name] != nil ? try getJsonAsString(parameters[name]!, name, functionName) : nil
-}
-
-internal func getOptionalIntParameter(_ name: String, _ parameters: [String: JSONObject], _ functionName: String)
-    throws
-    -> Int64?
-{
-    return parameters[name] != nil ? try getJsonAsInt(parameters[name]!, name, functionName) : nil
-}
-
-internal func getOptionalDoubleParameter(_ name: String, _ parameters: [String: JSONObject], _ functionName: String)
-    throws
-    -> Double?
-{
-    return parameters[name] != nil ? try getJsonAsDouble(parameters[name]!, name, functionName) : nil
-}
-
-internal func getOptionalBooleanParameter(_ name: String, _ parameters: [String: JSONObject], _ functionName: String)
-    throws -> Bool?
-{
-    return parameters[name] != nil ? try getJsonAsBoolean(parameters[name]!, name, functionName) : nil
-}
-
-internal func getOptionalListParameter(_ name: String, _ parameters: [String: JSONObject], _ functionName: String)
-    throws
-    -> [JSONObject]?
-{
-    return parameters[name] != nil ? try getJsonAsList(parameters[name]!, name, functionName) : nil
-}
-
-internal func getOptionalDictParameter(
+internal func getOptionalJsonParameter<T>(
     _ name: String, _ parameters: [String: JSONObject], _ functionName: String
-)
-    throws -> [String: JSONObject]?
-{
-    return parameters[name] != nil ? try getJsonAsDict(parameters[name]!, name, functionName) : nil
+) throws -> T? {
+    guard let param = parameters[name] else {
+        return nil
+    }
+    return try getJson(param, name, functionName) as T
 }
 
-internal func getRequiredStringParameter(_ name: String, _ parameters: [String: JSONObject], _ functionName: String)
-    throws -> String
-{
-    return try getJsonAsString(getParam(parameters[name], name, functionName), name, functionName)
-}
-
-internal func getRequiredIntParameter(_ name: String, _ parameters: [String: JSONObject], _ functionName: String)
-    throws -> Int64
-{
-    return try getJsonAsInt(getParam(parameters[name], name, functionName), name, functionName)
-}
-
-internal func getRequiredDoubleParameter(_ name: String, _ parameters: [String: JSONObject], _ functionName: String)
-    throws -> Double
-{
-    return try getJsonAsDouble(getParam(parameters[name], name, functionName), name, functionName)
-}
-
-internal func getRequiredBooleanParameter(_ name: String, _ parameters: [String: JSONObject], _ functionName: String)
-    throws -> Bool
-{
-    return try getJsonAsBoolean(getParam(parameters[name], name, functionName), name, functionName)
-}
-
-internal func getRequiredListParameter(_ name: String, _ parameters: [String: JSONObject], _ functionName: String)
-    throws -> [JSONObject]
-{
-    return try getJsonAsList(getParam(parameters[name], name, functionName), name, functionName)
-}
-
-internal func getRequiredDictParameter(_ name: String, _ parameters: [String: JSONObject], _ functionName: String)
-    throws -> [String: JSONObject]
-{
-    return try getJsonAsDict(getParam(parameters[name], name, functionName), name, functionName)
+internal func getRequiredJsonParameter<T>(
+    _ name: String, _ parameters: [String: JSONObject], _ functionName: String
+) throws -> T {
+    return try getJson(getParam(parameters[name], name, functionName), name, functionName)
 }
