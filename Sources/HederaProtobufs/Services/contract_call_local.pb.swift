@@ -116,11 +116,11 @@ public struct Proto_ContractFunctionResult {
 
   ///*
   /// [DEPRECATED] the list of smart contracts that were created by the function call.
-  ///
-  /// The created ids will now _also_ be externalized through internal transaction
-  /// records, where each record has its alias field populated with the new contract's
-  /// EVM address. (This is needed for contracts created with CREATE2, since
-  /// there is no longer a simple relationship between the new contract's 0.0.X id
+  /// 
+  /// The created ids will now _also_ be externalized through internal transaction 
+  /// records, where each record has its alias field populated with the new contract's 
+  /// EVM address. (This is needed for contracts created with CREATE2, since 
+  /// there is no longer a simple relationship between the new contract's 0.0.X id 
   /// and its Solidity address.)
   public var createdContractIds: [Proto_ContractID] {
     get {return _storage._createdContractIds}
@@ -128,24 +128,24 @@ public struct Proto_ContractFunctionResult {
   }
 
   ///*
-  /// The new contract's 20-byte EVM address. Only populated after release 0.23,
-  /// where each created contract will have its own record. (This is an important
-  /// point--the field is not <tt>repeated</tt> because there will be a separate
+  /// The new contract's 20-byte EVM address. Only populated after release 0.23, 
+  /// where each created contract will have its own record. (This is an important 
+  /// point--the field is not <tt>repeated</tt> because there will be a separate 
   /// child record for each created contract.)
-  ///
+  /// 
   /// Every contract has an EVM address determined by its <tt>shard.realm.num</tt> id.
   /// This address is as follows:
   ///   <ol>
   ///     <li>The first 4 bytes are the big-endian representation of the shard.</li>
   ///     <li>The next 8 bytes are the big-endian representation of the realm.</li>
   ///     <li>The final 8 bytes are the big-endian representation of the number.</li>
-  ///   </ol>
-  ///
-  /// Contracts created via CREATE2 have an <b>additional, primary address</b> that is
-  /// derived from the <a href="https://eips.ethereum.org/EIPS/eip-1014">EIP-1014</a>
-  /// specification, and does not have a simple relation to a <tt>shard.realm.num</tt> id.
-  ///
-  /// (Please do note that CREATE2 contracts can also be referenced by the three-part
+  ///   </ol>  
+  /// 
+  /// Contracts created via CREATE2 have an <b>additional, primary address</b> that is 
+  /// derived from the <a href="https://eips.ethereum.org/EIPS/eip-1014">EIP-1014</a> 
+  /// specification, and does not have a simple relation to a <tt>shard.realm.num</tt> id. 
+  /// 
+  /// (Please do note that CREATE2 contracts can also be referenced by the three-part 
   /// EVM address described above.)
   public var evmAddress: SwiftProtobuf.Google_Protobuf_BytesValue {
     get {return _storage._evmAddress ?? SwiftProtobuf.Google_Protobuf_BytesValue()}
@@ -157,10 +157,10 @@ public struct Proto_ContractFunctionResult {
   public mutating func clearEvmAddress() {_uniqueStorage()._evmAddress = nil}
 
   ///*
-  /// The amount of gas available for the call, aka the gasLimit.
+  /// The amount of gas available for the call, aka the gasLimit. 
   ///
   /// This field should only be populated when the paired TransactionBody in the record stream is not a
-  /// ContractCreateTransactionBody or a ContractCallTransactionBody.
+  /// ContractCreateTransactionBody or a ContractCallTransactionBody.     
   public var gas: Int64 {
     get {return _storage._gas}
     set {_uniqueStorage()._gas = newValue}
@@ -170,7 +170,7 @@ public struct Proto_ContractFunctionResult {
   /// Number of tinybars sent (the function must be payable if this is nonzero).
   ///
   /// This field should only be populated when the paired TransactionBody in the record stream is not a
-  /// ContractCreateTransactionBody or a ContractCallTransactionBody.
+  /// ContractCreateTransactionBody or a ContractCallTransactionBody.     
   public var amount: Int64 {
     get {return _storage._amount}
     set {_uniqueStorage()._amount = newValue}
@@ -180,7 +180,7 @@ public struct Proto_ContractFunctionResult {
   /// The parameters passed into the contract call.
   ///
   /// This field should only be populated when the paired TransactionBody in the record stream is not a
-  /// ContractCreateTransactionBody or a ContractCallTransactionBody.
+  /// ContractCreateTransactionBody or a ContractCallTransactionBody.     
   public var functionParameters: Data {
     get {return _storage._functionParameters}
     set {_uniqueStorage()._functionParameters = newValue}
@@ -190,7 +190,7 @@ public struct Proto_ContractFunctionResult {
   /// The account that is the "sender." If not present it is the accountId from the transactionId.
   ///
   /// This field should only be populated when the paired TransactionBody in the record stream is not a
-  /// ContractCreateTransactionBody or a ContractCallTransactionBody.
+  /// ContractCreateTransactionBody or a ContractCallTransactionBody.     
   public var senderID: Proto_AccountID {
     get {return _storage._senderID ?? Proto_AccountID()}
     set {_uniqueStorage()._senderID = newValue}
@@ -234,7 +234,7 @@ public struct Proto_ContractFunctionResult {
 /// It will not have a consensus timestamp. It cannot generate a record or a receipt. The response will contain the output
 /// returned by the function call.  This is useful for calling getter functions, which purely read the state and don't change it.
 /// It is faster and cheaper than a normal call, because it is purely local to a single  node.
-///
+/// 
 /// Unlike a ContractCall transaction, the node will consume the entire amount of provided gas in determining
 /// the fee for this query.
 public struct Proto_ContractCallLocalQuery {
@@ -278,7 +278,7 @@ public struct Proto_ContractCallLocalQuery {
 
   ///*
   /// The account that is the "sender." If not present it is the accountId from the transactionId.
-  /// Typically a different value than specified in the transactionId requires a valid signature
+  /// Typically a different value than specified in the transactionId requires a valid signature 
   /// over either the hedera transaction or foreign transaction data.
   public var senderID: Proto_AccountID {
     get {return _senderID ?? Proto_AccountID()}

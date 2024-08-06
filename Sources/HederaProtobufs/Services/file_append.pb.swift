@@ -25,7 +25,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// single FileCreateTransaction, then it can be created with the first part of its contents, and
 /// then appended as many times as necessary to create the entire file. This transaction must be
 /// signed by all initial M-of-M KeyList keys. If keys contains additional KeyList or ThresholdKey
-/// then M-of-M secondary KeyList or ThresholdKey signing requirements must be meet.
+/// then M-of-M secondary KeyList or ThresholdKey signing requirements must be meet. 
 public struct Proto_FileAppendTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for

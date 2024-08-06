@@ -22,11 +22,11 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// At consensus, updates an already created token to the given values.
-///
+/// 
 /// If no value is given for a field, that field is left unchanged. For an immutable tokens (that is,
 /// a token without an admin key), only the expiry may be updated. Setting any other field in that
 /// case will cause the transaction status to resolve to TOKEN_IS_IMMUTABLE.
-///
+/// 
 /// --- Signing Requirements ---
 /// 1. Whether or not a token has an admin key, its expiry can be extended with only the transaction
 ///    payer's signature.
@@ -36,7 +36,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///    token to become immutable. (Other <tt>Key</tt> structures without a constituent
 ///    <tt>Ed25519</tt> key will be rejected with <tt>INVALID_ADMIN_KEY</tt>.)
 /// 4. If a new treasury is set, the new treasury account's key must sign the transaction.
-///
+/// 
 /// --- Nft Requirements ---
 /// 1. If a non fungible token has a positive treasury balance, the operation will abort with
 ///    CURRENT_TREASURY_STILL_OWNS_NFTS.
@@ -57,7 +57,7 @@ public struct Proto_TokenUpdateTransactionBody {
   public mutating func clearToken() {_uniqueStorage()._token = nil}
 
   ///*
-  /// The new publicly visible token symbol. The token symbol is specified as a Unicode string.
+  /// The new publicly visible token symbol. The token symbol is specified as a Unicode string. 
   /// Its UTF-8 encoding cannot exceed 100 bytes, and cannot contain the 0 byte (NUL).
   public var symbol: String {
     get {return _storage._symbol}
@@ -65,7 +65,7 @@ public struct Proto_TokenUpdateTransactionBody {
   }
 
   ///*
-  /// The new publicly visible name of the token. The token name is specified as a Unicode string.
+  /// The new publicly visible name of the token. The token name is specified as a Unicode string. 
   /// Its UTF-8 encoding cannot exceed 100 bytes, and cannot contain the 0 byte (NUL).
   public var name: String {
     get {return _storage._name}

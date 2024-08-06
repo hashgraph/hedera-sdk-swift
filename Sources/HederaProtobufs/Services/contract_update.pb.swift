@@ -22,12 +22,12 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// At consensus, updates the fields of a smart contract to the given values.
-///
+/// 
 /// If no value is given for a field, that field is left unchanged on the contract. For an immutable
 /// smart contract (that is, a contract created without an adminKey), only the expirationTime may be
 /// updated; setting any other field in this case will cause the transaction status to resolve to
 /// MODIFYING_IMMUTABLE_CONTRACT.
-///
+/// 
 /// --- Signing Requirements ---
 /// 1. Whether or not a contract has an admin key, its expiry can be extended with only the
 ///    transaction payer's signature.
@@ -155,7 +155,7 @@ public struct Proto_ContractUpdateTransactionBody {
   public mutating func clearMaxAutomaticTokenAssociations() {_uniqueStorage()._maxAutomaticTokenAssociations = nil}
 
   ///*
-  /// If set to the sentinel <tt>0.0.0</tt> AccountID, this field removes the contract's auto-renew
+  /// If set to the sentinel <tt>0.0.0</tt> AccountID, this field removes the contract's auto-renew 
   /// account. Otherwise it updates the contract's auto-renew account to the referenced account.
   public var autoRenewAccountID: Proto_AccountID {
     get {return _storage._autoRenewAccountID ?? Proto_AccountID()}

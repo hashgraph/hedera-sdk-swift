@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// An exchange rate between hbar and cents (USD) and the time at which the exchange rate will
-/// expire, and be superseded by a new exchange rate.
+/// expire, and be superseded by a new exchange rate. 
 public struct Proto_ExchangeRate {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for

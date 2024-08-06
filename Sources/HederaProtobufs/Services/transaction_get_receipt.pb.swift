@@ -63,8 +63,8 @@ public struct Proto_TransactionGetReceiptQuery {
   public var includeDuplicates: Bool = false
 
   ///*
-  /// Whether the response should include the receipts of any child transactions spawned by the
-  /// top-level transaction with the given transactionID.
+  /// Whether the response should include the receipts of any child transactions spawned by the 
+  /// top-level transaction with the given transactionID. 
   public var includeChildReceipts: Bool = false
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -117,7 +117,7 @@ public struct Proto_TransactionGetReceiptResponse {
   public var duplicateTransactionReceipts: [Proto_TransactionReceipt] = []
 
   ///*
-  /// The receipts (if any) of all child transactions spawned by the transaction with the
+  /// The receipts (if any) of all child transactions spawned by the transaction with the 
   /// given top-level id, in consensus order. Always empty if the top-level status is UNKNOWN.
   public var childTransactionReceipts: [Proto_TransactionReceipt] = []
 

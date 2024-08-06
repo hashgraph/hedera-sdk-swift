@@ -26,7 +26,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// in the top level of a key list (M-of-M) of the file being updated. If the keys themselves are
 /// being updated, then the transaction must also be signed by all the new keys. If the keys contain
 /// additional KeyList or ThresholdKey then M-of-M secondary KeyList or ThresholdKey signing
-/// requirements must be meet If the update transaction sets the <tt>auto_renew_account_id</tt> field
+/// requirements must be meet If the update transaction sets the <tt>auto_renew_account_id</tt> field 
 /// to anything other than the sentinel <tt>0.0.0</tt>, the key of the referenced account must sign.
 public struct Proto_FileUpdateTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the

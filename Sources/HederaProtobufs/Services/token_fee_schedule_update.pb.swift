@@ -21,13 +21,13 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 ///*
-/// At consensus, updates a token type's fee schedule to the given list of custom fees.
-///
+/// At consensus, updates a token type's fee schedule to the given list of custom fees. 
+/// 
 /// If the target token type has no fee_schedule_key, resolves to TOKEN_HAS_NO_FEE_SCHEDULE_KEY.
-/// Otherwise this transaction must be signed to the fee_schedule_key, or the transaction will
+/// Otherwise this transaction must be signed to the fee_schedule_key, or the transaction will 
 /// resolve to INVALID_SIGNATURE.
-///
-/// If the custom_fees list is empty, clears the fee schedule or resolves to
+/// 
+/// If the custom_fees list is empty, clears the fee schedule or resolves to 
 /// CUSTOM_SCHEDULE_ALREADY_HAS_NO_FEES if the fee schedule was already empty.
 public struct Proto_TokenFeeScheduleUpdateTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the

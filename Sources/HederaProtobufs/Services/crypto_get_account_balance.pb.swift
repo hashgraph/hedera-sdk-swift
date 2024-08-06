@@ -133,9 +133,9 @@ public struct Proto_CryptoGetAccountBalanceResponse {
   public var balance: UInt64 = 0
 
   ///*
-  /// [DEPRECATED] The balances of the tokens associated to the account. This field was
-  /// deprecated by <a href="https://hips.hedera.com/hip/hip-367">HIP-367</a>, which allowed
-  /// an account to be associated to an unlimited number of tokens. This scale makes it more
+  /// [DEPRECATED] The balances of the tokens associated to the account. This field was 
+  /// deprecated by <a href="https://hips.hedera.com/hip/hip-367">HIP-367</a>, which allowed 
+  /// an account to be associated to an unlimited number of tokens. This scale makes it more 
   /// efficient for users to consult mirror nodes to review their token balances.
   public var tokenBalances: [Proto_TokenBalance] = []
 

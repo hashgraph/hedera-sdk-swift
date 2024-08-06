@@ -65,8 +65,8 @@ public struct Proto_TransactionGetRecordQuery {
   public var includeDuplicates: Bool = false
 
   ///*
-  /// Whether the response should include the records of any child transactions spawned by the
-  /// top-level transaction with the given transactionID.
+  /// Whether the response should include the records of any child transactions spawned by the 
+  /// top-level transaction with the given transactionID. 
   public var includeChildRecords: Bool = false
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -116,7 +116,7 @@ public struct Proto_TransactionGetRecordResponse {
   public var duplicateTransactionRecords: [Proto_TransactionRecord] = []
 
   ///*
-  /// The records of processing all child transaction spawned by the transaction with the given
+  /// The records of processing all child transaction spawned by the transaction with the given 
   /// top-level id, in consensus order. Always empty if the top-level status is UNKNOWN.
   public var childTransactionRecords: [Proto_TransactionRecord] = []
 

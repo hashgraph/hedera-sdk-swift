@@ -73,9 +73,9 @@ public struct Proto_ThrottleBucket {
 /// A list of throttle buckets which, simultaneously enforced, define the system's throttling policy.
 /// <ol>
 /// <li> When an operation appears in more than one throttling bucket, all its buckets must have room
-/// or it will be throttled.</li>
+/// or it will be throttled.</li> 
 /// <li>An operation assigned to no buckets is always throttled.</li>
-/// </ol>
+/// </ol> 
 public struct Proto_ThrottleDefinitions {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for

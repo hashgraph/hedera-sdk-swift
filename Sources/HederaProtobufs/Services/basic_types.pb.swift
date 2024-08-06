@@ -744,6 +744,18 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
   ///*
   /// Transfer one or more token balances held by the requesting account to the treasury for each token type.
   case tokenReject // = 92
+
+  ///*
+  /// Airdrop one or more tokens to one or more accounts.
+  case tokenAirdrop // = 93
+
+  ///*
+  /// Remove one or more pending airdrops from state on behalf of the sender(s) for each airdrop.
+  case tokenCancelAirdrop // = 94
+
+  ///*
+  /// Claim one or more pending airdrops
+  case tokenClaimAirdrop // = 95
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -831,6 +843,9 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
     case 90: self = .nodeUpdate
     case 91: self = .nodeDelete
     case 92: self = .tokenReject
+    case 93: self = .tokenAirdrop
+    case 94: self = .tokenCancelAirdrop
+    case 95: self = .tokenClaimAirdrop
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -916,6 +931,9 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum {
     case .nodeUpdate: return 90
     case .nodeDelete: return 91
     case .tokenReject: return 92
+    case .tokenAirdrop: return 93
+    case .tokenCancelAirdrop: return 94
+    case .tokenClaimAirdrop: return 95
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -1006,6 +1024,9 @@ extension Proto_HederaFunctionality: CaseIterable {
     .nodeUpdate,
     .nodeDelete,
     .tokenReject,
+    .tokenAirdrop,
+    .tokenCancelAirdrop,
+    .tokenClaimAirdrop,
   ]
 }
 
@@ -2757,7 +2778,7 @@ public struct Proto_TokenBalances {
   public init() {}
 }
 
-/// A token - account association
+/// A token - account association 
 public struct Proto_TokenAssociation {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -2884,6 +2905,144 @@ public struct Proto_StakingInfo {
   fileprivate var _stakePeriodStart: Proto_Timestamp? = nil
 }
 
+///*
+/// A unique, composite, identifier for a pending airdrop.
+///
+/// Each pending airdrop SHALL be uniquely identified by a PendingAirdropId.
+/// A PendingAirdropId SHALL be recorded when created and MUST be provided in any transaction
+/// that would modify that pending airdrop (such as a `claimAirdrop` or `cancelAirdrop`).
+public struct Proto_PendingAirdropId {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  ///*
+  /// A sending account.<br/>
+  /// This is the account that initiated, and SHALL fund, this pending airdrop.<br/>
+  /// This field is REQUIRED.
+  public var senderID: Proto_AccountID {
+    get {return _senderID ?? Proto_AccountID()}
+    set {_senderID = newValue}
+  }
+  /// Returns true if `senderID` has been explicitly set.
+  public var hasSenderID: Bool {return self._senderID != nil}
+  /// Clears the value of `senderID`. Subsequent reads from it will return its default value.
+  public mutating func clearSenderID() {self._senderID = nil}
+
+  ///*
+  /// A receiving account.<br/>
+  /// This is the ID of the account that SHALL receive the airdrop.<br/>
+  /// This field is REQUIRED.
+  public var receiverID: Proto_AccountID {
+    get {return _receiverID ?? Proto_AccountID()}
+    set {_receiverID = newValue}
+  }
+  /// Returns true if `receiverID` has been explicitly set.
+  public var hasReceiverID: Bool {return self._receiverID != nil}
+  /// Clears the value of `receiverID`. Subsequent reads from it will return its default value.
+  public mutating func clearReceiverID() {self._receiverID = nil}
+
+  public var tokenReference: Proto_PendingAirdropId.OneOf_TokenReference? = nil
+
+  ///*
+  /// A token ID.<br/>
+  /// This is the type of token for a fungible/common token airdrop.<br/>
+  /// This field is REQUIRED for a fungible/common token and MUST NOT be used for a
+  /// non-fungible/unique token.
+  public var fungibleTokenType: Proto_TokenID {
+    get {
+      if case .fungibleTokenType(let v)? = tokenReference {return v}
+      return Proto_TokenID()
+    }
+    set {tokenReference = .fungibleTokenType(newValue)}
+  }
+
+  ///*
+  /// The id of a single NFT, consisting of a Token ID and serial number.<br/>
+  /// This is the type of token for a non-fungible/unique token airdrop.<br/>
+  /// This field is REQUIRED for a non-fungible/unique token and MUST NOT be used for a
+  /// fungible/common token.
+  public var nonFungibleToken: Proto_NftID {
+    get {
+      if case .nonFungibleToken(let v)? = tokenReference {return v}
+      return Proto_NftID()
+    }
+    set {tokenReference = .nonFungibleToken(newValue)}
+  }
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum OneOf_TokenReference: Equatable {
+    ///*
+    /// A token ID.<br/>
+    /// This is the type of token for a fungible/common token airdrop.<br/>
+    /// This field is REQUIRED for a fungible/common token and MUST NOT be used for a
+    /// non-fungible/unique token.
+    case fungibleTokenType(Proto_TokenID)
+    ///*
+    /// The id of a single NFT, consisting of a Token ID and serial number.<br/>
+    /// This is the type of token for a non-fungible/unique token airdrop.<br/>
+    /// This field is REQUIRED for a non-fungible/unique token and MUST NOT be used for a
+    /// fungible/common token.
+    case nonFungibleToken(Proto_NftID)
+
+  #if !swift(>=4.1)
+    public static func ==(lhs: Proto_PendingAirdropId.OneOf_TokenReference, rhs: Proto_PendingAirdropId.OneOf_TokenReference) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch (lhs, rhs) {
+      case (.fungibleTokenType, .fungibleTokenType): return {
+        guard case .fungibleTokenType(let l) = lhs, case .fungibleTokenType(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.nonFungibleToken, .nonFungibleToken): return {
+        guard case .nonFungibleToken(let l) = lhs, case .nonFungibleToken(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      default: return false
+      }
+    }
+  #endif
+  }
+
+  public init() {}
+
+  fileprivate var _senderID: Proto_AccountID? = nil
+  fileprivate var _receiverID: Proto_AccountID? = nil
+}
+
+///*
+/// A single pending airdrop value.
+///
+/// This message SHALL record the airdrop amount for a fungible/common token.<br/>
+/// This message SHOULD be null for a non-fungible/unique token.<br/>
+/// If a non-null `PendingAirdropValue` is set for a non-fungible/unique token, the amount
+/// field MUST be `0`.
+///
+/// It is RECOMMENDED that implementations store pending airdrop information as a key-value map
+/// from `PendingAirdropId` to `PendingAirdropValue`, with a `null` value used for non-fungible
+/// pending airdrops.
+public struct Proto_PendingAirdropValue {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  ///*
+  /// An amount to transfer for fungible/common tokens.<br/>
+  /// This is expressed in the smallest available units for that token
+  /// (i.e. 10<sup>-`decimals`</sup> whole tokens).<br/>
+  /// This amount SHALL be transferred from the sender to the receiver, if claimed.<br/>
+  /// If the token is a fungible/common token, this value MUST be strictly greater than `0`.
+  /// If the token is a non-fungible/unique token, this message SHOULD NOT be set, and if
+  /// set, this field MUST be `0`.
+  public var amount: UInt64 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Proto_TokenType: @unchecked Sendable {}
 extension Proto_SubType: @unchecked Sendable {}
@@ -2938,6 +3097,9 @@ extension Proto_TokenBalances: @unchecked Sendable {}
 extension Proto_TokenAssociation: @unchecked Sendable {}
 extension Proto_StakingInfo: @unchecked Sendable {}
 extension Proto_StakingInfo.OneOf_StakedID: @unchecked Sendable {}
+extension Proto_PendingAirdropId: @unchecked Sendable {}
+extension Proto_PendingAirdropId.OneOf_TokenReference: @unchecked Sendable {}
+extension Proto_PendingAirdropValue: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -3081,6 +3243,9 @@ extension Proto_HederaFunctionality: SwiftProtobuf._ProtoNameProviding {
     90: .same(proto: "NodeUpdate"),
     91: .same(proto: "NodeDelete"),
     92: .same(proto: "TokenReject"),
+    93: .same(proto: "TokenAirdrop"),
+    94: .same(proto: "TokenCancelAirdrop"),
+    95: .same(proto: "TokenClaimAirdrop"),
   ]
 }
 
@@ -5255,6 +5420,120 @@ extension Proto_StakingInfo: SwiftProtobuf.Message, SwiftProtobuf._MessageImplem
     if lhs.pendingReward != rhs.pendingReward {return false}
     if lhs.stakedToMe != rhs.stakedToMe {return false}
     if lhs.stakedID != rhs.stakedID {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proto_PendingAirdropId: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".PendingAirdropId"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "sender_id"),
+    2: .standard(proto: "receiver_id"),
+    3: .standard(proto: "fungible_token_type"),
+    4: .standard(proto: "non_fungible_token"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._senderID) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._receiverID) }()
+      case 3: try {
+        var v: Proto_TokenID?
+        var hadOneofValue = false
+        if let current = self.tokenReference {
+          hadOneofValue = true
+          if case .fungibleTokenType(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.tokenReference = .fungibleTokenType(v)
+        }
+      }()
+      case 4: try {
+        var v: Proto_NftID?
+        var hadOneofValue = false
+        if let current = self.tokenReference {
+          hadOneofValue = true
+          if case .nonFungibleToken(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.tokenReference = .nonFungibleToken(v)
+        }
+      }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._senderID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._receiverID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    switch self.tokenReference {
+    case .fungibleTokenType?: try {
+      guard case .fungibleTokenType(let v)? = self.tokenReference else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    }()
+    case .nonFungibleToken?: try {
+      guard case .nonFungibleToken(let v)? = self.tokenReference else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    }()
+    case nil: break
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proto_PendingAirdropId, rhs: Proto_PendingAirdropId) -> Bool {
+    if lhs._senderID != rhs._senderID {return false}
+    if lhs._receiverID != rhs._receiverID {return false}
+    if lhs.tokenReference != rhs.tokenReference {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proto_PendingAirdropValue: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".PendingAirdropValue"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "amount"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularUInt64Field(value: &self.amount) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if self.amount != 0 {
+      try visitor.visitSingularUInt64Field(value: self.amount, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proto_PendingAirdropValue, rhs: Proto_PendingAirdropValue) -> Bool {
+    if lhs.amount != rhs.amount {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Submit an arbitrary (serialized) Transaction to the network without prechecks. Requires superuser
-/// privileges.
+/// privileges. 
 public struct Proto_UncheckedSubmitBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for

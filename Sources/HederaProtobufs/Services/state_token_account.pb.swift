@@ -315,6 +315,23 @@ public struct Proto_Account {
     set {_uniqueStorage()._firstContractStorageKey = newValue}
   }
 
+  ///*
+  /// A pending airdrop ID at the head of the linked list for this account
+  /// from the account airdrops map.<br/>
+  /// The account airdrops are connected by including the "next" and "previous"
+  /// `PendingAirdropID` in each `AccountAirdrop` message.
+  /// <p>
+  /// This value SHALL NOT be empty if this account is "sender" for any
+  /// pending airdrop, and SHALL be empty otherwise.
+  public var headPendingAirdropID: Proto_PendingAirdropId {
+    get {return _storage._headPendingAirdropID ?? Proto_PendingAirdropId()}
+    set {_uniqueStorage()._headPendingAirdropID = newValue}
+  }
+  /// Returns true if `headPendingAirdropID` has been explicitly set.
+  public var hasHeadPendingAirdropID: Bool {return _storage._headPendingAirdropID != nil}
+  /// Clears the value of `headPendingAirdropID`. Subsequent reads from it will return its default value.
+  public mutating func clearHeadPendingAirdropID() {_uniqueStorage()._headPendingAirdropID = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   ///*
@@ -500,6 +517,7 @@ extension Proto_Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     31: .standard(proto: "number_treasury_titles"),
     32: .standard(proto: "expired_and_pending_removal"),
     33: .standard(proto: "first_contract_storage_key"),
+    34: .standard(proto: "head_pending_airdrop_id"),
   ]
 
   fileprivate class _StorageClass {
@@ -535,6 +553,7 @@ extension Proto_Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     var _numberTreasuryTitles: UInt32 = 0
     var _expiredAndPendingRemoval: Bool = false
     var _firstContractStorageKey: Data = Data()
+    var _headPendingAirdropID: Proto_PendingAirdropId? = nil
 
     #if swift(>=5.10)
       // This property is used as the initial default value for new instances of the type.
@@ -581,6 +600,7 @@ extension Proto_Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       _numberTreasuryTitles = source._numberTreasuryTitles
       _expiredAndPendingRemoval = source._expiredAndPendingRemoval
       _firstContractStorageKey = source._firstContractStorageKey
+      _headPendingAirdropID = source._headPendingAirdropID
     }
   }
 
@@ -651,6 +671,7 @@ extension Proto_Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
         case 31: try { try decoder.decodeSingularUInt32Field(value: &_storage._numberTreasuryTitles) }()
         case 32: try { try decoder.decodeSingularBoolField(value: &_storage._expiredAndPendingRemoval) }()
         case 33: try { try decoder.decodeSingularBytesField(value: &_storage._firstContractStorageKey) }()
+        case 34: try { try decoder.decodeSingularMessageField(value: &_storage._headPendingAirdropID) }()
         default: break
         }
       }
@@ -767,6 +788,9 @@ extension Proto_Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       if !_storage._firstContractStorageKey.isEmpty {
         try visitor.visitSingularBytesField(value: _storage._firstContractStorageKey, fieldNumber: 33)
       }
+      try { if let v = _storage._headPendingAirdropID {
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 34)
+      } }()
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -808,6 +832,7 @@ extension Proto_Account: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
         if _storage._numberTreasuryTitles != rhs_storage._numberTreasuryTitles {return false}
         if _storage._expiredAndPendingRemoval != rhs_storage._expiredAndPendingRemoval {return false}
         if _storage._firstContractStorageKey != rhs_storage._firstContractStorageKey {return false}
+        if _storage._headPendingAirdropID != rhs_storage._headPendingAirdropID {return false}
         return true
       }
       if !storagesAreEqual {return false}

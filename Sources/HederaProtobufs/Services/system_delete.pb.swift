@@ -26,7 +26,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// stored internally until the expiration time, at which time it is truly and permanently deleted.
 /// Until that time, it can be undeleted by the Hedera administrative multisignature. When a smart
 /// contract is deleted, the cryptocurrency account within it continues to exist, and is not affected
-/// by the expiration time here.
+/// by the expiration time here. 
 public struct Proto_SystemDeleteTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for

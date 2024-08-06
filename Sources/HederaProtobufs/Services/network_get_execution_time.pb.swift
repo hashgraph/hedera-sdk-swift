@@ -21,9 +21,9 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 }
 
 ///*
-/// Gets the time in nanoseconds spent in <tt>handleTransaction</tt> for one or more
-/// TransactionIDs (assuming they have reached consensus "recently", since only a limited
-/// number of execution times are kept in-memory, depending on the value of the node-local
+/// Gets the time in nanoseconds spent in <tt>handleTransaction</tt> for one or more 
+/// TransactionIDs (assuming they have reached consensus "recently", since only a limited 
+/// number of execution times are kept in-memory, depending on the value of the node-local 
 /// property <tt>stats.executionTimesToTrack</tt>).
 public struct Proto_NetworkGetExecutionTimeQuery {
   // SwiftProtobuf.Message conformance is added in an extension below. See the

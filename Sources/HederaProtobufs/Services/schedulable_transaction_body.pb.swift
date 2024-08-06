@@ -496,6 +496,36 @@ public struct Proto_SchedulableTransactionBody {
     set {_uniqueStorage()._data = .tokenReject(newValue)}
   }
 
+  ///*
+  /// Transaction body for a scheduled transaction to cancel an airdrop.
+  public var tokenCancelAirdrop: Proto_TokenCancelAirdropTransactionBody {
+    get {
+      if case .tokenCancelAirdrop(let v)? = _storage._data {return v}
+      return Proto_TokenCancelAirdropTransactionBody()
+    }
+    set {_uniqueStorage()._data = .tokenCancelAirdrop(newValue)}
+  }
+
+  ///*
+  /// Transaction body for a scheduled transaction to claim an airdrop.
+  public var tokenClaimAirdrop: Proto_TokenClaimAirdropTransactionBody {
+    get {
+      if case .tokenClaimAirdrop(let v)? = _storage._data {return v}
+      return Proto_TokenClaimAirdropTransactionBody()
+    }
+    set {_uniqueStorage()._data = .tokenClaimAirdrop(newValue)}
+  }
+
+  ///*
+  /// Transaction body for a scheduled transaction to airdrop tokens.
+  public var tokenAirdrop: Proto_TokenAirdropTransactionBody {
+    get {
+      if case .tokenAirdrop(let v)? = _storage._data {return v}
+      return Proto_TokenAirdropTransactionBody()
+    }
+    set {_uniqueStorage()._data = .tokenAirdrop(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   ///*
@@ -644,6 +674,15 @@ public struct Proto_SchedulableTransactionBody {
     /// Custom fees and royalties defined for the tokens rejected
     /// SHALL NOT be charged for this transaction.
     case tokenReject(Proto_TokenRejectTransactionBody)
+    ///*
+    /// Transaction body for a scheduled transaction to cancel an airdrop.
+    case tokenCancelAirdrop(Proto_TokenCancelAirdropTransactionBody)
+    ///*
+    /// Transaction body for a scheduled transaction to claim an airdrop.
+    case tokenClaimAirdrop(Proto_TokenClaimAirdropTransactionBody)
+    ///*
+    /// Transaction body for a scheduled transaction to airdrop tokens.
+    case tokenAirdrop(Proto_TokenAirdropTransactionBody)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proto_SchedulableTransactionBody.OneOf_Data, rhs: Proto_SchedulableTransactionBody.OneOf_Data) -> Bool {
@@ -823,6 +862,18 @@ public struct Proto_SchedulableTransactionBody {
         guard case .tokenReject(let l) = lhs, case .tokenReject(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
+      case (.tokenCancelAirdrop, .tokenCancelAirdrop): return {
+        guard case .tokenCancelAirdrop(let l) = lhs, case .tokenCancelAirdrop(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.tokenClaimAirdrop, .tokenClaimAirdrop): return {
+        guard case .tokenClaimAirdrop(let l) = lhs, case .tokenClaimAirdrop(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.tokenAirdrop, .tokenAirdrop): return {
+        guard case .tokenAirdrop(let l) = lhs, case .tokenAirdrop(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
@@ -891,6 +942,9 @@ extension Proto_SchedulableTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
     43: .same(proto: "nodeUpdate"),
     44: .same(proto: "nodeDelete"),
     45: .same(proto: "tokenReject"),
+    46: .same(proto: "tokenCancelAirdrop"),
+    47: .same(proto: "tokenClaimAirdrop"),
+    48: .same(proto: "tokenAirdrop"),
   ]
 
   fileprivate class _StorageClass {
@@ -1493,6 +1547,45 @@ extension Proto_SchedulableTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
             _storage._data = .tokenReject(v)
           }
         }()
+        case 46: try {
+          var v: Proto_TokenCancelAirdropTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .tokenCancelAirdrop(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .tokenCancelAirdrop(v)
+          }
+        }()
+        case 47: try {
+          var v: Proto_TokenClaimAirdropTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .tokenClaimAirdrop(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .tokenClaimAirdrop(v)
+          }
+        }()
+        case 48: try {
+          var v: Proto_TokenAirdropTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .tokenAirdrop(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .tokenAirdrop(v)
+          }
+        }()
         default: break
         }
       }
@@ -1683,6 +1776,18 @@ extension Proto_SchedulableTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
       case .tokenReject?: try {
         guard case .tokenReject(let v)? = _storage._data else { preconditionFailure() }
         try visitor.visitSingularMessageField(value: v, fieldNumber: 45)
+      }()
+      case .tokenCancelAirdrop?: try {
+        guard case .tokenCancelAirdrop(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 46)
+      }()
+      case .tokenClaimAirdrop?: try {
+        guard case .tokenClaimAirdrop(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 47)
+      }()
+      case .tokenAirdrop?: try {
+        guard case .tokenAirdrop(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 48)
       }()
       case nil: break
       }
