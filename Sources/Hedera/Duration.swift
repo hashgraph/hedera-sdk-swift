@@ -33,6 +33,6 @@ extension Duration: ProtobufCodable {
     }
 
     internal func toProtobuf() -> Protobuf {
-        .with { proto in proto.seconds = Int64(seconds) }
+        .with { proto in proto.seconds = Int64(truncatingIfNeeded: seconds) }
     }
 }

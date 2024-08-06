@@ -18,10 +18,11 @@
  * ‍
  */
 import Foundation
-import Hedera
 import Vapor
 
-let server = TCKServer(sdkClient: SDKClient())
+@testable import Hedera
+
+private let server = TCKServer(sdkClient: SDKClient())
 try TCKServer.main()
 
 private func encodeJsonRpcResponseToHttpResponse(jsonResponse: JSONResponse) throws -> Response {
@@ -29,10 +30,10 @@ private func encodeJsonRpcResponseToHttpResponse(jsonResponse: JSONResponse) thr
     return Response(status: .ok, headers: ["Content-Type": "application/json"], body: .init(data: responseData))
 }
 
-struct TCKServer {
-    var sdkClient: SDKClient
+private struct TCKServer {
+    internal var sdkClient: SDKClient
 
-    static func main() throws {
+    internal static func main() throws {
         var env = try Environment.detect()
         try LoggingSystem.bootstrap(from: &env)
         let app = Application(env)
@@ -47,21 +48,33 @@ struct TCKServer {
                 return try encodeJsonRpcResponseToHttpResponse(jsonResponse: JSONResponse(id: nil, error: error))
             }
 
-            /// The request is well-formed, it can be processed.
-            return try encodeJsonRpcResponseToHttpResponse(jsonResponse: server.processRequest(request: jsonRpcRequest))
+            let response = await server.processRequest(request: jsonRpcRequest)
+            return try encodeJsonRpcResponseToHttpResponse(
+                jsonResponse: response)
         }
 
         try app.run()
     }
 
-    func processRequest(request: JSONRequest) -> JSONResponse {
+    private func processRequest(request: JSONRequest) async -> JSONResponse {
         do {
             switch request.method {
+            ///
+            /// createAccount
+            ///
+            case "createAccount":
+                return JSONResponse(
+                    id: request.id,
+                    result: try await sdkClient.createAccount(
+                        getOptionalJsonParameter("params", request.toDict(), request.method)))
             ///
             /// generateKey
             ///
             case "generateKey":
-                return JSONResponse(id: request.id, result: try sdkClient.generateKey(parameters: request.params))
+                return JSONResponse(
+                    id: request.id,
+                    result: try sdkClient.generateKey(
+                        getRequiredJsonParameter("params", request.toDict(), request.method)))
             ///
             /// reset
             ///
@@ -71,7 +84,9 @@ struct TCKServer {
             /// setup
             ///
             case "setup":
-                return JSONResponse(id: request.id, result: try sdkClient.setup(parameters: request.params))
+                return JSONResponse(
+                    id: request.id,
+                    result: try sdkClient.setup(getRequiredJsonParameter("params", request.toDict(), request.method)))
             ///
             /// Method Not Found
             ///
@@ -81,7 +96,21 @@ struct TCKServer {
         } catch let error as JSONError {
             return JSONResponse(id: request.id, error: error)
         } catch let error as HError {
-            return JSONResponse(id: request.id, error: JSONError.hederaError(error.description))
+            switch error.kind {
+            case .transactionPreCheckStatus(let status, let _),
+                .queryPreCheckStatus(let status, let _),
+                .receiptStatus(let status, let _):
+                return JSONResponse(
+                    id: request.id,
+                    error: JSONError.hederaError(
+                        "Hedera error",
+                        JSONObject.dictionary([
+                            "status": JSONObject.string(Status.nameMap[status.rawValue]!),
+                            "message": JSONObject.string(error.description),
+                        ])))
+            default:
+                return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))
+            }
         } catch let error {
             return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))
         }
