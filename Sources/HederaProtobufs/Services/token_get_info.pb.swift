@@ -305,7 +305,7 @@ public struct Proto_TokenInfo {
   }
 
   ///*
-  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs. 
+  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs.
   public var ledgerID: Data {
     get {return _storage._ledgerID}
     set {_uniqueStorage()._ledgerID = newValue}

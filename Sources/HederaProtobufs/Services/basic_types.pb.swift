@@ -2778,7 +2778,7 @@ public struct Proto_TokenBalances {
   public init() {}
 }
 
-/// A token - account association 
+/// A token - account association
 public struct Proto_TokenAssociation {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for

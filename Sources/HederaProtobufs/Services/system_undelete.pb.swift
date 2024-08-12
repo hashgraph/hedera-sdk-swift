@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Undelete a file or smart contract that was deleted by SystemDelete; requires a Hedera
-/// administrative multisignature. 
+/// administrative multisignature.
 public struct Proto_SystemUndeleteTransactionBody {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for

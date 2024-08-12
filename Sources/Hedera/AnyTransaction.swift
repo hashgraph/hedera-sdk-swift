@@ -308,6 +308,9 @@ extension ServicesTransactionDataList: TryFromProtobuf {
         case .nodeCreate: throw HError.fromProtobuf("Unsupported transaction `NodeCreateTransaction`")
         case .nodeUpdate: throw HError.fromProtobuf("Unsupported transaction `NodeUpdateTransaction`")
         case .tokenReject(let data): value = .tokenReject([data])
+        case .tokenAirdrop: throw HError.fromProtobuf("Unsupported transaction `TokenAirdropTransaction`")
+        case .tokenCancelAirdrop: throw HError.fromProtobuf("Unsupported transaction `TokenCancelAirdropTransaction`")
+        case .tokenClaimAirdrop: throw HError.fromProtobuf("Unsupported transaction `TokenClaimAirdropTransaction`")
         }
 
         for transaction in iter {
