@@ -262,7 +262,7 @@ public enum RequestType {
     /// Airdrop one or more tokens to one or more accounts.
     case tokenAirdrop
 
-    /// Remove one or more pending airdrops from state on 
+    /// Remove one or more pending airdrops from state on
     /// behalf of the sender(s) for each airdrop.
     case tokenCancelAirdrop
 

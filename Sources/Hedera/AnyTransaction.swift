@@ -65,6 +65,9 @@ internal enum ServicesTransactionDataList {
     case ethereum([Proto_EthereumTransactionBody])
     case prng([Proto_UtilPrngTransactionBody])
     case tokenUpdateNfts([Proto_TokenUpdateNftsTransactionBody])
+    case nodeCreate([Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody])
+    case nodeUpdate([Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody])
+    case nodeDelete([Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody])
 
     internal mutating func append(_ transaction: Proto_TransactionBody.OneOf_Data) throws {
         switch (self, transaction) {
@@ -240,6 +243,18 @@ internal enum ServicesTransactionDataList {
             array.append(data)
             self = .tokenReject(array)
 
+        case (.nodeCreate(var array), .nodeCreate(let data)):
+            array.append(data)
+            self = .nodeCreate(array)
+
+        case (.nodeUpdate(var array), .nodeUpdate(let data)):
+            array.append(data)
+            self = .nodeUpdate(array)
+
+        case (.nodeDelete(var array), .nodeDelete(let data)):
+            array.append(data)
+            self = .nodeDelete(array)
+
         default:
             throw HError.fromProtobuf("mismatched transaction types")
         }
@@ -304,9 +319,9 @@ extension ServicesTransactionDataList: TryFromProtobuf {
         case .cryptoDeleteLiveHash: throw HError.fromProtobuf("Unsupported transaction `DeleteLiveHashTransaction`")
         case .uncheckedSubmit: throw HError.fromProtobuf("Unsupported transaction `UncheckedSubmitTransaction`")
         case .nodeStakeUpdate: throw HError.fromProtobuf("Unsupported transaction `NodeStakeUpdateTransaction`")
-        case .nodeDelete: throw HError.fromProtobuf("Unsupported transaction `NodeDeleteTransaction`")
-        case .nodeCreate: throw HError.fromProtobuf("Unsupported transaction `NodeCreateTransaction`")
-        case .nodeUpdate: throw HError.fromProtobuf("Unsupported transaction `NodeUpdateTransaction`")
+        case .nodeCreate(let data): value = .nodeCreate([data])
+        case .nodeUpdate(let data): value = .nodeUpdate([data])
+        case .nodeDelete(let data): value = .nodeDelete([data])
         case .tokenReject(let data): value = .tokenReject([data])
         case .tokenAirdrop: throw HError.fromProtobuf("Unsupported transaction `TokenAirdropTransaction`")
         case .tokenCancelAirdrop: throw HError.fromProtobuf("Unsupported transaction `TokenCancelAirdropTransaction`")
