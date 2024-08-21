@@ -153,7 +153,7 @@ extension TransactionSources {
                 throw HError.fromProtobuf("Transaction had no signed transaction bytes")
             }
 
-            return try Proto_SignedTransaction(contiguousBytes: transaction.signedTransactionBytes)
+            return try Proto_SignedTransaction(serializedBytes: transaction.signedTransactionBytes)
         }
 
         // ensure all signers (if any) are consistent for all signed transactions.
@@ -182,7 +182,7 @@ extension TransactionSources {
             signedTx -> (transactionId: TransactionId, nodeAccountId: AccountId) in
             let transactionBody: Proto_TransactionBody
             do {
-                transactionBody = try Proto_TransactionBody(contiguousBytes: signedTx.bodyBytes)
+                transactionBody = try Proto_TransactionBody(serializedBytes: signedTx.bodyBytes)
             } catch {
                 throw HError.fromProtobuf(String(describing: error))
             }
