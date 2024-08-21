@@ -40,7 +40,8 @@ public struct TransactionReceipt {
         scheduledTransactionId: TransactionId? = nil,
         serials: [UInt64]? = nil,
         duplicates: [TransactionReceipt],
-        children: [TransactionReceipt]
+        children: [TransactionReceipt],
+        nodeId: UInt64 = 0
     ) {
         self.transactionId = transactionId
         self.status = status
@@ -59,6 +60,7 @@ public struct TransactionReceipt {
         self.serials = serials
         self.duplicates = duplicates
         self.children = children
+        self.nodeId = nodeId
     }
 
     /// The ID of the transaction that this is a receipt for.
@@ -132,6 +134,10 @@ public struct TransactionReceipt {
     /// The receipts (if any) of all child transactions spawned by the transaction with the
     /// given top-level id, in consensus order.
     public let children: [TransactionReceipt]
+
+    /// In the receipt of a NodeCreate, NodeUpdate, NodeDelete, the id of the newly created node.
+    /// An affected node identifier.
+    public let nodeId: UInt64
 
     internal init(
         protobuf proto: Proto_TransactionReceipt,
@@ -220,6 +226,7 @@ extension TransactionReceipt: TryProtobufCodable {
             exchangeRates?.toProtobufInto(&proto.exchangeRate)
             scheduledTransactionId?.toProtobufInto(&proto.scheduledTransactionID)
             proto.serialNumbers = serials?.map(Int64.init) ?? []
+            proto.nodeID = nodeId
         }
     }
 }
