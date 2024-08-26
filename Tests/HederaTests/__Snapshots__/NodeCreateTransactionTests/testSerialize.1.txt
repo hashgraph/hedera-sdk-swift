@@ -20,20 +20,20 @@ nodeCreate {
   }
   description: "test description"
   gossip_endpoint {
-    ipAddressV4: "\177\000\000\001"
-    port: 50222
+    port: 42
+    domain_name: "unit.test.com"
   }
   gossip_endpoint {
-    ipAddressV4: "\177\000\000\001"
-    port: 50212
+    port: 43
+    domain_name: "unit.test.com"
   }
   service_endpoint {
-    ipAddressV4: "\177\000\000\001"
-    port: 50222
+    port: 44
+    domain_name: "unit.test.com"
   }
   service_endpoint {
-    ipAddressV4: "\177\000\000\001"
-    port: 50212
+    port: 45
+    domain_name: "unit.test.com"
   }
   gossip_ca_certificate: "\001\002\003\004"
   grpc_certificate_hash: "\005\006\007\b"

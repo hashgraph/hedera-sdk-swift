@@ -12,7 +12,7 @@ import SwiftProtobuf
 
 
 ///*
-/// Transactions and queries for the file service. 
+/// Transactions and queries for the file service.
 ///
 /// Usage: instantiate `Proto_FileServiceClient`, then call methods of this protocol to make API calls.
 public protocol Proto_FileServiceClientProtocol: GRPCClient {
@@ -276,7 +276,7 @@ public struct Proto_FileServiceNIOClient: Proto_FileServiceClientProtocol {
 }
 
 ///*
-/// Transactions and queries for the file service. 
+/// Transactions and queries for the file service.
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
 public protocol Proto_FileServiceAsyncClientProtocol: GRPCClient {
   static var serviceDescriptor: GRPCServiceDescriptor { get }

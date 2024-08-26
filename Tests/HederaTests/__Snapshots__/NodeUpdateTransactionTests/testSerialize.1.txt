@@ -23,20 +23,20 @@ nodeUpdate {
     value: "test description"
   }
   gossip_endpoint {
-    ipAddressV4: "\177\000\000\001"
-    port: 50222
+    port: 21
+    domain_name: "unit.test.com"
   }
   gossip_endpoint {
-    ipAddressV4: "\177\000\000\001"
-    port: 50212
+    port: 22
+    domain_name: "unit.test.com"
   }
   service_endpoint {
-    ipAddressV4: "\177\000\000\001"
-    port: 50222
+    port: 23
+    domain_name: "unit.test.com"
   }
   service_endpoint {
-    ipAddressV4: "\177\000\000\001"
-    port: 50212
+    port: 24
+    domain_name: "unit.test.com"
   }
   gossip_ca_certificate {
     value: "\001\002\003\004"

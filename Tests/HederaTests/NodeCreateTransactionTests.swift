@@ -19,6 +19,7 @@
  */
 
 import HederaProtobufs
+import Network
 import SnapshotTesting
 import XCTest
 
@@ -29,8 +30,12 @@ internal final class NodeCreateTransactionTests: XCTestCase {
     internal static let testGossipCertificate = Data([0x01, 0x02, 0x03, 0x04])
     internal static let testGrpcCertificateHash = Data([0x05, 0x06, 0x07, 0x08])
 
-    private static func makeIpv4AddressList() throws -> [SocketAddressV4] {
-        [SocketAddressV4("127.0.0.1:50222")!, SocketAddressV4("127.0.0.1:50212")!]
+    private static func spawnTestEndpoint(offset: Int32) -> Endpoint {
+        Endpoint(ipAddress: IPv4Address("127.0.0.1:50222"), port: 42 + offset, domainName: "unit.test.com")
+    }
+
+    private static func spawnTestEndpointList(offset: Int32) -> [Endpoint] {
+        [Self.spawnTestEndpoint(offset: offset), Self.spawnTestEndpoint(offset: offset + 1)]
     }
 
     private static func makeTransaction() throws -> NodeCreateTransaction {
@@ -42,8 +47,8 @@ internal final class NodeCreateTransactionTests: XCTestCase {
             )
             .accountId(AccountId.fromString("0.0.5007"))
             .description(testDescription)
-            .gossipEndpoints(try Self.makeIpv4AddressList())
-            .serviceEndpoints(try Self.makeIpv4AddressList())
+            .gossipEndpoints(spawnTestEndpointList(offset: 0))
+            .serviceEndpoints(spawnTestEndpointList(offset: 2))
             .gossipCaCertificate(Self.testGossipCertificate)
             .grpcCertificateHash(Self.testGrpcCertificateHash)
             .adminKey(Key.single(Resources.privateKey.publicKey))
@@ -65,17 +70,17 @@ internal final class NodeCreateTransactionTests: XCTestCase {
     }
 
     internal func testFromProtoBody() throws {
-        let protoData = try Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody.with { proto in
+        let gossipEndpoints = Self.spawnTestEndpointList(offset: 0)
+        let serviceEndpoints = Self.spawnTestEndpointList(offset: 2)
+        let protoData = Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody.with { proto in
             proto.accountID = Resources.accountId.toProtobuf()
             proto.description_p = Self.testDescription
-            proto.gossipEndpoint = try Self.makeIpv4AddressList().map { $0.toProtobuf() }
-            proto.serviceEndpoint = try Self.makeIpv4AddressList().map { $0.toProtobuf() }
+            proto.gossipEndpoint = gossipEndpoints.map { $0.toProtobuf() }
+            proto.serviceEndpoint = serviceEndpoints.map { $0.toProtobuf() }
             proto.gossipCaCertificate = Self.testGossipCertificate
             proto.grpcCertificateHash = Self.testGrpcCertificateHash
             proto.adminKey = Key.single(Resources.publicKey).toProtobuf()
         }
-
-        let endpoints = try Self.makeIpv4AddressList()
 
         let protoBody = Proto_TransactionBody.with { proto in
             proto.nodeCreate = protoData
@@ -93,15 +98,15 @@ internal final class NodeCreateTransactionTests: XCTestCase {
         XCTAssertEqual(tx.serviceEndpoints.count, 2)
 
         for (index, endpoint) in tx.gossipEndpoints.enumerated() {
-            XCTAssertEqual(endpoint.ip, endpoints[index].ip)
-            XCTAssertEqual(endpoint.port, endpoints[index].port)
-            XCTAssertEqual(endpoint.domainName, endpoints[index].domainName)
+            XCTAssertEqual(endpoint.ipAddress, gossipEndpoints[index].ipAddress)
+            XCTAssertEqual(endpoint.port, gossipEndpoints[index].port)
+            XCTAssertEqual(endpoint.domainName, gossipEndpoints[index].domainName)
         }
 
         for (index, endpoint) in tx.serviceEndpoints.enumerated() {
-            XCTAssertEqual(endpoint.ip, endpoints[index].ip)
-            XCTAssertEqual(endpoint.port, endpoints[index].port)
-            XCTAssertEqual(endpoint.domainName, endpoints[index].domainName)
+            XCTAssertEqual(endpoint.ipAddress, serviceEndpoints[index].ipAddress)
+            XCTAssertEqual(endpoint.port, serviceEndpoints[index].port)
+            XCTAssertEqual(endpoint.domainName, serviceEndpoints[index].domainName)
         }
     }
 
@@ -128,11 +133,11 @@ internal final class NodeCreateTransactionTests: XCTestCase {
 
     internal func testGetSetGossipEndpoints() throws {
         let tx = NodeCreateTransaction()
-        let endpoints = try Self.makeIpv4AddressList()
+        let endpoints = Self.spawnTestEndpointList(offset: Int32(0))
         tx.gossipEndpoints(endpoints)
 
         for (index, endpoint) in tx.gossipEndpoints.enumerated() {
-            XCTAssertEqual(endpoint.ip, endpoints[index].ip)
+            XCTAssertEqual(endpoint.ipAddress, endpoints[index].ipAddress)
             XCTAssertEqual(endpoint.port, endpoints[index].port)
             XCTAssertEqual(endpoint.domainName, endpoints[index].domainName)
         }
@@ -140,11 +145,11 @@ internal final class NodeCreateTransactionTests: XCTestCase {
 
     internal func testGetSetServiceEndpoints() throws {
         let tx = NodeCreateTransaction()
-        let endpoints = try Self.makeIpv4AddressList()
+        let endpoints = Self.spawnTestEndpointList(offset: Int32(2))
         tx.serviceEndpoints(endpoints)
 
         for (index, endpoint) in tx.serviceEndpoints.enumerated() {
-            XCTAssertEqual(endpoint.ip, endpoints[index].ip)
+            XCTAssertEqual(endpoint.ipAddress, endpoints[index].ipAddress)
             XCTAssertEqual(endpoint.port, endpoints[index].port)
             XCTAssertEqual(endpoint.domainName, endpoints[index].domainName)
         }

@@ -42,8 +42,8 @@ public final class NodeUpdateTransaction: Transaction {
         nodeId: UInt64 = 0,
         accountId: AccountId? = nil,
         description: String? = nil,
-        gossipEndpoints: [SocketAddressV4] = [],
-        serviceEndpoints: [SocketAddressV4] = [],
+        gossipEndpoints: [Endpoint] = [],
+        serviceEndpoints: [Endpoint] = [],
         gossipCaCertificate: Data? = nil,
         grpcCertificateHash: Data? = nil,
         adminKey: Key? = nil
@@ -66,8 +66,8 @@ public final class NodeUpdateTransaction: Transaction {
         self.nodeId = data.nodeID
         self.accountId = data.hasAccountID ? try .fromProtobuf(data.accountID) : nil
         self.description = data.hasDescription_p ? data.description_p.value : nil
-        self.gossipEndpoints = try data.gossipEndpoint.map(SocketAddressV4.init)
-        self.serviceEndpoints = try data.serviceEndpoint.map(SocketAddressV4.init)
+        self.gossipEndpoints = try data.gossipEndpoint.map(Endpoint.init)
+        self.serviceEndpoints = try data.serviceEndpoint.map(Endpoint.init)
         self.gossipCaCertificate = data.hasGossipCaCertificate ? data.gossipCaCertificate.value : nil
         self.grpcCertificateHash = data.hasGrpcCertificateHash ? data.grpcCertificateHash.value : nil
         self.adminKey = data.hasAdminKey ? try .fromProtobuf(data.adminKey) : nil
@@ -121,7 +121,7 @@ public final class NodeUpdateTransaction: Transaction {
     }
 
     /// A list of service endpoints for gossip.
-    public var gossipEndpoints: [SocketAddressV4] {
+    public var gossipEndpoints: [Endpoint] {
         willSet {
             ensureNotFrozen()
         }
@@ -129,7 +129,7 @@ public final class NodeUpdateTransaction: Transaction {
 
     /// Assign the list of service endpoints for gossip.
     @discardableResult
-    public func gossipEndpoints(_ gossipEndpoints: [SocketAddressV4]) -> Self {
+    public func gossipEndpoints(_ gossipEndpoints: [Endpoint]) -> Self {
         self.gossipEndpoints = gossipEndpoints
 
         return self
@@ -137,14 +137,14 @@ public final class NodeUpdateTransaction: Transaction {
 
     /// Add an endpoint for gossip to the list of service endpoints for gossip.
     @discardableResult
-    public func addGossipEndpoint(_ gossipEndpoint: SocketAddressV4) -> Self {
+    public func addGossipEndpoint(_ gossipEndpoint: Endpoint) -> Self {
         self.gossipEndpoints.append(gossipEndpoint)
 
         return self
     }
 
     /// Extract the list of service endpoints for gRPC calls.
-    public var serviceEndpoints: [SocketAddressV4] {
+    public var serviceEndpoints: [Endpoint] {
         willSet {
             ensureNotFrozen()
         }
@@ -152,7 +152,7 @@ public final class NodeUpdateTransaction: Transaction {
 
     /// Assign the list of service endpoints for gRPC calls.
     @discardableResult
-    public func serviceEndpoints(_ serviceEndpoints: [SocketAddressV4]) -> Self {
+    public func serviceEndpoints(_ serviceEndpoints: [Endpoint]) -> Self {
         self.serviceEndpoints = serviceEndpoints
 
         return self
@@ -160,7 +160,7 @@ public final class NodeUpdateTransaction: Transaction {
 
     /// Add an endpoint for gRPC calls to the list of service endpoints for gRPC calls.
     @discardableResult
-    public func addServiceEndpoint(_ serviceEndpoint: SocketAddressV4) -> Self {
+    public func addServiceEndpoint(_ serviceEndpoint: Endpoint) -> Self {
         self.serviceEndpoints.append(serviceEndpoint)
 
         return self
