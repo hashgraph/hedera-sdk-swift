@@ -59,7 +59,7 @@ public struct ContractInfo {
     public let autoRenewAccountId: AccountId?
 
     /// The maximum number of tokens that a contract can be implicitly associated with.
-    public let maxAutomaticTokenAssociations: UInt32
+    public let maxAutomaticTokenAssociations: Int32
 
     /// Ledger ID for the network the response was returned from.
     public let ledgerId: LedgerId
@@ -103,7 +103,7 @@ extension ContractInfo: TryProtobufCodable {
             balance: .fromTinybars(Int64(proto.balance)),
             isDeleted: proto.deleted,
             autoRenewAccountId: try .fromProtobuf(autoRenewAccountId),
-            maxAutomaticTokenAssociations: UInt32(proto.maxAutomaticTokenAssociations),
+            maxAutomaticTokenAssociations: proto.maxAutomaticTokenAssociations,
             ledgerId: .fromBytes(proto.ledgerID),
             stakingInfo: try .fromProtobuf(proto.stakingInfo)
         )
@@ -122,7 +122,7 @@ extension ContractInfo: TryProtobufCodable {
             proto.balance = UInt64(balance.toTinybars())
             proto.deleted = isDeleted
             autoRenewAccountId?.toProtobufInto(&proto.autoRenewAccountID)
-            proto.maxAutomaticTokenAssociations = Int32(maxAutomaticTokenAssociations)
+            proto.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
             proto.ledgerID = ledgerId.bytes
             proto.stakingInfo = stakingInfo.toProtobuf()
         }

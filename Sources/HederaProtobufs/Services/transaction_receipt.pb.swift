@@ -100,59 +100,65 @@ public struct Proto_TransactionReceipt {
   }
 
   ///*
-  /// In the receipt of a ConsensusSubmitMessage, the new running hash of the topic that received
-  /// the message.  This 48-byte field is the output of a particular SHA-384 digest whose input
-  /// data are determined by the value of the topicRunningHashVersion below. The bytes of each
-  /// uint64 or uint32 are to be in Big-Endian format.
-  ///
-  /// IF the topicRunningHashVersion is '0' or '1', then the input data to the SHA-384 digest are,
+  /// In the receipt of a `ConsensusSubmitMessage`, the new running hash of the topic that
+  /// received the message.<br/>
+  /// This 48-byte field is the output of a SHA-384 digest with input data determined by the
+  /// value of the `topicRunningHashVersion` field.<br/>
+  /// All new transactions SHALL use `topicRunningHashVersion` `3`.<br/>
+  /// The bytes of each uint64 or uint32 encoded for the hash input MUST be in Big-Endian format.
+  /// <p>
+  /// <hr/>
+  /// If the `topicRunningHashVersion` is '0' or '1', then the input data to the SHA-384 digest are,
   /// in order:
-  /// ---
-  /// 1. The previous running hash of the topic (48 bytes)
-  /// 2. The topic's shard (8 bytes)
-  /// 3. The topic's realm (8 bytes)
-  /// 4. The topic's number (8 bytes)
-  /// 5. The number of seconds since the epoch before the ConsensusSubmitMessage reached
-  ///    consensus (8 bytes)
-  /// 6. The number of nanoseconds since 5. before the ConsensusSubmitMessage reached
-  ///    consensus (4 bytes)
-  /// 7. The topicSequenceNumber from above (8 bytes)
-  /// 8. The message bytes from the ConsensusSubmitMessage (variable).
-  ///
-  /// IF the topicRunningHashVersion is '2', then the input data to the SHA-384 digest are, in
+  /// <ol>
+  ///   <li>The previous running hash of the topic (48 bytes)</li>
+  ///   <li>The topic's shard (8 bytes)</li>
+  ///   <li>The topic's realm (8 bytes)</li>
+  ///   <li>The topic's number (8 bytes)</li>
+  ///   <li>The number of seconds since the epoch when the `ConsensusSubmitMessage` reached
+  ///    consensus (8 bytes)</li>
+  ///   <li>The number of nanoseconds within the second when the `ConsensusSubmitMessage` reached
+  ///    consensus (4 bytes)</li>
+  ///   <li>The `topicSequenceNumber` (8 bytes)</li>
+  ///   <li>The message bytes from the `ConsensusSubmitMessage` (variable).</li>
+  /// </ol>
+  /// <hr/>
+  /// If the `topicRunningHashVersion` is '2', then the input data to the SHA-384 digest are, in
   /// order:
-  /// ---
-  /// 1. The previous running hash of the topic (48 bytes)
-  /// 2. The topicRunningHashVersion below (8 bytes)
-  /// 3. The topic's shard (8 bytes)
-  /// 4. The topic's realm (8 bytes)
-  /// 5. The topic's number (8 bytes)
-  /// 6. The number of seconds since the epoch before the ConsensusSubmitMessage reached
-  ///    consensus (8 bytes)
-  /// 7. The number of nanoseconds since 6. before the ConsensusSubmitMessage reached
-  ///    consensus (4 bytes)
-  /// 8. The topicSequenceNumber from above (8 bytes)
-  /// 9. The output of the SHA-384 digest of the message bytes from the
-  ///    consensusSubmitMessage (48 bytes)
-  ///
-  /// Otherwise, IF the topicRunningHashVersion is '3', then the input data to the SHA-384 digest
+  /// <ol>
+  ///   <li>The previous running hash of the topic (48 bytes)</li>
+  ///   <li>The `topicRunningHashVersion` (8 bytes)</li>
+  ///   <li>The topic's shard (8 bytes)</li>
+  ///   <li>The topic's realm (8 bytes)</li>
+  ///   <li>The topic's number (8 bytes)</li>
+  ///   <li>The number of seconds since the epoch when the `ConsensusSubmitMessage` reached
+  ///    consensus (8 bytes)</li>
+  ///   <li>The number of nanoseconds within the second when the `ConsensusSubmitMessage` reached
+  ///    consensus (4 bytes)</li>
+  ///   <li>The `topicSequenceNumber` (8 bytes)</li>
+  ///   <li>The output of a SHA-384 digest of the message bytes from the `ConsensusSubmitMessage`
+  ///    (48 bytes)</li>
+  /// </ol>
+  /// <hr/>
+  /// If the `topicRunningHashVersion` is '3', then the input data to the SHA-384 digest
   /// are, in order:
-  /// ---
-  /// 1. The previous running hash of the topic (48 bytes)
-  /// 2. The topicRunningHashVersion below (8 bytes)
-  /// 3. The payer account's shard (8 bytes)
-  /// 4. The payer account's realm (8 bytes)
-  /// 5. The payer account's number (8 bytes)
-  /// 6. The topic's shard (8 bytes)
-  /// 7. The topic's realm (8 bytes)
-  /// 8. The topic's number (8 bytes)
-  /// 9. The number of seconds since the epoch before the ConsensusSubmitMessage reached
-  ///    consensus (8 bytes)
-  /// 10. The number of nanoseconds since 9. before the ConsensusSubmitMessage reached
-  ///     consensus (4 bytes)
-  /// 11. The topicSequenceNumber from above (8 bytes)
-  /// 12. The output of the SHA-384 digest of the message bytes from the
-  ///     consensusSubmitMessage (48 bytes)
+  /// <ol>
+  ///   <li>The previous running hash of the topic (48 bytes)</li>
+  ///   <li>The `topicRunningHashVersion` (8 bytes)</li>
+  ///   <li>The payer account's shard (8 bytes)</li>
+  ///   <li>The payer account's realm (8 bytes)</li>
+  ///   <li>The payer account's number (8 bytes)</li>
+  ///   <li>The topic's shard (8 bytes)</li>
+  ///   <li>The topic's realm (8 bytes)</li>
+  ///   <li>The topic's number (8 bytes)</li>
+  ///   <li>The number of seconds since the epoch when the `ConsensusSubmitMessage` reached
+  ///    consensus (8 bytes)</li>
+  ///   <li>The number of nanoseconds within the second when the `ConsensusSubmitMessage` reached
+  ///     consensus (4 bytes)</li>
+  ///   <li>The `topicSequenceNumber` (8 bytes)</li>
+  ///   <li>The output of a SHA-384 digest of the message bytes from the `ConsensusSubmitMessage`
+  ///     (48 bytes)</li>
+  /// </ol>
   public var topicRunningHash: Data {
     get {return _storage._topicRunningHash}
     set {_uniqueStorage()._topicRunningHash = newValue}
@@ -218,6 +224,18 @@ public struct Proto_TransactionReceipt {
     set {_uniqueStorage()._serialNumbers = newValue}
   }
 
+  ///*
+  /// In the receipt of a NodeCreate, NodeUpdate, NodeDelete, the id of the newly created node.
+  /// An affected node identifier.<br/>
+  /// This value SHALL be set following a `createNode` transaction.<br/>
+  /// This value SHALL be set following a `updateNode` transaction.<br/>
+  /// This value SHALL be set following a `deleteNode` transaction.<br/>
+  /// This value SHALL NOT be set following any other transaction.
+  public var nodeID: UInt64 {
+    get {return _storage._nodeID}
+    set {_uniqueStorage()._nodeID = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -250,6 +268,7 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
     12: .same(proto: "scheduleID"),
     13: .same(proto: "scheduledTransactionID"),
     14: .same(proto: "serialNumbers"),
+    15: .standard(proto: "node_id"),
   ]
 
   fileprivate class _StorageClass {
@@ -267,8 +286,17 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
     var _scheduleID: Proto_ScheduleID? = nil
     var _scheduledTransactionID: Proto_TransactionID? = nil
     var _serialNumbers: [Int64] = []
+    var _nodeID: UInt64 = 0
 
-    static let defaultInstance = _StorageClass()
+    #if swift(>=5.10)
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+    #else
+      static let defaultInstance = _StorageClass()
+    #endif
 
     private init() {}
 
@@ -287,6 +315,7 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
       _scheduleID = source._scheduleID
       _scheduledTransactionID = source._scheduledTransactionID
       _serialNumbers = source._serialNumbers
+      _nodeID = source._nodeID
     }
   }
 
@@ -319,6 +348,7 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
         case 12: try { try decoder.decodeSingularMessageField(value: &_storage._scheduleID) }()
         case 13: try { try decoder.decodeSingularMessageField(value: &_storage._scheduledTransactionID) }()
         case 14: try { try decoder.decodeRepeatedInt64Field(value: &_storage._serialNumbers) }()
+        case 15: try { try decoder.decodeSingularUInt64Field(value: &_storage._nodeID) }()
         default: break
         }
       }
@@ -373,6 +403,9 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
       if !_storage._serialNumbers.isEmpty {
         try visitor.visitPackedInt64Field(value: _storage._serialNumbers, fieldNumber: 14)
       }
+      if _storage._nodeID != 0 {
+        try visitor.visitSingularUInt64Field(value: _storage._nodeID, fieldNumber: 15)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -396,6 +429,7 @@ extension Proto_TransactionReceipt: SwiftProtobuf.Message, SwiftProtobuf._Messag
         if _storage._scheduleID != rhs_storage._scheduleID {return false}
         if _storage._scheduledTransactionID != rhs_storage._scheduledTransactionID {return false}
         if _storage._serialNumbers != rhs_storage._serialNumbers {return false}
+        if _storage._nodeID != rhs_storage._nodeID {return false}
         return true
       }
       if !storagesAreEqual {return false}

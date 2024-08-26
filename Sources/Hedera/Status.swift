@@ -946,6 +946,87 @@ public enum Status: Equatable {
 
     /// NFT serial numbers are missing in the TokenUpdateNftsTransactionBody
     case missingSerialNumbers  // = 336
+    /// Admin key is not set on token
+
+    case tokenHasNoAdminKey  // = 337
+
+    /// A transaction failed because the consensus node identified is
+    /// deleted from the address book.
+    case nodeDeleted  // = 338
+
+    /// A transaction failed because the consensus node identified is not valid or
+    /// does not exist in state.
+    case invalidNodeID  // = 339
+
+    /// A transaction failed because one or more entries in the list of
+    /// service endpoints for the `gossip_endpoint` field is invalid.<br/>
+    /// The most common cause for this response is a service endpoint that has
+    /// the domain name (DNS) set rather than address and port.
+    case invalidGossipEndpoint  // = 340
+
+    /// A transaction failed because the node account identifier provided
+    /// does not exist or is not valid.<br/>
+    /// One common source of this error is providing a node account identifier
+    /// using the "alias" form rather than "numeric" form.
+    case invalidNodeAccountID  // = 341
+
+    /// A transaction failed because the description field cannot be encoded
+    /// as UTF-8 or is more than 100 bytes when encoded.
+    case invalidNodeDescription  // = 342
+
+    /// A transaction failed because one or more entries in the list of
+    /// service endpoints for the `service_endpoint` field is invalid.
+    case invalidServiceEndpoint  // = 343
+
+    /// A transaction failed because the TLS certificate provided for the
+    /// node is missing or invalid.
+    case invalidGossipCaCertificate  // = 344
+
+    /// A transaction failed because the hash provided for the gRPC certificate
+    /// is present but invalid.
+    case invalidGrpcCertificate  // = 345
+
+    /// The maximum automatic associations value is not valid.
+    case invalidMaxAutoAssociations  // = 346
+
+    /// The maximum number of nodes allowed in the address book have been created.
+    case maxNodesCreated  // = 347
+
+    /// In ServiceEndpoint, domain_name and ipAddressV4 are mutually exclusive
+    case ipFqdnCannotBeSetForSameEndpoint  // = 348
+
+    ///  Fully qualified domain name is not allowed in gossip_endpoint
+    case gossipEndpointCannotHaveFqdn  // = 349
+
+    /// In ServiceEndpoint, domain_name size too large
+    case fqdnSizeTooLarge  // = 350
+
+    /// ServiceEndpoint is invalid
+    case invalidEndpoint  // = 351
+
+    /// The number of gossip endpoints exceeds the limit
+    case gossipEndpointsExceededLimit  // = 352
+
+    /// The transaction attempted to use duplicate `TokenReference`
+    case tokenReferenceRepeated  // = 353
+
+    /// The account id specified as the owner in `TokenReject` is invalid or does not exist.
+    case invalidOwnerID  // = 354
+
+    /// The transaction attempted to use more than the allowed number of `TokenReference`.
+    case tokenReferenceListSizeLimitExceeded  // = 355
+
+    /// The number of service endpoints exceeds the limit
+    case serviceEndpointsExceededLimit  // = 356
+
+    /// The IPv4 address is invalid
+    case invalidIpv4Address  // = 357
+
+    /// The transaction attempted to use empty `TokenReference` list.
+    case emptyTokenReferenceList  // = 358
+
+    /// The node account is not allowed to be updated
+    case updateNodeAccountNotAllowed  // = 359
 
     /// swift-format-ignore: AlwaysUseLowerCamelCase
     case unrecognized(Int32)
@@ -1249,6 +1330,29 @@ public enum Status: Equatable {
         case 334: self = .tokenHasNoMetadataKey
         case 335: self = .missingTokenMetadata
         case 336: self = .missingSerialNumbers
+        case 337: self = .tokenHasNoAdminKey
+        case 338: self = .nodeDeleted
+        case 339: self = .invalidNodeID
+        case 340: self = .invalidGossipEndpoint
+        case 341: self = .invalidNodeAccountID
+        case 342: self = .invalidNodeDescription
+        case 343: self = .invalidServiceEndpoint
+        case 344: self = .invalidGossipCaCertificate
+        case 345: self = .invalidGrpcCertificate
+        case 346: self = .invalidMaxAutoAssociations
+        case 347: self = .maxNodesCreated
+        case 348: self = .ipFqdnCannotBeSetForSameEndpoint
+        case 349: self = .gossipEndpointCannotHaveFqdn
+        case 350: self = .fqdnSizeTooLarge
+        case 351: self = .invalidEndpoint
+        case 352: self = .gossipEndpointsExceededLimit
+        case 353: self = .tokenReferenceRepeated
+        case 354: self = .invalidOwnerID
+        case 355: self = .tokenReferenceListSizeLimitExceeded
+        case 356: self = .serviceEndpointsExceededLimit
+        case 357: self = .invalidIpv4Address
+        case 358: self = .emptyTokenReferenceList
+        case 359: self = .updateNodeAccountNotAllowed
         default: self = .unrecognized(rawValue)
         }
     }
@@ -1550,6 +1654,29 @@ public enum Status: Equatable {
         case .tokenHasNoMetadataKey: return 334
         case .missingTokenMetadata: return 335
         case .missingSerialNumbers: return 336
+        case .tokenHasNoAdminKey: return 337
+        case .nodeDeleted: return 338
+        case .invalidNodeID: return 339
+        case .invalidGossipEndpoint: return 340
+        case .invalidNodeAccountID: return 341
+        case .invalidNodeDescription: return 342
+        case .invalidServiceEndpoint: return 343
+        case .invalidGossipCaCertificate: return 344
+        case .invalidGrpcCertificate: return 345
+        case .invalidMaxAutoAssociations: return 346
+        case .maxNodesCreated: return 347
+        case .ipFqdnCannotBeSetForSameEndpoint: return 348
+        case .gossipEndpointCannotHaveFqdn: return 349
+        case .fqdnSizeTooLarge: return 350
+        case .invalidEndpoint: return 351
+        case .gossipEndpointsExceededLimit: return 352
+        case .tokenReferenceRepeated: return 353
+        case .invalidOwnerID: return 354
+        case .tokenReferenceListSizeLimitExceeded: return 355
+        case .serviceEndpointsExceededLimit: return 356
+        case .invalidIpv4Address: return 357
+        case .emptyTokenReferenceList: return 358
+        case .updateNodeAccountNotAllowed: return 359
         case .unrecognized(let i): return i
         }
     }
@@ -1854,6 +1981,29 @@ extension Status: CaseIterable {
         .tokenHasNoMetadataKey,
         .missingTokenMetadata,
         .missingSerialNumbers,
+        .tokenHasNoAdminKey,
+        .nodeDeleted,
+        .invalidNodeID,
+        .invalidGossipEndpoint,
+        .invalidNodeAccountID,
+        .invalidNodeDescription,
+        .invalidServiceEndpoint,
+        .invalidGossipCaCertificate,
+        .invalidGrpcCertificate,
+        .invalidMaxAutoAssociations,
+        .maxNodesCreated,
+        .ipFqdnCannotBeSetForSameEndpoint,
+        .gossipEndpointCannotHaveFqdn,
+        .fqdnSizeTooLarge,
+        .invalidEndpoint,
+        .gossipEndpointsExceededLimit,
+        .tokenReferenceRepeated,
+        .invalidOwnerID,
+        .tokenReferenceListSizeLimitExceeded,
+        .serviceEndpointsExceededLimit,
+        .invalidIpv4Address,
+        .emptyTokenReferenceList,
+        .updateNodeAccountNotAllowed,
     ]
 }
 
@@ -2156,6 +2306,29 @@ extension Status {
             334: "TOKEN_HAS_NO_METADATA_KEY",
             335: "MISSING_TOKEN_METADATA",
             336: "MISSING_SERIAL_NUMBERS",
+            337: "TOKEN_HAS_NO_ADMIN_KEY",
+            338: "NODE_DELETED",
+            339: "INVALID_NODE_ID",
+            340: "INVALID_GOSSIP_ENDPOINT",
+            341: "INVALID_NODE_ACCOUNT_ID",
+            342: "INVALID_NODE_DESCRIPTION",
+            343: "INVALID_SERVICE_ENDPOINT",
+            344: "INVALID_GOSSIP_CA_CERTIFICATE",
+            345: "INVALID_GRPC_CERTIFICATE",
+            346: "INVALID_MAX_AUTO_ASSOCIATIONS",
+            347: "MAX_NODES_CREATED",
+            348: "IP_FQDN_CANNOT_BE_SET_FOR_SAME_ENDPOINT",
+            349: "GOSSIP_ENDPOINT_CANNOT_HAVE_FQDN",
+            350: "FQDN_SIZE_TOO_LARGE",
+            351: "INVALID_ENDPOINT",
+            352: "GOSSIP_ENDPOINTS_EXCEEDED_LIMIT",
+            353: "TOKEN_REFERENCE_REPEATED",
+            354: "INVALID_OWNER_ID",
+            355: "TOKEN_REFERENCE_LIST_SIZE_LIMIT_EXCEEDED",
+            356: "SERVICE_ENDPOINTS_EXCEEDED_LIMIT",
+            357: "INVALID_IPV4_ADDRESS",
+            358: "EMPTY_TOKEN_REFERENCE_LIST",
+            359: "UPDATE_NODE_ACCOUNT_NOT_ALLOWED",
         ]
 }
 

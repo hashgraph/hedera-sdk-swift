@@ -29,7 +29,7 @@ internal class ContractCreateTransactionTests: XCTestCase {
     private static let adminKey = Key.single(Resources.publicKey)
     private static let gas: UInt64 = 0
     private static let initialBalance = Hbar.fromTinybars(1000)
-    private static let maxAutomaticTokenAssociations: UInt32 = 101
+    private static let maxAutomaticTokenAssociations: Int32 = 101
     private static let autoRenewPeriod = Duration.hours(10)
     private static let constructorParameters = Data([10, 11, 12, 13, 25])
     private static let autoRenewAccountId: AccountId = 30
@@ -104,7 +104,7 @@ internal class ContractCreateTransactionTests: XCTestCase {
             proto.adminKey = Self.adminKey.toProtobuf()
             proto.gas = Int64(Self.gas)
             proto.initialBalance = Self.initialBalance.toTinybars()
-            proto.maxAutomaticTokenAssociations = Int32(Self.maxAutomaticTokenAssociations)
+            proto.maxAutomaticTokenAssociations = Self.maxAutomaticTokenAssociations
             proto.autoRenewPeriod = Self.autoRenewPeriod.toProtobuf()
             proto.constructorParameters = Self.constructorParameters
             proto.autoRenewAccountID = Self.autoRenewAccountId.toProtobuf()

@@ -74,7 +74,14 @@ protoc
 protoc-gen-swift (from https://github.com/apple/swift-protobuf)
 protoc-gen-grpc-swift (from https://github.com/grpc/grpc-swift)
 
+### Fetch Submodule (Hedera-Protobufs)
+Update [\protobuf](https://github.com/hashgraph/hedera-protobufs) submodule to latest changes.
+```bash
+git submodule update --recursive --remote
+```
+
 ### Generate services
+
 ```bash
 # cwd: `$REPO`
 protoc --swift_opt=Visibility=Public  --swift_opt=FileNaming=PathToUnderscores --swift_out=./Sources/HederaProtobufs/Services --proto_path=./protobufs/services protobufs/services/**.proto

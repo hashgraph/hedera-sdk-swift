@@ -42,8 +42,9 @@ public final class TokenUpdateTransaction: Transaction {
         tokenMemo: String? = nil,
         feeScheduleKey: Key? = nil,
         pauseKey: Key? = nil,
-        metadata: Data = .init(),
-        metadataKey: Key? = nil
+        metadata: Data? = nil,
+        metadataKey: Key? = nil,
+        keyVerificationMode: TokenKeyValidation = .fullValidation
     ) {
         self.tokenId = tokenId
         self.tokenName = tokenName
@@ -62,6 +63,7 @@ public final class TokenUpdateTransaction: Transaction {
         self.pauseKey = pauseKey
         self.metadata = metadata
         self.metadataKey = metadataKey
+        self.keyVerificationMode = keyVerificationMode
 
         super.init()
     }
@@ -84,6 +86,7 @@ public final class TokenUpdateTransaction: Transaction {
         self.pauseKey = data.hasPauseKey ? try .fromProtobuf(data.pauseKey) : nil
         self.metadata = data.hasMetadata ? data.metadata.value : nil ?? Data.init()
         self.metadataKey = data.hasMetadataKey ? try .fromProtobuf(data.metadataKey) : nil
+        self.keyVerificationMode = try .fromProtobuf(data.keyVerificationMode)
 
         try super.init(protobuf: proto)
     }
@@ -323,7 +326,7 @@ public final class TokenUpdateTransaction: Transaction {
     }
 
     /// Returns the new metadata of the created token definition.
-    public var metadata: Data {
+    public var metadata: Data? {
         willSet {
             ensureNotFrozen()
         }
@@ -348,6 +351,21 @@ public final class TokenUpdateTransaction: Transaction {
     @discardableResult
     public func metadataKey(_ metadataKey: Key) -> Self {
         self.metadataKey = metadataKey
+
+        return self
+    }
+
+    /// Returns the new key which can change the metadata of a token.
+    public var keyVerificationMode: TokenKeyValidation {
+        willSet {
+            ensureNotFrozen()
+        }
+    }
+
+    /// Sets the new key which can change the metadata of a token.
+    @discardableResult
+    public func keyVerificationMode(_ keyVerificationMode: TokenKeyValidation) -> Self {
+        self.keyVerificationMode = keyVerificationMode
 
         return self
     }
@@ -391,11 +409,15 @@ extension TokenUpdateTransaction: ToProtobuf {
             expirationTime?.toProtobufInto(&proto.expiry)
             feeScheduleKey?.toProtobufInto(&proto.feeScheduleKey)
             pauseKey?.toProtobufInto(&proto.pauseKey)
-            proto.metadata = Google_Protobuf_BytesValue(metadata)
             metadataKey?.toProtobufInto(&proto.metadataKey)
+            proto.keyVerificationMode = keyVerificationMode.toProtobuf()
             if let tokenMemo = tokenMemo {
                 proto.memo = .init(tokenMemo)
             }
+            if let metadata = metadata {
+                proto.metadata = Google_Protobuf_BytesValue(metadata)
+            }
+
         }
     }
 }

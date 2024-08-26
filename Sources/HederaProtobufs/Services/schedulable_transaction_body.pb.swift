@@ -442,6 +442,60 @@ public struct Proto_SchedulableTransactionBody {
     set {_uniqueStorage()._data = .tokenUpdateNfts(newValue)}
   }
 
+  ///*
+  /// Transaction body for a scheduled transaction to create a new node.
+  public var nodeCreate: Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody {
+    get {
+      if case .nodeCreate(let v)? = _storage._data {return v}
+      return Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody()
+    }
+    set {_uniqueStorage()._data = .nodeCreate(newValue)}
+  }
+
+  ///*
+  /// Transaction body for a scheduled transaction to modify an existing node.
+  public var nodeUpdate: Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody {
+    get {
+      if case .nodeUpdate(let v)? = _storage._data {return v}
+      return Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody()
+    }
+    set {_uniqueStorage()._data = .nodeUpdate(newValue)}
+  }
+
+  ///*
+  /// Transaction body for a scheduled transaction to remove a node.
+  public var nodeDelete: Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody {
+    get {
+      if case .nodeDelete(let v)? = _storage._data {return v}
+      return Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody()
+    }
+    set {_uniqueStorage()._data = .nodeDelete(newValue)}
+  }
+
+  ///*
+  /// A transaction body to "reject" undesired tokens.<br/>
+  /// This transaction will transfer one or more tokens or token
+  /// balances held by the requesting account to the treasury
+  /// for each token type.
+  /// <p>
+  /// Each transfer MUST be one of the following:
+  /// <ul>
+  ///   <li>A single non-fungible/unique token.</li>
+  ///   <li>The full balance held for a fungible/common
+  ///       token type.</li>
+  /// </ul>
+  /// When complete, the requesting account SHALL NOT hold the
+  /// rejected tokens.<br/>
+  /// Custom fees and royalties defined for the tokens rejected
+  /// SHALL NOT be charged for this transaction.
+  public var tokenReject: Proto_TokenRejectTransactionBody {
+    get {
+      if case .tokenReject(let v)? = _storage._data {return v}
+      return Proto_TokenRejectTransactionBody()
+    }
+    set {_uniqueStorage()._data = .tokenReject(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   ///*
@@ -564,6 +618,32 @@ public struct Proto_SchedulableTransactionBody {
     ///*
     /// Update the metadata of one or more NFT's of a specific token type.
     case tokenUpdateNfts(Proto_TokenUpdateNftsTransactionBody)
+    ///*
+    /// Transaction body for a scheduled transaction to create a new node.
+    case nodeCreate(Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody)
+    ///*
+    /// Transaction body for a scheduled transaction to modify an existing node.
+    case nodeUpdate(Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody)
+    ///*
+    /// Transaction body for a scheduled transaction to remove a node.
+    case nodeDelete(Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody)
+    ///*
+    /// A transaction body to "reject" undesired tokens.<br/>
+    /// This transaction will transfer one or more tokens or token
+    /// balances held by the requesting account to the treasury
+    /// for each token type.
+    /// <p>
+    /// Each transfer MUST be one of the following:
+    /// <ul>
+    ///   <li>A single non-fungible/unique token.</li>
+    ///   <li>The full balance held for a fungible/common
+    ///       token type.</li>
+    /// </ul>
+    /// When complete, the requesting account SHALL NOT hold the
+    /// rejected tokens.<br/>
+    /// Custom fees and royalties defined for the tokens rejected
+    /// SHALL NOT be charged for this transaction.
+    case tokenReject(Proto_TokenRejectTransactionBody)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proto_SchedulableTransactionBody.OneOf_Data, rhs: Proto_SchedulableTransactionBody.OneOf_Data) -> Bool {
@@ -727,6 +807,22 @@ public struct Proto_SchedulableTransactionBody {
         guard case .tokenUpdateNfts(let l) = lhs, case .tokenUpdateNfts(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
+      case (.nodeCreate, .nodeCreate): return {
+        guard case .nodeCreate(let l) = lhs, case .nodeCreate(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.nodeUpdate, .nodeUpdate): return {
+        guard case .nodeUpdate(let l) = lhs, case .nodeUpdate(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.nodeDelete, .nodeDelete): return {
+        guard case .nodeDelete(let l) = lhs, case .nodeDelete(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.tokenReject, .tokenReject): return {
+        guard case .tokenReject(let l) = lhs, case .tokenReject(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
@@ -791,6 +887,10 @@ extension Proto_SchedulableTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
     34: .same(proto: "scheduleDelete"),
     40: .standard(proto: "util_prng"),
     41: .standard(proto: "token_update_nfts"),
+    42: .same(proto: "nodeCreate"),
+    43: .same(proto: "nodeUpdate"),
+    44: .same(proto: "nodeDelete"),
+    45: .same(proto: "tokenReject"),
   ]
 
   fileprivate class _StorageClass {
@@ -798,7 +898,15 @@ extension Proto_SchedulableTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
     var _memo: String = String()
     var _data: Proto_SchedulableTransactionBody.OneOf_Data?
 
-    static let defaultInstance = _StorageClass()
+    #if swift(>=5.10)
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+    #else
+      static let defaultInstance = _StorageClass()
+    #endif
 
     private init() {}
 
@@ -1333,6 +1441,58 @@ extension Proto_SchedulableTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
             _storage._data = .tokenUpdateNfts(v)
           }
         }()
+        case 42: try {
+          var v: Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .nodeCreate(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .nodeCreate(v)
+          }
+        }()
+        case 43: try {
+          var v: Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .nodeUpdate(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .nodeUpdate(v)
+          }
+        }()
+        case 44: try {
+          var v: Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .nodeDelete(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .nodeDelete(v)
+          }
+        }()
+        case 45: try {
+          var v: Proto_TokenRejectTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .tokenReject(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .tokenReject(v)
+          }
+        }()
         default: break
         }
       }
@@ -1507,6 +1667,22 @@ extension Proto_SchedulableTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
       case .tokenUpdateNfts?: try {
         guard case .tokenUpdateNfts(let v)? = _storage._data else { preconditionFailure() }
         try visitor.visitSingularMessageField(value: v, fieldNumber: 41)
+      }()
+      case .nodeCreate?: try {
+        guard case .nodeCreate(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 42)
+      }()
+      case .nodeUpdate?: try {
+        guard case .nodeUpdate(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 43)
+      }()
+      case .nodeDelete?: try {
+        guard case .nodeDelete(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 44)
+      }()
+      case .tokenReject?: try {
+        guard case .tokenReject(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 45)
       }()
       case nil: break
       }

@@ -1,6 +1,7 @@
 included:
   - Examples/
   - Sources/Hedera/
+  - Sources/HederaTCK/
   - Tests/
 
 excluded:

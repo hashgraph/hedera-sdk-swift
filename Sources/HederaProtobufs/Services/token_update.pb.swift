@@ -242,6 +242,13 @@ public struct Proto_TokenUpdateTransactionBody {
   /// Clears the value of `metadataKey`. Subsequent reads from it will return its default value.
   public mutating func clearMetadataKey() {_uniqueStorage()._metadataKey = nil}
 
+  ///*
+  /// Determines whether the system should check the validity of the passed keys for update.
+  public var keyVerificationMode: Proto_TokenKeyValidation {
+    get {return _storage._keyVerificationMode}
+    set {_uniqueStorage()._keyVerificationMode = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -277,6 +284,7 @@ extension Proto_TokenUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
     15: .standard(proto: "pause_key"),
     16: .same(proto: "metadata"),
     17: .standard(proto: "metadata_key"),
+    18: .standard(proto: "key_verification_mode"),
   ]
 
   fileprivate class _StorageClass {
@@ -297,8 +305,17 @@ extension Proto_TokenUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
     var _pauseKey: Proto_Key? = nil
     var _metadata: SwiftProtobuf.Google_Protobuf_BytesValue? = nil
     var _metadataKey: Proto_Key? = nil
+    var _keyVerificationMode: Proto_TokenKeyValidation = .fullValidation
 
-    static let defaultInstance = _StorageClass()
+    #if swift(>=5.10)
+      // This property is used as the initial default value for new instances of the type.
+      // The type itself is protecting the reference to its storage via CoW semantics.
+      // This will force a copy to be made of this reference when the first mutation occurs;
+      // hence, it is safe to mark this as `nonisolated(unsafe)`.
+      static nonisolated(unsafe) let defaultInstance = _StorageClass()
+    #else
+      static let defaultInstance = _StorageClass()
+    #endif
 
     private init() {}
 
@@ -320,6 +337,7 @@ extension Proto_TokenUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
       _pauseKey = source._pauseKey
       _metadata = source._metadata
       _metadataKey = source._metadataKey
+      _keyVerificationMode = source._keyVerificationMode
     }
   }
 
@@ -355,6 +373,7 @@ extension Proto_TokenUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
         case 15: try { try decoder.decodeSingularMessageField(value: &_storage._pauseKey) }()
         case 16: try { try decoder.decodeSingularMessageField(value: &_storage._metadata) }()
         case 17: try { try decoder.decodeSingularMessageField(value: &_storage._metadataKey) }()
+        case 18: try { try decoder.decodeSingularEnumField(value: &_storage._keyVerificationMode) }()
         default: break
         }
       }
@@ -418,6 +437,9 @@ extension Proto_TokenUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
       try { if let v = _storage._metadataKey {
         try visitor.visitSingularMessageField(value: v, fieldNumber: 17)
       } }()
+      if _storage._keyVerificationMode != .fullValidation {
+        try visitor.visitSingularEnumField(value: _storage._keyVerificationMode, fieldNumber: 18)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -444,6 +466,7 @@ extension Proto_TokenUpdateTransactionBody: SwiftProtobuf.Message, SwiftProtobuf
         if _storage._pauseKey != rhs_storage._pauseKey {return false}
         if _storage._metadata != rhs_storage._metadata {return false}
         if _storage._metadataKey != rhs_storage._metadataKey {return false}
+        if _storage._keyVerificationMode != rhs_storage._keyVerificationMode {return false}
         return true
       }
       if !storagesAreEqual {return false}

@@ -247,6 +247,18 @@ public enum RequestType {
     /// Update a Non-Fungible token.
     case tokenUpdateNfts
 
+    /// Create a node
+    case nodeCreate
+
+    /// Update a node
+    case nodeUpdate
+
+    /// Delete a node
+    case nodeDelete
+
+    /// Reject a Token
+    case tokenReject
+
     // this literally can't be smaller.
     // swiftlint:disable:next function_body_length
     internal init?(protobuf proto: Proto_HederaFunctionality) throws {
@@ -324,10 +336,14 @@ public enum RequestType {
         case .ethereumTransaction: self = .ethereumTransaction
         case .nodeStakeUpdate: self = .nodeStakeUpdate
         case .utilPrng: self = .utilPrng
-        case .transactionGetFastRecord: self = .tokenUpdateNfts
-
+        case .transactionGetFastRecord: self = .transactionGetFastRecord
         case .tokenUpdateNfts: self = .tokenUpdateNfts
-        case .unrecognized(let code):
+        case .nodeCreate: self = .nodeCreate
+        case .nodeDelete: self = .nodeDelete
+        case .nodeUpdate: self = .nodeUpdate
+        case .tokenReject: self = .tokenReject
+
+        case .UNRECOGNIZED(let code):
             throw HError.fromProtobuf("unrecognized RequestType: `\(code)`")
         }
     }
@@ -408,6 +424,10 @@ public enum RequestType {
         case .utilPrng: return .utilPrng
         case .transactionGetFastRecord: return .transactionGetFastRecord
         case .tokenUpdateNfts: return .tokenUpdateNfts
+        case .nodeCreate: return .nodeCreate
+        case .nodeUpdate: return .nodeUpdate
+        case .nodeDelete: return .nodeDelete
+        case .tokenReject: return .tokenReject
         }
     }
 }

@@ -49,7 +49,7 @@ extension TokenType: TryProtobufCodable {
         switch proto {
         case .fungibleCommon: self = .fungibleCommon
         case .nonFungibleUnique: self = .nonFungibleUnique
-        case .unrecognized(let value):
+        case .UNRECOGNIZED(let value):
             throw HError.fromProtobuf("unrecognized token type \(value)")
         }
     }
