@@ -72,6 +72,10 @@ extension Endpoint: TryProtobufCodable {
             port = 50211
         }
 
+        guard isValidDomainName(proto.domainName) else {
+            throw HError(kind: .basicParse, description: "Invalid domain name format")
+        }
+
         self.init(ipAddress: ipAddress, port: port, domainName: proto.domainName)
     }
 
@@ -82,4 +86,11 @@ extension Endpoint: TryProtobufCodable {
             proto.domainName = domainName
         }
     }
+}
+
+private func isValidDomainName(_ domainName: String) -> Bool {
+    let pattern = "^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$"
+    let regex = try? NSRegularExpression(pattern: pattern, options: .caseInsensitive)
+    let range = NSRange(location: 0, length: domainName.utf16.count)
+    return regex?.firstMatch(in: domainName, options: [], range: range) != nil
 }
