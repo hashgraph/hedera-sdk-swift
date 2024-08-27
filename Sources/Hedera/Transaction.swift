@@ -360,10 +360,10 @@ public class Transaction: ValidateChecksums {
     public static func fromBytes(_ bytes: Data) throws -> Transaction {
         let list: [Proto_Transaction]
         do {
-            let tmp = try Proto_TransactionList(contiguousBytes: bytes)
+            let tmp = try Proto_TransactionList(serializedBytes: bytes)
 
             if tmp.transactionList.isEmpty {
-                list = [try Proto_Transaction(contiguousBytes: bytes)]
+                list = [try Proto_Transaction(serializedBytes: bytes)]
             } else {
                 list = tmp.transactionList
             }
@@ -375,7 +375,7 @@ public class Transaction: ValidateChecksums {
 
         let transactionBodies = try sources.signedTransactions.map { signed -> Proto_TransactionBody in
             do {
-                return try Proto_TransactionBody(contiguousBytes: signed.bodyBytes)
+                return try Proto_TransactionBody(serializedBytes: signed.bodyBytes)
             } catch {
                 throw HError.fromProtobuf(String(describing: error))
             }
@@ -399,7 +399,7 @@ public class Transaction: ValidateChecksums {
             .lazy
             .map { signed -> Proto_TransactionBody in
                 do {
-                    return try Proto_TransactionBody(contiguousBytes: signed.bodyBytes)
+                    return try Proto_TransactionBody(serializedBytes: signed.bodyBytes)
                 } catch {
                     throw HError.fromProtobuf(String(describing: error))
                 }

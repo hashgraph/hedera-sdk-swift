@@ -27,6 +27,7 @@ public struct SocketAddressV4: LosslessStringConvertible {
     // swiftlint:disable:next identifier_name
     public var ip: IPv4Address
     public var port: UInt16
+    public var domainName: String
 
     fileprivate init(ipBytes: Data, port: Int32) throws {
         guard let ipAddress = IPv4Address(ipBytes) else {
@@ -41,6 +42,7 @@ public struct SocketAddressV4: LosslessStringConvertible {
 
         self.ip = ipAddress
         self.port = port
+        self.domainName = ""
     }
 
     fileprivate init<S: StringProtocol>(parsing description: S) throws {
@@ -58,6 +60,7 @@ public struct SocketAddressV4: LosslessStringConvertible {
 
         self.ip = ipAddress
         self.port = port
+        self.domainName = ""
     }
 
     public init?(_ description: String) {
@@ -80,6 +83,7 @@ extension SocketAddressV4: TryProtobufCodable {
         .with { proto in
             proto.ipAddressV4 = ip.rawValue
             proto.port = Int32(port)
+            proto.domainName = domainName
         }
     }
 }

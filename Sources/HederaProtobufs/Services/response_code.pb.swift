@@ -1324,6 +1324,33 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
   ///
   /// The node account is not allowed to be updated
   case updateNodeAccountNotAllowed // = 359
+
+  ///
+  /// The token has no metadata or supply key
+  case tokenHasNoMetadataOrSupplyKey // = 360
+
+  ///*
+  /// The transaction attempted to the use an empty List of `PendingAirdropId`.
+  case emptyPendingAirdropIDList // = 361
+
+  ///*
+  /// The transaction attempted to the same `PendingAirdropId` twice.
+  case pendingAirdropIDRepeated // = 362
+
+  ///*
+  /// The transaction attempted to use more than the allowed number of `PendingAirdropId`.
+  case maxPendingAirdropIDExceeded // = 363
+
+  ///
+  /// A pending airdrop already exists for the specified NFT.
+  case pendingNftAirdropAlreadyExists // = 364
+
+  ///
+  /// The identified account is sender for one or more pending airdrop(s)
+  /// and cannot be deleted.<br/>
+  /// Requester should cancel all pending airdrops before resending
+  /// this transaction.
+  case accountHasPendingAirdrops // = 365
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -1650,6 +1677,12 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
     case 357: self = .invalidIpv4Address
     case 358: self = .emptyTokenReferenceList
     case 359: self = .updateNodeAccountNotAllowed
+    case 360: self = .tokenHasNoMetadataOrSupplyKey
+    case 361: self = .emptyPendingAirdropIDList
+    case 362: self = .pendingAirdropIDRepeated
+    case 363: self = .maxPendingAirdropIDExceeded
+    case 364: self = .pendingNftAirdropAlreadyExists
+    case 365: self = .accountHasPendingAirdrops
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -1974,6 +2007,12 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
     case .invalidIpv4Address: return 357
     case .emptyTokenReferenceList: return 358
     case .updateNodeAccountNotAllowed: return 359
+    case .tokenHasNoMetadataOrSupplyKey: return 360
+    case .emptyPendingAirdropIDList: return 361
+    case .pendingAirdropIDRepeated: return 362
+    case .maxPendingAirdropIDExceeded: return 363
+    case .pendingNftAirdropAlreadyExists: return 364
+    case .accountHasPendingAirdrops: return 365
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -2303,6 +2342,12 @@ extension Proto_ResponseCodeEnum: CaseIterable {
     .invalidIpv4Address,
     .emptyTokenReferenceList,
     .updateNodeAccountNotAllowed,
+    .tokenHasNoMetadataOrSupplyKey,
+    .emptyPendingAirdropIDList,
+    .pendingAirdropIDRepeated,
+    .maxPendingAirdropIDExceeded,
+    .pendingNftAirdropAlreadyExists,
+    .accountHasPendingAirdrops,
   ]
 }
 
@@ -2634,5 +2679,11 @@ extension Proto_ResponseCodeEnum: SwiftProtobuf._ProtoNameProviding {
     357: .same(proto: "INVALID_IPV4_ADDRESS"),
     358: .same(proto: "EMPTY_TOKEN_REFERENCE_LIST"),
     359: .same(proto: "UPDATE_NODE_ACCOUNT_NOT_ALLOWED"),
+    360: .same(proto: "TOKEN_HAS_NO_METADATA_OR_SUPPLY_KEY"),
+    361: .same(proto: "EMPTY_PENDING_AIRDROP_ID_LIST"),
+    362: .same(proto: "PENDING_AIRDROP_ID_REPEATED"),
+    363: .same(proto: "MAX_PENDING_AIRDROP_ID_EXCEEDED"),
+    364: .same(proto: "PENDING_NFT_AIRDROP_ALREADY_EXISTS"),
+    365: .same(proto: "ACCOUNT_HAS_PENDING_AIRDROPS"),
   ]
 }

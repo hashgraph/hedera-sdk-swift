@@ -113,6 +113,31 @@ public protocol Proto_TokenServiceClientProtocol: GRPCClient {
     _ request: Proto_Transaction,
     callOptions: CallOptions?
   ) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+
+  func updateNfts(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions?
+  ) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+
+  func rejectToken(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions?
+  ) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+
+  func airdropTokens(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions?
+  ) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+
+  func cancelAirdrop(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions?
+  ) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
+
+  func claimAirdrop(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions?
+  ) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse>
 }
 
 extension Proto_TokenServiceClientProtocol {
@@ -478,6 +503,139 @@ extension Proto_TokenServiceClientProtocol {
       interceptors: self.interceptors?.makeunpauseTokenInterceptors() ?? []
     )
   }
+
+  ///*
+  /// Updates the NFTs in a collection by TokenID and serial number
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to updateNfts.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func updateNfts(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.updateNfts.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeupdateNftsInterceptors() ?? []
+    )
+  }
+
+  ///*
+  /// Reject one or more tokens.<br/>
+  /// This transaction SHALL transfer the full balance of one or more tokens from the requesting
+  /// account to the treasury for each token. This transfer SHALL NOT charge any custom fee or
+  /// royalty defined for the token(s) to be rejected.<br/>
+  /// <h3>Effects on success</h3>
+  /// <ul>
+  ///   <li>If the rejected token is fungible/common, the requesting account SHALL have a balance
+  ///       of 0 for the rejected token. The treasury balance SHALL increase by the amount that
+  ///       the requesting account decreased.</li>
+  ///   <li>If the rejected token is non-fungible/unique the requesting account SHALL NOT hold
+  ///       the specific serialized token that is rejected. The treasury account SHALL hold each
+  ///       specific serialized token that was rejected.</li>
+  /// </li>
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to rejectToken.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func rejectToken(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.rejectToken.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makerejectTokenInterceptors() ?? []
+    )
+  }
+
+  ///*
+  /// Airdrop one or more tokens to one or more accounts.<br/>
+  /// This distributes tokens from the balance of one or more sending account(s) to the balance
+  /// of one or more recipient accounts. Accounts will receive the tokens in one of four ways.
+  /// <ul>
+  ///   <li>An account already associated to the token to be distributed SHALL receive the
+  ///       airdropped tokens immediately to the recipient account balance.</li>
+  ///   <li>An account with available automatic association slots SHALL be automatically
+  ///       associated to the token, and SHALL immediately receive the airdropped tokens to the
+  ///       recipient account balance.</li>
+  ///   <li>An account with "receiver signature required" set SHALL have a "Pending Airdrop"
+  ///       created and MUST claim that airdrop with a `claimAirdrop` transaction.</li>
+  ///   <li>An account with no available automatic association slots SHALL have a
+  ///       "Pending Airdrop" created and MUST claim that airdrop with a `claimAirdrop`
+  ///       transaction. </li>
+  /// </ul>
+  /// Any airdrop that completes immediately SHALL be irreversible. Any airdrop that results in a
+  /// "Pending Airdrop" MAY be canceled via a `cancelAirdrop` transaction.<br/>
+  /// All transfer fees (including custom fees and royalties), as well as the rent cost for the
+  /// first auto-renewal period for any automatic-association slot occupied by the airdropped
+  /// tokens, SHALL be charged to the account submitting this transaction.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to airdropTokens.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func airdropTokens(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.airdropTokens.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeairdropTokensInterceptors() ?? []
+    )
+  }
+
+  ///*
+  /// Cancel one or more pending airdrops.
+  /// <p>
+  /// This transaction MUST be signed by _each_ account *sending* an airdrop to be canceled.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to cancelAirdrop.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func cancelAirdrop(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.cancelAirdrop.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makecancelAirdropInterceptors() ?? []
+    )
+  }
+
+  ///*
+  /// Claim one or more pending airdrops.
+  /// <p>
+  /// This transaction MUST be signed by _each_ account **receiving** an
+  /// airdrop to be claimed.<br>
+  /// If a "Sender" lacks sufficient balance to fulfill the airdrop at the
+  /// time the claim is made, that claim SHALL fail.
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to claimAirdrop.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func claimAirdrop(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.claimAirdrop.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeclaimAirdropInterceptors() ?? []
+    )
+  }
 }
 
 @available(*, deprecated)
@@ -635,6 +793,31 @@ public protocol Proto_TokenServiceAsyncClientProtocol: GRPCClient {
   ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
 
   func makeUnpauseTokenCall(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+
+  func makeUpdateNftsCall(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+
+  func makeRejectTokenCall(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+
+  func makeAirdropTokensCall(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+
+  func makeCancelAirdropCall(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
+
+  func makeClaimAirdropCall(
     _ request: Proto_Transaction,
     callOptions: CallOptions?
   ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse>
@@ -877,6 +1060,66 @@ extension Proto_TokenServiceAsyncClientProtocol {
       interceptors: self.interceptors?.makeunpauseTokenInterceptors() ?? []
     )
   }
+
+  public func makeUpdateNftsCall(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeAsyncUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.updateNfts.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeupdateNftsInterceptors() ?? []
+    )
+  }
+
+  public func makeRejectTokenCall(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeAsyncUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.rejectToken.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makerejectTokenInterceptors() ?? []
+    )
+  }
+
+  public func makeAirdropTokensCall(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeAsyncUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.airdropTokens.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeairdropTokensInterceptors() ?? []
+    )
+  }
+
+  public func makeCancelAirdropCall(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeAsyncUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.cancelAirdrop.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makecancelAirdropInterceptors() ?? []
+    )
+  }
+
+  public func makeClaimAirdropCall(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<Proto_Transaction, Proto_TransactionResponse> {
+    return self.makeAsyncUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.claimAirdrop.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeclaimAirdropInterceptors() ?? []
+    )
+  }
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -1108,6 +1351,66 @@ extension Proto_TokenServiceAsyncClientProtocol {
       interceptors: self.interceptors?.makeunpauseTokenInterceptors() ?? []
     )
   }
+
+  public func updateNfts(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) async throws -> Proto_TransactionResponse {
+    return try await self.performAsyncUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.updateNfts.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeupdateNftsInterceptors() ?? []
+    )
+  }
+
+  public func rejectToken(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) async throws -> Proto_TransactionResponse {
+    return try await self.performAsyncUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.rejectToken.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makerejectTokenInterceptors() ?? []
+    )
+  }
+
+  public func airdropTokens(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) async throws -> Proto_TransactionResponse {
+    return try await self.performAsyncUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.airdropTokens.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeairdropTokensInterceptors() ?? []
+    )
+  }
+
+  public func cancelAirdrop(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) async throws -> Proto_TransactionResponse {
+    return try await self.performAsyncUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.cancelAirdrop.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makecancelAirdropInterceptors() ?? []
+    )
+  }
+
+  public func claimAirdrop(
+    _ request: Proto_Transaction,
+    callOptions: CallOptions? = nil
+  ) async throws -> Proto_TransactionResponse {
+    return try await self.performAsyncUnaryCall(
+      path: Proto_TokenServiceClientMetadata.Methods.claimAirdrop.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeclaimAirdropInterceptors() ?? []
+    )
+  }
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -1185,6 +1488,21 @@ public protocol Proto_TokenServiceClientInterceptorFactoryProtocol: Sendable {
 
   /// - Returns: Interceptors to use when invoking 'unpauseToken'.
   func makeunpauseTokenInterceptors() -> [ClientInterceptor<Proto_Transaction, Proto_TransactionResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'updateNfts'.
+  func makeupdateNftsInterceptors() -> [ClientInterceptor<Proto_Transaction, Proto_TransactionResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'rejectToken'.
+  func makerejectTokenInterceptors() -> [ClientInterceptor<Proto_Transaction, Proto_TransactionResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'airdropTokens'.
+  func makeairdropTokensInterceptors() -> [ClientInterceptor<Proto_Transaction, Proto_TransactionResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'cancelAirdrop'.
+  func makecancelAirdropInterceptors() -> [ClientInterceptor<Proto_Transaction, Proto_TransactionResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'claimAirdrop'.
+  func makeclaimAirdropInterceptors() -> [ClientInterceptor<Proto_Transaction, Proto_TransactionResponse>]
 }
 
 public enum Proto_TokenServiceClientMetadata {
@@ -1211,6 +1529,11 @@ public enum Proto_TokenServiceClientMetadata {
       Proto_TokenServiceClientMetadata.Methods.getTokenNftInfos,
       Proto_TokenServiceClientMetadata.Methods.pauseToken,
       Proto_TokenServiceClientMetadata.Methods.unpauseToken,
+      Proto_TokenServiceClientMetadata.Methods.updateNfts,
+      Proto_TokenServiceClientMetadata.Methods.rejectToken,
+      Proto_TokenServiceClientMetadata.Methods.airdropTokens,
+      Proto_TokenServiceClientMetadata.Methods.cancelAirdrop,
+      Proto_TokenServiceClientMetadata.Methods.claimAirdrop,
     ]
   )
 
@@ -1326,6 +1649,36 @@ public enum Proto_TokenServiceClientMetadata {
     public static let unpauseToken = GRPCMethodDescriptor(
       name: "unpauseToken",
       path: "/proto.TokenService/unpauseToken",
+      type: GRPCCallType.unary
+    )
+
+    public static let updateNfts = GRPCMethodDescriptor(
+      name: "updateNfts",
+      path: "/proto.TokenService/updateNfts",
+      type: GRPCCallType.unary
+    )
+
+    public static let rejectToken = GRPCMethodDescriptor(
+      name: "rejectToken",
+      path: "/proto.TokenService/rejectToken",
+      type: GRPCCallType.unary
+    )
+
+    public static let airdropTokens = GRPCMethodDescriptor(
+      name: "airdropTokens",
+      path: "/proto.TokenService/airdropTokens",
+      type: GRPCCallType.unary
+    )
+
+    public static let cancelAirdrop = GRPCMethodDescriptor(
+      name: "cancelAirdrop",
+      path: "/proto.TokenService/cancelAirdrop",
+      type: GRPCCallType.unary
+    )
+
+    public static let claimAirdrop = GRPCMethodDescriptor(
+      name: "claimAirdrop",
+      path: "/proto.TokenService/claimAirdrop",
       type: GRPCCallType.unary
     )
   }

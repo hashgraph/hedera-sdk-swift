@@ -225,6 +225,21 @@ public struct Proto_TransactionRecord {
     set {_uniqueStorage()._evmAddress = newValue}
   }
 
+  ///*
+  /// A list of pending token airdrops.
+  /// Each pending airdrop represents a single requested transfer from a
+  /// sending account to a recipient account. These pending transfers are
+  /// issued unilaterally by the sending account, and MUST be claimed by the
+  /// recipient account before the transfer MAY complete.
+  /// A sender MAY cancel a pending airdrop before it is claimed.
+  /// An airdrop transaction SHALL emit a pending airdrop when the recipient has no
+  /// available automatic association slots available or when the recipient
+  /// has set `receiver_sig_required`.
+  public var newPendingAirdrops: [Proto_PendingAirdropRecord] {
+    get {return _storage._newPendingAirdrops}
+    set {_uniqueStorage()._newPendingAirdrops = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Body: Equatable {
@@ -290,10 +305,53 @@ public struct Proto_TransactionRecord {
   fileprivate var _storage = _StorageClass.defaultInstance
 }
 
+///*
+/// A record of a new pending airdrop.
+public struct Proto_PendingAirdropRecord {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  ///*
+  /// A unique, composite, identifier for a pending airdrop.
+  /// This field is REQUIRED.
+  public var pendingAirdropID: Proto_PendingAirdropId {
+    get {return _pendingAirdropID ?? Proto_PendingAirdropId()}
+    set {_pendingAirdropID = newValue}
+  }
+  /// Returns true if `pendingAirdropID` has been explicitly set.
+  public var hasPendingAirdropID: Bool {return self._pendingAirdropID != nil}
+  /// Clears the value of `pendingAirdropID`. Subsequent reads from it will return its default value.
+  public mutating func clearPendingAirdropID() {self._pendingAirdropID = nil}
+
+  ///*
+  /// A single pending airdrop amount.
+  /// If the pending airdrop is for a fungible/common token this field is REQUIRED
+  /// and SHALL be the current amount of tokens offered.
+  /// If the pending airdrop is for a non-fungible/unique token, this field SHALL NOT
+  /// be set.
+  public var pendingAirdropValue: Proto_PendingAirdropValue {
+    get {return _pendingAirdropValue ?? Proto_PendingAirdropValue()}
+    set {_pendingAirdropValue = newValue}
+  }
+  /// Returns true if `pendingAirdropValue` has been explicitly set.
+  public var hasPendingAirdropValue: Bool {return self._pendingAirdropValue != nil}
+  /// Clears the value of `pendingAirdropValue`. Subsequent reads from it will return its default value.
+  public mutating func clearPendingAirdropValue() {self._pendingAirdropValue = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _pendingAirdropID: Proto_PendingAirdropId? = nil
+  fileprivate var _pendingAirdropValue: Proto_PendingAirdropValue? = nil
+}
+
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Proto_TransactionRecord: @unchecked Sendable {}
 extension Proto_TransactionRecord.OneOf_Body: @unchecked Sendable {}
 extension Proto_TransactionRecord.OneOf_Entropy: @unchecked Sendable {}
+extension Proto_PendingAirdropRecord: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -323,6 +381,7 @@ extension Proto_TransactionRecord: SwiftProtobuf.Message, SwiftProtobuf._Message
     19: .standard(proto: "prng_bytes"),
     20: .standard(proto: "prng_number"),
     21: .standard(proto: "evm_address"),
+    22: .standard(proto: "new_pending_airdrops"),
   ]
 
   fileprivate class _StorageClass {
@@ -344,6 +403,7 @@ extension Proto_TransactionRecord: SwiftProtobuf.Message, SwiftProtobuf._Message
     var _paidStakingRewards: [Proto_AccountAmount] = []
     var _entropy: Proto_TransactionRecord.OneOf_Entropy?
     var _evmAddress: Data = Data()
+    var _newPendingAirdrops: [Proto_PendingAirdropRecord] = []
 
     #if swift(>=5.10)
       // This property is used as the initial default value for new instances of the type.
@@ -376,6 +436,7 @@ extension Proto_TransactionRecord: SwiftProtobuf.Message, SwiftProtobuf._Message
       _paidStakingRewards = source._paidStakingRewards
       _entropy = source._entropy
       _evmAddress = source._evmAddress
+      _newPendingAirdrops = source._newPendingAirdrops
     }
   }
 
@@ -452,6 +513,7 @@ extension Proto_TransactionRecord: SwiftProtobuf.Message, SwiftProtobuf._Message
           }
         }()
         case 21: try { try decoder.decodeSingularBytesField(value: &_storage._evmAddress) }()
+        case 22: try { try decoder.decodeRepeatedMessageField(value: &_storage._newPendingAirdrops) }()
         default: break
         }
       }
@@ -534,6 +596,9 @@ extension Proto_TransactionRecord: SwiftProtobuf.Message, SwiftProtobuf._Message
       if !_storage._evmAddress.isEmpty {
         try visitor.visitSingularBytesField(value: _storage._evmAddress, fieldNumber: 21)
       }
+      if !_storage._newPendingAirdrops.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._newPendingAirdrops, fieldNumber: 22)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -561,10 +626,53 @@ extension Proto_TransactionRecord: SwiftProtobuf.Message, SwiftProtobuf._Message
         if _storage._paidStakingRewards != rhs_storage._paidStakingRewards {return false}
         if _storage._entropy != rhs_storage._entropy {return false}
         if _storage._evmAddress != rhs_storage._evmAddress {return false}
+        if _storage._newPendingAirdrops != rhs_storage._newPendingAirdrops {return false}
         return true
       }
       if !storagesAreEqual {return false}
     }
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Proto_PendingAirdropRecord: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + ".PendingAirdropRecord"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "pending_airdrop_id"),
+    2: .standard(proto: "pending_airdrop_value"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._pendingAirdropID) }()
+      case 2: try { try decoder.decodeSingularMessageField(value: &self._pendingAirdropValue) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._pendingAirdropID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try { if let v = self._pendingAirdropValue {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Proto_PendingAirdropRecord, rhs: Proto_PendingAirdropRecord) -> Bool {
+    if lhs._pendingAirdropID != rhs._pendingAirdropID {return false}
+    if lhs._pendingAirdropValue != rhs._pendingAirdropValue {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

@@ -97,9 +97,9 @@ private struct TCKServer {
             return JSONResponse(id: request.id, error: error)
         } catch let error as HError {
             switch error.kind {
-            case .transactionPreCheckStatus(let status, let _),
-                .queryPreCheckStatus(let status, let _),
-                .receiptStatus(let status, let _):
+            case .transactionPreCheckStatus(let status, _),
+                .queryPreCheckStatus(let status, _),
+                .receiptStatus(let status, _):
                 return JSONResponse(
                     id: request.id,
                     error: JSONError.hederaError(

@@ -45,7 +45,7 @@ internal final class FileAppendTransactionTests: XCTestCase {
         // Unlike most transactions, this iteration makes sure the chunked data is properly handled.
         // NOTE: Without a client, dealing with chunked data is cumbersome.
         let bodyBytes = try tx.makeSources().signedTransactions.makeIterator().map { signed in
-            try Proto_TransactionBody.init(contiguousBytes: signed.bodyBytes)
+            try Proto_TransactionBody.init(serializedBytes: signed.bodyBytes)
         }
 
         let txes = try bodyBytes.makeIterator().map { bytes in
@@ -62,11 +62,11 @@ internal final class FileAppendTransactionTests: XCTestCase {
 
         // As stated above, this assignment properly handles the possibilty of the data being chunked.
         let txBody = try tx.makeSources().signedTransactions.makeIterator().map { signed in
-            try Proto_TransactionBody.init(contiguousBytes: signed.bodyBytes)
+            try Proto_TransactionBody.init(serializedBytes: signed.bodyBytes)
         }
 
         let txBody2 = try tx2.makeSources().signedTransactions.makeIterator().map { signed in
-            try Proto_TransactionBody.init(contiguousBytes: signed.bodyBytes)
+            try Proto_TransactionBody.init(serializedBytes: signed.bodyBytes)
         }
 
         XCTAssertEqual(txBody, txBody2)

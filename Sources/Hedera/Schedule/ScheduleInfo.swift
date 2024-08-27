@@ -116,6 +116,9 @@ public struct ScheduleInfo: Sendable {
                 case .nodeUpdate(let data): proto.data = .nodeUpdate(data)
                 case .nodeDelete(let data): proto.data = .nodeDelete(data)
                 case .tokenReject(let data): proto.data = .tokenReject(data)
+                case .tokenAirdrop(let data): proto.data = .tokenAirdrop(data)
+                case .tokenCancelAirdrop(let data): proto.data = .tokenCancelAirdrop(data)
+                case .tokenClaimAirdrop(let data): proto.data = .tokenClaimAirdrop(data)
                 case nil: break
                 }
 

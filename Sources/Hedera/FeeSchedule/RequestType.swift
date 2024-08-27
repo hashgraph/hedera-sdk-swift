@@ -259,6 +259,16 @@ public enum RequestType {
     /// Reject a Token
     case tokenReject
 
+    /// Airdrop one or more tokens to one or more accounts.
+    case tokenAirdrop
+
+    /// Remove one or more pending airdrops from state on
+    /// behalf of the sender(s) for each airdrop.
+    case tokenCancelAirdrop
+
+    /// Claim one or more pending airdrops
+    case tokenClaimAirdrop
+
     // this literally can't be smaller.
     // swiftlint:disable:next function_body_length
     internal init?(protobuf proto: Proto_HederaFunctionality) throws {
@@ -342,6 +352,9 @@ public enum RequestType {
         case .nodeDelete: self = .nodeDelete
         case .nodeUpdate: self = .nodeUpdate
         case .tokenReject: self = .tokenReject
+        case .tokenAirdrop: self = .tokenAirdrop
+        case .tokenCancelAirdrop: self = .tokenCancelAirdrop
+        case .tokenClaimAirdrop: self = .tokenClaimAirdrop
 
         case .UNRECOGNIZED(let code):
             throw HError.fromProtobuf("unrecognized RequestType: `\(code)`")
@@ -428,6 +441,9 @@ public enum RequestType {
         case .nodeUpdate: return .nodeUpdate
         case .nodeDelete: return .nodeDelete
         case .tokenReject: return .tokenReject
+        case .tokenAirdrop: return .tokenAirdrop
+        case .tokenCancelAirdrop: return .tokenCancelAirdrop
+        case .tokenClaimAirdrop: return .tokenClaimAirdrop
         }
     }
 }

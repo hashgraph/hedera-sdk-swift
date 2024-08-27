@@ -615,6 +615,36 @@ public struct Proto_TransactionBody {
     set {_uniqueStorage()._data = .tokenReject(newValue)}
   }
 
+  ///*
+  /// A transaction body for a `tokenAirdrop` request.
+  public var tokenAirdrop: Proto_TokenAirdropTransactionBody {
+    get {
+      if case .tokenAirdrop(let v)? = _storage._data {return v}
+      return Proto_TokenAirdropTransactionBody()
+    }
+    set {_uniqueStorage()._data = .tokenAirdrop(newValue)}
+  }
+
+  ///*
+  /// A transaction body for a `cancelAirdrop` request.
+  public var tokenCancelAirdrop: Proto_TokenCancelAirdropTransactionBody {
+    get {
+      if case .tokenCancelAirdrop(let v)? = _storage._data {return v}
+      return Proto_TokenCancelAirdropTransactionBody()
+    }
+    set {_uniqueStorage()._data = .tokenCancelAirdrop(newValue)}
+  }
+
+  ///*
+  /// A transaction body for a `claimAirdrop` request.
+  public var tokenClaimAirdrop: Proto_TokenClaimAirdropTransactionBody {
+    get {
+      if case .tokenClaimAirdrop(let v)? = _storage._data {return v}
+      return Proto_TokenClaimAirdropTransactionBody()
+    }
+    set {_uniqueStorage()._data = .tokenClaimAirdrop(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   ///*
@@ -793,6 +823,15 @@ public struct Proto_TransactionBody {
     /// Custom fees and royalties defined for the tokens rejected
     /// SHALL NOT be charged for this transaction.
     case tokenReject(Proto_TokenRejectTransactionBody)
+    ///*
+    /// A transaction body for a `tokenAirdrop` request.
+    case tokenAirdrop(Proto_TokenAirdropTransactionBody)
+    ///*
+    /// A transaction body for a `cancelAirdrop` request.
+    case tokenCancelAirdrop(Proto_TokenCancelAirdropTransactionBody)
+    ///*
+    /// A transaction body for a `claimAirdrop` request.
+    case tokenClaimAirdrop(Proto_TokenClaimAirdropTransactionBody)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Proto_TransactionBody.OneOf_Data, rhs: Proto_TransactionBody.OneOf_Data) -> Bool {
@@ -1000,6 +1039,18 @@ public struct Proto_TransactionBody {
         guard case .tokenReject(let l) = lhs, case .tokenReject(let r) = rhs else { preconditionFailure() }
         return l == r
       }()
+      case (.tokenAirdrop, .tokenAirdrop): return {
+        guard case .tokenAirdrop(let l) = lhs, case .tokenAirdrop(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.tokenCancelAirdrop, .tokenCancelAirdrop): return {
+        guard case .tokenCancelAirdrop(let l) = lhs, case .tokenCancelAirdrop(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.tokenClaimAirdrop, .tokenClaimAirdrop): return {
+        guard case .tokenClaimAirdrop(let l) = lhs, case .tokenClaimAirdrop(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
       default: return false
       }
     }
@@ -1079,6 +1130,9 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
     55: .same(proto: "nodeUpdate"),
     56: .same(proto: "nodeDelete"),
     57: .same(proto: "tokenReject"),
+    58: .same(proto: "tokenAirdrop"),
+    59: .same(proto: "tokenCancelAirdrop"),
+    60: .same(proto: "tokenClaimAirdrop"),
   ]
 
   fileprivate class _StorageClass {
@@ -1784,6 +1838,45 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
             _storage._data = .tokenReject(v)
           }
         }()
+        case 58: try {
+          var v: Proto_TokenAirdropTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .tokenAirdrop(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .tokenAirdrop(v)
+          }
+        }()
+        case 59: try {
+          var v: Proto_TokenCancelAirdropTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .tokenCancelAirdrop(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .tokenCancelAirdrop(v)
+          }
+        }()
+        case 60: try {
+          var v: Proto_TokenClaimAirdropTransactionBody?
+          var hadOneofValue = false
+          if let current = _storage._data {
+            hadOneofValue = true
+            if case .tokenClaimAirdrop(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {
+            if hadOneofValue {try decoder.handleConflictingOneOf()}
+            _storage._data = .tokenClaimAirdrop(v)
+          }
+        }()
         default: break
         }
       }
@@ -2014,6 +2107,18 @@ extension Proto_TransactionBody: SwiftProtobuf.Message, SwiftProtobuf._MessageIm
       case .tokenReject?: try {
         guard case .tokenReject(let v)? = _storage._data else { preconditionFailure() }
         try visitor.visitSingularMessageField(value: v, fieldNumber: 57)
+      }()
+      case .tokenAirdrop?: try {
+        guard case .tokenAirdrop(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 58)
+      }()
+      case .tokenCancelAirdrop?: try {
+        guard case .tokenCancelAirdrop(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 59)
+      }()
+      case .tokenClaimAirdrop?: try {
+        guard case .tokenClaimAirdrop(let v)? = _storage._data else { preconditionFailure() }
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 60)
       }()
       case nil: break
       }
