@@ -40,7 +40,7 @@ internal final class KeyTests: XCTestCase {
     internal func testFromProtoKeyEcdsa() throws {
         let keyBytes = Data(hex: "3a21034e0441201f2bf9c7d9873c2a9dc3fd451f64b7c05e17e4d781d916e3a11dfd99")
 
-        let keyProto = try Proto_Key.init(serializedData: keyBytes)
+        let keyProto = try Proto_Key.init(serializedBytes: keyBytes)
 
         let key = try PublicKey.fromProtobuf(keyProto)
 

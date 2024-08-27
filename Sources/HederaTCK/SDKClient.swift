@@ -46,7 +46,7 @@ internal class SDKClient {
             do {
                 return Key.single(try PublicKey.fromStringDer(key))
             } catch {
-                return try Key(protobuf: try Proto_Key(serializedData: Data(hex: key)))
+                return try Key(protobuf: try Proto_Key(serializedBytes: Data(hex: key)))
             }
         }
     }

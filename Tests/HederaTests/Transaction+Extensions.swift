@@ -26,6 +26,6 @@ import XCTest
 
 extension Transaction {
     internal func makeProtoBody() throws -> Proto_TransactionBody {
-        try Proto_TransactionBody(contiguousBytes: makeSources().signedTransactions[0].bodyBytes)
+        try Proto_TransactionBody(serializedBytes: makeSources().signedTransactions[0].bodyBytes)
     }
 }

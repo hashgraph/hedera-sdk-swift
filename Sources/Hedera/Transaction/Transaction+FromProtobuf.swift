@@ -205,6 +205,20 @@ extension Transaction {
         case .tokenReject(let value):
             let value = try intoOnlyValue(value)
             return try TokenRejectTransaction(protobuf: firstBody, value)
+
+        case .nodeCreate(let value):
+            let value = try intoOnlyValue(value)
+            return try NodeCreateTransaction(protobuf: firstBody, value)
+
+        case .nodeUpdate(let value):
+            let value = try intoOnlyValue(value)
+            return try NodeUpdateTransaction(protobuf: firstBody, value)
+
+        case .nodeDelete(let value):
+            let value = try intoOnlyValue(value)
+            return try NodeDeleteTransaction(protobuf: firstBody, value)
+
         }
+
     }
 }
