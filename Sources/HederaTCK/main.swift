@@ -68,6 +68,14 @@ private struct TCKServer {
                     result: try await sdkClient.createAccount(
                         getOptionalJsonParameter("params", request.toDict(), request.method)))
             ///
+            /// createToken
+            ///
+            case "createToken":
+                return JSONResponse(
+                    id: request.id,
+                    result: try await sdkClient.createToken(
+                        getOptionalJsonParameter("params", request.toDict(), request.method)))
+            ///
             /// generateKey
             ///
             case "generateKey":

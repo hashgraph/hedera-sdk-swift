@@ -19,6 +19,7 @@
  */
 import Foundation
 import HederaProtobufs
+import NumberKit
 
 @testable import Hedera
 
@@ -258,6 +259,221 @@ internal class SDKClient {
         let txReceipt = try await accountCreateTransaction.execute(client).getReceipt(client)
         return JSONObject.dictionary([
             "accountId": JSONObject.string(txReceipt.accountId!.toString()),
+            "status": JSONObject.string(txReceipt.status.description),
+        ])
+    }
+
+    internal func createToken(_ parameters: [String: JSONObject]?) async throws -> JSONObject {
+        var tokenCreateTransaction = TokenCreateTransaction()
+
+        if let params = parameters {
+            if let name: String = try getOptionalJsonParameter("name", params, #function) {
+                tokenCreateTransaction.name = name
+            }
+
+            if let symbol: String = try getOptionalJsonParameter("symbol", params, #function) {
+                tokenCreateTransaction.symbol = symbol
+            }
+
+            if let decimals: UInt32 = try getOptionalJsonParameter("decimals", params, #function) {
+                tokenCreateTransaction.decimals = decimals
+            }
+
+            if let initialSupply: UInt64 = try getOptionalJsonParameter("initialSupply", params, #function) {
+                tokenCreateTransaction.initialSupply = initialSupply
+            }
+
+            if let treasuryAccountId: String = try getOptionalJsonParameter("treasuryAccountId", params, #function) {
+                tokenCreateTransaction.treasuryAccountId = try AccountId.fromString(treasuryAccountId)
+            }
+
+            if let adminKey: String = try getOptionalJsonParameter("adminKey", params, #function) {
+                tokenCreateTransaction.adminKey = try getHederaKey(adminKey)
+            }
+
+            if let kycKey: String = try getOptionalJsonParameter("kycKey", params, #function) {
+                tokenCreateTransaction.kycKey = try getHederaKey(kycKey)
+            }
+
+            if let freezeKey: String = try getOptionalJsonParameter("freezeKey", params, #function) {
+                tokenCreateTransaction.freezeKey = try getHederaKey(freezeKey)
+            }
+
+            if let wipeKey: String = try getOptionalJsonParameter("wipeKey", params, #function) {
+                tokenCreateTransaction.wipeKey = try getHederaKey(wipeKey)
+            }
+
+            if let supplyKey: String = try getOptionalJsonParameter("supplyKey", params, #function) {
+                tokenCreateTransaction.supplyKey = try getHederaKey(supplyKey)
+            }
+
+            if let freezeDefault: Bool = try getOptionalJsonParameter("freezeDefault", params, #function) {
+                tokenCreateTransaction.freezeDefault = freezeDefault
+            }
+
+            if let expirationTime: Int64 = try getOptionalJsonParameter("expirationTime", params, #function) {
+                tokenCreateTransaction.expirationTime = Timestamp(
+                    from: Date(timeIntervalSince1970: TimeInterval(expirationTime)))
+            }
+
+            if let autoRenewAccountId: String = try getOptionalJsonParameter("autoRenewAccountId", params, #function) {
+                tokenCreateTransaction.autoRenewAccountId = try AccountId.fromString(autoRenewAccountId)
+            }
+
+            if let autoRenewPeriod: Int64 = try getOptionalJsonParameter("autoRenewPeriod", params, #function) {
+                tokenCreateTransaction.autoRenewPeriod = Duration(seconds: UInt64(truncatingIfNeeded: autoRenewPeriod))
+            }
+
+            if let memo: String = try getOptionalJsonParameter("memo", params, #function) {
+                tokenCreateTransaction.tokenMemo = memo
+            }
+
+            if let tokenType: String = try getOptionalJsonParameter("tokenType", params, #function) {
+                guard tokenType == "ft" || tokenType == "nft" else {
+                    throw JSONError.invalidParams("\(#function): tokenType MUST be 'ft' or 'nft'.")
+                }
+                tokenCreateTransaction.tokenType =
+                    tokenType == "ft" ? TokenType.fungibleCommon : TokenType.nonFungibleUnique
+            }
+
+            if let supplyType: String = try getOptionalJsonParameter("supplyType", params, #function) {
+                guard supplyType == "finite" || supplyType == "infinite" else {
+                    throw JSONError.invalidParams("\(#function): supplyType MUST be 'finite' or 'infinite'.")
+                }
+                tokenCreateTransaction.tokenSupplyType =
+                    supplyType == "finite" ? TokenSupplyType.finite : TokenSupplyType.infinite
+            }
+
+            if let maxSupply: Int64 = try getOptionalJsonParameter("maxSupply", params, #function) {
+                tokenCreateTransaction.maxSupply = UInt64(truncatingIfNeeded: maxSupply)
+            }
+
+            if let feeScheduleKey: String = try getOptionalJsonParameter("feeScheduleKey", params, #function) {
+                tokenCreateTransaction.feeScheduleKey = try getHederaKey(feeScheduleKey)
+            }
+
+            if let customFees: [JSONObject] = try getOptionalJsonParameter("customFees", params, #function) {
+                var fees = [AnyCustomFee]()
+                for feeAsJson in customFees {
+                    /// A fee MUST be a dictionary.
+                    guard let fee = feeAsJson.dictValue else {
+                        throw JSONError.invalidParams("\(#function): fee MUST be a dictionary type.")
+                    }
+
+                    let feeCollectorAccountId: AccountId = try AccountId.fromString(
+                        getRequiredJsonParameter("feeCollectorAccountId", fee, #function) as String)
+                    let feeCollectorsExempt: Bool = try getRequiredJsonParameter("feeCollectorsExempt", fee, #function)
+
+                    /// Make sure only one of the three fee types is provided.
+                    guard
+                        let fixedFee: [String: JSONObject]? = try getOptionalJsonParameter("fixedFee", fee, #function),
+                        let fractionalFee: [String: JSONObject]? = try getOptionalJsonParameter(
+                            "fractionalFee", fee, #function),
+                        let royaltyFee: [String: JSONObject]? = try getOptionalJsonParameter(
+                            "royaltyFee", fee, #function),
+                        (fixedFee != nil && fractionalFee == nil && royaltyFee == nil)
+                            || (fixedFee == nil && fractionalFee != nil && royaltyFee == nil)
+                            || (fixedFee == nil && fractionalFee == nil && royaltyFee != nil)
+                    else {
+                        throw JSONError.invalidParams("\(#function): one and only one fee type SHALL be provided.")
+                    }
+
+                    /// Helper function for creating a FixedFee from its JSON parameters.
+                    func getFixedFee(_ feeJson: [String: JSONObject]) throws -> FixedFee {
+                        var tokenId: TokenId? = nil
+                        if let tokenIdStr: String = try getOptionalJsonParameter(
+                            "denominatingTokenId", feeJson, "createToken")
+                        {
+                            tokenId = try TokenId.fromString(tokenIdStr)
+                        }
+
+                        return FixedFee(
+                            amount: try getRequiredJsonParameter("amount", feeJson, "createToken") as UInt64,
+                            denominatingTokenId: tokenId,
+                            feeCollectorAccountId: feeCollectorAccountId,
+                            allCollectorsAreExempt: feeCollectorsExempt
+                        )
+                    }
+
+                    if let fixedFee = fixedFee {
+                        fees.append(try AnyCustomFee.fixed(getFixedFee(fixedFee)))
+                    } else if let fractionalFee = fractionalFee {
+                        /// Check assessmentMethod first to streamline FractionalFee construction.
+                        if let assessmentMethod: String = try getOptionalJsonParameter(
+                            "assessmentMethod", fractionalFee, #function)
+                        {
+                            guard assessmentMethod == "inclusive" || assessmentMethod == "exclusive" else {
+                                throw JSONError.invalidParams(
+                                    "\(#function): assessmentMethod MUST be 'inclusive' or 'exclusive'.")
+                            }
+
+                            fees.append(
+                                AnyCustomFee.fractional(
+                                    FractionalFee(
+                                        amount: Rational<UInt64>(
+                                            try getRequiredJsonParameter("numerator", fractionalFee, #function),
+                                            try getRequiredJsonParameter("denominator", fractionalFee, #function)),
+                                        minimumAmount: try getRequiredJsonParameter(
+                                            "minimumAmount", fractionalFee, #function),
+                                        maximumAmount: try getRequiredJsonParameter(
+                                            "minimumAmount", fractionalFee, #function),
+                                        assessmentMethod: assessmentMethod == "inclusive"
+                                            ? FractionalFee.FeeAssessmentMethod.inclusive
+                                            : FractionalFee.FeeAssessmentMethod.exclusive,
+                                        feeCollectorAccountId: feeCollectorAccountId,
+                                        allCollectorsAreExempt: feeCollectorsExempt
+                                    )
+                                ))
+                        }
+                    } else if let royaltyFee = royaltyFee {
+                        var fallbackFee: FixedFee? = nil
+                        if let fallbackFeeJson: [String: JSONObject] = try getOptionalJsonParameter(
+                            "fallbackFee", royaltyFee, #function)
+                        {
+                            fallbackFee = try getFixedFee(fallbackFeeJson)
+                        }
+
+                        fees.append(
+                            AnyCustomFee.royalty(
+                                RoyaltyFee(
+                                    numerator: try getRequiredJsonParameter("numerator", royaltyFee, #function),
+                                    denominator: try getRequiredJsonParameter("denominator", royaltyFee, #function),
+                                    fallbackFee: fallbackFee,
+                                    feeCollectorAccountId: feeCollectorAccountId,
+                                    allCollectorsAreExempt: feeCollectorsExempt
+                                )
+                            ))
+                    }
+                }
+            }
+
+            if let pauseKey: String = try getOptionalJsonParameter("pauseKey", params, #function) {
+                tokenCreateTransaction.pauseKey = try getHederaKey(pauseKey)
+            }
+
+            if let metadata: String = try getOptionalJsonParameter("metadata", params, #function) {
+                guard let metadataData = Data(hexEncoded: metadata) else {
+                    throw JSONError.invalidParams("\(#function): metadata MUST be hex-encoded data.")
+                }
+                tokenCreateTransaction.metadata = metadataData
+            }
+
+            if let metadataKey: String = try getOptionalJsonParameter("metadataKey", params, #function) {
+                tokenCreateTransaction.metadataKey = try getHederaKey(metadataKey)
+            }
+
+            if let commonTransactionParams: [String: JSONObject] = try getOptionalJsonParameter(
+                "commonTransactionParams", params, #function)
+            {
+                try fillOutCommonTransactionParameters(
+                    &tokenCreateTransaction, params: commonTransactionParams, client: self.client, function: #function
+                )
+            }
+        }
+
+        let txReceipt = try await tokenCreateTransaction.execute(client).getReceipt(client)
+        return JSONObject.dictionary([
+            "tokenId": JSONObject.string(txReceipt.tokenId!.toString()),
             "status": JSONObject.string(txReceipt.status.description),
         ])
     }
