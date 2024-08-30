@@ -22,6 +22,11 @@ import Hedera
 import XCTest
 
 internal class TokenReject: XCTestCase {
+
+    private var skipTest: Bool {
+        true
+    }
+
     internal func testBasicFtReject() async throws {
         let testEnv = try TestEnvironment.nonFree
 
@@ -366,21 +371,17 @@ internal class TokenReject: XCTestCase {
     }
 
     internal func testRemoveAllowance() async throws {
+        if skipTest {
+            throw XCTSkip("Temporarily disabled until nft issue is resolved on server side")
+        }
+
         let testEnv = try TestEnvironment.nonFree
 
         let ft = try await FungibleToken.create(testEnv, decimals: 3)
         let receiverAccountKey = PrivateKey.generateEd25519()
-        let receiverAccount = try await Account.create(testEnv, Key.single(receiverAccountKey.publicKey), 100)
-
+        let receiverAccount = try await Account.create(testEnv, Key.single(receiverAccountKey.publicKey), -1)
         let spenderAccountKey = PrivateKey.generateEd25519()
-        let spenderCreateReceipt = try await AccountCreateTransaction()
-            .key(.single(spenderAccountKey.publicKey))
-            .initialBalance(Hbar(1))
-            .maxAutomaticTokenAssociations(-1)
-            .execute(testEnv.client)
-            .getReceipt(testEnv.client)
-
-        let spenderAccountId = try XCTUnwrap(spenderCreateReceipt.accountId)
+        let spenderAccount = try await Account.create(testEnv, Key.single(spenderAccountKey.publicKey), -1)
 
         let _ = try await TransferTransaction()
             .tokenTransfer(ft.id, testEnv.operator.accountId, -10)
@@ -389,7 +390,7 @@ internal class TokenReject: XCTestCase {
             .getReceipt(testEnv.client)
 
         let _ = try await AccountAllowanceApproveTransaction()
-            .approveTokenAllowance(ft.id, receiverAccount.id, spenderAccountId, 10)
+            .approveTokenAllowance(ft.id, receiverAccount.id, spenderAccount.id, 10)
             .freezeWith(testEnv.client)
             .sign(receiverAccountKey)
             .execute(testEnv.client)
@@ -397,8 +398,8 @@ internal class TokenReject: XCTestCase {
 
         let _ = try await TransferTransaction()
             .approvedTokenTransfer(ft.id, receiverAccount.id, -5)
-            .tokenTransfer(ft.id, spenderAccountId, 5)
-            .transactionId(TransactionId.generateFrom(spenderAccountId))
+            .tokenTransfer(ft.id, spenderAccount.id, 5)
+            .transactionId(TransactionId.generateFrom(spenderAccount.id))
             .freezeWith(testEnv.client)
             .sign(spenderAccountKey)
             .execute(testEnv.client)
@@ -415,8 +416,8 @@ internal class TokenReject: XCTestCase {
         await assertThrowsHErrorAsync(
             try await TransferTransaction()
                 .approvedTokenTransfer(ft.id, receiverAccount.id, -5)
-                .tokenTransfer(ft.id, spenderAccountId, 5)
-                .transactionId(TransactionId.generateFrom(spenderAccountId))
+                .tokenTransfer(ft.id, spenderAccount.id, 5)
+                .transactionId(TransactionId.generateFrom(spenderAccount.id))
                 .freezeWith(testEnv.client)
                 .sign(spenderAccountKey)
                 .execute(testEnv.client)
@@ -449,16 +450,16 @@ internal class TokenReject: XCTestCase {
             .getReceipt(testEnv.client)
 
         let _ = try await AccountAllowanceApproveTransaction()
-            .approveTokenNftAllowance(nft.id.nft(nftSerials[0]), receiverAccount.id, spenderAccountId)
-            .approveTokenNftAllowance(nft.id.nft(nftSerials[1]), receiverAccount.id, spenderAccountId)
+            .approveTokenNftAllowance(nft.id.nft(nftSerials[0]), receiverAccount.id, spenderAccount.id)
+            .approveTokenNftAllowance(nft.id.nft(nftSerials[1]), receiverAccount.id, spenderAccount.id)
             .freezeWith(testEnv.client)
             .sign(receiverAccountKey)
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
 
         let _ = try await TransferTransaction()
-            .approvedNftTransfer(nft.id.nft(nftSerials[0]), receiverAccount.id, spenderAccountId)
-            .transactionId(TransactionId.generateFrom(spenderAccountId))
+            .approvedNftTransfer(nft.id.nft(nftSerials[0]), receiverAccount.id, spenderAccount.id)
+            .transactionId(TransactionId.generateFrom(spenderAccount.id))
             .freezeWith(testEnv.client)
             .sign(spenderAccountKey)
             .execute(testEnv.client)
@@ -474,9 +475,9 @@ internal class TokenReject: XCTestCase {
 
         await assertThrowsHErrorAsync(
             try await TransferTransaction()
-                .approvedNftTransfer(nft.id.nft(nftSerials[1]), receiverAccount.id, spenderAccountId)
-                .approvedNftTransfer(nft.id.nft(nftSerials[2]), receiverAccount.id, spenderAccountId)
-                .transactionId(TransactionId.generateFrom(spenderAccountId))
+                .approvedNftTransfer(nft.id.nft(nftSerials[1]), receiverAccount.id, spenderAccount.id)
+                .approvedNftTransfer(nft.id.nft(nftSerials[2]), receiverAccount.id, spenderAccount.id)
+                .transactionId(TransactionId.generateFrom(spenderAccount.id))
                 .freezeWith(testEnv.client)
                 .sign(spenderAccountKey)
                 .execute(testEnv.client)
