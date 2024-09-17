@@ -78,6 +78,7 @@ internal final class TokenUpdateNfts: XCTestCase {
     internal func testCantUpdateMetadataNoSignedMetadataKey() async throws {
         let testEnv = try TestEnvironment.nonFree
 
+        let supplyKey = PrivateKey.generateEd25519()
         let metadataKey = PrivateKey.generateEd25519()
         let nftCount = 4
         let initialMetadataList =
@@ -92,7 +93,7 @@ internal final class TokenUpdateNfts: XCTestCase {
             .tokenType(TokenType.nonFungibleUnique)
             .treasuryAccountId(testEnv.operator.accountId)
             .adminKey(.single(testEnv.operator.privateKey.publicKey))
-            .supplyKey(.single(testEnv.operator.privateKey.publicKey))
+            .supplyKey(.single(supplyKey.publicKey))
             .metadataKey(.single(metadataKey.publicKey))
             .expirationTime(.now + .minutes(5))
             .execute(testEnv.client)
@@ -112,6 +113,8 @@ internal final class TokenUpdateNfts: XCTestCase {
         let tokenMintTxReceipt = try await TokenMintTransaction()
             .metadata(initialMetadataList)
             .tokenId(tokenId)
+            .freezeWith(testEnv.client)
+            .sign(supplyKey)
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
 
@@ -138,6 +141,7 @@ internal final class TokenUpdateNfts: XCTestCase {
     internal func testCantUpdateMetadataNoSetMetadataKey() async throws {
         let testEnv = try TestEnvironment.nonFree
 
+        let supplyKey = PrivateKey.generateEd25519()
         let nftCount = 4
         let initialMetadataList = [
             Data(Array(repeating: [9, 1, 6], count: (nftCount / [9, 1, 6].count) + 1).flatMap { $0 }.prefix(nftCount))
@@ -151,7 +155,7 @@ internal final class TokenUpdateNfts: XCTestCase {
             .tokenType(TokenType.nonFungibleUnique)
             .treasuryAccountId(testEnv.operator.accountId)
             .adminKey(.single(testEnv.operator.privateKey.publicKey))
-            .supplyKey(.single(testEnv.operator.privateKey.publicKey))
+            .supplyKey(.single(supplyKey.publicKey))
             .expirationTime(.now + .minutes(5))
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
@@ -168,6 +172,8 @@ internal final class TokenUpdateNfts: XCTestCase {
         let tokenMintTxReceipt = try await TokenMintTransaction()
             .metadata(initialMetadataList)
             .tokenId(tokenId)
+            .freezeWith(testEnv.client)
+            .sign(supplyKey)
             .execute(testEnv.client)
             .getReceipt(testEnv.client)
 
@@ -188,7 +194,7 @@ internal final class TokenUpdateNfts: XCTestCase {
                 return
             }
 
-            XCTAssertEqual(status, .tokenHasNoMetadataKey)
+            XCTAssertEqual(status, .invalidSignature)
         }
     }
 }
