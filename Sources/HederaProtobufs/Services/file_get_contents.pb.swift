@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Get the contents of a file. The content field is empty (no bytes) if the file is empty.
-public struct Proto_FileGetContentsQuery {
+public struct Proto_FileGetContentsQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -60,7 +60,7 @@ public struct Proto_FileGetContentsQuery {
 
 ///*
 /// Response when the client sends the node FileGetContentsQuery
-public struct Proto_FileGetContentsResponse {
+public struct Proto_FileGetContentsResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -90,7 +90,7 @@ public struct Proto_FileGetContentsResponse {
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public struct FileContents {
+  public struct FileContents: @unchecked Sendable {
     // SwiftProtobuf.Message conformance is added in an extension below. See the
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
@@ -122,12 +122,6 @@ public struct Proto_FileGetContentsResponse {
   fileprivate var _header: Proto_ResponseHeader? = nil
   fileprivate var _fileContents: Proto_FileGetContentsResponse.FileContents? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_FileGetContentsQuery: @unchecked Sendable {}
-extension Proto_FileGetContentsResponse: @unchecked Sendable {}
-extension Proto_FileGetContentsResponse.FileContents: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

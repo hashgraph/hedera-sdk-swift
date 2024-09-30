@@ -24,7 +24,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// Representation of a Hedera Token Service staking info entity in the network Merkle tree.
 ///
 /// As with all network entities, staking info is per node and has a unique entity number represented as shard.realm.X.
-public struct Proto_StakingNodeInfo {
+public struct Proto_StakingNodeInfo: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -97,10 +97,6 @@ public struct Proto_StakingNodeInfo {
 
   public init() {}
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_StakingNodeInfo: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

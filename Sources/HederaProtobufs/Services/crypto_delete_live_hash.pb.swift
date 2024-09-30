@@ -23,7 +23,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// At consensus, deletes a livehash associated to the given account. The transaction must be signed
 /// by either the key of the owning account, or at least one of the keys associated to the livehash.
-public struct Proto_CryptoDeleteLiveHashTransactionBody {
+public struct Proto_CryptoDeleteLiveHashTransactionBody: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -49,10 +49,6 @@ public struct Proto_CryptoDeleteLiveHashTransactionBody {
 
   fileprivate var _accountOfLiveHash: Proto_AccountID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_CryptoDeleteLiveHashTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

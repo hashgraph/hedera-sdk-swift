@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// UNDOCUMENTED
-public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
+public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum, Swift.CaseIterable {
   public typealias RawValue = Int
 
   ///*
@@ -384,10 +384,14 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
 
   ///*
   /// [Deprecated]. attempt to set negative receive record threshold
+  ///
+  /// NOTE: This enum value was marked as deprecated in the .proto file
   case invalidReceiveRecordThreshold // = 86
 
   ///*
   /// [Deprecated]. attempt to set negative send record threshold
+  ///
+  /// NOTE: This enum value was marked as deprecated in the .proto file
   case invalidSendRecordThreshold // = 87
 
   ///*
@@ -763,6 +767,8 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
 
   ///*
   /// The transaction payer could not afford a custom fee
+  ///
+  /// NOTE: This enum value was marked as deprecated in the .proto file
   case insufficientPayerBalanceForCustomFee // = 231
 
   ///*
@@ -986,6 +992,8 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
 
   ///*
   /// [Deprecated] The proxy account id is invalid or does not exist.
+  ///
+  /// NOTE: This enum value was marked as deprecated in the .proto file
   case invalidProxyAccountID // = 284
 
   ///*
@@ -1016,6 +1024,8 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
 
   ///*
   /// [Deprecated] The approveForAll flag cannot be set for a fungible token.
+  ///
+  /// NOTE: This enum value was marked as deprecated in the .proto file
   case cannotApproveForAllFungibleCommon // = 291
 
   ///*
@@ -1038,10 +1048,14 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
   ///*
   /// [Deprecated] Spender is repeated more than once in Crypto or Token or NFT allowance lists in a single
   /// CryptoApproveAllowance transaction.
+  ///
+  /// NOTE: This enum value was marked as deprecated in the .proto file
   case spenderAccountRepeatedInAllowances // = 296
 
   ///*
   /// [Deprecated] Serial numbers are repeated in nft allowance for a single spender account
+  ///
+  /// NOTE: This enum value was marked as deprecated in the .proto file
   case repeatedSerialNumsInNftAllowances // = 297
 
   ///*
@@ -1062,6 +1076,8 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
 
   ///*
   /// [Deprecated] If the CryptoDeleteAllowance transaction has repeated crypto or token or Nft allowances to delete.
+  ///
+  /// NOTE: This enum value was marked as deprecated in the .proto file
   case repeatedAllowancesToDelete // = 302
 
   ///*
@@ -1339,7 +1355,7 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
 
   ///*
   /// The transaction attempted to use more than the allowed number of `PendingAirdropId`.
-  case maxPendingAirdropIDExceeded // = 363
+  case pendingAirdropIDListTooLong // = 363
 
   ///
   /// A pending airdrop already exists for the specified NFT.
@@ -1351,6 +1367,33 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
   /// Requester should cancel all pending airdrops before resending
   /// this transaction.
   case accountHasPendingAirdrops // = 365
+
+  ///*
+  /// Consensus throttle did not allow execution of this transaction.<br/>
+  /// The transaction should be retried after a modest delay.
+  case throttledAtConsensus // = 366
+
+  ///*
+  /// The provided pending airdrop id is invalid.<br/>
+  /// This pending airdrop MAY already be claimed or cancelled.
+  /// <p>
+  /// The client SHOULD query a mirror node to determine the current status of
+  /// the pending airdrop.
+  case invalidPendingAirdropID // = 367
+
+  ///*
+  /// The token to be airdropped has a fallback royalty fee and cannot be
+  /// sent or claimed via an airdrop transaction.
+  case tokenAirdropWithFallbackRoyalty // = 368
+
+  ///*
+  /// This airdrop claim is for a pending airdrop with an invalid token.<br/>
+  /// The token might be deleted, or the sender may not have enough tokens
+  /// to fulfill the offer.
+  /// <p>
+  /// The client SHOULD query mirror node to determine the status of the pending
+  /// airdrop and whether the sender can fulfill the offer.
+  case invalidTokenInPendingAirdrop // = 369
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -1680,9 +1723,13 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
     case 360: self = .tokenHasNoMetadataOrSupplyKey
     case 361: self = .emptyPendingAirdropIDList
     case 362: self = .pendingAirdropIDRepeated
-    case 363: self = .maxPendingAirdropIDExceeded
+    case 363: self = .pendingAirdropIDListTooLong
     case 364: self = .pendingNftAirdropAlreadyExists
     case 365: self = .accountHasPendingAirdrops
+    case 366: self = .throttledAtConsensus
+    case 367: self = .invalidPendingAirdropID
+    case 368: self = .tokenAirdropWithFallbackRoyalty
+    case 369: self = .invalidTokenInPendingAirdrop
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -2010,18 +2057,17 @@ public enum Proto_ResponseCodeEnum: SwiftProtobuf.Enum {
     case .tokenHasNoMetadataOrSupplyKey: return 360
     case .emptyPendingAirdropIDList: return 361
     case .pendingAirdropIDRepeated: return 362
-    case .maxPendingAirdropIDExceeded: return 363
+    case .pendingAirdropIDListTooLong: return 363
     case .pendingNftAirdropAlreadyExists: return 364
     case .accountHasPendingAirdrops: return 365
+    case .throttledAtConsensus: return 366
+    case .invalidPendingAirdropID: return 367
+    case .tokenAirdropWithFallbackRoyalty: return 368
+    case .invalidTokenInPendingAirdrop: return 369
     case .UNRECOGNIZED(let i): return i
     }
   }
 
-}
-
-#if swift(>=4.2)
-
-extension Proto_ResponseCodeEnum: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
   public static let allCases: [Proto_ResponseCodeEnum] = [
     .ok,
@@ -2345,17 +2391,16 @@ extension Proto_ResponseCodeEnum: CaseIterable {
     .tokenHasNoMetadataOrSupplyKey,
     .emptyPendingAirdropIDList,
     .pendingAirdropIDRepeated,
-    .maxPendingAirdropIDExceeded,
+    .pendingAirdropIDListTooLong,
     .pendingNftAirdropAlreadyExists,
     .accountHasPendingAirdrops,
+    .throttledAtConsensus,
+    .invalidPendingAirdropID,
+    .tokenAirdropWithFallbackRoyalty,
+    .invalidTokenInPendingAirdrop,
   ]
+
 }
-
-#endif  // swift(>=4.2)
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ResponseCodeEnum: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
@@ -2682,8 +2727,12 @@ extension Proto_ResponseCodeEnum: SwiftProtobuf._ProtoNameProviding {
     360: .same(proto: "TOKEN_HAS_NO_METADATA_OR_SUPPLY_KEY"),
     361: .same(proto: "EMPTY_PENDING_AIRDROP_ID_LIST"),
     362: .same(proto: "PENDING_AIRDROP_ID_REPEATED"),
-    363: .same(proto: "MAX_PENDING_AIRDROP_ID_EXCEEDED"),
+    363: .same(proto: "PENDING_AIRDROP_ID_LIST_TOO_LONG"),
     364: .same(proto: "PENDING_NFT_AIRDROP_ALREADY_EXISTS"),
     365: .same(proto: "ACCOUNT_HAS_PENDING_AIRDROPS"),
+    366: .same(proto: "THROTTLED_AT_CONSENSUS"),
+    367: .same(proto: "INVALID_PENDING_AIRDROP_ID"),
+    368: .same(proto: "TOKEN_AIRDROP_WITH_FALLBACK_ROYALTY"),
+    369: .same(proto: "INVALID_TOKEN_IN_PENDING_AIRDROP"),
   ]
 }

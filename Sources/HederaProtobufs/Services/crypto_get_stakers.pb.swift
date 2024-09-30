@@ -23,7 +23,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// Get all the accounts that are proxy staking to this account. For each of them, give the amount
 /// currently staked. This is not yet implemented, but will be in a future version of the API.
-public struct Proto_CryptoGetStakersQuery {
+public struct Proto_CryptoGetStakersQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -61,7 +61,7 @@ public struct Proto_CryptoGetStakersQuery {
 
 ///*
 /// information about a single account that is proxy staking
-public struct Proto_ProxyStaker {
+public struct Proto_ProxyStaker: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -90,7 +90,7 @@ public struct Proto_ProxyStaker {
 
 ///*
 /// all of the accounts proxy staking to a given account, and the amounts proxy staked
-public struct Proto_AllProxyStakers {
+public struct Proto_AllProxyStakers: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -119,7 +119,7 @@ public struct Proto_AllProxyStakers {
 
 ///*
 /// Response when the client sends the node CryptoGetStakersQuery
-public struct Proto_CryptoGetStakersResponse {
+public struct Proto_CryptoGetStakersResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -155,13 +155,6 @@ public struct Proto_CryptoGetStakersResponse {
   fileprivate var _header: Proto_ResponseHeader? = nil
   fileprivate var _stakers: Proto_AllProxyStakers? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_CryptoGetStakersQuery: @unchecked Sendable {}
-extension Proto_ProxyStaker: @unchecked Sendable {}
-extension Proto_AllProxyStakers: @unchecked Sendable {}
-extension Proto_CryptoGetStakersResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

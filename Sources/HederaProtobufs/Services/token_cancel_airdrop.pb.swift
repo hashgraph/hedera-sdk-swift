@@ -38,7 +38,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// Each cancellation SHALL be represented in the transaction body and SHALL NOT be restated
 /// in the record file.<br/>
 /// All cancellations MUST succeed for this transaction to succeed.
-public struct Proto_TokenCancelAirdropTransactionBody {
+public struct Proto_TokenCancelAirdropTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -59,10 +59,6 @@ public struct Proto_TokenCancelAirdropTransactionBody {
 
   public init() {}
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TokenCancelAirdropTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

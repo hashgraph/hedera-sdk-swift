@@ -45,7 +45,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///
 /// ### Record Stream Effects
 /// The completed transfers SHALL be present in the transfer list.
-public struct Proto_TokenClaimAirdropTransactionBody {
+public struct Proto_TokenClaimAirdropTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -63,10 +63,6 @@ public struct Proto_TokenClaimAirdropTransactionBody {
 
   public init() {}
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TokenClaimAirdropTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

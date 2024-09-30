@@ -26,7 +26,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// or it failed (so it won't). If the fee offered was insufficient, this will also contain the
 /// amount of the required fee. To learn the consensus result, the client should later obtain a
 /// receipt (free), or can buy a more detailed record (not free).
-public struct Proto_TransactionResponse {
+public struct Proto_TransactionResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -44,10 +44,6 @@ public struct Proto_TransactionResponse {
 
   public init() {}
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TransactionResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

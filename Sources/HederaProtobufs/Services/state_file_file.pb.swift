@@ -25,7 +25,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///
 /// As with all network entities, a file has a unique entity number, which is given along
 /// with the network's shard and realm in the form of a shard.realm.number id.
-public struct Proto_File {
+public struct Proto_File: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -79,10 +79,6 @@ public struct Proto_File {
   fileprivate var _fileID: Proto_FileID? = nil
   fileprivate var _keys: Proto_KeyList? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_File: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

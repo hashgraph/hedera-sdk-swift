@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// A single transaction. All transaction types are possible here.
-public struct Proto_TransactionBody {
+public struct Proto_TransactionBody: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -73,6 +73,8 @@ public struct Proto_TransactionBody {
   ///*
   /// Should a record of this transaction be generated? (A receipt is always generated, but the
   /// record is optional)
+  ///
+  /// NOTE: This field was marked as deprecated in the .proto file.
   public var generateRecord: Bool {
     get {return _storage._generateRecord}
     set {_uniqueStorage()._generateRecord = newValue}
@@ -649,7 +651,7 @@ public struct Proto_TransactionBody {
 
   ///*
   /// The choices here are arranged by service in roughly lexicographical order. The field ordinals are non-sequential, and a result of the historical order of implementation.
-  public enum OneOf_Data: Equatable {
+  public enum OneOf_Data: Equatable, Sendable {
     ///*
     /// Calls a function of a contract instance
     case contractCall(Proto_ContractCallTransactionBody)
@@ -833,239 +835,12 @@ public struct Proto_TransactionBody {
     /// A transaction body for a `claimAirdrop` request.
     case tokenClaimAirdrop(Proto_TokenClaimAirdropTransactionBody)
 
-  #if !swift(>=4.1)
-    public static func ==(lhs: Proto_TransactionBody.OneOf_Data, rhs: Proto_TransactionBody.OneOf_Data) -> Bool {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch (lhs, rhs) {
-      case (.contractCall, .contractCall): return {
-        guard case .contractCall(let l) = lhs, case .contractCall(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.contractCreateInstance, .contractCreateInstance): return {
-        guard case .contractCreateInstance(let l) = lhs, case .contractCreateInstance(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.contractUpdateInstance, .contractUpdateInstance): return {
-        guard case .contractUpdateInstance(let l) = lhs, case .contractUpdateInstance(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.cryptoAddLiveHash, .cryptoAddLiveHash): return {
-        guard case .cryptoAddLiveHash(let l) = lhs, case .cryptoAddLiveHash(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.cryptoCreateAccount, .cryptoCreateAccount): return {
-        guard case .cryptoCreateAccount(let l) = lhs, case .cryptoCreateAccount(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.cryptoDelete, .cryptoDelete): return {
-        guard case .cryptoDelete(let l) = lhs, case .cryptoDelete(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.cryptoDeleteLiveHash, .cryptoDeleteLiveHash): return {
-        guard case .cryptoDeleteLiveHash(let l) = lhs, case .cryptoDeleteLiveHash(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.cryptoTransfer, .cryptoTransfer): return {
-        guard case .cryptoTransfer(let l) = lhs, case .cryptoTransfer(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.cryptoUpdateAccount, .cryptoUpdateAccount): return {
-        guard case .cryptoUpdateAccount(let l) = lhs, case .cryptoUpdateAccount(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.fileAppend, .fileAppend): return {
-        guard case .fileAppend(let l) = lhs, case .fileAppend(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.fileCreate, .fileCreate): return {
-        guard case .fileCreate(let l) = lhs, case .fileCreate(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.fileDelete, .fileDelete): return {
-        guard case .fileDelete(let l) = lhs, case .fileDelete(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.fileUpdate, .fileUpdate): return {
-        guard case .fileUpdate(let l) = lhs, case .fileUpdate(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.systemDelete, .systemDelete): return {
-        guard case .systemDelete(let l) = lhs, case .systemDelete(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.systemUndelete, .systemUndelete): return {
-        guard case .systemUndelete(let l) = lhs, case .systemUndelete(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.contractDeleteInstance, .contractDeleteInstance): return {
-        guard case .contractDeleteInstance(let l) = lhs, case .contractDeleteInstance(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.freeze, .freeze): return {
-        guard case .freeze(let l) = lhs, case .freeze(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.consensusCreateTopic, .consensusCreateTopic): return {
-        guard case .consensusCreateTopic(let l) = lhs, case .consensusCreateTopic(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.consensusUpdateTopic, .consensusUpdateTopic): return {
-        guard case .consensusUpdateTopic(let l) = lhs, case .consensusUpdateTopic(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.consensusDeleteTopic, .consensusDeleteTopic): return {
-        guard case .consensusDeleteTopic(let l) = lhs, case .consensusDeleteTopic(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.consensusSubmitMessage, .consensusSubmitMessage): return {
-        guard case .consensusSubmitMessage(let l) = lhs, case .consensusSubmitMessage(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.uncheckedSubmit, .uncheckedSubmit): return {
-        guard case .uncheckedSubmit(let l) = lhs, case .uncheckedSubmit(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenCreation, .tokenCreation): return {
-        guard case .tokenCreation(let l) = lhs, case .tokenCreation(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenFreeze, .tokenFreeze): return {
-        guard case .tokenFreeze(let l) = lhs, case .tokenFreeze(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenUnfreeze, .tokenUnfreeze): return {
-        guard case .tokenUnfreeze(let l) = lhs, case .tokenUnfreeze(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenGrantKyc, .tokenGrantKyc): return {
-        guard case .tokenGrantKyc(let l) = lhs, case .tokenGrantKyc(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenRevokeKyc, .tokenRevokeKyc): return {
-        guard case .tokenRevokeKyc(let l) = lhs, case .tokenRevokeKyc(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenDeletion, .tokenDeletion): return {
-        guard case .tokenDeletion(let l) = lhs, case .tokenDeletion(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenUpdate, .tokenUpdate): return {
-        guard case .tokenUpdate(let l) = lhs, case .tokenUpdate(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenMint, .tokenMint): return {
-        guard case .tokenMint(let l) = lhs, case .tokenMint(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenBurn, .tokenBurn): return {
-        guard case .tokenBurn(let l) = lhs, case .tokenBurn(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenWipe, .tokenWipe): return {
-        guard case .tokenWipe(let l) = lhs, case .tokenWipe(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenAssociate, .tokenAssociate): return {
-        guard case .tokenAssociate(let l) = lhs, case .tokenAssociate(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenDissociate, .tokenDissociate): return {
-        guard case .tokenDissociate(let l) = lhs, case .tokenDissociate(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.scheduleCreate, .scheduleCreate): return {
-        guard case .scheduleCreate(let l) = lhs, case .scheduleCreate(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.scheduleDelete, .scheduleDelete): return {
-        guard case .scheduleDelete(let l) = lhs, case .scheduleDelete(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.scheduleSign, .scheduleSign): return {
-        guard case .scheduleSign(let l) = lhs, case .scheduleSign(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenFeeScheduleUpdate, .tokenFeeScheduleUpdate): return {
-        guard case .tokenFeeScheduleUpdate(let l) = lhs, case .tokenFeeScheduleUpdate(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenPause, .tokenPause): return {
-        guard case .tokenPause(let l) = lhs, case .tokenPause(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenUnpause, .tokenUnpause): return {
-        guard case .tokenUnpause(let l) = lhs, case .tokenUnpause(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.cryptoApproveAllowance, .cryptoApproveAllowance): return {
-        guard case .cryptoApproveAllowance(let l) = lhs, case .cryptoApproveAllowance(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.cryptoDeleteAllowance, .cryptoDeleteAllowance): return {
-        guard case .cryptoDeleteAllowance(let l) = lhs, case .cryptoDeleteAllowance(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.ethereumTransaction, .ethereumTransaction): return {
-        guard case .ethereumTransaction(let l) = lhs, case .ethereumTransaction(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.nodeStakeUpdate, .nodeStakeUpdate): return {
-        guard case .nodeStakeUpdate(let l) = lhs, case .nodeStakeUpdate(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.utilPrng, .utilPrng): return {
-        guard case .utilPrng(let l) = lhs, case .utilPrng(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenUpdateNfts, .tokenUpdateNfts): return {
-        guard case .tokenUpdateNfts(let l) = lhs, case .tokenUpdateNfts(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.nodeCreate, .nodeCreate): return {
-        guard case .nodeCreate(let l) = lhs, case .nodeCreate(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.nodeUpdate, .nodeUpdate): return {
-        guard case .nodeUpdate(let l) = lhs, case .nodeUpdate(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.nodeDelete, .nodeDelete): return {
-        guard case .nodeDelete(let l) = lhs, case .nodeDelete(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenReject, .tokenReject): return {
-        guard case .tokenReject(let l) = lhs, case .tokenReject(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenAirdrop, .tokenAirdrop): return {
-        guard case .tokenAirdrop(let l) = lhs, case .tokenAirdrop(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenCancelAirdrop, .tokenCancelAirdrop): return {
-        guard case .tokenCancelAirdrop(let l) = lhs, case .tokenCancelAirdrop(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.tokenClaimAirdrop, .tokenClaimAirdrop): return {
-        guard case .tokenClaimAirdrop(let l) = lhs, case .tokenClaimAirdrop(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      default: return false
-      }
-    }
-  #endif
   }
 
   public init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TransactionBody: @unchecked Sendable {}
-extension Proto_TransactionBody.OneOf_Data: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
