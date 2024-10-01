@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// The unique identifier for a non-fungible token (NFT) instance on Hedera.
-public struct NftId: LosslessStringConvertible, ExpressibleByStringLiteral, Equatable, ValidateChecksums {
+public struct NftId: Sendable, LosslessStringConvertible, ExpressibleByStringLiteral, Equatable, ValidateChecksums {
     /// The (non-fungible) token of which this NFT is an instance.
     public let tokenId: TokenId
 
