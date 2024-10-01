@@ -85,7 +85,7 @@ let package = Package(
         .library(name: "Hedera", targets: ["Hedera"])
     ],
     dependencies: [
-        .package(url: "https://github.com/objecthub/swift-numberkit.git", from: "2.4.1"),
+        .package(url: "https://github.com/objecthub/swift-numberkit.git", from: "2.5.1"),
         .package(url: "https://github.com/thebarndog/swift-dotenv.git", from: "1.0.0"),
         .package(url: "https://github.com/grpc/grpc-swift.git", from: "1.23.0"),
         .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.26.0"),
