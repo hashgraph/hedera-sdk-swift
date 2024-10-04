@@ -27,7 +27,7 @@ internal class TokenClaimAirdrop: XCTestCase {
 
         // Create a receiver account with unlimited auto associations
         let receiverKey = PrivateKey.generateEd25519()
-        let receiverAccount = try await Account.create(testEnv, Key.single(receiverKey.publicKey), -1)
+        let receiverAccount = try await Account.create(testEnv, Key.single(receiverKey.publicKey), 0)
 
         // Create a token and an NFT
         let token = try await FungibleToken.create(testEnv, decimals: 3)
@@ -59,11 +59,11 @@ internal class TokenClaimAirdrop: XCTestCase {
         XCTAssertNil(record.pendingAirdropRecords[0].pendingAirdropId.nftId)
 
         XCTAssertEqual(record.pendingAirdropRecords[1].amount, 0)
-        XCTAssertEqual(record.pendingAirdropRecords[1].pendingAirdropId.nftId, nft.id.nft(nftSerials[1]))
+        XCTAssertEqual(record.pendingAirdropRecords[1].pendingAirdropId.nftId, nft.id.nft(nftSerials[0]))
         XCTAssertNil(record.pendingAirdropRecords[1].pendingAirdropId.tokenId)
 
         XCTAssertEqual(record.pendingAirdropRecords[2].amount, 0)
-        XCTAssertEqual(record.pendingAirdropRecords[2].pendingAirdropId.nftId, nft.id.nft(nftSerials[2]))
+        XCTAssertEqual(record.pendingAirdropRecords[2].pendingAirdropId.nftId, nft.id.nft(nftSerials[1]))
         XCTAssertNil(record.pendingAirdropRecords[2].pendingAirdropId.tokenId)
 
         // Claim the tokens with the receiver account

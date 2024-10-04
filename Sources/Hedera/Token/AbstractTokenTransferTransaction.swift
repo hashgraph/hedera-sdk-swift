@@ -322,7 +322,7 @@ public class AbstractTokenTransferTransaction: Transaction {
 
         // Sort transfers within each TokenTransfer
         for index in transferLists.indices {
-            transferLists[index].transfers.sort { a, b in
+            transferLists[index].transfers.sort { (a: Transfer, b: Transfer) in
                 if a.accountId.shard != b.accountId.shard {
                     return a.accountId.shard < b.accountId.shard
                 }
