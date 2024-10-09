@@ -23,7 +23,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// Get the balance of a cryptocurrency account. This returns only the balance, so it is a smaller
 /// reply than CryptoGetInfo, which returns the balance plus additional information.
-public struct Proto_CryptoGetAccountBalanceQuery {
+public struct Proto_CryptoGetAccountBalanceQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -64,7 +64,7 @@ public struct Proto_CryptoGetAccountBalanceQuery {
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_BalanceSource: Equatable {
+  public enum OneOf_BalanceSource: Equatable, Sendable {
     ///*
     /// The account ID for which information is requested
     case accountID(Proto_AccountID)
@@ -72,24 +72,6 @@ public struct Proto_CryptoGetAccountBalanceQuery {
     /// The account ID for which information is requested
     case contractID(Proto_ContractID)
 
-  #if !swift(>=4.1)
-    public static func ==(lhs: Proto_CryptoGetAccountBalanceQuery.OneOf_BalanceSource, rhs: Proto_CryptoGetAccountBalanceQuery.OneOf_BalanceSource) -> Bool {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch (lhs, rhs) {
-      case (.accountID, .accountID): return {
-        guard case .accountID(let l) = lhs, case .accountID(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.contractID, .contractID): return {
-        guard case .contractID(let l) = lhs, case .contractID(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      default: return false
-      }
-    }
-  #endif
   }
 
   public init() {}
@@ -99,7 +81,7 @@ public struct Proto_CryptoGetAccountBalanceQuery {
 
 ///*
 /// Response when the client sends the node CryptoGetAccountBalanceQuery
-public struct Proto_CryptoGetAccountBalanceResponse {
+public struct Proto_CryptoGetAccountBalanceResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -133,10 +115,12 @@ public struct Proto_CryptoGetAccountBalanceResponse {
   public var balance: UInt64 = 0
 
   ///*
-  /// [DEPRECATED] The balances of the tokens associated to the account. This field was
-  /// deprecated by <a href="https://hips.hedera.com/hip/hip-367">HIP-367</a>, which allowed
-  /// an account to be associated to an unlimited number of tokens. This scale makes it more
+  /// [DEPRECATED] The balances of the tokens associated to the account. This field was 
+  /// deprecated by <a href="https://hips.hedera.com/hip/hip-367">HIP-367</a>, which allowed 
+  /// an account to be associated to an unlimited number of tokens. This scale makes it more 
   /// efficient for users to consult mirror nodes to review their token balances.
+  ///
+  /// NOTE: This field was marked as deprecated in the .proto file.
   public var tokenBalances: [Proto_TokenBalance] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -146,12 +130,6 @@ public struct Proto_CryptoGetAccountBalanceResponse {
   fileprivate var _header: Proto_ResponseHeader? = nil
   fileprivate var _accountID: Proto_AccountID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_CryptoGetAccountBalanceQuery: @unchecked Sendable {}
-extension Proto_CryptoGetAccountBalanceQuery.OneOf_BalanceSource: @unchecked Sendable {}
-extension Proto_CryptoGetAccountBalanceResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

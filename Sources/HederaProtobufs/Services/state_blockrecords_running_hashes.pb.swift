@@ -23,7 +23,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// The running hash of a transaction records and the previous 3 running hashes. All hashes are 48 bytes SHA384 hashes. If the
 /// running hashes do not exist yet then they will be default values witch is empty bytes object or zero length byte array.
-public struct Proto_RunningHashes {
+public struct Proto_RunningHashes: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -48,10 +48,6 @@ public struct Proto_RunningHashes {
 
   public init() {}
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_RunningHashes: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

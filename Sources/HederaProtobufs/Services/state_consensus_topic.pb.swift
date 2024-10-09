@@ -22,25 +22,25 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Representation of a Hedera Consensus Service topic in the network Merkle tree.
-///
-/// As with all network entities, a topic has a unique entity number, which is usually given along
+/// 
+/// As with all network entities, a topic has a unique entity number, which is usually given along 
 /// with the network's shard and realm in the form of a shard.realm.number id.
-///
+/// 
 /// A topic consists of just two pieces of data:
 ///   1. The total number of messages sent to the topic; and,
 ///   2. The running hash of all those messages.
 /// It also has several metadata elements:
 ///   1. A consensus expiration time in seconds since the epoch.
-///   2. (Optional) The number of an auto-renew account, in the same shard and realm as the topic, that
-///   has signed a transaction allowing the network to use its balance to automatically extend the topic's
+///   2. (Optional) The number of an auto-renew account, in the same shard and realm as the topic, that 
+///   has signed a transaction allowing the network to use its balance to automatically extend the topic's 
 ///   expiration time when it passes.
-///   3. The number of seconds the network should automatically extend the topic's expiration by, if the
+///   3. The number of seconds the network should automatically extend the topic's expiration by, if the 
 ///   topic has a valid auto-renew account, and is not deleted upon expiration.
 ///   4. A boolean marking if the topic has been deleted.
 ///   5. A memo string whose UTF-8 encoding is at most 100 bytes.
 ///   6. (Optional) An admin key whose signature must be active for the topic's metadata to be updated.
 ///   7. (Optional) A submit key whose signature must be active for the topic to receive a message.
-public struct Proto_Topic {
+public struct Proto_Topic: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -71,7 +71,7 @@ public struct Proto_Topic {
   }
 
   ///*
-  /// The number of seconds for which the topic will be automatically renewed
+  /// The number of seconds for which the topic will be automatically renewed 
   /// upon expiring (if it has a valid auto-renew account).
   public var autoRenewPeriod: Int64 {
     get {return _storage._autoRenewPeriod}
@@ -101,7 +101,7 @@ public struct Proto_Topic {
   /// When a topic is created, its running hash is initialized to 48 bytes of binary zeros.
   /// For each submitted message, the topic's running hash is then updated to the output
   /// of a particular SHA-384 digest whose input data include the previous running hash.
-  ///
+  /// 
   /// See the TransactionReceipt.proto documentation for an exact description of the
   /// data included in the SHA-384 digest used for the update.
   public var runningHash: Data {
@@ -145,10 +145,6 @@ public struct Proto_Topic {
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_Topic: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

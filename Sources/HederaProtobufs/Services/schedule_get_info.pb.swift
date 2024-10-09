@@ -22,9 +22,9 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Gets information about a schedule in the network's action queue.
-///
+/// 
 /// Responds with <tt>INVALID_SCHEDULE_ID</tt> if the requested schedule doesn't exist.
-public struct Proto_ScheduleGetInfoQuery {
+public struct Proto_ScheduleGetInfoQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -62,7 +62,7 @@ public struct Proto_ScheduleGetInfoQuery {
 
 ///*
 /// Information summarizing schedule state
-public struct Proto_ScheduleInfo {
+public struct Proto_ScheduleInfo: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -193,7 +193,7 @@ public struct Proto_ScheduleInfo {
   public mutating func clearScheduledTransactionID() {_uniqueStorage()._scheduledTransactionID = nil}
 
   ///*
-  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs.
+  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs. 
   public var ledgerID: Data {
     get {return _storage._ledgerID}
     set {_uniqueStorage()._ledgerID = newValue}
@@ -213,7 +213,7 @@ public struct Proto_ScheduleInfo {
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_Data: Equatable {
+  public enum OneOf_Data: Equatable, Sendable {
     ///*
     /// If the schedule has been deleted, the consensus time when this occurred
     case deletionTime(Proto_Timestamp)
@@ -221,24 +221,6 @@ public struct Proto_ScheduleInfo {
     /// If the schedule has been executed, the consensus time when this occurred
     case executionTime(Proto_Timestamp)
 
-  #if !swift(>=4.1)
-    public static func ==(lhs: Proto_ScheduleInfo.OneOf_Data, rhs: Proto_ScheduleInfo.OneOf_Data) -> Bool {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch (lhs, rhs) {
-      case (.deletionTime, .deletionTime): return {
-        guard case .deletionTime(let l) = lhs, case .deletionTime(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.executionTime, .executionTime): return {
-        guard case .executionTime(let l) = lhs, case .executionTime(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      default: return false
-      }
-    }
-  #endif
   }
 
   public init() {}
@@ -248,7 +230,7 @@ public struct Proto_ScheduleInfo {
 
 ///*
 /// Response wrapper for the <tt>ScheduleInfo</tt>
-public struct Proto_ScheduleGetInfoResponse {
+public struct Proto_ScheduleGetInfoResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -283,13 +265,6 @@ public struct Proto_ScheduleGetInfoResponse {
   fileprivate var _header: Proto_ResponseHeader? = nil
   fileprivate var _scheduleInfo: Proto_ScheduleInfo? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ScheduleGetInfoQuery: @unchecked Sendable {}
-extension Proto_ScheduleInfo: @unchecked Sendable {}
-extension Proto_ScheduleInfo.OneOf_Data: @unchecked Sendable {}
-extension Proto_ScheduleGetInfoResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

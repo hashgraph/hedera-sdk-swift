@@ -34,7 +34,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// CANNOT_WIPE_TOKEN_TREASURY_ACCOUNT
 /// On success, tokens are removed from the account and the total supply of the token is decreased by
 /// the wiped amount.
-///
+/// 
 /// If both amount and serialNumbers get filled, a INVALID_TRANSACTION_BODY response code will be
 /// returned.
 /// If the serialNumbers don't get filled for a non-fungible token type, a INVALID_WIPING_AMOUNT response
@@ -44,11 +44,11 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// response code will be returned.
 /// If the serialNumbers' list count is greater than the batch size limit global dynamic property, a
 /// BATCH_SIZE_LIMIT_EXCEEDED response code will be returned.
-///
+/// 
 /// The amount provided is in the lowest denomination possible. Example:
 /// Token A has 2 decimals. In order to wipe 100 tokens from account, one must provide amount of
 /// 10000. In order to wipe 100.55 tokens, one must provide amount of 10055.
-public struct Proto_TokenWipeAccountTransactionBody {
+public struct Proto_TokenWipeAccountTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -93,10 +93,6 @@ public struct Proto_TokenWipeAccountTransactionBody {
   fileprivate var _token: Proto_TokenID? = nil
   fileprivate var _account: Proto_AccountID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TokenWipeAccountTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

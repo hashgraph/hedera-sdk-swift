@@ -23,7 +23,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// Info about a contract account's nonce value.
 /// A nonce of a contract is only incremented when that contract creates another contract.
-public struct Proto_ContractNonceInfo {
+public struct Proto_ContractNonceInfo: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -49,10 +49,6 @@ public struct Proto_ContractNonceInfo {
 
   fileprivate var _contractID: Proto_ContractID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ContractNonceInfo: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

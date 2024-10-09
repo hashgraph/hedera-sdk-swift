@@ -33,7 +33,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// per account, the transaction will resolve to TOKENS_PER_ACCOUNT_LIMIT_EXCEEDED.
 /// On success, associations between the provided account and tokens are made and the account is
 /// ready to interact with the tokens.
-public struct Proto_TokenAssociateTransactionBody {
+public struct Proto_TokenAssociateTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -61,10 +61,6 @@ public struct Proto_TokenAssociateTransactionBody {
 
   fileprivate var _account: Proto_AccountID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TokenAssociateTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

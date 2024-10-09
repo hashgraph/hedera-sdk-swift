@@ -22,7 +22,9 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Before v0.9.0, requested records of all transactions against the given contract in the last 25 hours.
-public struct Proto_ContractGetRecordsQuery {
+///
+/// NOTE: This message was marked as deprecated in the .proto file.
+public struct Proto_ContractGetRecordsQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -59,7 +61,9 @@ public struct Proto_ContractGetRecordsQuery {
 
 ///*
 /// Before v0.9.0, returned records of all transactions against the given contract in the last 25 hours.
-public struct Proto_ContractGetRecordsResponse {
+///
+/// NOTE: This message was marked as deprecated in the .proto file.
+public struct Proto_ContractGetRecordsResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -97,11 +101,6 @@ public struct Proto_ContractGetRecordsResponse {
   fileprivate var _header: Proto_ResponseHeader? = nil
   fileprivate var _contractID: Proto_ContractID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ContractGetRecordsQuery: @unchecked Sendable {}
-extension Proto_ContractGetRecordsResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

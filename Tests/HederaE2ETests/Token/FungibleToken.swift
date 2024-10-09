@@ -21,6 +21,10 @@
 import Hedera
 import XCTest
 
+let testAmount: Int64 = 100
+let testMintedNfts: Int64 = 10
+let testFungibleInitialBalance: UInt64 = 1_000_000
+
 internal struct FungibleToken {
     internal let id: TokenId
     internal let owner: Account
