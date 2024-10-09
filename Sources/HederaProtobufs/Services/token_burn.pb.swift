@@ -28,7 +28,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// Token A has 2 decimals. In order to burn 100 tokens, one must provide amount of 10000. In order
 /// to burn 100.55 tokens, one must provide amount of 10055.
 /// For non fungible tokens the transaction body accepts serialNumbers list of integers as a parameter.
-///
+/// 
 /// If the serialNumbers don't get filled for non-fungible token type, a INVALID_TOKEN_BURN_AMOUNT response
 /// code will be returned.
 /// If a zero amount is provided for a fungible token type, it will be treated as a regular transaction.
@@ -38,7 +38,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// BATCH_SIZE_LIMIT_EXCEEDED response code will be returned.
 /// If the serialNumbers list contains a non-positive integer as a serial number, a INVALID_NFT_ID
 /// response code will be returned.
-public struct Proto_TokenBurnTransactionBody {
+public struct Proto_TokenBurnTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -71,10 +71,6 @@ public struct Proto_TokenBurnTransactionBody {
 
   fileprivate var _token: Proto_TokenID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TokenBurnTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

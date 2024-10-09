@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Gets information about Token instance
-public struct Proto_TokenGetInfoQuery {
+public struct Proto_TokenGetInfoQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -61,7 +61,7 @@ public struct Proto_TokenGetInfoQuery {
 
 ///*
 /// The metadata about a Token instance
-public struct Proto_TokenInfo {
+public struct Proto_TokenInfo: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -305,7 +305,7 @@ public struct Proto_TokenInfo {
   }
 
   ///*
-  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs.
+  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs. 
   public var ledgerID: Data {
     get {return _storage._ledgerID}
     set {_uniqueStorage()._ledgerID = newValue}
@@ -339,7 +339,7 @@ public struct Proto_TokenInfo {
 
 ///*
 /// Response when the client sends the node TokenGetInfoQuery
-public struct Proto_TokenGetInfoResponse {
+public struct Proto_TokenGetInfoResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -374,12 +374,6 @@ public struct Proto_TokenGetInfoResponse {
   fileprivate var _header: Proto_ResponseHeader? = nil
   fileprivate var _tokenInfo: Proto_TokenInfo? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TokenGetInfoQuery: @unchecked Sendable {}
-extension Proto_TokenInfo: @unchecked Sendable {}
-extension Proto_TokenGetInfoResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

@@ -34,7 +34,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///
 /// ### Record Stream Effects
 /// This value is not currently published in the record stream.
-public struct Proto_AccountPendingAirdrop {
+public struct Proto_AccountPendingAirdrop: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -90,10 +90,6 @@ public struct Proto_AccountPendingAirdrop {
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_AccountPendingAirdrop: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

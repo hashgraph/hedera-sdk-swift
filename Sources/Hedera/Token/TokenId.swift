@@ -22,7 +22,7 @@ import Foundation
 import HederaProtobufs
 
 /// The unique identifier for a token on Hedera.
-public struct TokenId: EntityId, ValidateChecksums, Sendable {
+public struct TokenId: EntityId, ValidateChecksums, Sendable, Equatable, Comparable {
     public init(shard: UInt64 = 0, realm: UInt64 = 0, num: UInt64, checksum: Checksum?) {
         self.shard = shard
         self.realm = realm
@@ -56,6 +56,16 @@ public struct TokenId: EntityId, ValidateChecksums, Sendable {
 
     internal func validateChecksums(on ledgerId: LedgerId) throws {
         try helper.validateChecksum(on: ledgerId)
+    }
+
+    public static func < (lhs: TokenId, rhs: TokenId) -> Bool {
+        if lhs.shard != rhs.shard {
+            return lhs.shard < rhs.shard
+        }
+        if lhs.realm != rhs.realm {
+            return lhs.realm < rhs.realm
+        }
+        return lhs.num < rhs.num
     }
 }
 

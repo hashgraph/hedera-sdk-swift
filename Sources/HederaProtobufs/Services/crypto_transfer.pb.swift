@@ -29,8 +29,8 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// hbars, then the entire transaction fails, and none of those transfers occur, though the
 /// transaction fee is still charged. This transaction must be signed by the keys for all the sending
 /// accounts, and for any receiving accounts that have receiverSigRequired == true. The signatures
-/// are in the same order as the accounts, skipping those accounts that don't need a signature.
-public struct Proto_CryptoTransferTransactionBody {
+/// are in the same order as the accounts, skipping those accounts that don't need a signature. 
+public struct Proto_CryptoTransferTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -58,10 +58,6 @@ public struct Proto_CryptoTransferTransactionBody {
 
   fileprivate var _transfers: Proto_TransferList? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_CryptoTransferTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

@@ -30,7 +30,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// resolve to TOKEN_NOT_ASSOCIATED_TO_ACCOUNT.
 /// If no KYC Key is defined, the transaction will resolve to TOKEN_HAS_NO_KYC_KEY.
 /// Once executed the Account is marked as KYC Revoked
-public struct Proto_TokenRevokeKycTransactionBody {
+public struct Proto_TokenRevokeKycTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -65,10 +65,6 @@ public struct Proto_TokenRevokeKycTransactionBody {
   fileprivate var _token: Proto_TokenID? = nil
   fileprivate var _account: Proto_AccountID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TokenRevokeKycTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

@@ -218,6 +218,18 @@ extension Transaction {
             let value = try intoOnlyValue(value)
             return try NodeDeleteTransaction(protobuf: firstBody, value)
 
+        case .tokenAirdrop(let value):
+            let value = try intoOnlyValue(value)
+            return try TokenAirdropTransaction(protobuf: firstBody, value)
+
+        case .tokenClaimAirdrop(let value):
+            let value = try intoOnlyValue(value)
+            return try TokenClaimAirdropTransaction(protobuf: firstBody, value)
+
+        case .tokenCancelAirdrop(let value):
+            let value = try intoOnlyValue(value)
+            return try TokenCancelAirdropTransaction(protobuf: firstBody, value)
+
         }
 
     }

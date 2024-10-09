@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// See [ConsensusService.getTopicInfo()](#proto.ConsensusService)
-public struct Proto_ConsensusGetTopicInfoQuery {
+public struct Proto_ConsensusGetTopicInfoQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -60,7 +60,7 @@ public struct Proto_ConsensusGetTopicInfoQuery {
 
 ///*
 /// Retrieve the parameters of and state of a consensus topic.
-public struct Proto_ConsensusGetTopicInfoResponse {
+public struct Proto_ConsensusGetTopicInfoResponse: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -104,11 +104,6 @@ public struct Proto_ConsensusGetTopicInfoResponse {
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ConsensusGetTopicInfoQuery: @unchecked Sendable {}
-extension Proto_ConsensusGetTopicInfoResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

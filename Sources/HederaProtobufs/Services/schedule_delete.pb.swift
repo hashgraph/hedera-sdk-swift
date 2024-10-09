@@ -28,8 +28,8 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// Other notable response codes include, <tt>INVALID_SCHEDULE_ID</tt>, <tt>SCHEDULE_PENDING_EXPIRATION</tt>,
 /// <tt>SCHEDULE_ALREADY_DELETED</tt>, <tt>SCHEDULE_ALREADY_EXECUTED</tt>, <tt>SCHEDULE_IS_IMMUTABLE</tt>.
 /// For more information please see the section of this documentation on the <tt>ResponseCode</tt>
-/// enum.
-public struct Proto_ScheduleDeleteTransactionBody {
+/// enum. 
+public struct Proto_ScheduleDeleteTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -51,10 +51,6 @@ public struct Proto_ScheduleDeleteTransactionBody {
 
   fileprivate var _scheduleID: Proto_ScheduleID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ScheduleDeleteTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

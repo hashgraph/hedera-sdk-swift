@@ -22,8 +22,8 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// An exchange rate between hbar and cents (USD) and the time at which the exchange rate will
-/// expire, and be superseded by a new exchange rate.
-public struct Proto_ExchangeRate {
+/// expire, and be superseded by a new exchange rate. 
+public struct Proto_ExchangeRate: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -56,7 +56,7 @@ public struct Proto_ExchangeRate {
 
 ///*
 /// Two sets of exchange rates
-public struct Proto_ExchangeRateSet {
+public struct Proto_ExchangeRateSet: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -90,11 +90,6 @@ public struct Proto_ExchangeRateSet {
   fileprivate var _currentRate: Proto_ExchangeRate? = nil
   fileprivate var _nextRate: Proto_ExchangeRate? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ExchangeRate: @unchecked Sendable {}
-extension Proto_ExchangeRateSet: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

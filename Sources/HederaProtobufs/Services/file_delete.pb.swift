@@ -27,7 +27,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// modify the file, but any single one of the top level keys can be used to delete the file. This
 /// transaction must be signed by 1-of-M KeyList keys. If keys contains additional KeyList or
 /// ThresholdKey then 1-of-M secondary KeyList or ThresholdKey signing requirements must be meet.
-public struct Proto_FileDeleteTransactionBody {
+public struct Proto_FileDeleteTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -49,10 +49,6 @@ public struct Proto_FileDeleteTransactionBody {
 
   fileprivate var _fileID: Proto_FileID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_FileDeleteTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
