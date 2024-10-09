@@ -57,9 +57,9 @@ extension TokenAirdropTransaction: ToProtobuf {
 
     internal func toProtobuf() -> Protobuf {
         .with { proto in
-            let sorted_transfers = sortTransfers()
+            let sortedTransfers = sortTransfers()
 
-            proto.tokenTransfers = sorted_transfers.toProtobuf()
+            proto.tokenTransfers = sortedTransfers.toProtobuf()
         }
     }
 }
