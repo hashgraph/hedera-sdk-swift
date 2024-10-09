@@ -23,10 +23,10 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// Start a new smart contract instance. After the instance is created, the ContractID for it is in
 /// the receipt, and can be retrieved by the Record or with a GetByKey query. The instance will run
-/// the bytecode, either stored in a previously created file or in the transaction body itself for
+/// the bytecode, either stored in a previously created file or in the transaction body itself for 
 /// small contracts.
-///
-///
+/// 
+/// 
 /// The constructor will be executed using the given amount of gas, and any unspent gas will be
 /// refunded to the paying account. Constructor inputs come from the given constructorParameters.
 ///  - The instance will exist for autoRenewPeriod seconds. When that is reached, it will renew
@@ -73,9 +73,9 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///    to the smart contract in the future. The memo field can only be changed using the admin keys.
 ///    If there are no admin keys, then it cannot be changed after the smart contract is created.
 ///
-/// <b>Signing requirements:</b> If an admin key is set, it must sign the transaction. If an
+/// <b>Signing requirements:</b> If an admin key is set, it must sign the transaction. If an 
 /// auto-renew account is set, its key must sign the transaction.
-public struct Proto_ContractCreateTransactionBody {
+public struct Proto_ContractCreateTransactionBody: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -147,6 +147,8 @@ public struct Proto_ContractCreateTransactionBody {
   /// staked to a node chosen by the network, but without earning payments. If the proxyAccountID
   /// account refuses to accept proxy staking , or if it is not currently running a node, then it
   /// will behave as if  proxyAccountID was null.
+  ///
+  /// NOTE: This field was marked as deprecated in the .proto file.
   public var proxyAccountID: Proto_AccountID {
     get {return _storage._proxyAccountID ?? Proto_AccountID()}
     set {_uniqueStorage()._proxyAccountID = newValue}
@@ -279,7 +281,7 @@ public struct Proto_ContractCreateTransactionBody {
   /// There are two ways to specify the initcode of a ContractCreateTransction. If the initcode is
   /// large (> 5K) then it must be stored in a file as hex encoded ascii. If it is small then it may
   /// either be stored as a hex encoded file or as a binary encoded field as part of the transaciton.
-  public enum OneOf_InitcodeSource: Equatable {
+  public enum OneOf_InitcodeSource: Equatable, @unchecked Sendable {
     ///*
     /// The file containing the smart contract initcode. A copy will be made and held by the
     /// contract instance, and have the same expiration time as the instance.
@@ -289,29 +291,11 @@ public struct Proto_ContractCreateTransactionBody {
     /// is less than the hedera transaction limit. In those cases fileID must be used.
     case initcode(Data)
 
-  #if !swift(>=4.1)
-    public static func ==(lhs: Proto_ContractCreateTransactionBody.OneOf_InitcodeSource, rhs: Proto_ContractCreateTransactionBody.OneOf_InitcodeSource) -> Bool {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch (lhs, rhs) {
-      case (.fileID, .fileID): return {
-        guard case .fileID(let l) = lhs, case .fileID(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.initcode, .initcode): return {
-        guard case .initcode(let l) = lhs, case .initcode(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      default: return false
-      }
-    }
-  #endif
   }
 
   ///*
   /// ID of the new account or node to which this contract is staking.
-  public enum OneOf_StakedID: Equatable {
+  public enum OneOf_StakedID: Equatable, Sendable {
     ///*
     /// ID of the account to which this contract is staking.
     case stakedAccountID(Proto_AccountID)
@@ -319,36 +303,12 @@ public struct Proto_ContractCreateTransactionBody {
     /// ID of the node this contract is staked to.
     case stakedNodeID(Int64)
 
-  #if !swift(>=4.1)
-    public static func ==(lhs: Proto_ContractCreateTransactionBody.OneOf_StakedID, rhs: Proto_ContractCreateTransactionBody.OneOf_StakedID) -> Bool {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch (lhs, rhs) {
-      case (.stakedAccountID, .stakedAccountID): return {
-        guard case .stakedAccountID(let l) = lhs, case .stakedAccountID(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.stakedNodeID, .stakedNodeID): return {
-        guard case .stakedNodeID(let l) = lhs, case .stakedNodeID(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      default: return false
-      }
-    }
-  #endif
   }
 
   public init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ContractCreateTransactionBody: @unchecked Sendable {}
-extension Proto_ContractCreateTransactionBody.OneOf_InitcodeSource: @unchecked Sendable {}
-extension Proto_ContractCreateTransactionBody.OneOf_StakedID: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

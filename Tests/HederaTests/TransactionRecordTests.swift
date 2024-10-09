@@ -85,7 +85,13 @@ internal final class TransactionRecordTests: XCTestCase {
             ethereumHash: "flook ethereum".data(using: .utf8)!,
             evmAddress: EvmAddress.fromBytes("0x000000000000000000".data(using: .utf8)!),
             prngBytes: prngBytes,
-            prngNumber: prngNumber)
+            prngNumber: prngNumber,
+            pendingAirdropRecords: [
+                PendingAirdropRecord.init(
+                    pendingAirdropId: PendingAirdropId.init(
+                        senderId: AccountId("0.2.3"), receiverId: AccountId("0.2.3"), tokenId: TokenId("0.0.2009")),
+                    amount: 3)
+            ])
     }
 
     internal func testSerialize() throws {

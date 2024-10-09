@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Get the runtime bytecode for a smart contract instance
-public struct Proto_ContractGetBytecodeQuery {
+public struct Proto_ContractGetBytecodeQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -60,7 +60,7 @@ public struct Proto_ContractGetBytecodeQuery {
 
 ///*
 /// Response when the client sends the node ContractGetBytecodeQuery
-public struct Proto_ContractGetBytecodeResponse {
+public struct Proto_ContractGetBytecodeResponse: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -87,11 +87,6 @@ public struct Proto_ContractGetBytecodeResponse {
 
   fileprivate var _header: Proto_ResponseHeader? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ContractGetBytecodeQuery: @unchecked Sendable {}
-extension Proto_ContractGetBytecodeResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

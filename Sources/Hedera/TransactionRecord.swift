@@ -97,6 +97,9 @@ public struct TransactionRecord {
     /// In the record of a PRNG transaction with an output range, the output of a PRNG
     /// whose input was a 384-bit string.
     public let prngNumber: UInt32?
+
+    /// A list of pending airdrop records.
+    public let pendingAirdropRecords: [PendingAirdropRecord]
 }
 
 extension TransactionRecord {
@@ -140,6 +143,12 @@ extension TransactionRecord {
             tokenTransfers[tokenId] = innerTokenTransfers
         }
 
+        var pendingAirdropRecords: [PendingAirdropRecord] = []
+
+        pendingAirdropRecords = try proto.newPendingAirdrops.map {
+            try PendingAirdropRecord.fromProtobuf($0)
+        }
+
         let evmAddress = !proto.evmAddress.isEmpty ? try EvmAddress(proto.evmAddress) : nil
 
         let prngBytes: Data?
@@ -178,7 +187,8 @@ extension TransactionRecord {
             ethereumHash: proto.ethereumHash,
             evmAddress: evmAddress,
             prngBytes: prngBytes,
-            prngNumber: prngNumber
+            prngNumber: prngNumber,
+            pendingAirdropRecords: pendingAirdropRecords
         )
     }
 }

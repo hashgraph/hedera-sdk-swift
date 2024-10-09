@@ -22,9 +22,9 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// The key of a storage slot. A slot is scoped to a specific contract number.
-///
-/// For each contract, its EVM storage is a mapping of 256-bit keys (or "words") to 256-bit values.
-public struct Proto_SlotKey {
+/// 
+/// For each contract, its EVM storage is a mapping of 256-bit keys (or "words") to 256-bit values. 
+public struct Proto_SlotKey: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -53,11 +53,11 @@ public struct Proto_SlotKey {
 
 ///*
 /// The value of a contract storage slot. For the EVM, this is a single word.
-///
+/// 
 /// Because we iterate through all the storage slots for an expired contract
 /// when purging it from state, our slot values also include the words
-/// of the previous and next keys in this contract's storage "list".
-public struct Proto_SlotValue {
+/// of the previous and next keys in this contract's storage "list". 
+public struct Proto_SlotValue: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -78,11 +78,6 @@ public struct Proto_SlotValue {
 
   public init() {}
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_SlotKey: @unchecked Sendable {}
-extension Proto_SlotValue: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

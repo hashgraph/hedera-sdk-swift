@@ -22,8 +22,8 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// A hash---presumably of some kind of credential or certificate---along with a list of keys, each
-/// of which may be either a primitive or a threshold key.
-public struct Proto_LiveHash {
+/// of which may be either a primitive or a threshold key. 
+public struct Proto_LiveHash: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -84,7 +84,7 @@ public struct Proto_LiveHash {
 /// livehash mechanism acts as a revocation service.  An account cannot have two identical livehashes
 /// associated. To modify the list of keys in a livehash, the livehash should first be deleted, then
 /// recreated with a new list of keys.
-public struct Proto_CryptoAddLiveHashTransactionBody {
+public struct Proto_CryptoAddLiveHashTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -106,11 +106,6 @@ public struct Proto_CryptoAddLiveHashTransactionBody {
 
   fileprivate var _liveHash: Proto_LiveHash? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_LiveHash: @unchecked Sendable {}
-extension Proto_CryptoAddLiveHashTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

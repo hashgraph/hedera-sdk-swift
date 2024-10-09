@@ -23,7 +23,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// An exact date and time. This is the same data structure as the protobuf Timestamp.proto (see the
 /// comments in https://github.com/google/protobuf/blob/master/src/google/protobuf/timestamp.proto)
-public struct Proto_Timestamp {
+public struct Proto_Timestamp: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -43,7 +43,7 @@ public struct Proto_Timestamp {
 
 ///*
 /// An exact date and time,  with a resolution of one second (no nanoseconds).
-public struct Proto_TimestampSeconds {
+public struct Proto_TimestampSeconds: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -56,11 +56,6 @@ public struct Proto_TimestampSeconds {
 
   public init() {}
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_Timestamp: @unchecked Sendable {}
-extension Proto_TimestampSeconds: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

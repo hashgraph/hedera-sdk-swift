@@ -26,7 +26,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// receipt period.  Before and after the receipt period, and for a transaction that was never
 /// submitted, the receipt is unknown.  This query is free (the payment field is left empty). No
 /// State proof is available for this response
-public struct Proto_TransactionGetReceiptQuery {
+public struct Proto_TransactionGetReceiptQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -63,8 +63,8 @@ public struct Proto_TransactionGetReceiptQuery {
   public var includeDuplicates: Bool = false
 
   ///*
-  /// Whether the response should include the receipts of any child transactions spawned by the
-  /// top-level transaction with the given transactionID.
+  /// Whether the response should include the receipts of any child transactions spawned by the 
+  /// top-level transaction with the given transactionID. 
   public var includeChildReceipts: Bool = false
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -81,7 +81,7 @@ public struct Proto_TransactionGetReceiptQuery {
 /// with the ID of the new entity. Sometimes a single transaction will create more than one new
 /// entity, such as when a new contract instance is created, and this also creates the new account
 /// that it owned by that instance. No State proof is available for this response
-public struct Proto_TransactionGetReceiptResponse {
+public struct Proto_TransactionGetReceiptResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -117,7 +117,7 @@ public struct Proto_TransactionGetReceiptResponse {
   public var duplicateTransactionReceipts: [Proto_TransactionReceipt] = []
 
   ///*
-  /// The receipts (if any) of all child transactions spawned by the transaction with the
+  /// The receipts (if any) of all child transactions spawned by the transaction with the 
   /// given top-level id, in consensus order. Always empty if the top-level status is UNKNOWN.
   public var childTransactionReceipts: [Proto_TransactionReceipt] = []
 
@@ -128,11 +128,6 @@ public struct Proto_TransactionGetReceiptResponse {
   fileprivate var _header: Proto_ResponseHeader? = nil
   fileprivate var _receipt: Proto_TransactionReceipt? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TransactionGetReceiptQuery: @unchecked Sendable {}
-extension Proto_TransactionGetReceiptResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

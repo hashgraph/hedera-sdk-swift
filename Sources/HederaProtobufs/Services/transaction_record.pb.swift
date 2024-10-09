@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Response when the client sends the node TransactionGetRecordResponse
-public struct Proto_TransactionRecord {
+public struct Proto_TransactionRecord: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -171,14 +171,14 @@ public struct Proto_TransactionRecord {
 
   ///*
   /// In the record of a CryptoCreate transaction triggered by a user transaction with a
-  /// (previously unused) alias, the new account's alias.
+  /// (previously unused) alias, the new account's alias. 
   public var alias: Data {
     get {return _storage._alias}
     set {_uniqueStorage()._alias = newValue}
   }
 
   ///*
-  /// The keccak256 hash of the ethereumData. This field will only be populated for
+  /// The keccak256 hash of the ethereumData. This field will only be populated for 
   /// EthereumTransaction.
   public var ethereumHash: Data {
     get {return _storage._ethereumHash}
@@ -242,7 +242,7 @@ public struct Proto_TransactionRecord {
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_Body: Equatable {
+  public enum OneOf_Body: Equatable, Sendable {
     ///*
     /// Record of the value returned by the smart contract function (if it completed and didn't
     /// fail) from ContractCallTransaction
@@ -252,27 +252,9 @@ public struct Proto_TransactionRecord {
     /// didn't fail) from ContractCreateTransaction
     case contractCreateResult(Proto_ContractFunctionResult)
 
-  #if !swift(>=4.1)
-    public static func ==(lhs: Proto_TransactionRecord.OneOf_Body, rhs: Proto_TransactionRecord.OneOf_Body) -> Bool {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch (lhs, rhs) {
-      case (.contractCallResult, .contractCallResult): return {
-        guard case .contractCallResult(let l) = lhs, case .contractCallResult(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.contractCreateResult, .contractCreateResult): return {
-        guard case .contractCreateResult(let l) = lhs, case .contractCreateResult(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      default: return false
-      }
-    }
-  #endif
   }
 
-  public enum OneOf_Entropy: Equatable {
+  public enum OneOf_Entropy: Equatable, @unchecked Sendable {
     ///*
     /// In the record of a UtilPrng transaction with no output range, a pseudorandom 384-bit string.
     case prngBytes(Data)
@@ -280,24 +262,6 @@ public struct Proto_TransactionRecord {
     /// In the record of a PRNG transaction with an output range, the output of a PRNG whose input was a 384-bit string.
     case prngNumber(Int32)
 
-  #if !swift(>=4.1)
-    public static func ==(lhs: Proto_TransactionRecord.OneOf_Entropy, rhs: Proto_TransactionRecord.OneOf_Entropy) -> Bool {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch (lhs, rhs) {
-      case (.prngBytes, .prngBytes): return {
-        guard case .prngBytes(let l) = lhs, case .prngBytes(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.prngNumber, .prngNumber): return {
-        guard case .prngNumber(let l) = lhs, case .prngNumber(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      default: return false
-      }
-    }
-  #endif
   }
 
   public init() {}
@@ -307,7 +271,7 @@ public struct Proto_TransactionRecord {
 
 ///*
 /// A record of a new pending airdrop.
-public struct Proto_PendingAirdropRecord {
+public struct Proto_PendingAirdropRecord: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -346,13 +310,6 @@ public struct Proto_PendingAirdropRecord {
   fileprivate var _pendingAirdropID: Proto_PendingAirdropId? = nil
   fileprivate var _pendingAirdropValue: Proto_PendingAirdropValue? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TransactionRecord: @unchecked Sendable {}
-extension Proto_TransactionRecord.OneOf_Body: @unchecked Sendable {}
-extension Proto_TransactionRecord.OneOf_Entropy: @unchecked Sendable {}
-extension Proto_PendingAirdropRecord: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

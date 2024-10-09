@@ -31,7 +31,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// If no Freeze Key is defined, the transaction will resolve to TOKEN_HAS_NO_FREEZE_KEY.
 /// Once executed the Account is marked as Frozen and will not be able to receive or send tokens
 /// unless unfrozen. The operation is idempotent.
-public struct Proto_TokenFreezeAccountTransactionBody {
+public struct Proto_TokenFreezeAccountTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -66,10 +66,6 @@ public struct Proto_TokenFreezeAccountTransactionBody {
   fileprivate var _token: Proto_TokenID? = nil
   fileprivate var _account: Proto_AccountID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TokenFreezeAccountTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

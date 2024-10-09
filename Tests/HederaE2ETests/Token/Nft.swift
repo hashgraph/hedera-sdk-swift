@@ -21,6 +21,8 @@
 import Hedera
 import XCTest
 
+let testMetadata = Array(repeating: Data([9, 1, 6]), count: 10)
+
 internal struct Nft {
     internal let id: TokenId
     internal let owner: Account

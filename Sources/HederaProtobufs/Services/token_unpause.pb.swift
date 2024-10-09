@@ -27,7 +27,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// If no Pause Key is defined, the transaction will resolve to TOKEN_HAS_NO_PAUSE_KEY.
 /// Once executed the Token is marked as Unpaused and can be used in Transactions.
 /// The operation is idempotent - becomes a no-op if the Token is already unpaused.
-public struct Proto_TokenUnpauseTransactionBody {
+public struct Proto_TokenUnpauseTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -49,10 +49,6 @@ public struct Proto_TokenUnpauseTransactionBody {
 
   fileprivate var _token: Proto_TokenID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TokenUnpauseTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

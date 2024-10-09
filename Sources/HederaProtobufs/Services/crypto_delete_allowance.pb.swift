@@ -25,7 +25,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// will remove the allowances granted to one or more specific non-fungible token serial numbers. Each owner account
 /// listed as wiping an allowance must sign the transaction. Hbar and fungible token allowances
 /// can be removed by setting the amount to zero in CryptoApproveAllowance.
-public struct Proto_CryptoDeleteAllowanceTransactionBody {
+public struct Proto_CryptoDeleteAllowanceTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -41,7 +41,7 @@ public struct Proto_CryptoDeleteAllowanceTransactionBody {
 
 ///*
 /// Nft allowances to be removed on an owner account
-public struct Proto_NftRemoveAllowance {
+public struct Proto_NftRemoveAllowance: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -79,11 +79,6 @@ public struct Proto_NftRemoveAllowance {
   fileprivate var _tokenID: Proto_TokenID? = nil
   fileprivate var _owner: Proto_AccountID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_CryptoDeleteAllowanceTransactionBody: @unchecked Sendable {}
-extension Proto_NftRemoveAllowance: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

@@ -26,7 +26,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// transaction or smart contract deletes the file, but it has not yet expired, then the fileInfo
 /// field will be non-empty, the deleted field will be true, its size will be 0, and its contents
 /// will be empty.
-public struct Proto_FileGetInfoQuery {
+public struct Proto_FileGetInfoQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -64,7 +64,7 @@ public struct Proto_FileGetInfoQuery {
 
 ///*
 /// Response when the client sends the node FileGetInfoQuery
-public struct Proto_FileGetInfoResponse {
+public struct Proto_FileGetInfoResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -94,7 +94,7 @@ public struct Proto_FileGetInfoResponse {
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public struct FileInfo {
+  public struct FileInfo: @unchecked Sendable {
     // SwiftProtobuf.Message conformance is added in an extension below. See the
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
@@ -145,7 +145,7 @@ public struct Proto_FileGetInfoResponse {
     public var memo: String = String()
 
     ///*
-    /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs.
+    /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs. 
     public var ledgerID: Data = Data()
 
     public var unknownFields = SwiftProtobuf.UnknownStorage()
@@ -162,12 +162,6 @@ public struct Proto_FileGetInfoResponse {
   fileprivate var _header: Proto_ResponseHeader? = nil
   fileprivate var _fileInfo: Proto_FileGetInfoResponse.FileInfo? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_FileGetInfoQuery: @unchecked Sendable {}
-extension Proto_FileGetInfoResponse: @unchecked Sendable {}
-extension Proto_FileGetInfoResponse.FileInfo: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

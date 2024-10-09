@@ -1,17 +1,17 @@
 import HederaProtobufs
 import NumberKit
 
-extension Rational: ProtobufCodable where T == UInt64 {
+extension Rational: ProtobufCodable where T == Int64 {
     internal typealias Protobuf = Proto_Fraction
 
     internal init(protobuf proto: Protobuf) {
-        self.init(UInt64(proto.numerator), UInt64(proto.denominator))
+        self.init(proto.numerator, proto.denominator)
     }
 
     internal func toProtobuf() -> Protobuf {
         .with { proto in
-            proto.numerator = Int64(self.numerator)
-            proto.denominator = Int64(self.denominator)
+            proto.numerator = self.numerator
+            proto.denominator = self.denominator
         }
     }
 }

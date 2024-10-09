@@ -20,7 +20,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public struct Proto_SignedTransaction {
+public struct Proto_SignedTransaction: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -46,10 +46,6 @@ public struct Proto_SignedTransaction {
 
   fileprivate var _sigMap: Proto_SignatureMap? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_SignedTransaction: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
