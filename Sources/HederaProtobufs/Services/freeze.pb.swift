@@ -23,7 +23,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// At consensus, sets the consensus time at which the platform should stop creating events and
 /// accepting transactions, and enter a maintenance window.
-public struct Proto_FreezeTransactionBody {
+public struct Proto_FreezeTransactionBody: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -31,21 +31,29 @@ public struct Proto_FreezeTransactionBody {
   ///*
   /// !! DEPRECATED and REJECTED by nodes
   /// The start hour (in UTC time), a value between 0 and 23
+  ///
+  /// NOTE: This field was marked as deprecated in the .proto file.
   public var startHour: Int32 = 0
 
   ///*
   /// !! DEPRECATED and REJECTED by nodes
   /// The start minute (in UTC time), a value between 0 and 59
+  ///
+  /// NOTE: This field was marked as deprecated in the .proto file.
   public var startMin: Int32 = 0
 
   ///*
   /// !! DEPRECATED and REJECTED by nodes
   /// The end hour (in UTC time), a value between 0 and 23
+  ///
+  /// NOTE: This field was marked as deprecated in the .proto file.
   public var endHour: Int32 = 0
 
   ///*
   /// !! DEPRECATED and REJECTED by nodes
   /// The end minute (in UTC time), a value between 0 and 59
+  ///
+  /// NOTE: This field was marked as deprecated in the .proto file.
   public var endMin: Int32 = 0
 
   ///*
@@ -86,10 +94,6 @@ public struct Proto_FreezeTransactionBody {
   fileprivate var _updateFile: Proto_FileID? = nil
   fileprivate var _startTime: Proto_Timestamp? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_FreezeTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

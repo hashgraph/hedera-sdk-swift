@@ -25,7 +25,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///
 /// As with all network entities, a schedule has a unique entity number, which is usually given along
 /// with the network's shard and realm in the form of a shard.realm.number id.
-public struct Proto_Schedule {
+public struct Proto_Schedule: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -199,7 +199,7 @@ public struct Proto_Schedule {
 /// A message for storing a list of schedules in state.
 /// This is used to store lists of schedules that expire at a particular time or that have the same
 /// simplified hash code.
-public struct Proto_ScheduleList {
+public struct Proto_ScheduleList: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -212,11 +212,6 @@ public struct Proto_ScheduleList {
 
   public init() {}
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_Schedule: @unchecked Sendable {}
-extension Proto_ScheduleList: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

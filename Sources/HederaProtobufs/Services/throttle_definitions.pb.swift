@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// A set of operations which should be collectively throttled at a given milli-ops-per-second limit.
-public struct Proto_ThrottleGroup {
+public struct Proto_ThrottleGroup: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -45,7 +45,7 @@ public struct Proto_ThrottleGroup {
 
 ///*
 /// A list of throttle groups that should all compete for the same internal bucket.
-public struct Proto_ThrottleBucket {
+public struct Proto_ThrottleBucket: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -73,10 +73,10 @@ public struct Proto_ThrottleBucket {
 /// A list of throttle buckets which, simultaneously enforced, define the system's throttling policy.
 /// <ol>
 /// <li> When an operation appears in more than one throttling bucket, all its buckets must have room
-/// or it will be throttled.</li>
+/// or it will be throttled.</li> 
 /// <li>An operation assigned to no buckets is always throttled.</li>
-/// </ol>
-public struct Proto_ThrottleDefinitions {
+/// </ol> 
+public struct Proto_ThrottleDefinitions: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -87,12 +87,6 @@ public struct Proto_ThrottleDefinitions {
 
   public init() {}
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ThrottleGroup: @unchecked Sendable {}
-extension Proto_ThrottleBucket: @unchecked Sendable {}
-extension Proto_ThrottleDefinitions: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

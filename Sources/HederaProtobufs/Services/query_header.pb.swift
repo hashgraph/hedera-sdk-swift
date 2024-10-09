@@ -26,8 +26,8 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// (allowing it to tailor the payment transaction accordingly). If the payment in the query fails
 /// the precheck, then the response may have some fields blank. The state proof is only available for
 /// some types of information. It is available for a Record, but not a receipt. It is available for
-/// the information in each kind of *GetInfo request.
-public enum Proto_ResponseType: SwiftProtobuf.Enum {
+/// the information in each kind of *GetInfo request. 
+public enum Proto_ResponseType: SwiftProtobuf.Enum, Swift.CaseIterable {
   public typealias RawValue = Int
 
   ///*
@@ -71,11 +71,6 @@ public enum Proto_ResponseType: SwiftProtobuf.Enum {
     }
   }
 
-}
-
-#if swift(>=4.2)
-
-extension Proto_ResponseType: CaseIterable {
   // The compiler won't synthesize support with the UNRECOGNIZED case.
   public static let allCases: [Proto_ResponseType] = [
     .answerOnly,
@@ -83,15 +78,14 @@ extension Proto_ResponseType: CaseIterable {
     .costAnswer,
     .costAnswerStateProof,
   ]
-}
 
-#endif  // swift(>=4.2)
+}
 
 ///*
 /// Each query from the client to the node will contain the QueryHeader, which gives the requested
 /// response type, and includes a payment transaction that will compensate the node for responding to
-/// the query. The payment can be blank if the query is free.
-public struct Proto_QueryHeader {
+/// the query. The payment can be blank if the query is free. 
+public struct Proto_QueryHeader: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -117,11 +111,6 @@ public struct Proto_QueryHeader {
 
   fileprivate var _payment: Proto_Transaction? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ResponseType: @unchecked Sendable {}
-extension Proto_QueryHeader: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

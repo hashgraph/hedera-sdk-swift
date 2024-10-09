@@ -24,7 +24,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// Get the IDs in the format used by transactions, given the ID in the format used by Solidity. If
 /// the Solidity ID is for a smart contract instance, then both the ContractID and associated
 /// AccountID will be returned.
-public struct Proto_GetBySolidityIDQuery {
+public struct Proto_GetBySolidityIDQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -54,7 +54,7 @@ public struct Proto_GetBySolidityIDQuery {
 
 ///*
 /// Response when the client sends the node GetBySolidityIDQuery
-public struct Proto_GetBySolidityIDResponse {
+public struct Proto_GetBySolidityIDResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -114,11 +114,6 @@ public struct Proto_GetBySolidityIDResponse {
   fileprivate var _fileID: Proto_FileID? = nil
   fileprivate var _contractID: Proto_ContractID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_GetBySolidityIDQuery: @unchecked Sendable {}
-extension Proto_GetBySolidityIDResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

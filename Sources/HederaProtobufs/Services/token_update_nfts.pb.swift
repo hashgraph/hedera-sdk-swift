@@ -31,7 +31,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///
 /// --- Signing Requirements ---
 /// 1. To update metadata of an NFT, the metadata_key of the token should sign the transaction.
-public struct Proto_TokenUpdateNftsTransactionBody {
+public struct Proto_TokenUpdateNftsTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -69,10 +69,6 @@ public struct Proto_TokenUpdateNftsTransactionBody {
   fileprivate var _token: Proto_TokenID? = nil
   fileprivate var _metadata: SwiftProtobuf.Google_Protobuf_BytesValue? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TokenUpdateNftsTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

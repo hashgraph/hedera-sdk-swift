@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Get the deployed versions of Hedera Services and the HAPI proto in semantic version format
-public struct Proto_NetworkGetVersionInfoQuery {
+public struct Proto_NetworkGetVersionInfoQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -48,7 +48,7 @@ public struct Proto_NetworkGetVersionInfoQuery {
 
 ///*
 /// Response when the client sends the node NetworkGetVersionInfoQuery
-public struct Proto_NetworkGetVersionInfoResponse {
+public struct Proto_NetworkGetVersionInfoResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -95,11 +95,6 @@ public struct Proto_NetworkGetVersionInfoResponse {
   fileprivate var _hapiProtoVersion: Proto_SemanticVersion? = nil
   fileprivate var _hederaServicesVersion: Proto_SemanticVersion? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_NetworkGetVersionInfoQuery: @unchecked Sendable {}
-extension Proto_NetworkGetVersionInfoResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

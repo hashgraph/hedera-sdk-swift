@@ -23,14 +23,14 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// At consensus, marks a contract as deleted and transfers its remaining hBars, if any, to a
 /// designated receiver. After a contract is deleted, it can no longer be called.
-///
+/// 
 /// If the target contract is immutable (that is, was created without an admin key), then this
 /// transaction resolves to MODIFYING_IMMUTABLE_CONTRACT.
-///
+/// 
 /// --- Signing Requirements ---
 /// 1. The admin key of the target contract must sign.
 /// 2. If the transfer account or contract has receiverSigRequired, its associated key must also sign
-public struct Proto_ContractDeleteTransactionBody {
+public struct Proto_ContractDeleteTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -69,7 +69,7 @@ public struct Proto_ContractDeleteTransactionBody {
   }
 
   ///*
-  /// If set to true, means this is a "synthetic" system transaction being used to
+  /// If set to true, means this is a "synthetic" system transaction being used to 
   /// alert mirror nodes that the contract is being permanently removed from the ledger.
   /// <b>IMPORTANT:</b> User transactions cannot set this field to true, as permanent
   /// removal is always managed by the ledger itself. Any ContractDeleteTransactionBody
@@ -79,7 +79,7 @@ public struct Proto_ContractDeleteTransactionBody {
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_Obtainers: Equatable {
+  public enum OneOf_Obtainers: Equatable, Sendable {
     ///*
     /// The id of an account to receive any remaining hBars from the deleted contract
     case transferAccountID(Proto_AccountID)
@@ -87,35 +87,12 @@ public struct Proto_ContractDeleteTransactionBody {
     /// The id of a contract to receive any remaining hBars from the deleted contract
     case transferContractID(Proto_ContractID)
 
-  #if !swift(>=4.1)
-    public static func ==(lhs: Proto_ContractDeleteTransactionBody.OneOf_Obtainers, rhs: Proto_ContractDeleteTransactionBody.OneOf_Obtainers) -> Bool {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch (lhs, rhs) {
-      case (.transferAccountID, .transferAccountID): return {
-        guard case .transferAccountID(let l) = lhs, case .transferAccountID(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.transferContractID, .transferContractID): return {
-        guard case .transferContractID(let l) = lhs, case .transferContractID(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      default: return false
-      }
-    }
-  #endif
   }
 
   public init() {}
 
   fileprivate var _contractID: Proto_ContractID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ContractDeleteTransactionBody: @unchecked Sendable {}
-extension Proto_ContractDeleteTransactionBody.OneOf_Obtainers: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

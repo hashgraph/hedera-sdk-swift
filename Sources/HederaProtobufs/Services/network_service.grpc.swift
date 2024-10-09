@@ -65,9 +65,9 @@ extension Proto_NetworkServiceClientProtocol {
   }
 
   ///*
-  /// Retrieves the time in nanoseconds spent in <tt>handleTransaction</tt> for one or more
-  /// TransactionIDs (assuming they have reached consensus "recently", since only a limited
-  /// number of execution times are kept in-memory, depending on the value of the node-local
+  /// Retrieves the time in nanoseconds spent in <tt>handleTransaction</tt> for one or more 
+  /// TransactionIDs (assuming they have reached consensus "recently", since only a limited 
+  /// number of execution times are kept in-memory, depending on the value of the node-local 
   /// property <tt>stats.executionTimesToTrack</tt>).
   ///
   /// - Parameters:
