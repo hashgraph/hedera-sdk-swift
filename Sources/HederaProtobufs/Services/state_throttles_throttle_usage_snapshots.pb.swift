@@ -20,7 +20,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public struct Proto_ThrottleUsageSnapshots {
+public struct Proto_ThrottleUsageSnapshots: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -47,7 +47,7 @@ public struct Proto_ThrottleUsageSnapshots {
   fileprivate var _gasThrottle: Proto_ThrottleUsageSnapshot? = nil
 }
 
-public struct Proto_ThrottleUsageSnapshot {
+public struct Proto_ThrottleUsageSnapshot: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -73,11 +73,6 @@ public struct Proto_ThrottleUsageSnapshot {
 
   fileprivate var _lastDecisionTime: Proto_Timestamp? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ThrottleUsageSnapshots: @unchecked Sendable {}
-extension Proto_ThrottleUsageSnapshot: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

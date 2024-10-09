@@ -27,7 +27,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// for reconnect.
 ///
 /// As with all network entities, staking info is per node and has a unique entity number represented as shard.realm.X.
-public struct Proto_NetworkStakingRewards {
+public struct Proto_NetworkStakingRewards: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -56,10 +56,6 @@ public struct Proto_NetworkStakingRewards {
 
   public init() {}
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_NetworkStakingRewards: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

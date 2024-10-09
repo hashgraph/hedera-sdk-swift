@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// A single 64-bit number with no particular meaning.
-public struct Proto_ProtoLong {
+public struct Proto_ProtoLong: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -36,7 +36,7 @@ public struct Proto_ProtoLong {
 
 ///*
 /// A single 32-bit number with no particular meaning.
-public struct Proto_ProtoInteger {
+public struct Proto_ProtoInteger: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -50,7 +50,7 @@ public struct Proto_ProtoInteger {
 
 ///*
 /// A single boolean with no particular meaning.
-public struct Proto_ProtoBoolean {
+public struct Proto_ProtoBoolean: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -64,7 +64,7 @@ public struct Proto_ProtoBoolean {
 
 ///*
 /// A single string with no particular meaning.
-public struct Proto_ProtoString {
+public struct Proto_ProtoString: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -78,7 +78,7 @@ public struct Proto_ProtoString {
 
 ///*
 /// A single byte array with no particular meaning.
-public struct Proto_ProtoBytes {
+public struct Proto_ProtoBytes: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -89,14 +89,6 @@ public struct Proto_ProtoBytes {
 
   public init() {}
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ProtoLong: @unchecked Sendable {}
-extension Proto_ProtoInteger: @unchecked Sendable {}
-extension Proto_ProtoBoolean: @unchecked Sendable {}
-extension Proto_ProtoString: @unchecked Sendable {}
-extension Proto_ProtoBytes: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

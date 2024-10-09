@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// See [ConsensusService.createTopic()](#proto.ConsensusService)
-public struct Proto_ConsensusCreateTopicTransactionBody {
+public struct Proto_ConsensusCreateTopicTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -97,10 +97,6 @@ public struct Proto_ConsensusCreateTopicTransactionBody {
   fileprivate var _autoRenewPeriod: Proto_Duration? = nil
   fileprivate var _autoRenewAccount: Proto_AccountID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ConsensusCreateTopicTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

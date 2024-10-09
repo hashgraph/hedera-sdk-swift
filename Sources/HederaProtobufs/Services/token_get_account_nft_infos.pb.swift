@@ -38,7 +38,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// INVALID_ACCOUNT_ID response code will be returned if the queried account does not exist
 ///
 /// ACCOUNT_DELETED response code will be returned if the queried account has been deleted
-public struct Proto_TokenGetAccountNftInfosQuery {
+public struct Proto_TokenGetAccountNftInfosQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -86,7 +86,7 @@ public struct Proto_TokenGetAccountNftInfosQuery {
 
 ///*
 /// UNDOCUMENTED
-public struct Proto_TokenGetAccountNftInfosResponse {
+public struct Proto_TokenGetAccountNftInfosResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -113,11 +113,6 @@ public struct Proto_TokenGetAccountNftInfosResponse {
 
   fileprivate var _header: Proto_ResponseHeader? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TokenGetAccountNftInfosQuery: @unchecked Sendable {}
-extension Proto_TokenGetAccountNftInfosResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

@@ -24,7 +24,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// Mark an account as deleted, moving all its current hbars to another account. It will remain in
 /// the ledger, marked as deleted, until it expires. Transfers into it a deleted account fail. But a
 /// deleted account can still have its expiration extended in the normal way.
-public struct Proto_CryptoDeleteTransactionBody {
+public struct Proto_CryptoDeleteTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -58,10 +58,6 @@ public struct Proto_CryptoDeleteTransactionBody {
   fileprivate var _transferAccountID: Proto_AccountID? = nil
   fileprivate var _deleteAccountID: Proto_AccountID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_CryptoDeleteTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
