@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Representation of a Hedera Token Service NFT in the network Merkle tree.
-public struct Proto_Nft {
+public struct Proto_Nft: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -83,7 +83,7 @@ public struct Proto_Nft {
   }
 
   ///*
-  /// If the owner of this NFT is not its token treasury, the id of the previous NFT
+  /// If the owner of this NFT is not its token treasury, the id of the previous NFT 
   /// in the owner's "doubly-linked list" of owned NFTs (if any).
   public var ownerPreviousNftID: Proto_NftID {
     get {return _storage._ownerPreviousNftID ?? Proto_NftID()}
@@ -95,7 +95,7 @@ public struct Proto_Nft {
   public mutating func clearOwnerPreviousNftID() {_uniqueStorage()._ownerPreviousNftID = nil}
 
   ///*
-  /// If the owner of this NFT is not its token treasury, the id of the next NFT in
+  /// If the owner of this NFT is not its token treasury, the id of the next NFT in 
   /// the owner's "doubly-linked list" of owned NFTs (if any).
   public var ownerNextNftID: Proto_NftID {
     get {return _storage._ownerNextNftID ?? Proto_NftID()}
@@ -112,10 +112,6 @@ public struct Proto_Nft {
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_Nft: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

@@ -23,7 +23,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// Every query receives a response containing the QueryResponseHeader. Either or both of the cost
 /// and stateProof fields may be blank, if the responseType didn't ask for the cost or stateProof.
-public struct Proto_ResponseHeader {
+public struct Proto_ResponseHeader: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -51,10 +51,6 @@ public struct Proto_ResponseHeader {
 
   public init() {}
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ResponseHeader: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

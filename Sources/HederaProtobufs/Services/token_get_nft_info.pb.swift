@@ -23,7 +23,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// Applicable only to tokens of type NON_FUNGIBLE_UNIQUE. Gets info on a NFT for a given TokenID (of
 /// type NON_FUNGIBLE_UNIQUE) and serial number
-public struct Proto_TokenGetNftInfoQuery {
+public struct Proto_TokenGetNftInfoQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -61,7 +61,7 @@ public struct Proto_TokenGetNftInfoQuery {
 
 ///*
 /// UNDOCUMENTED
-public struct Proto_TokenNftInfo {
+public struct Proto_TokenNftInfo: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -104,7 +104,7 @@ public struct Proto_TokenNftInfo {
   public var metadata: Data = Data()
 
   ///*
-  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs.
+  /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs. 
   public var ledgerID: Data = Data()
 
   ///*
@@ -130,7 +130,7 @@ public struct Proto_TokenNftInfo {
 
 ///*
 /// UNDOCUMENTED
-public struct Proto_TokenGetNftInfoResponse {
+public struct Proto_TokenGetNftInfoResponse: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -164,12 +164,6 @@ public struct Proto_TokenGetNftInfoResponse {
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TokenGetNftInfoQuery: @unchecked Sendable {}
-extension Proto_TokenNftInfo: @unchecked Sendable {}
-extension Proto_TokenGetNftInfoResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// UNDOCUMENTED
-public struct Proto_ConsensusMessageChunkInfo {
+public struct Proto_ConsensusMessageChunkInfo: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -55,7 +55,7 @@ public struct Proto_ConsensusMessageChunkInfo {
 
 ///*
 /// UNDOCUMENTED
-public struct Proto_ConsensusSubmitMessageTransactionBody {
+public struct Proto_ConsensusSubmitMessageTransactionBody: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -93,11 +93,6 @@ public struct Proto_ConsensusSubmitMessageTransactionBody {
   fileprivate var _topicID: Proto_TopicID? = nil
   fileprivate var _chunkInfo: Proto_ConsensusMessageChunkInfo? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_ConsensusMessageChunkInfo: @unchecked Sendable {}
-extension Proto_ConsensusSubmitMessageTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

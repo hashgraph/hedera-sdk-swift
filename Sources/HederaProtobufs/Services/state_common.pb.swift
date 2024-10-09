@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// A single 64-bit number identifying a Hedera native entity.
-public struct Proto_EntityNumber {
+public struct Proto_EntityNumber: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -36,7 +36,7 @@ public struct Proto_EntityNumber {
 
 ///*
 /// Pair of AccountID and TokenID to represent TokenRelation
-public struct Proto_EntityIDPair {
+public struct Proto_EntityIDPair: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -66,11 +66,6 @@ public struct Proto_EntityIDPair {
   fileprivate var _accountID: Proto_AccountID? = nil
   fileprivate var _tokenID: Proto_TokenID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_EntityNumber: @unchecked Sendable {}
-extension Proto_EntityIDPair: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

@@ -25,7 +25,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// consensus, then information about whether it succeeded or failed will be available until the end
 /// of the receipt period.  Before and after the receipt period, and for a transaction that was never
 /// submitted, the receipt is unknown.  This query is free (the payment field is left empty).
-public struct Proto_TransactionGetFastRecordQuery {
+public struct Proto_TransactionGetFastRecordQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -67,7 +67,7 @@ public struct Proto_TransactionGetFastRecordQuery {
 /// with the ID of the new entity. Sometimes a single transaction will create more than one new
 /// entity, such as when a new contract instance is created, and this also creates the new account
 /// that it owned by that instance.
-public struct Proto_TransactionGetFastRecordResponse {
+public struct Proto_TransactionGetFastRecordResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -102,11 +102,6 @@ public struct Proto_TransactionGetFastRecordResponse {
   fileprivate var _header: Proto_ResponseHeader? = nil
   fileprivate var _transactionRecord: Proto_TransactionRecord? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_TransactionGetFastRecordQuery: @unchecked Sendable {}
-extension Proto_TransactionGetFastRecordResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

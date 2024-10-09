@@ -23,7 +23,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// Gets all the information about an account, including balance and allowances. This does not get the list of
 /// account records.
-public struct Proto_GetAccountDetailsQuery {
+public struct Proto_GetAccountDetailsQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -61,7 +61,7 @@ public struct Proto_GetAccountDetailsQuery {
 
 ///*
 /// Response when the client sends the node GetAccountDetailsQuery
-public struct Proto_GetAccountDetailsResponse {
+public struct Proto_GetAccountDetailsResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -91,7 +91,7 @@ public struct Proto_GetAccountDetailsResponse {
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public struct AccountDetails {
+  public struct AccountDetails: @unchecked Sendable {
     // SwiftProtobuf.Message conformance is added in an extension below. See the
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
@@ -129,6 +129,8 @@ public struct Proto_GetAccountDetailsResponse {
     /// automatically proxy staked to a node chosen by the network, but without earning payments.
     /// If the proxyAccountID account refuses to accept proxy staking , or if it is not currently
     /// running a node, then it will behave as if proxyAccountID was null.
+    ///
+    /// NOTE: This field was marked as deprecated in the .proto file.
     public var proxyAccountID: Proto_AccountID {
       get {return _storage._proxyAccountID ?? Proto_AccountID()}
       set {_uniqueStorage()._proxyAccountID = newValue}
@@ -273,7 +275,7 @@ public struct Proto_GetAccountDetailsResponse {
 
 ///*
 /// A granted allowance of hbar transfers for a spender relative to the owner account.
-public struct Proto_GrantedCryptoAllowance {
+public struct Proto_GrantedCryptoAllowance: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -302,7 +304,7 @@ public struct Proto_GrantedCryptoAllowance {
 
 ///*
 /// A granted allowance for all the NFTs of a token for a spender relative to the owner account.
-public struct Proto_GrantedNftAllowance {
+public struct Proto_GrantedNftAllowance: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -339,7 +341,7 @@ public struct Proto_GrantedNftAllowance {
 
 ///*
 /// A granted allowance of fungible token transfers for a spender relative to the owner account.
-public struct Proto_GrantedTokenAllowance {
+public struct Proto_GrantedTokenAllowance: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -377,15 +379,6 @@ public struct Proto_GrantedTokenAllowance {
   fileprivate var _tokenID: Proto_TokenID? = nil
   fileprivate var _spender: Proto_AccountID? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_GetAccountDetailsQuery: @unchecked Sendable {}
-extension Proto_GetAccountDetailsResponse: @unchecked Sendable {}
-extension Proto_GetAccountDetailsResponse.AccountDetails: @unchecked Sendable {}
-extension Proto_GrantedCryptoAllowance: @unchecked Sendable {}
-extension Proto_GrantedNftAllowance: @unchecked Sendable {}
-extension Proto_GrantedTokenAllowance: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

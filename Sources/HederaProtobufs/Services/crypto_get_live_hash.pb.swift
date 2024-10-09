@@ -22,7 +22,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 
 ///*
 /// Requests a livehash associated to an account.
-public struct Proto_CryptoGetLiveHashQuery {
+public struct Proto_CryptoGetLiveHashQuery: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -66,7 +66,7 @@ public struct Proto_CryptoGetLiveHashQuery {
 /// Returns the full livehash associated to an account, if it is present. Note that the only way to
 /// obtain a state proof exhibiting the absence of a livehash from an account is to retrieve a state
 /// proof of the entire account with its list of livehashes.
-public struct Proto_CryptoGetLiveHashResponse {
+public struct Proto_CryptoGetLiveHashResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -101,11 +101,6 @@ public struct Proto_CryptoGetLiveHashResponse {
   fileprivate var _header: Proto_ResponseHeader? = nil
   fileprivate var _liveHash: Proto_LiveHash? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_CryptoGetLiveHashQuery: @unchecked Sendable {}
-extension Proto_CryptoGetLiveHashResponse: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

@@ -23,7 +23,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 ///*
 /// Get all the information about an account, including the balance. This does not get the list of
 /// account records.
-public struct Proto_CryptoGetInfoQuery {
+public struct Proto_CryptoGetInfoQuery: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -61,7 +61,7 @@ public struct Proto_CryptoGetInfoQuery {
 
 ///*
 /// Response when the client sends the node CryptoGetInfoQuery
-public struct Proto_CryptoGetInfoResponse {
+public struct Proto_CryptoGetInfoResponse: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -91,7 +91,7 @@ public struct Proto_CryptoGetInfoResponse {
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public struct AccountInfo {
+  public struct AccountInfo: @unchecked Sendable {
     // SwiftProtobuf.Message conformance is added in an extension below. See the
     // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
     // methods supported on all messages.
@@ -129,6 +129,8 @@ public struct Proto_CryptoGetInfoResponse {
     /// automatically proxy staked to a node chosen by the network, but without earning payments.
     /// If the proxyAccountID account refuses to accept proxy staking , or if it is not currently
     /// running a node, then it will behave as if proxyAccountID was null.
+    ///
+    /// NOTE: This field was marked as deprecated in the .proto file.
     public var proxyAccountID: Proto_AccountID {
       get {return _storage._proxyAccountID ?? Proto_AccountID()}
       set {_uniqueStorage()._proxyAccountID = newValue}
@@ -167,6 +169,8 @@ public struct Proto_CryptoGetInfoResponse {
     ///*
     /// [Deprecated]. The threshold amount, in tinybars, at which a record is created of any
     /// transaction that decreases the balance of this account by more than the threshold
+    ///
+    /// NOTE: This field was marked as deprecated in the .proto file.
     public var generateSendRecordThreshold: UInt64 {
       get {return _storage._generateSendRecordThreshold}
       set {_uniqueStorage()._generateSendRecordThreshold = newValue}
@@ -175,6 +179,8 @@ public struct Proto_CryptoGetInfoResponse {
     ///*
     /// [Deprecated]. The threshold amount, in tinybars, at which a record is created of any
     /// transaction that increases the balance of this account by more than the threshold
+    ///
+    /// NOTE: This field was marked as deprecated in the .proto file.
     public var generateReceiveRecordThreshold: UInt64 {
       get {return _storage._generateReceiveRecordThreshold}
       set {_uniqueStorage()._generateReceiveRecordThreshold = newValue}
@@ -220,10 +226,12 @@ public struct Proto_CryptoGetInfoResponse {
     }
 
     ///*
-    /// [DEPRECATED] The metadata of the tokens associated to the account. This field was
-    /// deprecated by <a href="https://hips.hedera.com/hip/hip-367">HIP-367</a>, which allowed
-    /// an account to be associated to an unlimited number of tokens. This scale makes it more
+    /// [DEPRECATED] The metadata of the tokens associated to the account. This field was 
+    /// deprecated by <a href="https://hips.hedera.com/hip/hip-367">HIP-367</a>, which allowed 
+    /// an account to be associated to an unlimited number of tokens. This scale makes it more 
     /// efficient for users to consult mirror nodes to review their token associations.
+    ///
+    /// NOTE: This field was marked as deprecated in the .proto file.
     public var tokenRelationships: [Proto_TokenRelationship] {
       get {return _storage._tokenRelationships}
       set {_uniqueStorage()._tokenRelationships = newValue}
@@ -258,7 +266,7 @@ public struct Proto_CryptoGetInfoResponse {
     }
 
     ///*
-    /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs.
+    /// The ledger ID the response was returned from; please see <a href="https://github.com/hashgraph/hedera-improvement-proposal/blob/master/HIP/hip-198.md">HIP-198</a> for the network-specific IDs. 
     public var ledgerID: Data {
       get {return _storage._ledgerID}
       set {_uniqueStorage()._ledgerID = newValue}
@@ -294,12 +302,6 @@ public struct Proto_CryptoGetInfoResponse {
   fileprivate var _header: Proto_ResponseHeader? = nil
   fileprivate var _accountInfo: Proto_CryptoGetInfoResponse.AccountInfo? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_CryptoGetInfoQuery: @unchecked Sendable {}
-extension Proto_CryptoGetInfoResponse: @unchecked Sendable {}
-extension Proto_CryptoGetInfoResponse.AccountInfo: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

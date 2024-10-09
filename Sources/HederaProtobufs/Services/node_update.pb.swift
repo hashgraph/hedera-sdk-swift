@@ -39,7 +39,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// ### Record Stream Effects
 /// Upon completion the `node_id` for the updated entry SHALL be in the
 /// transaction receipt.
-public struct Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody {
+public struct Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -197,10 +197,6 @@ public struct Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody {
   fileprivate var _grpcCertificateHash: SwiftProtobuf.Google_Protobuf_BytesValue? = nil
   fileprivate var _adminKey: Proto_Key? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

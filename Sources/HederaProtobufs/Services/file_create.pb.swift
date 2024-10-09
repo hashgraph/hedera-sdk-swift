@@ -29,14 +29,14 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// at the expirationTime, unless its expiration is extended by another transaction before that time.
 /// If the file is deleted, then its contents will become empty and it will be marked as deleted
 /// until it expires, and then it will cease to exist.
-///
+/// 
 /// The keys field is a list of keys. All keys within the top-level key list must sign (M-M) to
 /// create or modify a file. However, to delete the file, only one key (1-M) is required to sign from
 /// the top-level key list.  Each of those "keys" may itself be threshold key containing other keys
 /// (including other threshold keys). In other words, the behavior is an AND for create/modify, OR
 /// for delete. This is useful for acting as a revocation server. If it is desired to have the
 /// behavior be AND for all 3 operations (or OR for all 3), then the list should have only a single
-/// Key, which is a threshold key, with N=1 for OR, N=M for AND. If the auto_renew_account field
+/// Key, which is a threshold key, with N=1 for OR, N=M for AND. If the auto_renew_account field 
 /// is set, the key of the referenced account must sign.
 ///
 /// If a file is created without ANY keys in the keys field, the file is immutable and ONLY the
@@ -54,7 +54,7 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// The current API ignores shardID, realmID, and newRealmAdminKey, and creates everything in shard 0
 /// and realm 0, with a null key. Future versions of the API will support multiple realms and
 /// multiple shards.
-public struct Proto_FileCreateTransactionBody {
+public struct Proto_FileCreateTransactionBody: @unchecked Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -134,10 +134,6 @@ public struct Proto_FileCreateTransactionBody {
   fileprivate var _realmID: Proto_RealmID? = nil
   fileprivate var _newRealmAdminKey: Proto_Key? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_FileCreateTransactionBody: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 

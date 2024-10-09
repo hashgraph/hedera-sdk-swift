@@ -26,8 +26,8 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
 /// stored internally until the expiration time, at which time it is truly and permanently deleted.
 /// Until that time, it can be undeleted by the Hedera administrative multisignature. When a smart
 /// contract is deleted, the cryptocurrency account within it continues to exist, and is not affected
-/// by the expiration time here.
-public struct Proto_SystemDeleteTransactionBody {
+/// by the expiration time here. 
+public struct Proto_SystemDeleteTransactionBody: Sendable {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
@@ -67,7 +67,7 @@ public struct Proto_SystemDeleteTransactionBody {
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public enum OneOf_ID: Equatable {
+  public enum OneOf_ID: Equatable, Sendable {
     ///*
     /// The file ID of the file to delete, in the format used in transactions
     case fileID(Proto_FileID)
@@ -75,35 +75,12 @@ public struct Proto_SystemDeleteTransactionBody {
     /// The contract ID instance to delete, in the format used in transactions
     case contractID(Proto_ContractID)
 
-  #if !swift(>=4.1)
-    public static func ==(lhs: Proto_SystemDeleteTransactionBody.OneOf_ID, rhs: Proto_SystemDeleteTransactionBody.OneOf_ID) -> Bool {
-      // The use of inline closures is to circumvent an issue where the compiler
-      // allocates stack space for every case branch when no optimizations are
-      // enabled. https://github.com/apple/swift-protobuf/issues/1034
-      switch (lhs, rhs) {
-      case (.fileID, .fileID): return {
-        guard case .fileID(let l) = lhs, case .fileID(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      case (.contractID, .contractID): return {
-        guard case .contractID(let l) = lhs, case .contractID(let r) = rhs else { preconditionFailure() }
-        return l == r
-      }()
-      default: return false
-      }
-    }
-  #endif
   }
 
   public init() {}
 
   fileprivate var _expirationTime: Proto_TimestampSeconds? = nil
 }
-
-#if swift(>=5.5) && canImport(_Concurrency)
-extension Proto_SystemDeleteTransactionBody: @unchecked Sendable {}
-extension Proto_SystemDeleteTransactionBody.OneOf_ID: @unchecked Sendable {}
-#endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
