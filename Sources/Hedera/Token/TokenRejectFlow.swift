@@ -59,15 +59,9 @@ public final class TokenRejectFlow {
     public init() {
         self.nodeAccountIds = nil
         self.tokenRejectData = .init()
-        self.tokenIds = []
-        self.nftIds = []
-        self.ownerId = nil
     }
 
     private var tokenRejectData: TokenRejectTransactionData
-
-    /// Owner ID of the token to be rejected.
-    public var ownerId: AccountId?
 
     /// Assign the Account ID of the Owner.
     @discardableResult
@@ -76,9 +70,6 @@ public final class TokenRejectFlow {
 
         return self
     }
-
-    /// A list of one or more token rejections (a fungible/common token type).
-    public var tokenIds: [TokenId]
 
     /// Assign a list of TokenIds
     @discardableResult
@@ -95,9 +86,6 @@ public final class TokenRejectFlow {
 
         return self
     }
-
-    /// A list of one or more token rejections (a single specific serialized non-fungible/unique token).
-    public var nftIds: [NftId]
 
     /// Assign a list of Nft IDs
     @discardableResult
@@ -168,11 +156,11 @@ public final class TokenRejectFlow {
 
     }
 
-    public func executeWithTimeout(_ client: Client, _ timeout_per_transaction: TimeInterval) async throws
+    public func executeWithTimeout(_ client: Client, _ timeoutPerTransaction: TimeInterval) async throws
         -> TransactionResponse
     {
         try await Self.executeWithOptionalTimeout(
-            client, timeoutPerTransaction: timeout_per_transaction, nodeAccountIds: self.nodeAccountIds,
+            client, timeoutPerTransaction: timeoutPerTransaction, nodeAccountIds: self.nodeAccountIds,
             tokenRejectData: self.tokenRejectData)
     }
 
