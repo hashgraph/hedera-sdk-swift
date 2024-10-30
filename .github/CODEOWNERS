@@ -11,8 +11,8 @@
 # NOTE: Must be placed last to ensure enforcement over all other rules
 
 # Protection Rules for Github Configuration Files and Actions Workflows
-/.github/                                       @hashgraph/release-engineering @hashgraph/release-engineering-managers
-/.github/workflows/                             @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
+/.github/                                       @hashgraph/devops-ci @hashgraph/devops-ci-commiters @hashgraph/release-engineering @hashgraph/release-engineering-managers
+/.github/workflows/                             @hashgraph/devops-ci @hashgraph/devops-ci-commiters @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
 
 # Swift project files and inline plugins
 **/.swift-format.json                           @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
