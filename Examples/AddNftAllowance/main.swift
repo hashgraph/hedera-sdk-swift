@@ -16,9 +16,9 @@
  * limitations under the License.
  */
 
+import Foundation
 import Hedera
 import SwiftDotenv
-import Foundation
 
 @main
 internal enum Program {
