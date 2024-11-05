@@ -18,6 +18,7 @@
 
 import Hedera
 import SwiftDotenv
+import Foundation
 
 @main
 internal enum Program {
@@ -37,8 +38,8 @@ internal enum Program {
             .maxSupply(10)
             .tokenSupplyType(.finite)
             .treasuryAccountId(env.operatorAccountId)
-            .adminKey(env.operatorKey.publicKey)
-            .supplyKey(env.operatorKey.publicKey)
+            .adminKey(.single(env.operatorKey.publicKey))
+            .supplyKey(.single(env.operatorKey.publicKey))
             .freezeWith(client)
             .execute(client)
             .getReceipt(client)
@@ -83,14 +84,14 @@ internal enum Program {
         let receiverKey = PrivateKey.generateEd25519()
 
         let spenderAccountId = try await AccountCreateTransaction()
-            .key(spenderKey.publicKey.single())
+            .key(Key.single(spenderKey.publicKey))
             .initialBalance(Hbar(2))
             .execute(client)
             .getReceipt(client)
             .accountId!
 
         let receiverAccountId = try await AccountCreateTransaction()
-            .key(receiverKey.publicKey.single())
+            .key(Key.single(receiverKey.publicKey))
             .initialBalance(Hbar(2))
             .execute(client)
             .getReceipt(client)
