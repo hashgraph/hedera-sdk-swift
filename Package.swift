@@ -25,6 +25,7 @@ import PackageDescription
 let exampleTargets = [
     "AccountAlias",
     "AccountAllowance",
+    "AddNftAllowance",
     "ConsensusPubSub",
     "ConsensusPubSubChunked",
     "ConsensusPubSubWithSubmitKey",
