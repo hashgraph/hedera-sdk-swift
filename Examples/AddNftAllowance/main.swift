@@ -28,6 +28,12 @@ internal enum Program {
 
         client.setOperator(env.operatorAccountId, env.operatorKey)
 
+        let cids = [
+            "QmNPCiNA3Dsu3K5FxDPMG5Q3fZRwVTg14EXA92uqEeSRXn",
+            "QmZ4dgAgt8owvnULxnKxNe8YqpavtVCXmc1Lt2XajFpJs9",
+            "QmPzY5GxevjyfMUF5vEAjtyRoigzWp47MiKAtLBduLMC1T",
+        ]
+
         // Step 1: Create an NFT
         let nftCreateReceipt = try await TokenCreateTransaction()
             .name("HIP-336 NFT1")
@@ -35,7 +41,7 @@ internal enum Program {
             .tokenType(TokenType.nonFungibleUnique)
             .decimals(0)
             .initialSupply(0)
-            .maxSupply(10)
+            .maxSupply(UInt64(cids.count))
             .tokenSupplyType(.finite)
             .treasuryAccountId(env.operatorAccountId)
             .adminKey(.single(env.operatorKey.publicKey))
@@ -47,36 +53,25 @@ internal enum Program {
         guard let nftTokenId = nftCreateReceipt.tokenId else {
             fatalError("Failed to create NFT")
         }
-
         print("Created NFT with token ID: \(nftTokenId)")
-
-        // Step 2: Mint NFTs
-        let cids = [
-            "QmNPCiNA3Dsu3K5FxDPMG5Q3fZRwVTg14EXA92uqEeSRXn",
-            "QmZ4dgAgt8owvnULxnKxNe8YqpavtVCXmc1Lt2XajFpJs9",
-            "QmPzY5GxevjyfMUF5vEAjtyRoigzWp47MiKAtLBduLMC1T",
-        ]
 
         let metadataArray = cids.map {
             Data($0.utf8)
         }
 
-        for cid in cids {
-            let mintReceipt = try await TokenMintTransaction()
-                .tokenId(nftTokenId)
-                .metadata(metadataArray)
-                .freezeWith(client)
-                .execute(client)
-                .getReceipt(client)
+        // Step 2: Mint NFTs
+        var nftMintTxReceipts: [TransactionReceipt] = []
+        for (i, _) in cids.enumerated() {
+            nftMintTxReceipts.append(
+                try await TokenMintTransaction()
+                    .tokenId(nftTokenId)
+                    .metadata([metadataArray[i]])
+                    .freezeWith(client)
+                    .execute(client)
+                    .getReceipt(client)
+            )
 
-            guard let serials = mintReceipt.serials, !serials.isEmpty else {
-                fatalError("Failed to mint NFTs")
-            }
-
-            for (index, serial) in serials.enumerated() {
-                print("Minted NFT (token ID: \(nftTokenId)) with serial: \(serials.first!)")
-            }
-
+            print("Minted NFT (token ID: \(nftTokenId)) with serial: \(nftMintTxReceipts[i].serials![0])")
         }
 
         // Step 3: Create spender and receiver accounts
@@ -100,7 +95,7 @@ internal enum Program {
         print("Created spender account ID: \(spenderAccountId), receiver account ID: \(receiverAccountId)")
 
         // Step 4: Associate spender and receiver with the NFT
-        try await TokenAssociateTransaction()
+        _ = try await TokenAssociateTransaction()
             .accountId(spenderAccountId)
             .tokenIds([nftTokenId])
             .freezeWith(client)
@@ -108,7 +103,7 @@ internal enum Program {
             .execute(client)
             .getReceipt(client)
 
-        try await TokenAssociateTransaction()
+        _ = try await TokenAssociateTransaction()
             .accountId(receiverAccountId)
             .tokenIds([nftTokenId])
             .freezeWith(client)
@@ -119,7 +114,7 @@ internal enum Program {
         print("Associated spender and receiver accounts with NFT")
 
         // Step 5: Approve NFT allowance for spender
-        try await AccountAllowanceApproveTransaction()
+        _ = try await AccountAllowanceApproveTransaction()
             .approveTokenNftAllowance(NftId(tokenId: nftTokenId, serial: 1), env.operatorAccountId, spenderAccountId)
             .approveTokenNftAllowance(NftId(tokenId: nftTokenId, serial: 2), env.operatorAccountId, spenderAccountId)
             .execute(client)
