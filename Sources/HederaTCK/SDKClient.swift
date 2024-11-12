@@ -71,7 +71,7 @@ internal class SDKClient {
             )
         }
 
-        let threshold: Int? = try getOptionalJsonParameter("threshold", parameters, "generateKey")
+        let threshold: Int64? = try getOptionalJsonParameter("threshold", parameters, "generateKey")
         if threshold != nil, type != .thresholdKeyType {
             throw JSONError.invalidParams(
                 "generateKey: threshold MUST NOT be provided for types other than thresholdKey.")
@@ -309,5 +309,79 @@ internal class SDKClient {
             "success": JSONObject.string("SUCCESS"),
         ])
 
+    }
+
+    internal func updateAccount(_ parameters: [String: JSONObject]?) async throws -> JSONObject {
+        var accountUpdateTransaction = AccountUpdateTransaction()
+
+        if let params = parameters {
+            if let accountId: String = try getOptionalJsonParameter("accountId", params, #function) {
+                accountUpdateTransaction.accountId = try AccountId.fromString(accountId)
+            }
+
+            if let key: String = try getOptionalJsonParameter("key", params, #function) {
+                accountUpdateTransaction.key = try getHederaKey(key)
+            }
+
+            if let autoRenewPeriod: Int64 = try getOptionalJsonParameter(
+                "autoRenewPeriod", params, #function)
+            {
+                accountUpdateTransaction.autoRenewPeriod = Duration(
+                    seconds: UInt64(truncatingIfNeeded: autoRenewPeriod))
+            }
+
+            if let expirationTime: Int64 = try getOptionalJsonParameter("expirationTime", params, #function) {
+                accountUpdateTransaction.expirationTime = Timestamp(
+                    seconds: UInt64(truncatingIfNeeded: expirationTime), subSecondNanos: 0)
+            }
+
+            if let receiverSignatureRequired: Bool = try getOptionalJsonParameter(
+                "receiverSignatureRequired", params, #function)
+            {
+                accountUpdateTransaction.receiverSignatureRequired = receiverSignatureRequired
+            }
+
+            if let memo: String = try getOptionalJsonParameter("memo", params, #function) {
+                accountUpdateTransaction.accountMemo = memo
+            }
+
+            if let maxAutoTokenAssociations: Int64 = try getOptionalJsonParameter(
+                "maxAutoTokenAssociations", params, #function)
+            {
+                accountUpdateTransaction.maxAutomaticTokenAssociations =
+                    Int32(truncatingIfNeeded: maxAutoTokenAssociations)
+            }
+
+            if let stakedAccountId: String = try getOptionalJsonParameter(
+                "stakedAccountId", params, #function)
+            {
+                accountUpdateTransaction.stakedAccountId = try AccountId.fromString(stakedAccountId)
+            }
+
+            if let stakedNodeId: Int64 = try getOptionalJsonParameter(
+                "stakedNodeId", params, #function)
+            {
+                accountUpdateTransaction.stakedNodeId = UInt64(truncatingIfNeeded: stakedNodeId)
+            }
+
+            if let declineStakingReward: Bool = try getOptionalJsonParameter(
+                "declineStakingReward", params, #function)
+            {
+                accountUpdateTransaction.declineStakingReward = declineStakingReward
+            }
+
+            if let commonTransactionParams: [String: JSONObject] = try getOptionalJsonParameter(
+                "commonTransactionParams", params, #function)
+            {
+                try fillOutCommonTransactionParameters(
+                    &accountUpdateTransaction, params: commonTransactionParams, client: self.client, function: #function
+                )
+            }
+        }
+
+        let txReceipt = try await accountUpdateTransaction.execute(client).getReceipt(client)
+        return JSONObject.dictionary([
+            "status": JSONObject.string(txReceipt.status.description)
+        ])
     }
 }
