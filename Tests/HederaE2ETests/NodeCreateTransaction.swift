@@ -38,32 +38,32 @@ internal class NodeCreate: XCTestCase {
         }
 
         // Set the network
-        let network = ["localhost:50211": AccountId(0, 0, 3)]
+        let network = ["localhost:50211": try AccountId.fromString("0.0.3")]
 
-        let client = Client.forNetwork(network).setMirrorNetwork(["localhost:5600"])
+        let client = try Client.forNetwork(network).setMirrorNetwork(["localhost:5600"])
 
         // Set the operator to Account Id 0.0.2
-        let operatorKey = PrivateKey.fromString(
+        let operatorKey = try PrivateKey.fromString(
             "302e020100300506032b65700422042091132178e72057a1d7528025956fe39b0b847f200ab59b2fdd367017f3087137")
 
-        client.setOperator(AccountId(0, 0, 2), operatorKey)
+        client.setOperator(try AccountId.fromString("0.0.2"), operatorKey)
 
         // The account of the new node
-        let accountId = AccountId(0, 0, 4)
+        let accountId = try AccountId.fromString("0.0.4")
 
         // Create new endpoints. IPV4 address is not required.
         let endpoint = Endpoint(ipAddress: nil, port: 1234, domainName: "tests.com")
         let endpoint2 = Endpoint(ipAddress: nil, port: 123, domainName: "testing.com")
 
         // Convert hex string to byte array
-        let validGossipCert = Data(hex: try validGossipCertDer.bytes)
+        let validGossipCert = Data(validGossipCertDer.data(using: .utf8)!)
 
         // Generate new admin key
         let adminKey = PrivateKey.generateEd25519()
 
         _ = try await NodeCreateTransaction()
             .accountId(accountId)
-            .adminKey(adminKey.publicKey)
+            .adminKey(.single(adminKey.publicKey))
             .description("New node")
             .gossipCaCertificate(validGossipCert)
             .gossipEndpoints([endpoint, endpoint2])
