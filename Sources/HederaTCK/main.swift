@@ -68,6 +68,14 @@ private struct TCKServer {
                     result: try await sdkClient.createAccount(
                         getOptionalJsonParameter("params", request.toDict(), request.method)))
             ///
+            /// deleteAccount
+            ///
+            case "deleteAccount":
+                return JSONResponse(
+                    id: request.id,
+                    result: try await sdkClient.deleteAccount(
+                        getOptionalJsonParameter("params", request.toDict(), request.method)))
+            ///
             /// generateKey
             ///
             case "generateKey":
