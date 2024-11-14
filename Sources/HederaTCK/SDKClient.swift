@@ -262,6 +262,33 @@ internal class SDKClient {
         ])
     }
 
+    internal func deleteAccount(_ parameters: [String: JSONObject]?) async throws -> JSONObject {
+        var accountDeleteTransaction = AccountDeleteTransaction()
+
+        if let params = parameters {
+            if let deleteAccountId: String = try getOptionalJsonParameter("deleteAccountId", params, #function) {
+                accountDeleteTransaction.accountId = try AccountId.fromString(deleteAccountId)
+            }
+
+            if let transferAccountId: String = try getOptionalJsonParameter("transferAccountId", params, #function) {
+                accountDeleteTransaction.transferAccountId = try AccountId.fromString(transferAccountId)
+            }
+
+            if let commonTransactionParams: [String: JSONObject] = try getOptionalJsonParameter(
+                "commonTransactionParams", params, #function)
+            {
+                try fillOutCommonTransactionParameters(
+                    &accountDeleteTransaction, params: commonTransactionParams, client: self.client, function: #function
+                )
+            }
+        }
+
+        let txReceipt = try await accountDeleteTransaction.execute(client).getReceipt(client)
+        return JSONObject.dictionary([
+            "status": JSONObject.string(txReceipt.status.description)
+        ])
+    }
+
     internal func generateKey(_ parameters: [String: JSONObject]) throws -> JSONObject {
         var privateKeys = [JSONObject]()
         let key = try generateKeyHelper(parameters: parameters, privateKeys: &privateKeys)
