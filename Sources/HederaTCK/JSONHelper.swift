@@ -26,29 +26,25 @@ internal func getJson<T>(_ json: JSONObject, _ paramName: String, _ functionName
         }
         return val as! T
     }
-    if T.self == Int32.self
-    {
+    if T.self == Int32.self {
         guard let val = json.intValue else {
             throw JSONError.invalidParams("\(functionName): \(paramName) MUST be an int32.")
         }
         return Int32(truncatingIfNeeded: val) as! T
     }
-    if T.self == UInt32.self
-    {
+    if T.self == UInt32.self {
         guard let val = json.intValue else {
             throw JSONError.invalidParams("\(functionName): \(paramName) MUST be a uint32.")
         }
         return UInt32(truncatingIfNeeded: val) as! T
     }
-    if T.self == Int64.self
-    {
+    if T.self == Int64.self {
         guard let val = json.intValue else {
             throw JSONError.invalidParams("\(functionName): \(paramName) MUST be an int64.")
         }
         return val as! T
     }
-    if T.self == UInt64.self
-    {
+    if T.self == UInt64.self {
         guard let val = json.intValue else {
             throw JSONError.invalidParams("\(functionName): \(paramName) MUST be a uint64.")
         }
