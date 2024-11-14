@@ -372,11 +372,10 @@ internal class SDKClient {
                 accountUpdateTransaction.accountMemo = memo
             }
 
-            if let maxAutoTokenAssociations: Int64 = try getOptionalJsonParameter(
+            if let maxAutoTokenAssociations: Int32 = try getOptionalJsonParameter(
                 "maxAutoTokenAssociations", params, #function)
             {
-                accountUpdateTransaction.maxAutomaticTokenAssociations =
-                    Int32(truncatingIfNeeded: maxAutoTokenAssociations)
+                accountUpdateTransaction.maxAutomaticTokenAssociations = maxAutoTokenAssociations
             }
 
             if let stakedAccountId: String = try getOptionalJsonParameter(
