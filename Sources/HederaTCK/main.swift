@@ -96,6 +96,14 @@ private struct TCKServer {
                     id: request.id,
                     result: try sdkClient.setup(getRequiredJsonParameter("params", request.toDict(), request.method)))
             ///
+            /// updateAccount
+            ///
+            case "updateAccount":
+                return JSONResponse(
+                    id: request.id,
+                    result: try await sdkClient.updateAccount(
+                        getOptionalJsonParameter("params", request.toDict(), request.method)))
+            ///
             /// Method Not Found
             ///
             default:
