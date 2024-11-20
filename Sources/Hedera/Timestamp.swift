@@ -88,8 +88,8 @@ extension Timestamp: ProtobufCodable {
 
     internal func toProtobuf() -> Protobuf {
         .with { proto in
-            proto.seconds = Int64(seconds)
-            proto.nanos = Int32(subSecondNanos)
+            proto.seconds = Int64(truncatingIfNeeded: seconds)
+            proto.nanos = Int32(truncatingIfNeeded: subSecondNanos)
         }
     }
 }
