@@ -61,22 +61,17 @@ internal enum Program {
             Data($0.utf8)
         }
 
-        for cid in cids {
-            let mintReceipt = try await TokenMintTransaction()
-                .tokenId(nftTokenId)
-                .metadata(metadataArray)
-                .freezeWith(client)
-                .execute(client)
-                .getReceipt(client)
+        var nftMintReceipts: [TransactionReceipt] = []
+        for (offset, _) in cids.enumerated() {
+            nftMintReceipts.append(
+                try await TokenMintTransaction()
+                    .tokenId(nftTokenId)
+                    .metadata([metadataArray[offset]])
+                    .freezeWith(client)
+                    .execute(client)
+                    .getReceipt(client))
 
-            guard let serials = mintReceipt.serials, !serials.isEmpty else {
-                fatalError("Failed to mint NFTs")
-            }
-
-            for (index, serial) in serials.enumerated() {
-                print("Minted NFT (token ID: \(nftTokenId)) with serial: \(serials.first!)")
-            }
-
+            print("Minted NFT (token ID: \(nftTokenId)) with serial: \(nftMintReceipts[offset].serials![0])")
         }
 
         // Step 3: Create spender and receiver accounts
@@ -100,7 +95,7 @@ internal enum Program {
         print("Created spender account ID: \(spenderAccountId), receiver account ID: \(receiverAccountId)")
 
         // Step 4: Associate spender and receiver with the NFT
-        try await TokenAssociateTransaction()
+        _ = try await TokenAssociateTransaction()
             .accountId(spenderAccountId)
             .tokenIds([nftTokenId])
             .freezeWith(client)
@@ -108,7 +103,7 @@ internal enum Program {
             .execute(client)
             .getReceipt(client)
 
-        try await TokenAssociateTransaction()
+        _ = try await TokenAssociateTransaction()
             .accountId(receiverAccountId)
             .tokenIds([nftTokenId])
             .freezeWith(client)
@@ -119,7 +114,7 @@ internal enum Program {
         print("Associated spender and receiver accounts with NFT")
 
         // Step 5: Approve NFT allowance for spender
-        try await AccountAllowanceApproveTransaction()
+        _ = try await AccountAllowanceApproveTransaction()
             .approveTokenNftAllowance(NftId(tokenId: nftTokenId, serial: 1), env.operatorAccountId, spenderAccountId)
             .approveTokenNftAllowance(NftId(tokenId: nftTokenId, serial: 2), env.operatorAccountId, spenderAccountId)
             .execute(client)
