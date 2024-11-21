@@ -133,6 +133,18 @@ internal final class Network: Sendable, AtomicReference {
         self.init(map: tmp.map, nodes: tmp.nodes, health: tmp.health, connections: tmp.connections)
     }
 
+    internal static func addressBookToNetwork(_ addressBook: [NodeAddress]) -> [String: AccountId] {
+        var network = [String: AccountId]()
+
+        for nodeAddress in addressBook {
+            for endpoint in nodeAddress.serviceEndpoints {
+                network[endpoint.description] = nodeAddress.nodeAccountId
+            }
+        }
+
+        return network
+    }
+
     internal static func withAddressBook(_ old: Network, _ eventLoop: EventLoop, _ addressBook: NodeAddressBook) -> Self
     {
         let addressBook = addressBook.nodeAddresses
