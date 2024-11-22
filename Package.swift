@@ -64,6 +64,7 @@ let exampleTargets = [
     "TokenUpdateMetadata",
     "NftUpdateMetadata",
     "TokenAirdrop",
+    "InitializeClientWithMirrorNetwork",
 ].map { name in
     Target.executableTarget(
         name: "\(name)Example",
