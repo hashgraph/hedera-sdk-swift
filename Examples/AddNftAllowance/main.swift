@@ -59,19 +59,17 @@ internal enum Program {
             Data($0.utf8)
         }
 
-        // Step 2: Mint NFTs
-        var nftMintTxReceipts: [TransactionReceipt] = []
-        for (i, _) in cids.enumerated() {
-            nftMintTxReceipts.append(
+        var nftMintReceipts: [TransactionReceipt] = []
+        for (offset, _) in cids.enumerated() {
+            nftMintReceipts.append(
                 try await TokenMintTransaction()
                     .tokenId(nftTokenId)
-                    .metadata([metadataArray[i]])
+                    .metadata([metadataArray[offset]])
                     .freezeWith(client)
                     .execute(client)
-                    .getReceipt(client)
-            )
+                    .getReceipt(client))
 
-            print("Minted NFT (token ID: \(nftTokenId)) with serial: \(nftMintTxReceipts[i].serials![0])")
+            print("Minted NFT (token ID: \(nftTokenId)) with serial: \(nftMintReceipts[offset].serials![0])")
         }
 
         // Step 3: Create spender and receiver accounts
