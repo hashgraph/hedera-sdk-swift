@@ -25,6 +25,7 @@ import PackageDescription
 let exampleTargets = [
     "AccountAlias",
     "AccountAllowance",
+    "AddNftAllowance",
     "ConsensusPubSub",
     "ConsensusPubSubChunked",
     "ConsensusPubSubWithSubmitKey",
@@ -63,6 +64,7 @@ let exampleTargets = [
     "TokenUpdateMetadata",
     "NftUpdateMetadata",
     "TokenAirdrop",
+    "InitializeClientWithMirrorNetwork",
 ].map { name in
     Target.executableTarget(
         name: "\(name)Example",
