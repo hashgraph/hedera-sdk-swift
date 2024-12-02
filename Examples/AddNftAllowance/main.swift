@@ -28,6 +28,12 @@ internal enum Program {
 
         client.setOperator(env.operatorAccountId, env.operatorKey)
 
+        let cids = [
+            "QmNPCiNA3Dsu3K5FxDPMG5Q3fZRwVTg14EXA92uqEeSRXn",
+            "QmZ4dgAgt8owvnULxnKxNe8YqpavtVCXmc1Lt2XajFpJs9",
+            "QmPzY5GxevjyfMUF5vEAjtyRoigzWp47MiKAtLBduLMC1T",
+        ]
+
         // Step 1: Create an NFT
         let nftCreateReceipt = try await TokenCreateTransaction()
             .name("HIP-336 NFT1")
@@ -35,7 +41,7 @@ internal enum Program {
             .tokenType(TokenType.nonFungibleUnique)
             .decimals(0)
             .initialSupply(0)
-            .maxSupply(10)
+            .maxSupply(UInt64(cids.count))
             .tokenSupplyType(.finite)
             .treasuryAccountId(env.operatorAccountId)
             .adminKey(.single(env.operatorKey.publicKey))
@@ -47,15 +53,7 @@ internal enum Program {
         guard let nftTokenId = nftCreateReceipt.tokenId else {
             fatalError("Failed to create NFT")
         }
-
         print("Created NFT with token ID: \(nftTokenId)")
-
-        // Step 2: Mint NFTs
-        let cids = [
-            "QmNPCiNA3Dsu3K5FxDPMG5Q3fZRwVTg14EXA92uqEeSRXn",
-            "QmZ4dgAgt8owvnULxnKxNe8YqpavtVCXmc1Lt2XajFpJs9",
-            "QmPzY5GxevjyfMUF5vEAjtyRoigzWp47MiKAtLBduLMC1T",
-        ]
 
         let metadataArray = cids.map {
             Data($0.utf8)
