@@ -41,7 +41,7 @@ internal struct Keccak256Digest: Crypto.SecpDigest {
     }
 }
 
-private struct ChainCode {
+struct ChainCode {
     let data: Data
 }
 
@@ -197,11 +197,13 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
 
     /// Generates a new Ed25519 private key.
     public static func generateEd25519() -> Self {
+        // PrivateKeyED25519.generateInternal()
         Self(kind: .ed25519(.init()), chainCode: .randomData(withLength: 32))
     }
 
     /// Generates a new ECDSA(secp256k1) private key.
     public static func generateEcdsa() -> Self {
+        // PrivateKeyECDSA.generateInternal()
         .ecdsa(try! .init())
     }
 
@@ -454,7 +456,37 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         }
 
         switch kind {
-        case .ecdsa: throw HError(kind: .keyDerive, description: "ecdsa keys are currently underivable")
+        case .ecdsa(let key):
+            let isHardened = (index & hardenedMask) != 0
+            var data = Data.init(capacity: Int(index))
+
+            if isHardened {
+                var bytes33 = Data.init(capacity: 33)
+                let priv = toBytesRaw()
+
+                // Copy private key with padding
+                bytes33.replaceSubrange(33 - priv.count..<33, with: priv)
+                data.append(bytes33)
+            } else {
+                data.append(key.publicKey.dataRepresentation)
+            }
+
+            // Append the index bytes
+            data.append(index.bigEndianBytes)
+
+            var hmac = CryptoKit.HMAC<CryptoKit.SHA512>(key: .init(data: chainCode.data))
+            hmac.update(data: data)
+            let output = hmac.finalize().bytes
+
+            // Split into key and new chain code
+            let (keyData, newChainCode) = (output[..<32], output[32...])
+
+            // Create new private key
+            return Self(
+                kind: .ecdsa(try! .init(dataRepresentation: Data(keyData))),
+                chainCode: Data(newChainCode)
+            )
+
         case .ed25519(let key):
             let index = index | hardenedMask
 
@@ -500,6 +532,52 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
             // note: this shouldn't fail, but there isn't an infaliable conversion.
             return try .fromBytesEd25519(key)
         }
+    }
+
+    // Extract the ECDSA private key from a seed.
+    public static func fromSeedECDSAsecp256k1(_ seed: Data) -> Self {
+        var hmac = HMAC<SHA512>(key: .init(data: "ecdsa seed".data(using: .utf8)!))
+        hmac.update(data: seed)
+
+        let output = hmac.finalize().bytes
+
+        let (data, chainCode) = (output[..<32], output[32...])
+
+        var key = Self(
+            kind: .ecdsa(try! .init(dataRepresentation: data)),
+            chainCode: Data(chainCode)
+        )
+
+        for index: Int32 in [44, 3030, 0, 0] {
+            // an error here would be... Really weird because we just set chainCode.
+            // swiftlint:disable:next force_try
+            key = try! key.derive(index)
+        }
+
+        return key
+    }
+
+    public static func fromSeedED25519(_ seed: Data) -> Self {
+        var hmac = HMAC<SHA512>(key: .init(data: "ed25519 seed".data(using: .utf8)!))
+
+        hmac.update(data: seed)
+
+        let output = hmac.finalize().bytes
+
+        let (data, chainCode) = (output[..<32], output[32...])
+
+        var key = Self(
+            kind: .ed25519(try! .init(rawRepresentation: data)),
+            chainCode: Data(chainCode)
+        )
+
+        for index: Int32 in [44, 3030, 0, 0] {
+            // an error here would be... Really weird because we just set chainCode.
+            // swiftlint:disable:next force_try
+            key = try! key.derive(index)
+        }
+
+        return key
     }
 
     public static func fromMnemonic(_ mnemonic: Mnemonic, _ passphrase: String) -> Self {
