@@ -18,6 +18,7 @@
  * ‍
  */
 
+import BigInt
 import CommonCrypto
 import CryptoKit
 import Foundation
@@ -41,7 +42,7 @@ internal struct Keccak256Digest: Crypto.SecpDigest {
     }
 }
 
-private struct ChainCode {
+public struct ChainCode {
     let data: Data
 }
 
@@ -55,6 +56,9 @@ private struct ChainCode {
 public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral, CustomStringConvertible,
     CustomDebugStringConvertible
 {
+
+    private let secp256k1Order = BigInt("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141", radix: 16)!
+
     /// Debug description for `PrivateKey`
     ///
     /// Please note that debugDescriptions of any kind should not be considered a stable format.
@@ -113,7 +117,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         guts.kind
     }
 
-    private let chainCode: ChainCode?
+    public let chainCode: ChainCode?
 
     private static func decodeBytes<S: StringProtocol>(_ description: S) throws -> Data {
         let description = description.stripPrefix("0x") ?? description[...]
@@ -197,11 +201,13 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
 
     /// Generates a new Ed25519 private key.
     public static func generateEd25519() -> Self {
+        // PrivateKeyED25519.generateInternal()
         Self(kind: .ed25519(.init()), chainCode: .randomData(withLength: 32))
     }
 
     /// Generates a new ECDSA(secp256k1) private key.
     public static func generateEcdsa() -> Self {
+        // PrivateKeyECDSA.generateInternal()
         .ecdsa(try! .init())
     }
 
@@ -217,7 +223,8 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
     public var publicKey: PublicKey {
         switch kind {
         case .ed25519(let key): return .ed25519(key.publicKey)
-        case .ecdsa(let key): return .ecdsa(key.publicKey)
+        case .ecdsa(let key):
+            return .ecdsa(key.publicKey)
 
         }
     }
@@ -446,7 +453,6 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
     }
 
     public func derive(_ index: Int32) throws -> Self {
-        let hardenedMask: UInt32 = 1 << 31
         let index = UInt32(bitPattern: index)
 
         guard let chainCode = chainCode else {
@@ -454,9 +460,57 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
         }
 
         switch kind {
-        case .ecdsa: throw HError(kind: .keyDerive, description: "ecdsa keys are currently underivable")
+        case .ecdsa(let key):
+            let isHardened = Bip32Utils.isHardenedIndex(index)
+            var data = Data()
+            let priv = toBytesRaw()
+
+            if isHardened {
+                data.append(0x00)
+                data.append(priv)
+            } else {
+                data.append(key.publicKey.dataRepresentation)
+            }
+
+            // Append the index bytes
+            data.append(index.bigEndianBytes)
+
+            let hmac = HMAC<SHA512>.authenticationCode(for: data, using: SymmetricKey(data: chainCode.data))
+            let il = Data(hmac.prefix(32))
+            let newChainCode = Data(hmac.suffix(32))
+
+            let parentPrivateKeyBigInt = BigInt(priv.hexStringEncoded(), radix: 16)!
+            let ilBigInt = BigInt(il.hexStringEncoded(), radix: 16)!
+
+            // Compute child key
+            let childPrivateKeyBigInt = (parentPrivateKeyBigInt + ilBigInt) % secp256k1Order
+
+            var childPrivateKeyData = childPrivateKeyBigInt.serialize()
+
+            // Convert to Data without leading zeros, left-pad to 32 bytes
+            if childPrivateKeyData.count > 32 {
+                childPrivateKeyData = childPrivateKeyData.suffix(32)
+            } else if childPrivateKeyData.count < 32 {
+                childPrivateKeyData = Data(repeating: 0, count: 32 - childPrivateKeyData.count) + childPrivateKeyData
+            }
+
+            // Check if private key is valid
+            guard let childPrivateKey = try? secp256k1.Signing.PrivateKey(dataRepresentation: childPrivateKeyData)
+            else {
+                throw NSError(
+                    domain: "InvalidPrivateKey", code: -1,
+                    userInfo: [
+                        NSLocalizedDescriptionKey: "Failed to initialize secp256k1 private key. Key out of range."
+                    ])
+            }
+
+            return Self(
+                kind: .ecdsa(try! .init(dataRepresentation: childPrivateKey.dataRepresentation)),
+                chainCode: Data(newChainCode)
+            )
+
         case .ed25519(let key):
-            let index = index | hardenedMask
+            let index = Bip32Utils.toHardenedIndex(index)
 
             var hmac = CryptoKit.HMAC<CryptoKit.SHA512>(key: .init(data: chainCode.data))
 
@@ -500,6 +554,47 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
             // note: this shouldn't fail, but there isn't an infaliable conversion.
             return try .fromBytesEd25519(key)
         }
+    }
+
+    // Extract the ECDSA private key from a seed.
+    public static func fromSeedECDSAsecp256k1(_ seed: Data) -> Self {
+        var hmac = HMAC<SHA512>(key: .init(data: "Bitcoin seed".data(using: .utf8)!))
+        hmac.update(data: seed)
+
+        let output = hmac.finalize().bytes
+
+        let (data, chainCode) = (output[..<32], output[32...])
+
+        // Create new private key
+        let key = Self(
+            kind: .ecdsa(try! .init(dataRepresentation: data)),
+            chainCode: Data(chainCode)
+        )
+
+        return key
+    }
+
+    public static func fromSeedED25519(_ seed: Data) -> Self {
+        var hmac = HMAC<SHA512>(key: .init(data: "ed25519 seed".data(using: .utf8)!))
+
+        hmac.update(data: seed)
+
+        let output = hmac.finalize().bytes
+
+        let (data, chainCode) = (output[..<32], output[32...])
+
+        var key = Self(
+            kind: .ed25519(try! .init(rawRepresentation: data)),
+            chainCode: Data(chainCode)
+        )
+
+        for index: Int32 in [44, 3030, 0, 0] {
+            // an error here would be... Really weird because we just set chainCode.
+            // swiftlint:disable:next force_try
+            key = try! key.derive(index)
+        }
+
+        return key
     }
 
     public static func fromMnemonic(_ mnemonic: Mnemonic, _ passphrase: String) -> Self {
@@ -564,6 +659,13 @@ extension PrivateKey {
                 chainCode: \(chainCode)
             )
             """
+    }
+}
+
+extension UInt32 {
+    var bigEndianBytes: Data {
+        var value = self.bigEndian
+        return Data(bytes: &value, count: MemoryLayout<UInt32>.size)
     }
 }
 
