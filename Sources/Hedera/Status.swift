@@ -1059,6 +1059,29 @@ public enum Status: Equatable {
     /// This airdrop claim is for a pending airdrop with an invalid token.
     case invalidTokenInPendingAirdrop  // = 369
 
+    /// A scheduled transaction configured to wait for expiry to execute was given
+    /// an expiry time not strictly after the time at which its creation reached
+    /// consensus.
+    case scheduleExpiryMustBeFuture  // = 370
+
+    /// A scheduled transaction configured to wait for expiry to execute was given
+    /// an expiry time too far in the future after the time at which its creation
+    /// reached consensus.
+    case scheduleExpiryTooLong  // = 371
+
+    /// A scheduled transaction configured to wait for expiry to execute was given
+    /// an expiry time at which there is already too many transactions scheduled to
+    /// expire; its creation must be retried with a different expiry.
+    case scheduleExpiryIsBusy  // = 372
+
+    /// The provided gRPC certificate hash is invalid.
+    case invalidGrpcCertificateHash  // = 373
+
+    /// The provided gRPC certificate hash is invalid.
+    /// A scheduled transaction configured to wait for expiry to execute was not
+    /// given an explicit expiration time.
+    case missingExpiryTime  // = 374
+
     /// swift-format-ignore: AlwaysUseLowerCamelCase
     case unrecognized(Int32)
 
@@ -1394,6 +1417,11 @@ public enum Status: Equatable {
         case 367: self = .invalidPendingAirdropId
         case 368: self = .tokenAirdropWithFallbackRoyalty
         case 369: self = .invalidTokenInPendingAirdrop
+        case 370: self = .scheduleExpiryMustBeFuture
+        case 371: self = .scheduleExpiryTooLong
+        case 372: self = .scheduleExpiryIsBusy
+        case 373: self = .invalidGrpcCertificateHash
+        case 374: self = .missingExpiryTime
         default: self = .unrecognized(rawValue)
         }
     }
@@ -1728,6 +1756,11 @@ public enum Status: Equatable {
         case .invalidPendingAirdropId: return 367
         case .tokenAirdropWithFallbackRoyalty: return 368
         case .invalidTokenInPendingAirdrop: return 369
+        case .scheduleExpiryMustBeFuture: return 370
+        case .scheduleExpiryTooLong: return 371
+        case .scheduleExpiryIsBusy: return 372
+        case .invalidGrpcCertificateHash: return 373
+        case .missingExpiryTime: return 374
         case .unrecognized(let i): return i
         }
     }
@@ -2065,6 +2098,11 @@ extension Status: CaseIterable {
         .invalidPendingAirdropId,
         .tokenAirdropWithFallbackRoyalty,
         .invalidTokenInPendingAirdrop,
+        .scheduleExpiryMustBeFuture,
+        .scheduleExpiryTooLong,
+        .scheduleExpiryIsBusy,
+        .invalidGrpcCertificateHash,
+        .missingExpiryTime,
     ]
 }
 
@@ -2400,6 +2438,11 @@ extension Status {
             367: "INVALID_PENDING_AIRDROP_ID",
             368: "TOKEN_AIRDROP_WITH_FALLBACK_ROYALTY",
             369: "INVALID_TOKEN_IN_PENDING_AIRDROP",
+            370: "SCHEDULE_EXPIRY_MUST_BE_FUTURE",
+            371: "SCHEDULE_EXPIRY_TOO_LONG",
+            372: "SCHEDULE_EXPIRY_IS_BUSY",
+            373: "INVALID_GRPC_CERTIFICATE_HASH",
+            374: "MISSING_EXPIRY_TIME",
         ]
 }
 
