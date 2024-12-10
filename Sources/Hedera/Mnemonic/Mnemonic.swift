@@ -146,6 +146,13 @@ public struct Mnemonic: Equatable {
         String(describing: self)
     }
 
+    public func toStandardECDSAsecp256k1PrivateKey(passphrase: String = "") throws -> PrivateKey {
+        let seed = toSeed(passphrase: passphrase)
+        let derivedKey = PrivateKey.fromSeedECDSAsecp256k1(seed)
+
+        return derivedKey
+    }
+
     internal func toSeed<S: StringProtocol>(passphrase: S) -> Data {
         var salt = "mnemonic"
         salt += passphrase
