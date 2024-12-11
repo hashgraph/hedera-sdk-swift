@@ -22,48 +22,8 @@ import Hedera
 import XCTest
 
 internal class ScheduleCreate: XCTestCase {
-    // none of these commented out ones are implemented on Hedera's side.
-    // internal func testCreateAccount() async throws {
-    //     let testEnv = try TestEnvironment.nonFree
-
-    //     let key = PrivateKey.generateEd25519()
-
-    //     let transaction = AccountCreateTransaction().key(.single(key.publicKey))
-
-    //     let receipt = try await ScheduleCreateTransaction()
-    //         .scheduledTransaction(transaction)
-    //         .adminKey(.single(testEnv.operator.privateKey.publicKey))
-    //         .payerAccountId(testEnv.operator.accountId)
-    //         .execute(testEnv.client)
-    //         .getReceipt(testEnv.client)
-
-    //     let scheduleId = try XCTUnwrap(receipt.scheduleId)
-
-    //     let info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
-
-    //     _ = try XCTUnwrap(info.executedAt)
-    // }
-
-    // internal func testCreateAccountSchedule() async throws {
-    //     let testEnv = try TestEnvironment.nonFree
-
-    //     let key = PrivateKey.generateEd25519()
-
-    //     let receipt = try await AccountCreateTransaction()
-    //         .key(.single(key.publicKey))
-    //         .schedule()
-    //         .adminKey(.single(testEnv.operator.privateKey.publicKey))
-    //         .payerAccountId(testEnv.operator.accountId)
-    //         .execute(testEnv.client)
-    //         .getReceipt(testEnv.client)
-
-    //     let scheduleId = try XCTUnwrap(receipt.scheduleId)
-
-    //     let info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
-
-    //     _ = try XCTUnwrap(info.executedAt)
-    //     _ = try info.scheduledTransaction
-    // }
+    // Seconds in a day
+    private let testSeconds: UInt64 = 86400
 
     internal func testTransfer() async throws {
         let testEnv = try TestEnvironment.nonFree
@@ -129,9 +89,6 @@ internal class ScheduleCreate: XCTestCase {
 
             .getReceipt(testEnv.client)
     }
-
-    // token balances are deprecated.
-    // internal func testCanScheduleTokenTransfer() async throws {}
 
     internal func testDoubleScheduleFails() async throws {
         let testEnv = try TestEnvironment.nonFree
@@ -219,4 +176,323 @@ internal class ScheduleCreate: XCTestCase {
 
         _ = try XCTUnwrap(info.executedAt)
     }
+
+    internal func testCanSignSchedule() async throws {
+        let testEnv = try TestEnvironment.nonFree
+
+        let privateKey = PrivateKey.generateEd25519()
+
+        let accountId = try await AccountCreateTransaction()
+            .key(.single(privateKey.publicKey))
+            .initialBalance(Hbar(10))
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+            .accountId!
+
+        // Create transaction to schedule
+        let transfer = TransferTransaction()
+            .hbarTransfer(testEnv.operator.accountId, Hbar(1))
+            .hbarTransfer(accountId, -Hbar(1))
+
+        // Schedule transaction
+        let scheduleId = try await transfer.schedule().expirationTime(.now + .seconds(testSeconds))
+            .scheduleMemo("HIP-423 e2e Test")
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+            .scheduleId!
+
+        var info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
+
+        // Verify the schedule is not yet executed
+        XCTAssertNil(info.executedAt)
+
+        // Schedule sign
+        _ = try await ScheduleSignTransaction()
+            .scheduleId(scheduleId)
+            .freezeWith(testEnv.client)
+            .sign(privateKey)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
+
+        // Verify the schedule is executed
+        XCTAssertNotNil(info.executedAt)
+
+        XCTAssertNil(scheduleId.checksum)
+        XCTAssertEqual(scheduleId, try ScheduleId.fromBytes(scheduleId.toBytes()))
+        XCTAssertNotEqual(scheduleId.hashValue, 0)
+    }
+
+    internal func testScheduleAheadOneYearFail() async throws {
+        let testEnv = try TestEnvironment.nonFree
+
+        let privateKey = PrivateKey.generateEd25519()
+
+        let accountId = try await AccountCreateTransaction()
+            .key(.single(privateKey.publicKey))
+            .initialBalance(Hbar(10))
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+            .accountId!
+
+        // Create transaction to schedule
+        let transfer = TransferTransaction()
+            .hbarTransfer(testEnv.operator.accountId, Hbar(1))
+            .hbarTransfer(accountId, -Hbar(1))
+
+        await assertThrowsHErrorAsync(
+            // Schedule transaction should fail
+            try await transfer.schedule().expirationTime(.now + .days(365))
+                .scheduleMemo("HIP-423 e2e Test")
+                .execute(testEnv.client)
+                .getReceipt(testEnv.client),
+            "expected topic delete to fail"
+        ) { error in
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
+                return
+            }
+
+            XCTAssertEqual(status, .scheduleExpirationTimeTooFarInFuture)
+        }
+    }
+
+    internal func testScheduleInThePastFail() async throws {
+        let testEnv = try TestEnvironment.nonFree
+
+        let privateKey = PrivateKey.generateEd25519()
+
+        let accountId = try await AccountCreateTransaction()
+            .key(.single(privateKey.publicKey))
+            .initialBalance(Hbar(10))
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+            .accountId!
+
+        // Create transaction to schedule
+        let transfer = TransferTransaction()
+            .hbarTransfer(testEnv.operator.accountId, Hbar(1))
+            .hbarTransfer(accountId, -Hbar(1))
+
+        await assertThrowsHErrorAsync(
+            // Schedule transaction should fail
+            try await transfer.schedule().expirationTime(.now - .seconds(10))
+                .scheduleMemo("HIP-423 e2e Test")
+                .execute(testEnv.client)
+                .getReceipt(testEnv.client),
+            "expected topic delete to fail"
+        ) { error in
+            guard case .receiptStatus(let status, transactionId: _) = error.kind else {
+                XCTFail("`\(error.kind)` is not `.receiptStatus`")
+                return
+            }
+
+            XCTAssertEqual(status, .scheduleExpirationTimeMustBeHigherThanConsensusTime)
+        }
+    }
+
+    internal func testSignScheduleAndWaitForExpiry() async throws {
+        let testEnv = try TestEnvironment.nonFree
+
+        let privateKey = PrivateKey.generateEd25519()
+
+        let accountId = try await AccountCreateTransaction()
+            .key(.single(privateKey.publicKey))
+            .initialBalance(Hbar(10))
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+            .accountId!
+
+        // Create transaction to schedule
+        let transfer = TransferTransaction()
+            .hbarTransfer(testEnv.operator.accountId, Hbar(1))
+            .hbarTransfer(accountId, -Hbar(1))
+
+        // Schedule transaction
+        let scheduleId = try await transfer.schedule().expirationTime(.now + .seconds(testSeconds))
+            .isWaitForExpiry(true)
+            .scheduleMemo("HIP-423 e2e Test")
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+            .scheduleId!
+
+        var info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
+
+        // Verify the schedule is not yet executed
+        XCTAssertNil(info.executedAt)
+
+        // Schedule sign
+        _ = try await ScheduleSignTransaction()
+            .scheduleId(scheduleId)
+            .freezeWith(testEnv.client)
+            .sign(privateKey)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
+
+        // Verify the schedule is executed
+        XCTAssertNil(info.executedAt)
+
+        XCTAssertNil(scheduleId.checksum)
+        XCTAssertEqual(scheduleId, try ScheduleId.fromBytes(scheduleId.toBytes()))
+        XCTAssertNotEqual(scheduleId.hashValue, 0)
+    }
+
+    internal func testSignWithMultiSigAndUpdateSigningRequirements() async throws {
+        let testEnv = try TestEnvironment.nonFree
+
+        let privateKey1 = PrivateKey.generateEd25519()
+        let privateKey2 = PrivateKey.generateEd25519()
+        let privateKey3 = PrivateKey.generateEd25519()
+        let privateKey4 = PrivateKey.generateEd25519()
+
+        let keyList = KeyList.init(
+            keys: [.single(privateKey1.publicKey), .single(privateKey2.publicKey), .single(privateKey3.publicKey)],
+            threshold: 2)
+
+        let accountId = try await AccountCreateTransaction()
+            .key(.keyList(keyList))
+            .initialBalance(Hbar(10))
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+            .accountId!
+
+        // Create transaction to schedule
+        let transfer = TransferTransaction()
+            .hbarTransfer(testEnv.operator.accountId, Hbar(1))
+            .hbarTransfer(accountId, -Hbar(1))
+
+        // Schedule transaction
+        let scheduleId = try await transfer.schedule().expirationTime(.now + .seconds(testSeconds))
+            .scheduleMemo("HIP-423 e2e Test")
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+            .scheduleId!
+
+        var info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
+
+        // Verify the schedule is not yet executed
+        XCTAssertNil(info.executedAt)
+
+        // Schedule sign
+        _ = try await ScheduleSignTransaction()
+            .scheduleId(scheduleId)
+            .freezeWith(testEnv.client)
+            .sign(privateKey1)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
+
+        // Verify the schedule is still not executed
+        XCTAssertNil(info.executedAt)
+
+        // Update the signing requirements
+        _ = try await AccountUpdateTransaction()
+            .accountId(accountId)
+            .key(.single(privateKey4.publicKey))
+            .freezeWith(testEnv.client)
+            .sign(privateKey1)
+            .sign(privateKey2)
+            .sign(privateKey4)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
+
+        // Verify the schedule is still not executed
+        XCTAssertNil(info.executedAt)
+
+        _ = try await ScheduleSignTransaction()
+            .scheduleId(scheduleId)
+            .freezeWith(testEnv.client)
+            .sign(privateKey4)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
+
+        // Verify the schedule is executed
+        XCTAssertNotNil(info.executedAt)
+    }
+
+    internal func testSignWithMultiSig() async throws {
+        let testEnv = try TestEnvironment.nonFree
+
+        let privateKey1 = PrivateKey.generateEd25519()
+        let privateKey2 = PrivateKey.generateEd25519()
+        let privateKey3 = PrivateKey.generateEd25519()
+
+        let keyList = KeyList.init(
+            keys: [.single(privateKey1.publicKey), .single(privateKey2.publicKey), .single(privateKey3.publicKey)],
+            threshold: 2)
+
+        let accountId = try await AccountCreateTransaction()
+            .key(.keyList(keyList))
+            .initialBalance(Hbar(10))
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+            .accountId!
+
+        // Create transaction to schedule
+        let transfer = TransferTransaction()
+            .hbarTransfer(testEnv.operator.accountId, Hbar(1))
+            .hbarTransfer(accountId, -Hbar(1))
+
+        // Schedule transaction
+        let scheduleId = try await transfer.schedule().expirationTime(.now + .seconds(testSeconds))
+            .scheduleMemo("HIP-423 e2e Test")
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+            .scheduleId!
+
+        var info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
+
+        // Verify the transaction has still not executed
+        XCTAssertNil(info.executedAt)
+
+        // Schedule sign with one key
+        _ = try await ScheduleSignTransaction()
+            .scheduleId(scheduleId)
+            .freezeWith(testEnv.client)
+            .sign(privateKey1)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
+
+        // Verify the transaction has still not executed
+        XCTAssertNil(info.executedAt)
+
+        // Update the signing requirements
+        _ = try await AccountUpdateTransaction()
+            .accountId(accountId)
+            .key(.single(privateKey1.publicKey))
+            .freezeWith(testEnv.client)
+            .sign(privateKey1)
+            .sign(privateKey2)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
+
+        // Verify the transaction has still not executed
+        XCTAssertNil(info.executedAt)
+
+        // Schedule sign with one key
+        _ = try await ScheduleSignTransaction()
+            .scheduleId(scheduleId)
+            .freezeWith(testEnv.client)
+            .sign(privateKey2)
+            .execute(testEnv.client)
+            .getReceipt(testEnv.client)
+
+        info = try await ScheduleInfoQuery(scheduleId: scheduleId).execute(testEnv.client)
+
+        // Verify the transaction has executed
+        XCTAssertNotNil(info.executedAt)
+    }
+
 }
