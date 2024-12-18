@@ -103,6 +103,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.0.0"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.101.3"),
+        .package(url: "https://github.com/attaswift/BigInt.git", from: "5.2.0"),
     ],
     targets: [
         .target(
@@ -128,6 +129,7 @@ let package = Package(
                 .product(name: "GRPC", package: "grpc-swift"),
                 .product(name: "Atomics", package: "swift-atomics"),
                 .product(name: "secp256k1", package: "secp256k1.swift"),
+                .product(name: "BigInt", package: "BigInt"),
                 "CryptoSwift",
             ]
             // todo: find some way to enable these locally.
