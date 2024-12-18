@@ -530,7 +530,25 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
 
     public func legacyDerive(_ index: Int64) throws -> Self {
         switch kind {
-        case .ecdsa: throw HError(kind: .keyDerive, description: "ecdsa keys are currently underivable")
+        case .ecdsa(let key):
+            var seed = key.dataRepresentation
+
+            seed.append(contentsOf: index.bigEndianBytes)
+
+            let salt = Data([0xff])
+            let derivedKey = Pkcs5.pbkdf2(
+                variant: .sha2(.sha512),
+                password: seed,
+                salt: salt,
+                rounds: 2048,
+                keySize: 32
+            )
+
+            guard let newKey = try? P256.Signing.PrivateKey(rawRepresentation: derivedKey) else {
+                throw KeyDerivationError.invalidDerivedKey
+            }
+
+            return try .fromBytesEcdsa(newKey.rawRepresentation)
 
         case .ed25519(let key):
             var seed = key.rawRepresentation
@@ -667,6 +685,16 @@ extension UInt32 {
         var value = self.bigEndian
         return Data(bytes: &value, count: MemoryLayout<UInt32>.size)
     }
+}
+
+extension Int64 {
+    fileprivate var bigEndianBytes: [UInt8] {
+        withUnsafeBytes(of: self.bigEndian) { Array($0) }
+    }
+}
+
+enum KeyDerivationError: Error {
+    case invalidDerivedKey
 }
 
 #if compiler(>=5.7)
