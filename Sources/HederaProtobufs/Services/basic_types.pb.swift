@@ -775,14 +775,6 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum, Swift.CaseIterable {
   ///*
   /// Submit a node signature as part of the Threshold Signature Scheme (TSS) processing.
   case tssShareSignature // = 98
-
-  ///*
-  /// Submit a node public tss encryption key as part of the Threshold Signature Scheme (TSS).
-  case tssEncryptionKey // = 99
-
-  ///*
-  /// Submit a signature of a state root hash gossiped to other nodes
-  case stateSignatureTransaction // = 100
   case UNRECOGNIZED(Int)
 
   public init() {
@@ -876,8 +868,6 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum, Swift.CaseIterable {
     case 96: self = .tssMessage
     case 97: self = .tssVote
     case 98: self = .tssShareSignature
-    case 99: self = .tssEncryptionKey
-    case 100: self = .stateSignatureTransaction
     default: self = .UNRECOGNIZED(rawValue)
     }
   }
@@ -969,8 +959,6 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum, Swift.CaseIterable {
     case .tssMessage: return 96
     case .tssVote: return 97
     case .tssShareSignature: return 98
-    case .tssEncryptionKey: return 99
-    case .stateSignatureTransaction: return 100
     case .UNRECOGNIZED(let i): return i
     }
   }
@@ -1062,8 +1050,6 @@ public enum Proto_HederaFunctionality: SwiftProtobuf.Enum, Swift.CaseIterable {
     .tssMessage,
     .tssVote,
     .tssShareSignature,
-    .tssEncryptionKey,
-    .stateSignatureTransaction,
   ]
 
 }
@@ -3070,8 +3056,6 @@ extension Proto_HederaFunctionality: SwiftProtobuf._ProtoNameProviding {
     96: .same(proto: "TssMessage"),
     97: .same(proto: "TssVote"),
     98: .same(proto: "TssShareSignature"),
-    99: .same(proto: "TssEncryptionKey"),
-    100: .same(proto: "StateSignatureTransaction"),
   ]
 }
 

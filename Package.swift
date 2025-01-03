@@ -111,6 +111,9 @@ let package = Package(
             dependencies: [
                 .product(name: "SwiftProtobuf", package: "swift-protobuf"),
                 .product(name: "GRPC", package: "grpc-swift"),
+            ],
+            exclude: [
+                "Protos"
             ]
         ),
         // weird name, but whatever, internal targets

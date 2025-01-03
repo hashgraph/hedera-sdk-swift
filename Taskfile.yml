@@ -1,5 +1,7 @@
 version: "3"
 
+silent: true
+
 tasks:
     build:
         cmds:
@@ -16,9 +18,68 @@ tasks:
             - swift format lint --configuration .swift-format.json --recursive --parallel Sources/ Tests/ Examples/ Package.swift
 
     package:
+        desc: "Build package"
         cmds:
             - swift build -c release
 
     example:
+        desc: "Run example"
         cmds:
             - swift run {{.CLI_ARGS}}Example
+            
+    submodule:install:
+        desc: "Fetch the submodule and clean non-proto files"
+        cmds:
+            - git submodule update --init --recursive
+            - task submodule:move
+            - echo "Submodule Successfully Installed"
+
+    submodule:move:
+        desc: "Copy all contents from protobufs/hapi/hedera-protobufs to Sources/HederaProtobufs/Protos"
+        deps: 
+            - submodule:install
+        cmds:
+            - mkdir -p Sources/HederaProtobufs/Protos/mirror
+            - mkdir -p Sources/HederaProtobufs/Protos/sdk
+
+            - find Sources/HederaProtobufs/Protos -mindepth 1 \
+               \! -path 'Sources/HederaProtobufs/Protos/mirror*' \
+               \! -path 'Sources/HederaProtobufs/Protos/sdk*' \
+               -print0 | xargs -0 rm -rf
+
+            - mkdir -p Sources/HederaProtobufs/Protos
+            - cp -R protobufs/hapi/hedera-protobufs/* Sources/HederaProtobufs/Protos
+    
+    submodule:clean:
+        desc: "Clean content within the submodule"
+        deps: 
+            - submodule:install
+        cmds:
+            - find src/services -mindepth 1 -delete
+            - echo "Submodule Successfully Cleaned"
+    
+    submodule:fetch:
+        desc: "Fetch a specific version of the submodule, or else the latest version"
+        dir: protobufs
+        vars:
+            latest_tag:
+                sh: git -c versionsort.suffix=-alpha \
+                        -c versionsort.suffix=-beta \
+                        -c versionsort.suffix=-rc \
+                        tag -l --sort=version:refname | tail -1
+            proto: "{{.proto | default .latest_tag}}"
+        cmds:
+            - echo "Protobuf version set to {{.proto}}"
+            - git fetch origin
+            - git checkout {{.proto}}
+            - git show-ref --verify -q refs/heads/{{.proto}} && git pull origin || exit 0
+            - cd ..
+            - |
+                if [ "$(git diff --cached --name-only | grep protobufs)" ]; then
+                    git add protobufs
+                    git commit -m "Update submodule to {{.proto}}"
+                else
+                    echo "No changes to submodule. Skipping commit."
+                fi
+            - task: build
+            - echo "Successfully updated protobufs to {{.proto}}"
