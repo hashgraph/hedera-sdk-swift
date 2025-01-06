@@ -28,7 +28,7 @@ tasks:
             - swift run {{.CLI_ARGS}}Example
             
     submodule:install:
-        desc: "Fetch the submodule and clean non-proto files"
+        desc: "Install the submodule into the parent directory"
         cmds:
             - git submodule update --init --recursive
             - task submodule:move
