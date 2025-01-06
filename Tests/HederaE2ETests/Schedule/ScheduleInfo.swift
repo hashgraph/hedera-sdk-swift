@@ -71,7 +71,7 @@ internal class ScheduleInfo: XCTestCase {
         XCTAssertEqual(info.memo, "")
         XCTAssertEqual(info.payerAccountId, testEnv.operator.accountId)
         _ = try info.scheduledTransaction
-        XCTAssertEqual(info.signatories, [])
+        XCTAssertEqual(info.signatories, [.single(testEnv.operator.privateKey.publicKey)])
         XCTAssertFalse(info.waitForExpiry)
     }
 
