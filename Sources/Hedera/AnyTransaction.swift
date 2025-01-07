@@ -341,6 +341,12 @@ extension ServicesTransactionDataList: TryFromProtobuf {
         case .tokenAirdrop(let data): value = .tokenAirdrop([data])
         case .tokenCancelAirdrop(let data): value = .tokenCancelAirdrop([data])
         case .tokenClaimAirdrop(let data): value = .tokenClaimAirdrop([data])
+        case .tssMessage(_):
+            throw HError.fromProtobuf("Unsupported transaction `TssMessageTransaction`")
+        case .tssVote(_):
+            throw HError.fromProtobuf("Unsupported transaction `TssVoteTransaction`")
+        case .tssShareSignature(_):
+            throw HError.fromProtobuf("Unsupported transaction `TssShareSignatureTransaction`")
         }
 
         for transaction in iter {

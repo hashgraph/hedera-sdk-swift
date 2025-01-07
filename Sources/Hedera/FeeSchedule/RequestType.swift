@@ -278,12 +278,6 @@ public enum RequestType {
     /// Submit a node signature as part of the Threshold Signature Scheme (TSS) processing.
     case tssShareSignature
 
-    /// Submit a node public tss encryption key as part of the Threshold Signature Scheme (TSS).
-    case tssEncryptionKey
-
-    /// Submit a signature of a state root hash gossiped to other nodes
-    case stateSignatureTransaction
-
     // this literally can't be smaller.
     // swiftlint:disable:next function_body_length
     internal init?(protobuf proto: Proto_HederaFunctionality) throws {
@@ -373,8 +367,6 @@ public enum RequestType {
         case .tssMessage: self = .tssMessage
         case .tssVote: self = .tssVote
         case .tssShareSignature: self = .tssShareSignature
-        case .tssEncryptionKey: self = .tssEncryptionKey
-        case .stateSignatureTransaction: self = .stateSignatureTransaction
         case .UNRECOGNIZED(let code):
             throw HError.fromProtobuf("unrecognized RequestType: `\(code)`")
         }
@@ -466,8 +458,6 @@ public enum RequestType {
         case .tssMessage: return .tssMessage
         case .tssVote: return .tssVote
         case .tssShareSignature: return .tssShareSignature
-        case .tssEncryptionKey: return .tssEncryptionKey
-        case .stateSignatureTransaction: return .stateSignatureTransaction
         }
     }
 }
