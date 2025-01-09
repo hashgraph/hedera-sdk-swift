@@ -1,4 +1,4 @@
-﻿/*
+/*
  * ‌
  * Hedera Swift SDK
  * ​
@@ -144,6 +144,19 @@ public struct Mnemonic: Equatable {
 
     public func toString() -> String {
         String(describing: self)
+    }
+
+    public func toStandardECDSAsecp256k1PrivateKey(_ passphrase: String = "", _ index: Int32) throws -> PrivateKey {
+        let seed = toSeed(passphrase: passphrase)
+        var derivedKey = PrivateKey.fromSeedECDSAsecp256k1(seed)
+
+        for index: Int32 in [
+            Bip32Utils.toHardenedIndex(44), Bip32Utils.toHardenedIndex(3030), Bip32Utils.toHardenedIndex(0), 0, index,
+        ] {
+            derivedKey = try! derivedKey.derive(index)
+        }
+
+        return derivedKey
     }
 
     internal func toSeed<S: StringProtocol>(passphrase: S) -> Data {

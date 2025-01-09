@@ -120,6 +120,24 @@ public final class Client: Sendable {
         )
     }
 
+    /// Set up the client from selected mirror network.
+    public static func forMirrorNetwork(_ mirrorNetworks: [String]) async throws -> Self {
+        let eventLoop = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+        let client = Self(
+            network: .init(
+                primary: try .init(addresses: [:], eventLoop: eventLoop.next()),
+                mirror: .init(targets: mirrorNetworks, eventLoop: eventLoop)
+            ),
+            ledgerId: nil,
+            eventLoop
+        )
+
+        let addressBook = try await NodeAddressBookQuery().execute(client)
+        client.setNetworkFromAddressBook(addressBook)
+
+        return client
+    }
+
     /// Construct a Hedera client pre-configured for mainnet access.
     public static func forMainnet() -> Self {
         let eventLoop = PlatformSupport.makeEventLoopGroup(loopCount: 1)
@@ -358,6 +376,18 @@ public final class Client: Sendable {
         return self
     }
 
+    /// Replace all nodes in this Client with a new set of nodes from the given address book.
+    /// This preserves and makes appropriate updates to the existing Client.
+    @discardableResult
+    public func setNetworkFromAddressBook(_ addressBook: NodeAddressBook) -> Self {
+        _ = try? self.networkInner.primary.readCopyUpdate { old in
+            try Network.withAddresses(
+                old, Network.addressBookToNetwork(addressBook.nodeAddresses), eventLoop: self.eventLoop.next())
+        }
+
+        return self
+    }
+
     public var networkUpdatePeriod: UInt64? {
         networkUpdatePeriodInner.withLockedValue { $0 }
     }
@@ -366,6 +396,7 @@ public final class Client: Sendable {
         await self.networkUpdateTask.setUpdatePeriod(nanoseconds)
         self.networkUpdatePeriodInner.withLockedValue { $0 = nanoseconds }
     }
+
 }
 
 extension Client {

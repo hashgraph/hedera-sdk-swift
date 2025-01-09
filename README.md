@@ -51,32 +51,28 @@ HederaProtobufs is entirely generated. The protobufs repo will be migrated to Hi
 protoc
 protoc-gen-swift (from https://github.com/apple/swift-protobuf)
 protoc-gen-grpc-swift (from https://github.com/grpc/grpc-swift)
+task (from https://github.com/go-task/task)
 
 ### Fetch Submodule (Hedera-Protobufs)
 
 Update [\protobuf](https://github.com/hashgraph/hedera-protobufs) submodule to latest changes.
 ```bash
-git submodule update --recursive --remote
+## Fetch the latest version of the services submodule
+## Note: Append "proto=<version>" to fetch a specific version
+task submodule:fetch 
+
+## Update the submodule to the latest version
+task submodule:install
+
 ```
 
 ### Generate services
-
 ```bash
 # cwd: `$REPO`
-protoc --swift_opt=Visibility=Public  --swift_opt=FileNaming=PathToUnderscores --swift_out=./Sources/HederaProtobufs/Services --proto_path=./protobufs/services protobufs/services/**.proto
+protoc --swift_opt=Visibility=Public --swift_opt=FileNaming=PathToUnderscores --swift_out=./Sources/HederaProtobufs/Services --proto_path=./Sources/HederaProtobufs/Protos/services Sources/HederaProtobufs/Protos/services/*.proto
 
 # generate GRPC (if needed)
-protoc --grpc-swift_opt=Visibility=Public,Server=false --grpc-swift_out=./Sources/HederaProtobufs/Services --proto_path=protobufs/services protobufs/services/**.proto
-```
-
-### Generate Mirror
-
-```bash
-# cwd: `$REPO/sdk/swift`
-protoc --swift_opt=Visibility=Public --swift_opt=FileNaming=PathToUnderscores --swift_out=./Sources/HederaProtobufs/Mirror -I=protobufs/mirror -I=protobufs/services protobufs/mirror/**.proto
-
-# generate GRPC (if needed)
-protoc --grpc-swift_opt=Visibility=Public,FileNaming=PathToUnderscores,Server=false --grpc-swift_out=./Sources/HederaProtobufs/Mirror -I=protobufs/mirror -I=protobufs/services protobufs/mirror/**.proto
+protoc --grpc-swift_opt=Visibility=Public,Server=false --grpc-swift_out=./Sources/HederaProtobufs/Services --proto_path=./Sources/HederaProtobufs/Protos/services Sources/HederaProtobufs/HederaProtobufs/Protos/services/*.proto
 ```
 
 ###  Integration Tests
@@ -112,14 +108,3 @@ TEST_NETWORK_NAME=localhost
 ```
 
 Lastly, run the tests using `swift test`
-
-### Generate SDK
-
-```bash
-# cwd: `$REPO/sdk/swift`
-protoc --swift_opt=Visibility=Public --swift_opt=FileNaming=PathToUnderscores --swift_out=./Sources/HederaProtobufs/Sdk -I=protobufs/sdk -I=protobufs/services protobufs/sdk/**.proto
-```
-
-## License
-
-[Apache License 2.0](LICENSE)

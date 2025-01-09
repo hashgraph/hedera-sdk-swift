@@ -105,6 +105,30 @@ extension Data {
 }
 
 extension Data {
+    func leftPadded(to size: Int) -> Data {
+        if self.count >= size { return self }
+        return Data(repeating: 0, count: size - self.count) + self
+    }
+}
+
+extension Data {
+    internal func hexEncodedString() -> String {
+        self.map { String(format: "%02x", $0) }.joined()
+    }
+}
+
+extension Data {
+    func ensureSize(_ size: Int) -> Data {
+        if self.count > size {
+            return self.suffix(size)
+        } else if self.count < size {
+            return Data(repeating: 0, count: size - self.count) + self
+        }
+        return self
+    }
+}
+
+extension Data {
     internal func split(at middle: Index) -> (SubSequence, SubSequence)? {
         guard let index = index(startIndex, offsetBy: middle, limitedBy: endIndex) else {
             return nil
