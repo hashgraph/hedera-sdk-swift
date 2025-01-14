@@ -11,8 +11,9 @@
 # NOTE: Must be placed last to ensure enforcement over all other rules
 
 # Protection Rules for Github Configuration Files and Actions Workflows
-/.github/                                       @hashgraph/devops-ci @hashgraph/devops-ci-committers @hashgraph/release-engineering @hashgraph/release-engineering-managers
-/.github/workflows/                             @hashgraph/devops-ci @hashgraph/devops-ci-committers @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
+/.github/                                       @hashgraph/platform-ci @hashgraph/platform-ci-committers @hashgraph/release-engineering-managers
+/.github/workflows/                             @hashgraph/platform-ci @hashgraph/platform-ci-committers @hashgraph/release-engineering-managers
+/.github/dependabot.yml                         @hashgraph/platform-ci @hashgraph/platform-ci-committers @hashgraph/release-engineering-managers  @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
 
 # Swift project files and inline plugins
 **/.swift-format.json                           @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
@@ -25,11 +26,11 @@
 .remarkrc                                       @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
 
 # Self-protection for root CODEOWNERS files (this file should not exist and should definitely require approval)
-/CODEOWNERS                                     @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
+/CODEOWNERS                                     @hashgraph/release-engineering-managers
 
 # Protect the repository root files
-/README.md                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
-**/LICENSE                                      @hashgraph/release-engineering @hashgraph/release-engineering-managers
+/README.md                                      @hashgraph/platform-ci @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
+**/LICENSE                                      @hashgraph/release-engineering-managers
 
 # CodeCov configuration
 **/codecov.yml                                  @hashgraph/release-engineering @hashgraph/release-engineering-managers @hashgraph/hedera-sdk @hashgraph/hedera-sdk-swift-contributors @hashgraph/launchbadge-hedera
