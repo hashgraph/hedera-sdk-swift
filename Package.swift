@@ -98,12 +98,12 @@ let package = Package(
         // swift-asn1 wants swift 5.7+ past 0.4
         .package(url: "https://github.com/apple/swift-asn1.git", .upToNextMinor(from: "0.3.0")),
         .package(url: "https://github.com/GigaBitcoin/secp256k1.swift.git", .upToNextMinor(from: "0.12.0")),
-        // we use this entirely for sha3-keccak256, yes, I'm serious.
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.0.0"),
         .package(url: "https://github.com/vapor/vapor.git", from: "4.101.3"),
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.2.0"),
+        // Currently, only used for keccak256
+        .package(url: "https://github.com/krzyzanowskim/OpenSSL-Package.git", from: "3.3.2000"),
     ],
     targets: [
         .target(
@@ -133,7 +133,7 @@ let package = Package(
                 .product(name: "Atomics", package: "swift-atomics"),
                 .product(name: "secp256k1", package: "secp256k1.swift"),
                 .product(name: "BigInt", package: "BigInt"),
-                "CryptoSwift",
+                .product(name: "OpenSSL", package: "OpenSSL-Package"),
             ]
             // todo: find some way to enable these locally.
             // swiftSettings: [
