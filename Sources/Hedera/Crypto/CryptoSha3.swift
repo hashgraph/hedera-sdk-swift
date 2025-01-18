@@ -46,15 +46,15 @@ extension Crypto {
         }
 
         private func keccak256Digest(_ data: Data) -> Data {
-            // Initialize OpenSSL's keccak256 context
+            // Initialize OpenSSL's new context
             let ctx = EVP_MD_CTX_new()
             defer { EVP_MD_CTX_free(ctx) }
 
+            // Fetch Keccak-256 Algorithm
             guard let keccak256 = EVP_MD_fetch(nil, "KECCAK-256", nil) else {
                 fatalError("Failed to get Keccak-256 digest method")
             }
 
-            // Initialize the context for hashing
             guard EVP_DigestInit_ex(ctx, keccak256, nil) == 1 else {
                 fatalError("Failed to initialize Keccak-256 context")
             }

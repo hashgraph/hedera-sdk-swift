@@ -65,7 +65,7 @@ internal final class TransactionFeeScheduleTests: XCTestCase {
     }
 
     internal func testToBytes() throws {
-        let schedule = try Self.makeSchedule().toBytes().toHexString()
+        let schedule = try Self.makeSchedule().toBytes().hexStringEncoded()
 
         assertSnapshot(matching: schedule, as: .description)
     }

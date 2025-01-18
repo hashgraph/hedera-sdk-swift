@@ -43,7 +43,7 @@ internal final class DelegateContractIdTests: XCTestCase {
 
     internal func testToBytes() throws {
         assertSnapshot(
-            matching: try DelegateContractId.fromString("0.0.5005").toBytes().toHexString(), as: .description)
+            matching: try DelegateContractId.fromString("0.0.5005").toBytes().hexStringEncoded(), as: .description)
     }
 
     internal func testFromBytes() throws {

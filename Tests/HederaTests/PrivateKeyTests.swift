@@ -412,7 +412,7 @@ internal final class PrivateKeyTests: XCTestCase {
         let seed = Data(hexEncoded: "000102030405060708090a0b0c0d0e0f")!
 
         let key1 = PrivateKey.fromSeedECDSAsecp256k1(seed)
-        XCTAssertEqual(key1.chainCode?.data.toHexString(), chainCode1)
+        XCTAssertEqual(key1.chainCode?.data.hexStringEncoded(), chainCode1)
         XCTAssertEqual(key1.toStringRaw(), privateKey1)
         XCTAssert(publicKey1.contains(key1.publicKey.toStringRaw()))
 

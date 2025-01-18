@@ -232,32 +232,32 @@ internal final class MnemonicTests: XCTestCase {
 
         // Chain m/44'/3030'/0'/0/0
         let key = try mnemonic.toStandardECDSAsecp256k1PrivateKey("", 0)
-        XCTAssertEqual(key.chainCode!.data.toHexString(), chainCode)
+        XCTAssertEqual(key.chainCode!.data.hexStringEncoded(), chainCode)
         XCTAssertEqual(key.toStringRaw(), privateKey)
         XCTAssert(publicKey.contains(key.publicKey.toStringRaw()))
 
         // Chain m/44'/3030'/0'/0/0; Passphrase "some pass"
         let key2 = try mnemonic.toStandardECDSAsecp256k1PrivateKey("some pass", 0)
-        XCTAssertEqual(key2.chainCode!.data.toHexString(), chainCode2)
+        XCTAssertEqual(key2.chainCode!.data.hexStringEncoded(), chainCode2)
         XCTAssertEqual(key2.toStringRaw(), privateKey2)
         XCTAssert(publicKey2.contains(key2.publicKey.toStringRaw()))
 
         // Chain m/44'/3030'/0'/0/2147483647; Passphrase "some pass"
         let key3 = try mnemonic.toStandardECDSAsecp256k1PrivateKey("some pass", 2_147_483_647)
-        XCTAssertEqual(key3.chainCode!.data.toHexString(), chainCode3)
+        XCTAssertEqual(key3.chainCode!.data.hexStringEncoded(), chainCode3)
         XCTAssertEqual(key3.toStringRaw(), privateKey3)
         XCTAssert(publicKey3.contains(key3.publicKey.toStringRaw()))
 
         // Chain m/44'/3030'/0'/0/0'
         let key4 = try mnemonic.toStandardECDSAsecp256k1PrivateKey("", Bip32Utils.toHardenedIndex(0))
-        XCTAssertEqual(key4.chainCode!.data.toHexString(), chainCode4)
+        XCTAssertEqual(key4.chainCode!.data.hexStringEncoded(), chainCode4)
         XCTAssertEqual(key4.toStringRaw(), privateKey4)
         XCTAssert(publicKey4.contains(key4.publicKey.toStringRaw()))
 
         // Chain m/44'/3030'/0'/0/2147483647'; Passphrase "some pass"
         let key5 = try mnemonic.toStandardECDSAsecp256k1PrivateKey(
             "some pass", Bip32Utils.toHardenedIndex(2_147_483_647))
-        XCTAssertEqual(key5.chainCode!.data.toHexString(), chainCode5)
+        XCTAssertEqual(key5.chainCode!.data.hexStringEncoded(), chainCode5)
         XCTAssertEqual(key5.toStringRaw(), privateKey5)
         XCTAssert(publicKey5.contains(key5.publicKey.toStringRaw()))
     }
@@ -291,32 +291,32 @@ internal final class MnemonicTests: XCTestCase {
 
         // Chain m/44'/3030'/0'/0 /0
         let key = try mnemonic.toStandardECDSAsecp256k1PrivateKey("", 0)
-        XCTAssertEqual(key.chainCode!.data.toHexString(), chainCode)
+        XCTAssertEqual(key.chainCode!.data.hexStringEncoded(), chainCode)
         XCTAssertEqual(key.toStringRaw(), privateKey)
         XCTAssert(publicKey.contains(key.publicKey.toStringRaw()))
 
         // Chain m/44'/3030'/0'/0 /0; Passphrase "some pass"
         let key2 = try mnemonic.toStandardECDSAsecp256k1PrivateKey("some pass", 0)
-        XCTAssertEqual(key2.chainCode!.data.toHexString(), chainCode2)
+        XCTAssertEqual(key2.chainCode!.data.hexStringEncoded(), chainCode2)
         XCTAssertEqual(key2.toStringRaw(), privateKey2)
         XCTAssert(publicKey2.contains(key2.publicKey.toStringRaw()))
 
         // Chain m/44'/3030'/0'/0/2147483647; Passphrase "some pass"
         let key3 = try mnemonic.toStandardECDSAsecp256k1PrivateKey("some pass", 2_147_483_647)
-        XCTAssertEqual(key3.chainCode!.data.toHexString(), chainCode3)
+        XCTAssertEqual(key3.chainCode!.data.hexStringEncoded(), chainCode3)
         XCTAssertEqual(key3.toStringRaw(), privateKey3)
         XCTAssert(publicKey3.contains(key3.publicKey.toStringRaw()))
 
         // Chain m/44'/3030'/0'/0/0'
         let key4 = try mnemonic.toStandardECDSAsecp256k1PrivateKey("", Bip32Utils.toHardenedIndex(0))
-        XCTAssertEqual(key4.chainCode!.data.toHexString(), chainCode4)
+        XCTAssertEqual(key4.chainCode!.data.hexStringEncoded(), chainCode4)
         XCTAssertEqual(key4.toStringRaw(), privateKey4)
         XCTAssert(publicKey4.contains(key4.publicKey.toStringRaw()))
 
         // Chain m/44'/3030'/0'/0/2147483647'; Passphrase "some pass"
         let key5 = try mnemonic.toStandardECDSAsecp256k1PrivateKey(
             "some pass", Bip32Utils.toHardenedIndex(2_147_483_647))
-        XCTAssertEqual(key5.chainCode!.data.toHexString(), chainCode5)
+        XCTAssertEqual(key5.chainCode!.data.hexStringEncoded(), chainCode5)
         XCTAssertEqual(key5.toStringRaw(), privateKey5)
         XCTAssert(publicKey5.contains(key5.publicKey.toStringRaw()))
     }
