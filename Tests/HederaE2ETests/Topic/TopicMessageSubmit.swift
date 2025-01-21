@@ -18,9 +18,10 @@
  * ‍
  */
 
-import Hedera
 import HederaExampleUtilities
 import XCTest
+
+@testable import Hedera
 
 internal class TopicMessageSubmit: XCTestCase {
     internal func testBasic() async throws {
@@ -117,7 +118,7 @@ internal class TopicMessageSubmit: XCTestCase {
 
     internal func testDecodeHexRegressionTest() throws {
         let transactionBytes = Data(
-            hex:
+            hexEncoded:
                 """
                 2ac2010a580a130a0b08d38f8f880610a09be91512041899e11c120218041880\
                 c2d72f22020878da01330a0418a5a12012103030303030303136323736333737\
@@ -127,7 +128,7 @@ internal class TopicMessageSubmit: XCTestCase {
                 2177f129ca0abae7831e595b5beaa1c947e2cb71201642bab33fece5184b0454\
                 7afc40850a
                 """
-        )
+        )!
 
         let transaction = try Transaction.fromBytes(transactionBytes)
 

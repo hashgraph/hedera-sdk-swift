@@ -51,7 +51,7 @@ internal final class ContractLogInfoTests: XCTestCase {
 
     internal func testToBytes() throws {
         assertSnapshot(
-            matching: try ContractLogInfo.fromBytes(Self.info.serializedData()).toBytes().toHexString(),
+            matching: try ContractLogInfo.fromBytes(Self.info.serializedData()).toBytes().hexStringEncoded(),
             as: .description)
     }
 }

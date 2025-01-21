@@ -409,6 +409,18 @@ extension AnyRlp {
     }
 }
 
+// Extend Optional where Wrapped is Data to conform to RlpEncodable
+extension Optional: RlpEncodable where Wrapped == Data {
+    internal func encode(to encoder: inout Rlp.Encoder) {
+        switch self {
+        case .some(let data):
+            data.encode(to: &encoder)  // Encode the wrapped Data
+        case .none:
+            encoder.appendRawValue(Data())  // Handle nil case by encoding an empty Data
+        }
+    }
+}
+
 extension Rlp.Encoder {
     internal init(buffer: Data = Data()) {
         self.raw = buffer
