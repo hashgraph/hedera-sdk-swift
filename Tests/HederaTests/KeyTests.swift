@@ -25,7 +25,7 @@ import XCTest
 
 internal final class KeyTests: XCTestCase {
     internal func testFromProtoKeyEd25519() throws {
-        let keyBytes = Data(hex: "0011223344556677889900112233445566778899001122334455667788990011")
+        let keyBytes = Data(hexEncoded: "0011223344556677889900112233445566778899001122334455667788990011")!
 
         let keyProto = Proto_Key.with { proto in
             proto.key = .ed25519(keyBytes)
@@ -38,7 +38,7 @@ internal final class KeyTests: XCTestCase {
     }
 
     internal func testFromProtoKeyEcdsa() throws {
-        let keyBytes = Data(hex: "3a21034e0441201f2bf9c7d9873c2a9dc3fd451f64b7c05e17e4d781d916e3a11dfd99")
+        let keyBytes = Data(hexEncoded: "3a21034e0441201f2bf9c7d9873c2a9dc3fd451f64b7c05e17e4d781d916e3a11dfd99")!
 
         let keyProto = try Proto_Key.init(serializedBytes: keyBytes)
 
@@ -49,8 +49,8 @@ internal final class KeyTests: XCTestCase {
     }
 
     internal func testFromProtoKeyKeyList() throws {
-        let keyBytes1 = Data(hex: "0011223344556677889900112233445566778899001122334455667788990011")
-        let keyBytes2 = Data(hex: "aa11223344556677889900112233445566778899001122334455667788990011")
+        let keyBytes1 = Data(hexEncoded: "0011223344556677889900112233445566778899001122334455667788990011")!
+        let keyBytes2 = Data(hexEncoded: "aa11223344556677889900112233445566778899001122334455667788990011")!
 
         let keyProto1 = Proto_Key.with { proto in
             proto.key = .ed25519(keyBytes1)
@@ -88,8 +88,8 @@ internal final class KeyTests: XCTestCase {
     }
 
     internal func testFromProtoKeyThresholdKey() throws {
-        let keyBytes1 = Data(hex: "0011223344556677889900112233445566778899001122334455667788990011")
-        let keyBytes2 = Data(hex: "aa11223344556677889900112233445566778899001122334455667788990011")
+        let keyBytes1 = Data(hexEncoded: "0011223344556677889900112233445566778899001122334455667788990011")!
+        let keyBytes2 = Data(hexEncoded: "aa11223344556677889900112233445566778899001122334455667788990011")!
 
         let keyProto1 = Proto_Key.with { proto in
             proto.key = .ed25519(keyBytes1)

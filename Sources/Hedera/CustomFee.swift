@@ -299,7 +299,7 @@ public struct FractionalFee: CustomFee, Equatable, ValidateChecksums {
 
     /// Create a new `CustomFixedFee`.
     public init(
-        amount: Rational<UInt64> = "1/1",
+        amount: Rational<Int64> = "1/1",
         minimumAmount: UInt64 = 0,
         maximumAmount: UInt64 = 0,
         assessmentMethod: FeeAssessmentMethod = .exclusive,
@@ -320,8 +320,8 @@ public struct FractionalFee: CustomFee, Equatable, ValidateChecksums {
         feeCollectorAccountId: AccountId?,
         allCollectorsAreExempt: Bool
     ) {
-        denominator = UInt64(proto.fractionalAmount.denominator)
-        numerator = UInt64(proto.fractionalAmount.numerator)
+        denominator = proto.fractionalAmount.denominator
+        numerator = proto.fractionalAmount.numerator
         minimumAmount = UInt64(proto.minimumAmount)
         maximumAmount = UInt64(proto.maximumAmount)
         assessmentMethod = .init(netOfTransfers: proto.netOfTransfers)
@@ -330,7 +330,7 @@ public struct FractionalFee: CustomFee, Equatable, ValidateChecksums {
     }
 
     /// The fraction of the transferred units to assess as a fee.
-    public var amount: Rational<UInt64> {
+    public var amount: Rational<Int64> {
         get {
             Rational(numerator, denominator)
         }
@@ -341,14 +341,14 @@ public struct FractionalFee: CustomFee, Equatable, ValidateChecksums {
     }
 
     /// Denominator of `amount`
-    public var denominator: UInt64
+    public var denominator: Int64
 
     /// Numerator of `amount`
-    public var numerator: UInt64
+    public var numerator: Int64
 
     /// Sets the fraction of the transferred units to assess as a fee.
     @discardableResult
-    public mutating func amount(_ amount: Rational<UInt64>) -> Self {
+    public mutating func amount(_ amount: Rational<Int64>) -> Self {
         self.amount = amount
 
         return self
@@ -361,7 +361,7 @@ public struct FractionalFee: CustomFee, Equatable, ValidateChecksums {
     ///
     /// - Returns: `self`.
     @discardableResult
-    public mutating func denominator(_ denominator: UInt64) -> Self {
+    public mutating func denominator(_ denominator: Int64) -> Self {
         self.denominator = denominator
 
         return self
@@ -374,7 +374,7 @@ public struct FractionalFee: CustomFee, Equatable, ValidateChecksums {
     ///
     /// - Returns: `self`.
     @discardableResult
-    public mutating func numerator(_ numerator: UInt64) -> Self {
+    public mutating func numerator(_ numerator: Int64) -> Self {
         self.numerator = numerator
 
         return self
@@ -468,7 +468,7 @@ public struct RoyaltyFee: CustomFee, Equatable {
 
     /// Create a new `CustomRoyaltyFee`.
     public init(
-        exchangeValue: Rational<UInt64> = "1/1",
+        exchangeValue: Rational<Int64> = "1/1",
         fallbackFee: FixedFee? = nil,
         feeCollectorAccountId: AccountId? = nil,
         allCollectorsAreExempt: Bool = false
@@ -484,8 +484,8 @@ public struct RoyaltyFee: CustomFee, Equatable {
 
     /// Create a new `CustomRoyaltyFee`
     public init(
-        numerator: UInt64 = 1,
-        denominator: UInt64 = 1,
+        numerator: Int64 = 1,
+        denominator: Int64 = 1,
         fallbackFee: FixedFee? = nil,
         feeCollectorAccountId: AccountId? = nil,
         allCollectorsAreExempt: Bool = false
@@ -504,8 +504,8 @@ public struct RoyaltyFee: CustomFee, Equatable {
     ) {
         let fallbackFee = proto.hasFallbackFee ? proto.fallbackFee : nil
         self.init(
-            numerator: UInt64(proto.exchangeValueFraction.numerator),
-            denominator: UInt64(proto.exchangeValueFraction.denominator),
+            numerator: proto.exchangeValueFraction.numerator,
+            denominator: proto.exchangeValueFraction.denominator,
             fallbackFee: fallbackFee.map { protoFee in
                 FixedFee(fromFee: protoFee, feeCollectorAccountId: nil, allCollectorsAreExempt: false)
             },
@@ -515,7 +515,7 @@ public struct RoyaltyFee: CustomFee, Equatable {
     }
 
     /// The fraction of fungible value exchanged for an NFT to collect as royalty.
-    public var exchangeValue: Rational<UInt64> {
+    public var exchangeValue: Rational<Int64> {
         get {
             Rational(numerator, denominator)
         }
@@ -526,14 +526,14 @@ public struct RoyaltyFee: CustomFee, Equatable {
     }
 
     /// Denominator of `exchangeValue`
-    public var denominator: UInt64
+    public var denominator: Int64
 
     /// Numerator of `exchangeValue`
-    public var numerator: UInt64
+    public var numerator: Int64
 
     /// Sets the fraction of fungible value exchanged for an NFT to collect as royalty.
     @discardableResult
-    public mutating func exchangeValue(_ exchangeValue: Rational<UInt64>) -> Self {
+    public mutating func exchangeValue(_ exchangeValue: Rational<Int64>) -> Self {
         self.exchangeValue = exchangeValue
 
         return self
@@ -546,7 +546,7 @@ public struct RoyaltyFee: CustomFee, Equatable {
     ///
     /// - Returns: `self`.
     @discardableResult
-    public mutating func denominator(_ denominator: UInt64) -> Self {
+    public mutating func denominator(_ denominator: Int64) -> Self {
         self.denominator = denominator
 
         return self
@@ -559,7 +559,7 @@ public struct RoyaltyFee: CustomFee, Equatable {
     ///
     /// - Returns: `self`.
     @discardableResult
-    public mutating func numerator(_ numerator: UInt64) -> Self {
+    public mutating func numerator(_ numerator: Int64) -> Self {
         self.numerator = numerator
 
         return self

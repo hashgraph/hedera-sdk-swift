@@ -55,6 +55,6 @@ internal final class FileInfoTests: XCTestCase {
 
     internal func testToBytes() throws {
         assertSnapshot(
-            matching: try FileInfo.fromBytes(Self.info.serializedData()).toBytes().toHexString(), as: .description)
+            matching: try FileInfo.fromBytes(Self.info.serializedData()).toBytes().hexStringEncoded(), as: .description)
     }
 }

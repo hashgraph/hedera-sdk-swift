@@ -73,7 +73,14 @@ private struct TCKServer {
             case "createToken":
                 return JSONResponse(
                     id: request.id,
-                    result: try await sdkClient.createToken(
+                    result: try await sdkClient.createToken(getOptionalJsonParameter("params", request.toDict(), request.method)))
+            /// 
+            /// deleteAccount
+            ///
+            case "deleteAccount":
+                return JSONResponse(
+                    id: request.id,
+                    result: try await sdkClient.deleteAccount(
                         getOptionalJsonParameter("params", request.toDict(), request.method)))
             ///
             /// generateKey
@@ -95,6 +102,14 @@ private struct TCKServer {
                 return JSONResponse(
                     id: request.id,
                     result: try sdkClient.setup(getRequiredJsonParameter("params", request.toDict(), request.method)))
+            ///
+            /// updateAccount
+            ///
+            case "updateAccount":
+                return JSONResponse(
+                    id: request.id,
+                    result: try await sdkClient.updateAccount(
+                        getOptionalJsonParameter("params", request.toDict(), request.method)))
             ///
             /// Method Not Found
             ///

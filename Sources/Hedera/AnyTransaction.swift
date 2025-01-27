@@ -68,6 +68,9 @@ internal enum ServicesTransactionDataList {
     case nodeCreate([Com_Hedera_Hapi_Node_Addressbook_NodeCreateTransactionBody])
     case nodeUpdate([Com_Hedera_Hapi_Node_Addressbook_NodeUpdateTransactionBody])
     case nodeDelete([Com_Hedera_Hapi_Node_Addressbook_NodeDeleteTransactionBody])
+    case tokenAirdrop([Proto_TokenAirdropTransactionBody])
+    case tokenClaimAirdrop([Proto_TokenClaimAirdropTransactionBody])
+    case tokenCancelAirdrop([Proto_TokenCancelAirdropTransactionBody])
 
     internal mutating func append(_ transaction: Proto_TransactionBody.OneOf_Data) throws {
         switch (self, transaction) {
@@ -255,6 +258,18 @@ internal enum ServicesTransactionDataList {
             array.append(data)
             self = .nodeDelete(array)
 
+        case (.tokenAirdrop(var array), .tokenAirdrop(let data)):
+            array.append(data)
+            self = .tokenAirdrop(array)
+
+        case (.tokenClaimAirdrop(var array), .tokenClaimAirdrop(let data)):
+            array.append(data)
+            self = .tokenClaimAirdrop(array)
+
+        case (.tokenCancelAirdrop(var array), .tokenCancelAirdrop(let data)):
+            array.append(data)
+            self = .tokenCancelAirdrop(array)
+
         default:
             throw HError.fromProtobuf("mismatched transaction types")
         }
@@ -323,9 +338,15 @@ extension ServicesTransactionDataList: TryFromProtobuf {
         case .nodeUpdate(let data): value = .nodeUpdate([data])
         case .nodeDelete(let data): value = .nodeDelete([data])
         case .tokenReject(let data): value = .tokenReject([data])
-        case .tokenAirdrop: throw HError.fromProtobuf("Unsupported transaction `TokenAirdropTransaction`")
-        case .tokenCancelAirdrop: throw HError.fromProtobuf("Unsupported transaction `TokenCancelAirdropTransaction`")
-        case .tokenClaimAirdrop: throw HError.fromProtobuf("Unsupported transaction `TokenClaimAirdropTransaction`")
+        case .tokenAirdrop(let data): value = .tokenAirdrop([data])
+        case .tokenCancelAirdrop(let data): value = .tokenCancelAirdrop([data])
+        case .tokenClaimAirdrop(let data): value = .tokenClaimAirdrop([data])
+        case .tssMessage(_):
+            throw HError.fromProtobuf("Unsupported transaction `TssMessageTransaction`")
+        case .tssVote(_):
+            throw HError.fromProtobuf("Unsupported transaction `TssVoteTransaction`")
+        case .tssShareSignature(_):
+            throw HError.fromProtobuf("Unsupported transaction `TssShareSignatureTransaction`")
         }
 
         for transaction in iter {

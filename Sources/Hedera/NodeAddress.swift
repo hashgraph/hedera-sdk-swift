@@ -68,7 +68,10 @@ public struct SocketAddressV4: LosslessStringConvertible {
     }
 
     public var description: String {
-        "\(ip):\(port)"
+        guard !domainName.isEmpty else {
+            return "\(ip):\(port)"
+        }
+        return "\(domainName):\(port)"
     }
 }
 

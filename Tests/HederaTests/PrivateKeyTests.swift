@@ -403,4 +403,18 @@ internal final class PrivateKeyTests: XCTestCase {
             "03b69a75a5ddb1c0747e995d47555019e5d8a28003ab5202bd92f534361fb4ec8a"
         )
     }
+
+    internal func testslip10TestVector1() throws {
+        let chainCode1 = "873dff81c02f525623fd1fe5167eac3a55a049de3d314bb42ee227ffed37d508"
+        let privateKey1 = "e8f32e723decf4051aefac8e2c93c9c5b214313817cdb01a1494b917c8436b35"
+        let publicKey1 = "0339a36013301597daef41fbe593a02cc513d0b55527ec2df1050e2e8ff49c85c2"
+
+        let seed = Data(hexEncoded: "000102030405060708090a0b0c0d0e0f")!
+
+        let key1 = PrivateKey.fromSeedECDSAsecp256k1(seed)
+        XCTAssertEqual(key1.chainCode?.data.hexStringEncoded(), chainCode1)
+        XCTAssertEqual(key1.toStringRaw(), privateKey1)
+        XCTAssert(publicKey1.contains(key1.publicKey.toStringRaw()))
+
+    }
 }

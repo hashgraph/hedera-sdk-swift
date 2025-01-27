@@ -1028,6 +1028,60 @@ public enum Status: Equatable {
     /// The node account is not allowed to be updated
     case updateNodeAccountNotAllowed  // = 359
 
+    /// The token has no metadata key or supply key
+    case tokenHasNoMetadataOrSupplyKey  // = 360
+
+    /// The transaction attempted to the use an empty List of `PendingAirdropId`.
+    case emptyPendingAirdropIdList  // = 361
+
+    /// The transaction attempted to the same `PendingAirdropId` twice.
+    case pendingAirdropIdRepeated  // = 362
+
+    /// The transaction attempted to use more than the allowed number of `PendingAirdropId`.
+    case pendingAirdropIdListTooLong  // = 363
+
+    /// A pending airdrop already exists for the specified NFT.
+    case pendingNftAirdropAlreadyExists  // = 364
+
+    /// The identified account is sender for one or more pending airdrop(s) and cannot be deleted.
+    case accountHasPendingAirdrops  // = 365
+
+    /// Consensus throttle did not allow execution of this transaction.
+    case throttledAtConsensus  // = 366
+
+    /// The provided pending airdrop id is invalid.
+    case invalidPendingAirdropId  // = 367
+
+    /// The token to be airdropped has a fallback royalty fee and cannot be
+    /// sent or claimed via an airdrop transaction.
+    case tokenAirdropWithFallbackRoyalty  // = 368
+
+    /// This airdrop claim is for a pending airdrop with an invalid token.
+    case invalidTokenInPendingAirdrop  // = 369
+
+    /// A scheduled transaction configured to wait for expiry to execute was given
+    /// an expiry time not strictly after the time at which its creation reached
+    /// consensus.
+    case scheduleExpiryMustBeFuture  // = 370
+
+    /// A scheduled transaction configured to wait for expiry to execute was given
+    /// an expiry time too far in the future after the time at which its creation
+    /// reached consensus.
+    case scheduleExpiryTooLong  // = 371
+
+    /// A scheduled transaction configured to wait for expiry to execute was given
+    /// an expiry time at which there is already too many transactions scheduled to
+    /// expire; its creation must be retried with a different expiry.
+    case scheduleExpiryIsBusy  // = 372
+
+    /// The provided gRPC certificate hash is invalid.
+    case invalidGrpcCertificateHash  // = 373
+
+    /// The provided gRPC certificate hash is invalid.
+    /// A scheduled transaction configured to wait for expiry to execute was not
+    /// given an explicit expiration time.
+    case missingExpiryTime  // = 374
+
     /// swift-format-ignore: AlwaysUseLowerCamelCase
     case unrecognized(Int32)
 
@@ -1353,6 +1407,21 @@ public enum Status: Equatable {
         case 357: self = .invalidIpv4Address
         case 358: self = .emptyTokenReferenceList
         case 359: self = .updateNodeAccountNotAllowed
+        case 360: self = .tokenHasNoMetadataOrSupplyKey
+        case 361: self = .emptyPendingAirdropIdList
+        case 362: self = .pendingAirdropIdRepeated
+        case 363: self = .pendingAirdropIdListTooLong
+        case 364: self = .pendingNftAirdropAlreadyExists
+        case 365: self = .accountHasPendingAirdrops
+        case 366: self = .throttledAtConsensus
+        case 367: self = .invalidPendingAirdropId
+        case 368: self = .tokenAirdropWithFallbackRoyalty
+        case 369: self = .invalidTokenInPendingAirdrop
+        case 370: self = .scheduleExpiryMustBeFuture
+        case 371: self = .scheduleExpiryTooLong
+        case 372: self = .scheduleExpiryIsBusy
+        case 373: self = .invalidGrpcCertificateHash
+        case 374: self = .missingExpiryTime
         default: self = .unrecognized(rawValue)
         }
     }
@@ -1677,6 +1746,21 @@ public enum Status: Equatable {
         case .invalidIpv4Address: return 357
         case .emptyTokenReferenceList: return 358
         case .updateNodeAccountNotAllowed: return 359
+        case .tokenHasNoMetadataOrSupplyKey: return 360
+        case .emptyPendingAirdropIdList: return 361
+        case .pendingAirdropIdRepeated: return 362
+        case .pendingAirdropIdListTooLong: return 363
+        case .pendingNftAirdropAlreadyExists: return 364
+        case .accountHasPendingAirdrops: return 365
+        case .throttledAtConsensus: return 366
+        case .invalidPendingAirdropId: return 367
+        case .tokenAirdropWithFallbackRoyalty: return 368
+        case .invalidTokenInPendingAirdrop: return 369
+        case .scheduleExpiryMustBeFuture: return 370
+        case .scheduleExpiryTooLong: return 371
+        case .scheduleExpiryIsBusy: return 372
+        case .invalidGrpcCertificateHash: return 373
+        case .missingExpiryTime: return 374
         case .unrecognized(let i): return i
         }
     }
@@ -2004,6 +2088,21 @@ extension Status: CaseIterable {
         .invalidIpv4Address,
         .emptyTokenReferenceList,
         .updateNodeAccountNotAllowed,
+        .tokenHasNoMetadataOrSupplyKey,
+        .emptyPendingAirdropIdList,
+        .pendingAirdropIdRepeated,
+        .pendingAirdropIdListTooLong,
+        .pendingNftAirdropAlreadyExists,
+        .accountHasPendingAirdrops,
+        .throttledAtConsensus,
+        .invalidPendingAirdropId,
+        .tokenAirdropWithFallbackRoyalty,
+        .invalidTokenInPendingAirdrop,
+        .scheduleExpiryMustBeFuture,
+        .scheduleExpiryTooLong,
+        .scheduleExpiryIsBusy,
+        .invalidGrpcCertificateHash,
+        .missingExpiryTime,
     ]
 }
 
@@ -2329,6 +2428,21 @@ extension Status {
             357: "INVALID_IPV4_ADDRESS",
             358: "EMPTY_TOKEN_REFERENCE_LIST",
             359: "UPDATE_NODE_ACCOUNT_NOT_ALLOWED",
+            360: "TOKEN_HAS_NO_METADATA_OR_SUPPLY_KEY",
+            361: "EMPTY_PENDING_AIRDROP_ID_LIST",
+            362: "PENDING_AIRDROP_ID_REPEATED",
+            363: "PENDING_AIRDROP_ID_LIST_TOO_LONG",
+            364: "PENDING_NFT_AIRDROP_ALREADY_EXISTS",
+            365: "ACCOUNT_HAS_PENDING_AIRDROPS",
+            366: "THROTTLED_AT_CONSENSUS",
+            367: "INVALID_PENDING_AIRDROP_ID",
+            368: "TOKEN_AIRDROP_WITH_FALLBACK_ROYALTY",
+            369: "INVALID_TOKEN_IN_PENDING_AIRDROP",
+            370: "SCHEDULE_EXPIRY_MUST_BE_FUTURE",
+            371: "SCHEDULE_EXPIRY_TOO_LONG",
+            372: "SCHEDULE_EXPIRY_IS_BUSY",
+            373: "INVALID_GRPC_CERTIFICATE_HASH",
+            374: "MISSING_EXPIRY_TIME",
         ]
 }
 
