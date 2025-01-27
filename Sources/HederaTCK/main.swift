@@ -73,8 +73,9 @@ private struct TCKServer {
             case "createToken":
                 return JSONResponse(
                     id: request.id,
-                    result: try await sdkClient.createToken(getOptionalJsonParameter("params", request.toDict(), request.method)))
-            /// 
+                    result: try await sdkClient.createToken(
+                        getOptionalJsonParameter("params", request.toDict(), request.method)))
+            ///
             /// deleteAccount
             ///
             case "deleteAccount":
