@@ -17,21 +17,18 @@
  * limitations under the License.
  * ‍
  */
-import Foundation
 import Vapor
 
 @testable import Hedera
 
-private let server = TCKServer(sdkClient: SDKClient())
+private let server = TCKServer()
 try TCKServer.main()
 
-private func encodeJsonRpcResponseToHttpResponse(jsonResponse: JSONResponse) throws -> Response {
-    let responseData = try JSONEncoder().encode(jsonResponse)
-    return Response(status: .ok, headers: ["Content-Type": "application/json"], body: .init(data: responseData))
-}
+internal class TCKServer {
 
-private struct TCKServer {
-    internal var sdkClient: SDKClient
+    ////////////////
+    /// INTERNAL ///
+    ////////////////
 
     internal static func main() throws {
         var env = try Environment.detect()
@@ -56,67 +53,64 @@ private struct TCKServer {
         try app.run()
     }
 
+    ///////////////
+    /// PRIVATE ///
+    ///////////////
+
+    /// Enumeration of currently-implemented JSON-RPC endpoints.
+    private enum JSONRPCMethod: String {
+        case CREATE_ACCOUNT = "createAccount"
+        case CREATE_TOKEN = "createToken"
+        case DELETE_ACCOUNT = "deleteAccount"
+        case GENERATE_KEY = "generateKey"
+        case RESET = "reset"
+        case SETUP = "setup"
+        case UPDATE_ACCOUNT = "updateAccount"
+        case UNDEFINED_METHOD
+    }
+
+    /// Fully process a JSON-RPC request and generate a response.
     private func processRequest(request: JSONRequest) async -> JSONResponse {
         do {
-            switch request.method {
+            let jsonRpcResponse: JSONObject
+            let method = JSONRPCMethod(rawValue: request.method) ?? JSONRPCMethod.UNDEFINED_METHOD
+
+            switch method {
             ///
-            /// createAccount
+            /// AccountService JSON-RPC methods.
             ///
-            case "createAccount":
-                return JSONResponse(
-                    id: request.id,
-                    result: try await sdkClient.createAccount(
-                        getOptionalJsonParameter("params", request.toDict(), request.method)))
+            case JSONRPCMethod.CREATE_ACCOUNT:
+                jsonRpcResponse = try await AccountService.service.createAccount(getOptionalParams(request))
+            case JSONRPCMethod.DELETE_ACCOUNT:
+                jsonRpcResponse = try await AccountService.service.deleteAccount(getOptionalParams(request))
+            case JSONRPCMethod.UPDATE_ACCOUNT:
+                jsonRpcResponse = try await AccountService.service.updateAccount(getOptionalParams(request))
             ///
-            /// createToken
+            /// KeyService JSON-RPC methods.
             ///
-            case "createToken":
-                return JSONResponse(
-                    id: request.id,
-                    result: try await sdkClient.createToken(
-                        getOptionalJsonParameter("params", request.toDict(), request.method)))
+            case JSONRPCMethod.GENERATE_KEY:
+                jsonRpcResponse = try KeyService.service.generateKey(getRequiredParams(request))
             ///
-            /// deleteAccount
+            /// SdkClient JSON-RPC methods.
             ///
-            case "deleteAccount":
-                return JSONResponse(
-                    id: request.id,
-                    result: try await sdkClient.deleteAccount(
-                        getOptionalJsonParameter("params", request.toDict(), request.method)))
+            case JSONRPCMethod.RESET:
+                jsonRpcResponse = try SDKClient.client.reset()
+            case JSONRPCMethod.SETUP:
+                jsonRpcResponse = try SDKClient.client.setup(getRequiredParams(request))
             ///
-            /// generateKey
+            /// TokenService JSON-RPC methods.
             ///
-            case "generateKey":
-                return JSONResponse(
-                    id: request.id,
-                    result: try sdkClient.generateKey(
-                        getRequiredJsonParameter("params", request.toDict(), request.method)))
+            case JSONRPCMethod.CREATE_TOKEN:
+                jsonRpcResponse = try await TokenService.service.createToken(getOptionalParams(request))
             ///
-            /// reset
+            /// Undefined method or method not provided.
             ///
-            case "reset":
-                return JSONResponse(id: request.id, result: try sdkClient.reset())
-            ///
-            /// setup
-            ///
-            case "setup":
-                return JSONResponse(
-                    id: request.id,
-                    result: try sdkClient.setup(getRequiredJsonParameter("params", request.toDict(), request.method)))
-            ///
-            /// updateAccount
-            ///
-            case "updateAccount":
-                return JSONResponse(
-                    id: request.id,
-                    result: try await sdkClient.updateAccount(
-                        getOptionalJsonParameter("params", request.toDict(), request.method)))
-            ///
-            /// Method Not Found
-            ///
-            default:
+            case JSONRPCMethod.UNDEFINED_METHOD:
                 throw JSONError.methodNotFound("\(request.method) not implemented.")
             }
+
+            return JSONResponse(id: request.id, result: jsonRpcResponse)
+
         } catch let error as JSONError {
             return JSONResponse(id: request.id, error: error)
         } catch let error as HError {
@@ -133,10 +127,28 @@ private struct TCKServer {
                             "message": JSONObject.string(error.description),
                         ])))
             default:
+                print(error)
                 return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))
             }
         } catch let error {
+            print(error)
             return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))
         }
+    }
+
+    /// Get the JSON-RPC request parameters that are required.
+    private func getRequiredParams(_ request: JSONRequest) throws -> [String: JSONObject] {
+        return try getRequiredJsonParameter("params", request.toDict(), request.method)
+    }
+
+    /// Get the JSON-RPC request parameters that are optional.
+    private func getOptionalParams(_ request: JSONRequest) throws -> [String: JSONObject]? {
+        return try getOptionalJsonParameter("params", request.toDict(), request.method)
+    }
+
+    /// Fills an HTTP response with a JSON-RPC response.
+    private static func encodeJsonRpcResponseToHttpResponse(jsonResponse: JSONResponse) throws -> Response {
+        let responseData = try JSONEncoder().encode(jsonResponse)
+        return Response(status: .ok, headers: ["Content-Type": "application/json"], body: .init(data: responseData))
     }
 }

@@ -294,12 +294,12 @@ extension AccountCreateTransaction: ToProtobuf {
                 proto.alias = alias.data
             }
 
-            if let stakedNodeId = stakedNodeId {
-                proto.stakedNodeID = Int64(truncatingIfNeeded: stakedNodeId)
-            }
-
             if let stakedAccountId = stakedAccountId {
                 proto.stakedAccountID = stakedAccountId.toProtobuf()
+            }
+
+            if let stakedNodeId = stakedNodeId {
+                proto.stakedNodeID = Int64(truncatingIfNeeded: stakedNodeId)
             }
 
             proto.declineReward = declineStakingReward
