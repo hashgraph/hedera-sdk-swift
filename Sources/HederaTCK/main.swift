@@ -100,6 +100,8 @@ internal class TCKServer {
                 jsonRpcResponse = try await TokenService.service.dissociateToken(DissociateTokenParams(request))
             case JSONRPCMethod.FREEZE_TOKEN:
                 jsonRpcResponse = try await TokenService.service.freezeToken(FreezeTokenParams(request))
+            case JSONRPCMethod.GRANT_TOKEN_KYC:
+                jsonRpcResponse = try await TokenService.service.grantTokenKyc(GrantTokenKycParams(request))
             case JSONRPCMethod.PAUSE_TOKEN:
                 jsonRpcResponse = try await TokenService.service.pauseToken(PauseTokenParams(request))
             case JSONRPCMethod.UNFREEZE_TOKEN:

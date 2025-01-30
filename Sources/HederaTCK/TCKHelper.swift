@@ -29,6 +29,7 @@ internal enum JSONRPCMethod: String {
     case DISSOCIATE_TOKEN = "dissociateToken"
     case FREEZE_TOKEN = "freezeToken"
     case GENERATE_KEY = "generateKey"
+    case GRANT_TOKEN_KYC = "grantTokenKyc"
     case PAUSE_TOKEN = "pauseToken"
     case RESET = "reset"
     case SETUP = "setup"
