@@ -96,6 +96,8 @@ internal class TCKServer {
                 jsonRpcResponse = try await TokenService.service.createToken(CreateTokenParams(request))
             case JSONRPCMethod.DELETE_TOKEN:
                 jsonRpcResponse = try await TokenService.service.deleteToken(DeleteTokenParams(request))
+            case JSONRPCMethod.PAUSE_TOKEN:
+                jsonRpcResponse = try await TokenService.service.pauseToken(PauseTokenParams(request))
             case JSONRPCMethod.UPDATE_TOKEN_FEE_SCHEDULE:
                 jsonRpcResponse =
                     try await TokenService.service.updateTokenFeeSchedule(UpdateTokenFeeScheduleParams(request))
