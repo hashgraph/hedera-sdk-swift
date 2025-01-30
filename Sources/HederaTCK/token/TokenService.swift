@@ -28,7 +28,7 @@ internal class TokenService {
 
     ////////////////
     /// INTERNAL ///
-    ///////////////
+    ////////////////
 
     internal func associateToken(_ params: AssociateTokenParams) async throws -> JSONObject {
         var tokenAssociateTransaction = TokenAssociateTransaction()
@@ -126,6 +126,22 @@ internal class TokenService {
         }
 
         let txReceipt = try await tokenDeleteTransaction.execute(SDKClient.client.getClient()).getReceipt(
+            SDKClient.client.getClient())
+        return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
+    }
+
+    internal func dissociateToken(_ params: DissociateTokenParams) async throws -> JSONObject {
+        var tokenDissociateTransaction = TokenDissociateTransaction()
+
+        tokenDissociateTransaction.accountId = try params.accountId.flatMap { try AccountId.fromString($0) }
+        tokenDissociateTransaction.tokenIds = try params.tokenIds?.map { try TokenId.fromString($0) } ?? []
+
+        try params.commonTransactionParams.map {
+            try fillOutCommonTransactionParameters(
+                transaction: &tokenDissociateTransaction, params: $0, client: SDKClient.client.getClient())
+        }
+
+        let txReceipt = try await tokenDissociateTransaction.execute(SDKClient.client.getClient()).getReceipt(
             SDKClient.client.getClient())
         return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
     }
