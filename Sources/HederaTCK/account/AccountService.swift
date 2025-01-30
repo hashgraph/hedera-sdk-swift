@@ -26,55 +26,30 @@ internal class AccountService {
     internal func createAccount(_ params: CreateAccountParams) async throws -> JSONObject {
         var accountCreateTransaction = AccountCreateTransaction()
 
-        if let key = params.key {
-            accountCreateTransaction.key = try KeyService.service.getHederaKey(key)
+        accountCreateTransaction.key = try params.key.flatMap { try KeyService.service.getHederaKey($0) }
+        accountCreateTransaction.initialBalance =
+            try params.initialBalance.flatMap {
+                Hbar.fromTinybars(try toInt($0, "initialBalance", JSONRPCMethod.CREATE_ACCOUNT))
+            } ?? accountCreateTransaction.initialBalance
+        accountCreateTransaction.receiverSignatureRequired =
+            params.receiverSignatureRequired ?? accountCreateTransaction.receiverSignatureRequired
+        accountCreateTransaction.autoRenewPeriod = try params.autoRenewPeriod.flatMap {
+            Duration(seconds: toUint64(try toInt($0, "autoRenewPeriod", JSONRPCMethod.CREATE_ACCOUNT)))
         }
-
-        if let initialBalance = params.initialBalance {
-            accountCreateTransaction.initialBalance = Hbar.fromTinybars(
-                try toInt(initialBalance, "initialBalance", JSONRPCMethod.CREATE_ACCOUNT))
+        accountCreateTransaction.accountMemo = params.memo ?? accountCreateTransaction.accountMemo
+        accountCreateTransaction.maxAutomaticTokenAssociations =
+            params.maxAutoTokenAssociations ?? accountCreateTransaction.maxAutomaticTokenAssociations
+        accountCreateTransaction.alias = try params.alias.flatMap { try EvmAddress.fromString($0) }
+        accountCreateTransaction.stakedAccountId = try params.stakedAccountId.flatMap { try AccountId.fromString($0) }
+        accountCreateTransaction.stakedNodeId = try params.stakedNodeId.flatMap {
+            toUint64(try toInt($0, "stakedNodeId", JSONRPCMethod.CREATE_ACCOUNT))
         }
+        accountCreateTransaction.declineStakingReward =
+            params.declineStakingReward ?? accountCreateTransaction.declineStakingReward
 
-        if let receiverSignatureRequired = params.receiverSignatureRequired {
-            accountCreateTransaction.receiverSignatureRequired = receiverSignatureRequired
-        }
-
-        if let autoRenewPeriod = params.autoRenewPeriod {
-            accountCreateTransaction.autoRenewPeriod = Duration(
-                seconds: toUint64(try toInt(autoRenewPeriod, "autoRenewPeriod", JSONRPCMethod.CREATE_ACCOUNT)))
-        }
-
-        if let memo = params.memo {
-            accountCreateTransaction.accountMemo = memo
-        }
-
-        if let maxAutoTokenAssociations = params.maxAutoTokenAssociations {
-            accountCreateTransaction.maxAutomaticTokenAssociations = maxAutoTokenAssociations
-        }
-
-        if let stakedAccountId = params.stakedAccountId {
-            accountCreateTransaction.stakedAccountId = try AccountId.fromString(stakedAccountId)
-        }
-
-        if let stakedNodeId = params.stakedNodeId {
-            accountCreateTransaction.stakedNodeId = toUint64(
-                try toInt(stakedNodeId, "stakedNodeId", JSONRPCMethod.CREATE_ACCOUNT))
-        }
-
-        if let declineStakingReward = params.declineStakingReward {
-            accountCreateTransaction.declineStakingReward = declineStakingReward
-        }
-
-        if let alias = params.alias {
-            accountCreateTransaction.alias = try EvmAddress.fromString(alias)
-        }
-
-        if let commonTransactionParams = params.commonTransactionParams {
+        try params.commonTransactionParams.map {
             try fillOutCommonTransactionParameters(
-                transaction: &accountCreateTransaction,
-                params: commonTransactionParams,
-                client: SDKClient.client.getClient()
-            )
+                transaction: &accountCreateTransaction, params: $0, client: SDKClient.client.getClient())
         }
 
         let txReceipt = try await accountCreateTransaction.execute(SDKClient.client.getClient()).getReceipt(
@@ -88,88 +63,49 @@ internal class AccountService {
     internal func deleteAccount(_ params: DeleteAccountParams) async throws -> JSONObject {
         var accountDeleteTransaction = AccountDeleteTransaction()
 
-        if let deleteAccountId = params.deleteAccountId {
-            accountDeleteTransaction.accountId = try AccountId.fromString(deleteAccountId)
+        accountDeleteTransaction.accountId = try params.deleteAccountId.flatMap { try AccountId.fromString($0) }
+        accountDeleteTransaction.transferAccountId = try params.transferAccountId.flatMap {
+            try AccountId.fromString($0)
         }
 
-        if let transferAccountId = params.transferAccountId {
-            accountDeleteTransaction.transferAccountId = try AccountId.fromString(transferAccountId)
-        }
-
-        if let commonTransactionParams = params.commonTransactionParams {
+        try params.commonTransactionParams.map {
             try fillOutCommonTransactionParameters(
-                transaction: &accountDeleteTransaction,
-                params: commonTransactionParams,
-                client: SDKClient.client.getClient()
-            )
+                transaction: &accountDeleteTransaction, params: $0, client: SDKClient.client.getClient())
         }
 
         let txReceipt = try await accountDeleteTransaction.execute(SDKClient.client.getClient()).getReceipt(
             SDKClient.client.getClient())
-        return JSONObject.dictionary([
-            "status": JSONObject.string(txReceipt.status.description)
-        ])
+        return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
     }
 
     internal func updateAccount(_ params: UpdateAccountParams) async throws -> JSONObject {
         var accountUpdateTransaction = AccountUpdateTransaction()
 
-        if let accountId = params.accountId {
-            accountUpdateTransaction.accountId = try AccountId.fromString(accountId)
+        accountUpdateTransaction.accountId = try params.accountId.flatMap { try AccountId.fromString($0) }
+        accountUpdateTransaction.key = try params.key.flatMap { try KeyService.service.getHederaKey($0) }
+        accountUpdateTransaction.autoRenewPeriod = try params.autoRenewPeriod.flatMap {
+            Duration(seconds: toUint64(try toInt($0, "autoRenewPeriod", JSONRPCMethod.UPDATE_ACCOUNT)))
         }
-
-        if let key = params.key {
-            accountUpdateTransaction.key = try KeyService.service.getHederaKey(key)
+        accountUpdateTransaction.expirationTime = try params.expirationTime.flatMap {
+            Timestamp(
+                seconds: toUint64(try toInt($0, "expirationTime", JSONRPCMethod.UPDATE_ACCOUNT)), subSecondNanos: 0)
         }
-
-        if let autoRenewPeriod = params.autoRenewPeriod {
-            accountUpdateTransaction.autoRenewPeriod = Duration(
-                seconds: toUint64(try toInt(autoRenewPeriod, "autoRenewPeriod", JSONRPCMethod.UPDATE_ACCOUNT)))
+        accountUpdateTransaction.receiverSignatureRequired = params.receiverSignatureRequired
+        accountUpdateTransaction.accountMemo = params.memo
+        accountUpdateTransaction.maxAutomaticTokenAssociations = params.maxAutoTokenAssociations
+        accountUpdateTransaction.stakedAccountId = try params.stakedAccountId.flatMap { try AccountId.fromString($0) }
+        accountUpdateTransaction.stakedNodeId = try params.stakedNodeId.flatMap {
+            toUint64(try toInt($0, "stakedNodeId", JSONRPCMethod.UPDATE_ACCOUNT))
         }
+        accountUpdateTransaction.declineStakingReward = params.declineStakingReward
 
-        if let expirationTime = params.expirationTime {
-            accountUpdateTransaction.expirationTime = Timestamp(
-                seconds: toUint64(try toInt(expirationTime, "expirationTime", JSONRPCMethod.UPDATE_ACCOUNT)),
-                subSecondNanos: 0)
-        }
-
-        if let receiverSignatureRequired = params.receiverSignatureRequired {
-            accountUpdateTransaction.receiverSignatureRequired = receiverSignatureRequired
-        }
-
-        if let memo = params.memo {
-            accountUpdateTransaction.accountMemo = memo
-        }
-
-        if let maxAutoTokenAssociations = params.maxAutoTokenAssociations {
-            accountUpdateTransaction.maxAutomaticTokenAssociations = maxAutoTokenAssociations
-        }
-
-        if let stakedAccountId = params.stakedAccountId {
-            accountUpdateTransaction.stakedAccountId = try AccountId.fromString(stakedAccountId)
-        }
-
-        if let stakedNodeId = params.stakedNodeId {
-            accountUpdateTransaction.stakedNodeId = toUint64(
-                try toInt(stakedNodeId, "stakedNodeId", JSONRPCMethod.UPDATE_ACCOUNT))
-        }
-
-        if let declineStakingReward = params.declineStakingReward {
-            accountUpdateTransaction.declineStakingReward = declineStakingReward
-        }
-
-        if let commonTransactionParams = params.commonTransactionParams {
+        try params.commonTransactionParams.map {
             try fillOutCommonTransactionParameters(
-                transaction: &accountUpdateTransaction,
-                params: commonTransactionParams,
-                client: SDKClient.client.getClient()
-            )
+                transaction: &accountUpdateTransaction, params: $0, client: SDKClient.client.getClient())
         }
 
         let txReceipt = try await accountUpdateTransaction.execute(SDKClient.client.getClient()).getReceipt(
             SDKClient.client.getClient())
-        return JSONObject.dictionary([
-            "status": JSONObject.string(txReceipt.status.description)
-        ])
+        return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
     }
 }

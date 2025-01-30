@@ -285,7 +285,7 @@ extension AccountCreateTransaction: ToProtobuf {
             key?.toProtobufInto(&proto.key)
             proto.initialBalance = UInt64(truncatingIfNeeded: initialBalance.toTinybars())
             proto.receiverSigRequired = receiverSignatureRequired
-            autoRenewPeriod?.toProtobufInto(&proto.autoRenewPeriod)
+            (autoRenewPeriod ?? .days(90)).toProtobufInto(&proto.autoRenewPeriod)
             // autoRenewAccountId?.toProtobufInto(&proto.autoRenewAccount)
             proto.memo = accountMemo
             proto.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
