@@ -94,6 +94,8 @@ internal class TCKServer {
                 jsonRpcResponse = try await TokenService.service.createToken(CreateTokenParams(request))
             case JSONRPCMethod.DELETE_TOKEN:
                 jsonRpcResponse = try await TokenService.service.deleteToken(DeleteTokenParams(request))
+            case JSONRPCMethod.UPDATE_TOKEN:
+                jsonRpcResponse = try await TokenService.service.updateToken(UpdateTokenParams(request))
             ///
             /// Undefined method or method not provided.
             ///
@@ -112,8 +114,8 @@ internal class TCKServer {
                 .receiptStatus(let status, _):
                 return JSONResponse(
                     id: request.id,
-                    error: JSONError.hederaError(
-                        "Hedera error",
+                    error: JSONError.hieroError(
+                        "Hiero error",
                         JSONObject.dictionary([
                             "status": JSONObject.string(Status.nameMap[status.rawValue]!),
                             "message": JSONObject.string(error.description),

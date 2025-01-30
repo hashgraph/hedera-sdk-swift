@@ -417,7 +417,6 @@ extension TokenUpdateTransaction: ToProtobuf {
             if let metadata = metadata {
                 proto.metadata = Google_Protobuf_BytesValue(metadata)
             }
-
         }
     }
 }

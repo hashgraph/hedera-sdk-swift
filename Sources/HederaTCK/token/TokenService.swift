@@ -174,4 +174,45 @@ internal class TokenService {
             "status": JSONObject.string(txReceipt.status.description)
         ])
     }
+
+    internal func updateToken(_ params: UpdateTokenParams) async throws -> JSONObject {
+        var tokenUpdateTransaction = try TokenUpdateTransaction(
+            tokenId: params.tokenId.flatMap { try TokenId.fromString($0) },
+            tokenName: params.name ?? "",
+            tokenSymbol: params.symbol ?? "",
+            treasuryAccountId: params.treasuryAccountId.flatMap { try AccountId.fromString($0) },
+            adminKey: params.adminKey.flatMap { try KeyService.service.getHederaKey($0) },
+            kycKey: params.kycKey.flatMap { try KeyService.service.getHederaKey($0) },
+            freezeKey: params.freezeKey.flatMap { try KeyService.service.getHederaKey($0) },
+            wipeKey: params.wipeKey.flatMap { try KeyService.service.getHederaKey($0) },
+            supplyKey: params.supplyKey.flatMap { try KeyService.service.getHederaKey($0) },
+            autoRenewAccountId: params.autoRenewAccountId.flatMap { try AccountId.fromString($0) },
+            autoRenewPeriod: params.autoRenewPeriod.flatMap {
+                Duration(seconds: toUint64(try toInt($0, "autoRenewPeriod", JSONRPCMethod.UPDATE_TOKEN)))
+            },
+            expirationTime: params.expirationTime.flatMap {
+                Timestamp(
+                    seconds: toUint64(try toInt($0, "expirationTime", JSONRPCMethod.UPDATE_TOKEN)), subSecondNanos: 0)
+            },
+            tokenMemo: params.memo,
+            feeScheduleKey: params.feeScheduleKey.flatMap { try KeyService.service.getHederaKey($0) },
+            pauseKey: params.pauseKey.flatMap { try KeyService.service.getHederaKey($0) },
+            metadata: try params.metadata.flatMap {
+                try $0.data(using: .utf8)
+                    ?? { throw JSONError.invalidParams("\(#function): metadata MUST be a UTF-8 string.") }()
+            },
+            metadataKey: params.metadataKey.flatMap { try KeyService.service.getHederaKey($0) }
+        )
+
+        try params.commonTransactionParams.map {
+            try fillOutCommonTransactionParameters(
+                transaction: &tokenUpdateTransaction, params: $0, client: SDKClient.client.getClient())
+        }
+
+        let txReceipt = try await tokenUpdateTransaction.execute(SDKClient.client.getClient()).getReceipt(
+            SDKClient.client.getClient())
+        return JSONObject.dictionary([
+            "status": JSONObject.string(txReceipt.status.description)
+        ])
+    }
 }
