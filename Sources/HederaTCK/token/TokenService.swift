@@ -145,6 +145,21 @@ internal class TokenService {
         return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
     }
 
+    internal func unpauseToken(_ params: UnpauseTokenParams) async throws -> JSONObject {
+        var tokenUnpauseTransaction = TokenUnpauseTransaction()
+
+        tokenUnpauseTransaction.tokenId = try params.tokenId.flatMap { try TokenId.fromString($0) }
+
+        try params.commonTransactionParams.map {
+            try fillOutCommonTransactionParameters(
+                transaction: &tokenUnpauseTransaction, params: $0, client: SDKClient.client.getClient())
+        }
+
+        let txReceipt = try await tokenUnpauseTransaction.execute(SDKClient.client.getClient()).getReceipt(
+            SDKClient.client.getClient())
+        return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
+    }
+
     internal func updateTokenFeeSchedule(_ params: UpdateTokenFeeScheduleParams) async throws -> JSONObject {
         var tokenFeeScheduleUpdateTransaction = TokenFeeScheduleUpdateTransaction()
 
