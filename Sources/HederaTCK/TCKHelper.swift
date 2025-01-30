@@ -21,6 +21,7 @@ import Hedera
 
 /// Enumeration of currently-implemented JSON-RPC endpoints.
 internal enum JSONRPCMethod: String {
+    case ASSOCIATE_TOKEN = "associateToken"
     case CREATE_ACCOUNT = "createAccount"
     case CREATE_TOKEN = "createToken"
     case DELETE_ACCOUNT = "deleteAccount"

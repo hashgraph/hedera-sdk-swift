@@ -35,10 +35,9 @@ internal struct CommonTransactionParams {
             self.validTransactionDuration = try getOptionalJsonParameter("validTransactionDuration", params, funcName)
             self.memo = try getOptionalJsonParameter("memo", params, funcName)
             self.regenerateTransactionId = try getOptionalJsonParameter("regenerateTransactionId", params, funcName)
-            self.signers =
-                try (getOptionalJsonParameter("signers", params, funcName) as [JSONObject]?)?.map {
-                    try getJson($0, "signer in signers list", funcName) as String
-                } ?? []
+            self.signers = try (getOptionalJsonParameter("signers", params, funcName) as [JSONObject]?)?.map {
+                try getJson($0, "signer in signers list", funcName) as String
+            }
         }
     }
 }

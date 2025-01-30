@@ -30,6 +30,22 @@ internal class TokenService {
     /// INTERNAL ///
     ///////////////
 
+    internal func associateToken(_ params: AssociateTokenParams) async throws -> JSONObject {
+        var tokenAssociateTransaction = TokenAssociateTransaction()
+
+        tokenAssociateTransaction.accountId = try params.accountId.flatMap { try AccountId.fromString($0) }
+        tokenAssociateTransaction.tokenIds = try params.tokenIds?.map { try TokenId.fromString($0) } ?? []
+
+        try params.commonTransactionParams.map {
+            try fillOutCommonTransactionParameters(
+                transaction: &tokenAssociateTransaction, params: $0, client: SDKClient.client.getClient())
+        }
+
+        let txReceipt = try await tokenAssociateTransaction.execute(SDKClient.client.getClient()).getReceipt(
+            SDKClient.client.getClient())
+        return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
+    }
+
     internal func createToken(_ params: CreateTokenParams) async throws -> JSONObject {
         var tokenCreateTransaction = TokenCreateTransaction()
 
