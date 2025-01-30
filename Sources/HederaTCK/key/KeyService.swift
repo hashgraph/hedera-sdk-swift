@@ -31,9 +31,9 @@ internal class KeyService {
     ////////////////
 
     /// Generate a key. Can be called via JSON-RPC.
-    internal func generateKey(_ parameters: [String: JSONObject]) throws -> JSONObject {
+    internal func generateKey(_ params: GenerateKeyParams) throws -> JSONObject {
         var privateKeys = [JSONObject]()
-        let key = try generateKeyHelper(parameters: parameters, privateKeys: &privateKeys)
+        let key = try generateKeyHelper(params, &privateKeys)
 
         if !privateKeys.isEmpty {
             return JSONObject.dictionary(["key": JSONObject.string(key), "privateKeys": JSONObject.list(privateKeys)])
@@ -72,46 +72,41 @@ internal class KeyService {
 
     /// Helper function used to generate keys that can be called recursively (useful when generating a KeyList, for example).
     private func generateKeyHelper(
-        parameters: [String: JSONObject], privateKeys: inout [JSONObject], isList: Bool = false
+        _ params: GenerateKeyParams, _ privateKeys: inout [JSONObject], _ isList: Bool = false
     ) throws -> String {
-        guard
-            let type = KeyType(
-                rawValue: try getRequiredJsonParameter("type", parameters, "generateKey"))
-        else {
-            throw JSONError.invalidParams(
-                "generateKey: type is NOT a valid value.")
+        guard let type = KeyType(rawValue: params.type) else {
+            throw JSONError.invalidParams("\(JSONRPCMethod.GENERATE_KEY): type is NOT a valid value.")
         }
 
-        let fromKey: String? = try getOptionalJsonParameter("fromKey", parameters, "generateKey")
-        if fromKey != nil, type != .ed25519PublicKeyType, type != .ecdsaSecp256k1PublicKeyType,
+        if params.fromKey != nil, type != .ed25519PublicKeyType, type != .ecdsaSecp256k1PublicKeyType,
             type != .evmAddressKeyType
         {
             throw JSONError.invalidParams(
-                "generateKey: fromKey MUST NOT be provided for types other than ed25519PublicKey, ecdsaSecp256k1PublicKey, or evmAddress."
+                "\(JSONRPCMethod.GENERATE_KEY): fromKey MUST NOT be provided for types other than ed25519PublicKey, ecdsaSecp256k1PublicKey, or evmAddress."
             )
         }
 
-        let threshold: Int64? = try getOptionalJsonParameter("threshold", parameters, "generateKey")
-        if threshold != nil, type != .thresholdKeyType {
+        if params.threshold != nil, type != .thresholdKeyType {
             throw JSONError.invalidParams(
-                "generateKey: threshold MUST NOT be provided for types other than thresholdKey.")
-        } else if threshold == nil, type == .thresholdKeyType {
-            throw JSONError.invalidParams("generateKey: threshold MUST be provided for thresholdKey types.")
+                "\(JSONRPCMethod.GENERATE_KEY): threshold MUST NOT be provided for types other than thresholdKey.")
+        } else if params.threshold == nil, type == .thresholdKeyType {
+            throw JSONError.invalidParams(
+                "\(JSONRPCMethod.GENERATE_KEY): threshold MUST be provided for thresholdKey types.")
         }
 
-        let keys: [JSONObject]? = try getOptionalJsonParameter("keys", parameters, "generateKey")
-        if keys != nil, type != .listKeyType, type != .thresholdKeyType {
+        if params.keys != nil, type != .listKeyType, type != .thresholdKeyType {
             throw JSONError.invalidParams(
-                "generateKey: keys MUST NOT be provided for types other than keyList or thresholdKey.")
-        } else if keys == nil, type == .listKeyType || type == .thresholdKeyType {
-            throw JSONError.invalidParams("generateKey: keys MUST be provided for keyList and thresholdKey types.")
+                "\(JSONRPCMethod.GENERATE_KEY): keys MUST NOT be provided for types other than keyList or thresholdKey."
+            )
+        } else if params.keys == nil, type == .listKeyType || type == .thresholdKeyType {
+            throw JSONError.invalidParams(
+                "\(JSONRPCMethod.GENERATE_KEY): keys MUST be provided for keyList and thresholdKey types.")
         }
 
         switch type {
         case .ed25519PrivateKeyType, .ecdsaSecp256k1PrivateKeyType:
-            let key =
-                ((type == .ed25519PrivateKeyType)
-                ? PrivateKey.generateEd25519() : PrivateKey.generateEcdsa()).toStringDer()
+            let key = ((type == .ed25519PrivateKeyType) ? PrivateKey.generateEd25519() : PrivateKey.generateEcdsa())
+                .toStringDer()
 
             if isList {
                 privateKeys.append(JSONObject.string(key))
@@ -120,7 +115,7 @@ internal class KeyService {
             return key
 
         case .ed25519PublicKeyType, .ecdsaSecp256k1PublicKeyType:
-            if let fromKey = fromKey {
+            if let fromKey = params.fromKey {
                 return try PrivateKey.fromStringDer(fromKey).publicKey.toStringDer()
             }
 
@@ -133,27 +128,19 @@ internal class KeyService {
             return key.publicKey.toStringDer()
 
         case .listKeyType, .thresholdKeyType:
-            var keyList: KeyList = []
-
-            /// It's guaranteed at this point that keys is provided, so the unwrap can be safely forced.
-            for keyJson in keys! {
-                keyList.keys.append(
-                    try getHederaKey(
-                        generateKeyHelper(
-                            parameters: getJson(keyJson, "keys list key", "generateKey"),
-                            privateKeys: &privateKeys, isList: true)))
-            }
+            /// It's guaranteed at this point that a list of keys is provided, so the unwrap can be safely forced.
+            var keyList = KeyList(
+                keys: try params.keys!.map { try getHederaKey(generateKeyHelper($0, &privateKeys, true)) })
 
             if type == KeyType.thresholdKeyType {
-                /// It's guaranteed at this point that threshold is provided, so the unwrap can be safely forced.
-                keyList.threshold = Int(threshold!)
+                /// It's guaranteed at this point that a threshold is provided, so the unwrap can be safely forced.
+                keyList.threshold = Int(params.threshold!)
             }
 
-            let keylist = Key.keyList(keyList).toProtobufBytes().hexStringEncoded()
-            return keylist
+            return Key.keyList(keyList).toProtobufBytes().hexStringEncoded()
 
         case .evmAddressKeyType:
-            guard let fromKey = fromKey else {
+            guard let fromKey = params.fromKey else {
                 return PrivateKey.generateEcdsa().publicKey.toEvmAddress()!.toString()
             }
 
@@ -164,7 +151,8 @@ internal class KeyService {
                     return try PublicKey.fromStringEcdsa(fromKey).toEvmAddress()!.toString()
                 } catch {
                     throw JSONError.invalidParams(
-                        "generateKey: fromKey for evmAddress MUST be an ECDSAsecp256k1 private or public key.")
+                        "\(JSONRPCMethod.GENERATE_KEY): fromKey for evmAddress MUST be an ECDSAsecp256k1 private or public key."
+                    )
                 }
             }
         }

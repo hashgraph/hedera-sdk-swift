@@ -45,7 +45,9 @@ internal class TCKServer {
                 return try encodeJsonRpcResponseToHttpResponse(jsonResponse: JSONResponse(id: nil, error: error))
             }
 
+            print(jsonRpcRequest)
             let response = await server.processRequest(request: jsonRpcRequest)
+            print(response)
             return try encodeJsonRpcResponseToHttpResponse(
                 jsonResponse: response)
         }
@@ -56,18 +58,6 @@ internal class TCKServer {
     ///////////////
     /// PRIVATE ///
     ///////////////
-
-    /// Enumeration of currently-implemented JSON-RPC endpoints.
-    private enum JSONRPCMethod: String {
-        case CREATE_ACCOUNT = "createAccount"
-        case CREATE_TOKEN = "createToken"
-        case DELETE_ACCOUNT = "deleteAccount"
-        case GENERATE_KEY = "generateKey"
-        case RESET = "reset"
-        case SETUP = "setup"
-        case UPDATE_ACCOUNT = "updateAccount"
-        case UNDEFINED_METHOD
-    }
 
     /// Fully process a JSON-RPC request and generate a response.
     private func processRequest(request: JSONRequest) async -> JSONResponse {
@@ -80,28 +70,28 @@ internal class TCKServer {
             /// AccountService JSON-RPC methods.
             ///
             case JSONRPCMethod.CREATE_ACCOUNT:
-                jsonRpcResponse = try await AccountService.service.createAccount(getOptionalParams(request))
+                jsonRpcResponse = try await AccountService.service.createAccount(CreateAccountParams(request))
             case JSONRPCMethod.DELETE_ACCOUNT:
-                jsonRpcResponse = try await AccountService.service.deleteAccount(getOptionalParams(request))
+                jsonRpcResponse = try await AccountService.service.deleteAccount(DeleteAccountParams(request))
             case JSONRPCMethod.UPDATE_ACCOUNT:
-                jsonRpcResponse = try await AccountService.service.updateAccount(getOptionalParams(request))
+                jsonRpcResponse = try await AccountService.service.updateAccount(UpdateAccountParams(request))
             ///
             /// KeyService JSON-RPC methods.
             ///
             case JSONRPCMethod.GENERATE_KEY:
-                jsonRpcResponse = try KeyService.service.generateKey(getRequiredParams(request))
+                jsonRpcResponse = try KeyService.service.generateKey(GenerateKeyParams(request))
             ///
             /// SdkClient JSON-RPC methods.
             ///
             case JSONRPCMethod.RESET:
-                jsonRpcResponse = try SDKClient.client.reset()
+                jsonRpcResponse = try SDKClient.client.reset(ResetParams(request))
             case JSONRPCMethod.SETUP:
-                jsonRpcResponse = try SDKClient.client.setup(getRequiredParams(request))
+                jsonRpcResponse = try SDKClient.client.setup(SetupParams(request))
             ///
             /// TokenService JSON-RPC methods.
             ///
             case JSONRPCMethod.CREATE_TOKEN:
-                jsonRpcResponse = try await TokenService.service.createToken(getOptionalParams(request))
+                jsonRpcResponse = try await TokenService.service.createToken(CreateTokenParams(request))
             ///
             /// Undefined method or method not provided.
             ///
@@ -127,23 +117,11 @@ internal class TCKServer {
                             "message": JSONObject.string(error.description),
                         ])))
             default:
-                print(error)
                 return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))
             }
         } catch let error {
-            print(error)
             return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))
         }
-    }
-
-    /// Get the JSON-RPC request parameters that are required.
-    private func getRequiredParams(_ request: JSONRequest) throws -> [String: JSONObject] {
-        return try getRequiredJsonParameter("params", request.toDict(), request.method)
-    }
-
-    /// Get the JSON-RPC request parameters that are optional.
-    private func getOptionalParams(_ request: JSONRequest) throws -> [String: JSONObject]? {
-        return try getOptionalJsonParameter("params", request.toDict(), request.method)
     }
 
     /// Fills an HTTP response with a JSON-RPC response.

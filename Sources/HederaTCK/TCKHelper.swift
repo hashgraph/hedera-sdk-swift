@@ -19,49 +19,55 @@
  */
 import Hedera
 
+/// Enumeration of currently-implemented JSON-RPC endpoints.
+internal enum JSONRPCMethod: String {
+    case CREATE_ACCOUNT = "createAccount"
+    case CREATE_TOKEN = "createToken"
+    case DELETE_ACCOUNT = "deleteAccount"
+    case GENERATE_KEY = "generateKey"
+    case RESET = "reset"
+    case SETUP = "setup"
+    case UPDATE_ACCOUNT = "updateAccount"
+    case UNDEFINED_METHOD
+}
+
 /// Fill in a Transaction's commpon parameters based on JSON input.
 internal func fillOutCommonTransactionParameters<T: Transaction>(
-    _ transaction: inout T, params: [String: JSONObject], client: Client, function: String
+    transaction: inout T, params: CommonTransactionParams, client: Client
 )
     throws
 {
-    if let transactionId: String = try getOptionalJsonParameter("transactionId", params, function) {
+    if let transactionId = params.transactionId {
         transaction.transactionId = try TransactionId.fromString(transactionId)
     }
 
-    if let maxTransactionFee: Int64 = try getOptionalJsonParameter("maxTransactionFee", params, function) {
+    if let maxTransactionFee = params.maxTransactionFee {
         transaction.maxTransactionFee = Hbar.fromTinybars(maxTransactionFee)
     }
 
-    if let validTransactionDuration: UInt64 = try getOptionalJsonParameter(
-        "validTransactionDuration", params, function)
-    {
-        transaction.transactionValidDuration = Duration(seconds: validTransactionDuration)
+    if let validTransactionDuration = params.validTransactionDuration {
+        transaction.transactionValidDuration = Duration(seconds: toUint64(validTransactionDuration))
     }
 
-    if let memo: String = try getOptionalJsonParameter("memo", params, function) {
+    if let memo = params.memo {
         transaction.transactionMemo = memo
     }
 
-    if let regenerateTransactionId: Bool = try getOptionalJsonParameter("regenerateTransactionId", params, function) {
+    if let regenerateTransactionId = params.regenerateTransactionId {
         transaction.regenerateTransactionId = regenerateTransactionId
     }
 
-    if let signers: [JSONObject] = try getOptionalJsonParameter("signers", params, function) {
+    if let signers = params.signers {
         try transaction.freezeWith(client)
-        for signer in signers {
-            transaction.sign(
-                try PrivateKey.fromStringDer(getJson(signer, "signers list element", "generateKey") as String))
-        }
+        try signers.forEach { transaction.sign(try PrivateKey.fromStringDer($0)) }
     }
 }
 
 /// Convert a String to an integer type.
-internal func toInt<T: FixedWidthInteger>(_ str: String, _ parameterName: String, _ functionName: String) throws -> T {
-    guard let int = T(str) else {
-        throw JSONError.invalidParams("\(functionName): \(parameterName) isn't a valid \(T.self).")
-    }
-    return int
+internal func toInt<T: FixedWidthInteger>(_ str: String, _ parameterName: String, _ funcName: JSONRPCMethod) throws -> T
+{
+    return try T(str)
+        ?? { throw JSONError.invalidParams("\(funcName.rawValue): \(parameterName) isn't a valid \(T.self).") }()
 }
 
 /// Convert an Int64 to a UInt64. Useful if the TCK test specification defines an Int64, but the associated SDK value is a UInt64.

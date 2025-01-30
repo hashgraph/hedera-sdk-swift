@@ -38,27 +38,23 @@ internal class SDKClient {
     }
 
     /// Reset the client network. Can be called via JSON-RPC.
-    internal func reset() throws -> JSONObject {
+    internal func reset(_ params: ResetParams) throws -> JSONObject {
         self.client = try Client.forNetwork([String: AccountId]())
         return JSONObject.dictionary(["status": JSONObject.string("SUCCESS")])
     }
 
     /// Setup the client network. Can be called via JSON-RPC.
-    internal func setup(_ parameters: [String: JSONObject]) throws -> JSONObject {
-        let operatorAccountId = try AccountId.fromString(
-            getRequiredJsonParameter("operatorAccountId", parameters, #function) as String)
-        let operatorPrivateKey = try PrivateKey.fromStringDer(
-            getRequiredJsonParameter("operatorPrivateKey", parameters, #function) as String)
+    internal func setup(_ params: SetupParams) throws -> JSONObject {
+        let operatorAccountId = try AccountId.fromString(params.operatorAccountId)
+        let operatorPrivateKey = try PrivateKey.fromStringDer(params.operatorPrivateKey)
 
-        var clientType: String
-        let nodeIp: String? = try getOptionalJsonParameter("nodeIp", parameters, #function)
-        let nodeAccountId: String? = try getOptionalJsonParameter("nodeAccountId", parameters, #function)
-        let mirrorNetworkIp: String? = try getOptionalJsonParameter("mirrorNetworkIp", parameters, #function)
-
-        if nodeIp == nil, nodeAccountId == nil, mirrorNetworkIp == nil {
+        let clientType: String
+        if params.nodeIp == nil, params.nodeAccountId == nil, params.mirrorNetworkIp == nil {
             self.client = Client.forTestnet()
             clientType = "testnet"
-        } else if let nodeIp = nodeIp, let nodeAccountId = nodeAccountId, let mirrorNetworkIp = mirrorNetworkIp {
+        } else if let nodeIp = params.nodeIp, let nodeAccountId = params.nodeAccountId,
+            let mirrorNetworkIp = params.mirrorNetworkIp
+        {
             self.client = try Client.forNetwork([nodeIp: AccountId.fromString(nodeAccountId)])
             self.client.setMirrorNetwork([mirrorNetworkIp])
             clientType = "custom"
