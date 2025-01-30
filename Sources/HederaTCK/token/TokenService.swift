@@ -177,6 +177,22 @@ internal class TokenService {
         return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
     }
 
+    internal func unfreezeToken(_ params: UnfreezeTokenParams) async throws -> JSONObject {
+        var tokenUnfreezeTransaction = TokenUnfreezeTransaction()
+
+        tokenUnfreezeTransaction.accountId = try params.accountId.flatMap { try AccountId.fromString($0) }
+        tokenUnfreezeTransaction.tokenId = try params.tokenId.flatMap { try TokenId.fromString($0) }
+
+        try params.commonTransactionParams.map {
+            try fillOutCommonTransactionParameters(
+                transaction: &tokenUnfreezeTransaction, params: $0, client: SDKClient.client.getClient())
+        }
+
+        let txReceipt = try await tokenUnfreezeTransaction.execute(SDKClient.client.getClient()).getReceipt(
+            SDKClient.client.getClient())
+        return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
+    }
+
     internal func unpauseToken(_ params: UnpauseTokenParams) async throws -> JSONObject {
         var tokenUnpauseTransaction = TokenUnpauseTransaction()
 

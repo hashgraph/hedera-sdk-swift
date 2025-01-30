@@ -32,6 +32,7 @@ internal enum JSONRPCMethod: String {
     case PAUSE_TOKEN = "pauseToken"
     case RESET = "reset"
     case SETUP = "setup"
+    case UNFREEZE_TOKEN = "unfreezeToken"
     case UNPAUSE_TOKEN = "unpauseToken"
     case UPDATE_ACCOUNT = "updateAccount"
     case UPDATE_TOKEN_FEE_SCHEDULE = "updateTokenFeeSchedule"
