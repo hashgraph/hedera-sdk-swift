@@ -193,6 +193,22 @@ internal class TokenService {
         return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
     }
 
+    internal func revokeTokenKyc(_ params: RevokeTokenKycParams) async throws -> JSONObject {
+        var tokenRevokeKycTransaction = TokenRevokeKycTransaction()
+
+        tokenRevokeKycTransaction.accountId = try params.accountId.flatMap { try AccountId.fromString($0) }
+        tokenRevokeKycTransaction.tokenId = try params.tokenId.flatMap { try TokenId.fromString($0) }
+
+        try params.commonTransactionParams.map {
+            try fillOutCommonTransactionParameters(
+                transaction: &tokenRevokeKycTransaction, params: $0, client: SDKClient.client.getClient())
+        }
+
+        let txReceipt = try await tokenRevokeKycTransaction.execute(SDKClient.client.getClient()).getReceipt(
+            SDKClient.client.getClient())
+        return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
+    }
+
     internal func unfreezeToken(_ params: UnfreezeTokenParams) async throws -> JSONObject {
         var tokenUnfreezeTransaction = TokenUnfreezeTransaction()
 

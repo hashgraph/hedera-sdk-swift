@@ -32,6 +32,7 @@ internal enum JSONRPCMethod: String {
     case GRANT_TOKEN_KYC = "grantTokenKyc"
     case PAUSE_TOKEN = "pauseToken"
     case RESET = "reset"
+    case REVOKE_TOKEN_KYC = "revokeTokenKyc"
     case SETUP = "setup"
     case UNFREEZE_TOKEN = "unfreezeToken"
     case UNPAUSE_TOKEN = "unpauseToken"
