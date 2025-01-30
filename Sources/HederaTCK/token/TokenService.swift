@@ -153,4 +153,25 @@ internal class TokenService {
             "status": JSONObject.string(txReceipt.status.description),
         ])
     }
+
+    internal func deleteToken(_ params: DeleteTokenParams) async throws -> JSONObject {
+        var tokenDeleteTransaction = TokenDeleteTransaction()
+
+        if let tokenId = params.tokenId {
+            tokenDeleteTransaction.tokenId = try TokenId.fromString(tokenId)
+        }
+
+        if let commonTransactionParams = params.commonTransactionParams {
+            try fillOutCommonTransactionParameters(
+                transaction: &tokenDeleteTransaction,
+                params: commonTransactionParams,
+                client: SDKClient.client.getClient())
+        }
+
+        let txReceipt = try await tokenDeleteTransaction.execute(SDKClient.client.getClient()).getReceipt(
+            SDKClient.client.getClient())
+        return JSONObject.dictionary([
+            "status": JSONObject.string(txReceipt.status.description)
+        ])
+    }
 }

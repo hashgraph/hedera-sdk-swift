@@ -92,6 +92,8 @@ internal class TCKServer {
             ///
             case JSONRPCMethod.CREATE_TOKEN:
                 jsonRpcResponse = try await TokenService.service.createToken(CreateTokenParams(request))
+            case JSONRPCMethod.DELETE_TOKEN:
+                jsonRpcResponse = try await TokenService.service.deleteToken(DeleteTokenParams(request))
             ///
             /// Undefined method or method not provided.
             ///
@@ -115,12 +117,28 @@ internal class TCKServer {
                         JSONObject.dictionary([
                             "status": JSONObject.string(Status.nameMap[status.rawValue]!),
                             "message": JSONObject.string(error.description),
-                        ])))
+                        ])
+                    )
+                )
             default:
-                return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))
+                return JSONResponse(
+                    id: request.id,
+                    error: JSONError.internalError(
+                        "Internal error",
+                        JSONObject.dictionary([
+                            "data": JSONObject.dictionary(["message": JSONObject.string("\(error)")])
+                        ])
+                    )
+                )
             }
         } catch let error {
-            return JSONResponse(id: request.id, error: JSONError.internalError("\(error)"))
+            return JSONResponse(
+                id: request.id,
+                error: JSONError.internalError(
+                    "Internal error",
+                    JSONObject.dictionary(["data": JSONObject.dictionary(["message": JSONObject.string("\(error)")])])
+                )
+            )
         }
     }
 
