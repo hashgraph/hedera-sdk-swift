@@ -165,7 +165,8 @@ internal class TokenService {
             try fillOutCommonTransactionParameters(
                 transaction: &tokenDeleteTransaction,
                 params: commonTransactionParams,
-                client: SDKClient.client.getClient())
+                client: SDKClient.client.getClient()
+            )
         }
 
         let txReceipt = try await tokenDeleteTransaction.execute(SDKClient.client.getClient()).getReceipt(
@@ -173,6 +174,28 @@ internal class TokenService {
         return JSONObject.dictionary([
             "status": JSONObject.string(txReceipt.status.description)
         ])
+    }
+
+    internal func updateTokenFeeSchedule(_ params: UpdateTokenFeeScheduleParams) async throws -> JSONObject {
+        var tokenFeeScheduleUpdateTransaction = try TokenFeeScheduleUpdateTransaction(
+            tokenId: params.tokenId.flatMap { try TokenId.fromString($0) },
+            customFees: try params.customFees?.map { try $0.toHederaCustomFee(JSONRPCMethod.UPDATE_TOKEN_FEE_SCHEDULE) }
+                ?? []
+        )
+
+        if let commonTransactionParams = params.commonTransactionParams {
+            try fillOutCommonTransactionParameters(
+                transaction: &tokenFeeScheduleUpdateTransaction,
+                params: commonTransactionParams,
+                client: SDKClient.client.getClient()
+            )
+        }
+
+        let txReceipt =
+            try await tokenFeeScheduleUpdateTransaction
+            .execute(SDKClient.client.getClient())
+            .getReceipt(SDKClient.client.getClient())
+        return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
     }
 
     internal func updateToken(_ params: UpdateTokenParams) async throws -> JSONObject {
