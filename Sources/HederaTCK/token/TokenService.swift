@@ -178,6 +178,37 @@ internal class TokenService {
         return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
     }
 
+    internal func mintToken(_ params: MintTokenParams) async throws -> JSONObject {
+        var tokenMintTransaction = TokenMintTransaction()
+
+        tokenMintTransaction.tokenId = try params.tokenId.flatMap { try TokenId.fromString($0) }
+        tokenMintTransaction.amount =
+            try params.amount.flatMap { try toInt($0, "initialSupply", JSONRPCMethod.MINT_TOKEN) }
+            ?? tokenMintTransaction.amount
+        tokenMintTransaction.metadata =
+            try params.metadata?.map {
+                try Data(hexEncoded: $0)
+                    ?? { throw JSONError.invalidParams("\(#function): metadata MUST be a hex-encoded string.") }()
+            } ?? tokenMintTransaction.metadata
+
+        try params.commonTransactionParams.map {
+            try fillOutCommonTransactionParameters(
+                transaction: &tokenMintTransaction, params: $0, client: SDKClient.client.getClient())
+        }
+
+        let txReceipt = try await tokenMintTransaction.execute(SDKClient.client.getClient()).getReceipt(
+            SDKClient.client.getClient())
+        return JSONObject.dictionary(
+            [
+                "status": JSONObject.string(txReceipt.status.description),
+                "newTotalSupply": JSONObject.string(String(txReceipt.totalSupply)),
+            ].merging(
+                txReceipt.serials.map { ["serialNumbers": JSONObject.list($0.map { JSONObject.string(String($0)) })] }
+                    ?? [:]
+            ) { _, new in new })
+
+    }
+
     internal func pauseToken(_ params: PauseTokenParams) async throws -> JSONObject {
         var tokenPauseTransaction = TokenPauseTransaction()
 
