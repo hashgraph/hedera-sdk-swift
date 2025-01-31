@@ -92,6 +92,8 @@ internal class TCKServer {
             ///
             case JSONRPCMethod.ASSOCIATE_TOKEN:
                 jsonRpcResponse = try await TokenService.service.associateToken(AssociateTokenParams(request))
+            case JSONRPCMethod.BURN_TOKEN:
+                jsonRpcResponse = try await TokenService.service.burnToken(BurnTokenParams(request))
             case JSONRPCMethod.CREATE_TOKEN:
                 jsonRpcResponse = try await TokenService.service.createToken(CreateTokenParams(request))
             case JSONRPCMethod.DELETE_TOKEN:

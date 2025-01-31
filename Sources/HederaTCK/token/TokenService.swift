@@ -46,6 +46,32 @@ internal class TokenService {
         return JSONObject.dictionary(["status": JSONObject.string(txReceipt.status.description)])
     }
 
+    internal func burnToken(_ params: BurnTokenParams) async throws -> JSONObject {
+        var tokenBurnTransaction = TokenBurnTransaction()
+
+        tokenBurnTransaction.tokenId = try params.tokenId.flatMap { try TokenId.fromString($0) }
+        tokenBurnTransaction.amount =
+            try params.amount.flatMap { try toInt($0, "amount", JSONRPCMethod.BURN_TOKEN) }
+            ?? tokenBurnTransaction.amount
+        tokenBurnTransaction.serials =
+            try params.serialNumbers?.map {
+                toUint64(try toInt($0, "serial number in serialNumbers list", JSONRPCMethod.BURN_TOKEN))
+            } ?? tokenBurnTransaction.serials
+
+        try params.commonTransactionParams.map {
+            try fillOutCommonTransactionParameters(
+                transaction: &tokenBurnTransaction, params: $0, client: SDKClient.client.getClient())
+        }
+
+        let txReceipt = try await tokenBurnTransaction.execute(SDKClient.client.getClient()).getReceipt(
+            SDKClient.client.getClient())
+        return JSONObject.dictionary([
+            "status": JSONObject.string(txReceipt.status.description),
+            "newTotalSupply": JSONObject.string(String(txReceipt.totalSupply)),
+        ])
+
+    }
+
     internal func createToken(_ params: CreateTokenParams) async throws -> JSONObject {
         var tokenCreateTransaction = TokenCreateTransaction()
 
@@ -183,7 +209,7 @@ internal class TokenService {
 
         tokenMintTransaction.tokenId = try params.tokenId.flatMap { try TokenId.fromString($0) }
         tokenMintTransaction.amount =
-            try params.amount.flatMap { try toInt($0, "initialSupply", JSONRPCMethod.MINT_TOKEN) }
+            try params.amount.flatMap { try toInt($0, "amount", JSONRPCMethod.MINT_TOKEN) }
             ?? tokenMintTransaction.amount
         tokenMintTransaction.metadata =
             try params.metadata?.map {
