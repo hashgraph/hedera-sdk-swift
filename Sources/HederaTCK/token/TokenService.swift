@@ -60,7 +60,6 @@ internal class TokenService {
             "status": JSONObject.string(txReceipt.status.description),
             "newTotalSupply": JSONObject.string(String(txReceipt.totalSupply)),
         ])
-
     }
 
     /// Create a token. Can be called via JSON-RPC.
@@ -257,7 +256,8 @@ internal class TokenService {
 
         tokenFeeScheduleUpdateTransaction.tokenId = try CommonParams.getTokenId(params.tokenId)
         tokenFeeScheduleUpdateTransaction.customFees =
-            try CommonParams.getCustomFees(params.customFees, JSONRPCMethod.UPDATE_TOKEN_FEE_SCHEDULE) ?? []
+            try CommonParams.getCustomFees(params.customFees, JSONRPCMethod.UPDATE_TOKEN_FEE_SCHEDULE)
+            ?? tokenFeeScheduleUpdateTransaction.customFees
         try params.commonTransactionParams?.fillOutTransaction(&tokenFeeScheduleUpdateTransaction)
 
         let txReceipt = try await tokenFeeScheduleUpdateTransaction.execute(SDKClient.client.getClient()).getReceipt(

@@ -74,32 +74,29 @@ internal func getJson<T>(_ json: JSONObject, _ paramName: String, _ funcName: JS
     throw JSONError.invalidParams("\(funcName.rawValue): \(paramName) is NOT a valid type.")
 }
 
-/// Get a typed-value from a JSONObject. If the JSONObject doesn't exist, throw.
-internal func getParam(_ json: JSONObject?, _ paramName: String, _ funcName: JSONRPCMethod) throws -> JSONObject {
-    return try json ?? { throw JSONError.invalidParams("\(funcName): \(paramName) MUST be provided.") }()
-}
-
-/// Get a named typed-value from a parameters dictionary. If the parameter doesn't exist, return nil.
+/// Get a named value from a JSON parameters dictionary. If the parameter doesn't exist, return nil.
 internal func getOptionalJsonParameter<T>(
     _ name: String, _ parameters: [String: JSONObject], _ funcName: JSONRPCMethod
 ) throws -> T? {
     return try parameters[name].flatMap { try getJson($0, name, funcName) as T }
 }
 
-/// Get a named typed-value from a parameters dictionary. If the parameter doesn't exist, throw.
+/// Get a named value from a JSON parameters dictionary. If the parameter doesn't exist, throw.
 internal func getRequiredJsonParameter<T>(
     _ name: String, _ parameters: [String: JSONObject], _ funcName: JSONRPCMethod
 ) throws -> T {
-    return try getJson(getParam(parameters[name], name, funcName), name, funcName)
+    return try getJson(
+        parameters[name] ?? { throw JSONError.invalidParams("\(funcName): \(name) MUST be provided.") }(), name,
+        funcName)
 }
 
-/// Get the parameters of the JSON-RPC request parameters that are required.
+/// Get the parameters of the JSON-RPC request. If the parameters do not exist, throw.
 internal func getRequiredParams(_ request: JSONRequest) throws -> [String: JSONObject] {
     return try getRequiredJsonParameter(
         "params", request.toDict(), JSONRPCMethod(rawValue: request.method) ?? JSONRPCMethod.UNDEFINED_METHOD)
 }
 
-/// Get the parameters of the JSON-RPC request parameters that are optional.
+/// Get the parameters of the JSON-RPC request. If the parameters do not exist, return nil.
 internal func getOptionalParams(_ request: JSONRequest) throws -> [String: JSONObject]? {
     return try getOptionalJsonParameter(
         "params", request.toDict(), JSONRPCMethod(rawValue: request.method) ?? JSONRPCMethod.UNDEFINED_METHOD)

@@ -37,11 +37,10 @@ internal class KeyService {
         var privateKeys = [JSONObject]()
         let key = try generateKeyHelper(params, &privateKeys)
 
-        if !privateKeys.isEmpty {
-            return JSONObject.dictionary(["key": JSONObject.string(key), "privateKeys": JSONObject.list(privateKeys)])
-        }
-
-        return JSONObject.dictionary(["key": JSONObject.string(key)])
+        return JSONObject.dictionary(
+            privateKeys.isEmpty
+                ? ["key": JSONObject.string(key)]
+                : ["key": JSONObject.string(key), "privateKeys": JSONObject.list(privateKeys)])
     }
 
     /// Get a Hiero Key object from a hex-encoded key string.
