@@ -27,11 +27,11 @@ internal struct RevokeTokenKycParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.REVOKE_TOKEN_KYC)
-            self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.REVOKE_TOKEN_KYC)
+            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.revokeTokenKyc)
+            self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.revokeTokenKyc)
             self.commonTransactionParams = try CommonTransactionParams(
-                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.REVOKE_TOKEN_KYC),
-                JSONRPCMethod.REVOKE_TOKEN_KYC)
+                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.revokeTokenKyc),
+                JSONRPCMethod.revokeTokenKyc)
         }
     }
 }

@@ -27,11 +27,11 @@ internal struct UnfreezeTokenParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.UNFREEZE_TOKEN)
-            self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.UNFREEZE_TOKEN)
+            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.unfreezeToken)
+            self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.unfreezeToken)
             self.commonTransactionParams = try CommonTransactionParams(
-                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.UNFREEZE_TOKEN),
-                JSONRPCMethod.UNFREEZE_TOKEN)
+                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.unfreezeToken),
+                JSONRPCMethod.unfreezeToken)
         }
     }
 }

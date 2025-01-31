@@ -93,11 +93,11 @@ internal func getRequiredJsonParameter<T>(
 /// Get the parameters of the JSON-RPC request. If the parameters do not exist, throw.
 internal func getRequiredParams(_ request: JSONRequest) throws -> [String: JSONObject] {
     return try getRequiredJsonParameter(
-        "params", request.toDict(), JSONRPCMethod(rawValue: request.method) ?? JSONRPCMethod.UNDEFINED_METHOD)
+        "params", request.toDict(), JSONRPCMethod(rawValue: request.method) ?? JSONRPCMethod.undefinedMethod)
 }
 
 /// Get the parameters of the JSON-RPC request. If the parameters do not exist, return nil.
 internal func getOptionalParams(_ request: JSONRequest) throws -> [String: JSONObject]? {
     return try getOptionalJsonParameter(
-        "params", request.toDict(), JSONRPCMethod(rawValue: request.method) ?? JSONRPCMethod.UNDEFINED_METHOD)
+        "params", request.toDict(), JSONRPCMethod(rawValue: request.method) ?? JSONRPCMethod.undefinedMethod)
 }

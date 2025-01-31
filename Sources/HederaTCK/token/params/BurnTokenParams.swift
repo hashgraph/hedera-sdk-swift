@@ -28,15 +28,15 @@ internal struct BurnTokenParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.BURN_TOKEN)
-            self.amount = try getOptionalJsonParameter("amount", params, JSONRPCMethod.BURN_TOKEN)
+            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.burnToken)
+            self.amount = try getOptionalJsonParameter("amount", params, JSONRPCMethod.burnToken)
             self.serialNumbers = try
-                (getOptionalJsonParameter("serialNumbers", params, JSONRPCMethod.BURN_TOKEN) as [JSONObject]?)?.map {
-                    try getJson($0, "serial number in serialNumbers list", JSONRPCMethod.BURN_TOKEN)
+                (getOptionalJsonParameter("serialNumbers", params, JSONRPCMethod.burnToken) as [JSONObject]?)?.map {
+                    try getJson($0, "serial number in serialNumbers list", JSONRPCMethod.burnToken)
                 }
             self.commonTransactionParams = try CommonTransactionParams(
-                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.BURN_TOKEN),
-                JSONRPCMethod.BURN_TOKEN)
+                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.burnToken),
+                JSONRPCMethod.burnToken)
         }
     }
 }

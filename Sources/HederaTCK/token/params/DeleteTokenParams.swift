@@ -26,10 +26,10 @@ internal struct DeleteTokenParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.DELETE_TOKEN)
+            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.deleteToken)
             self.commonTransactionParams = try CommonTransactionParams(
-                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.DELETE_TOKEN),
-                JSONRPCMethod.DELETE_TOKEN)
+                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.deleteToken),
+                JSONRPCMethod.deleteToken)
         }
     }
 }

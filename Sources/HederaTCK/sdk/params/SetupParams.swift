@@ -30,10 +30,10 @@ internal struct SetupParams {
     internal init(_ request: JSONRequest) throws {
         let params = try getRequiredParams(request)
 
-        self.operatorAccountId = try getRequiredJsonParameter("operatorAccountId", params, JSONRPCMethod.SETUP)
-        self.operatorPrivateKey = try getRequiredJsonParameter("operatorPrivateKey", params, JSONRPCMethod.SETUP)
-        self.nodeIp = try getOptionalJsonParameter("nodeIp", params, JSONRPCMethod.SETUP)
-        self.nodeAccountId = try getOptionalJsonParameter("nodeAccountId", params, JSONRPCMethod.SETUP)
-        self.mirrorNetworkIp = try getOptionalJsonParameter("mirrorNetworkIp", params, JSONRPCMethod.SETUP)
+        self.operatorAccountId = try getRequiredJsonParameter("operatorAccountId", params, JSONRPCMethod.setup)
+        self.operatorPrivateKey = try getRequiredJsonParameter("operatorPrivateKey", params, JSONRPCMethod.setup)
+        self.nodeIp = try getOptionalJsonParameter("nodeIp", params, JSONRPCMethod.setup)
+        self.nodeAccountId = try getOptionalJsonParameter("nodeAccountId", params, JSONRPCMethod.setup)
+        self.mirrorNetworkIp = try getOptionalJsonParameter("mirrorNetworkIp", params, JSONRPCMethod.setup)
     }
 }

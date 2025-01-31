@@ -27,14 +27,14 @@ internal struct AssociateTokenParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.ASSOCIATE_TOKEN)
+            self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.associateToken)
             self.tokenIds = try
-                (getOptionalJsonParameter("tokenIds", params, JSONRPCMethod.ASSOCIATE_TOKEN) as [JSONObject]?)?.map {
-                    try getJson($0, "token ID in tokenIds list", JSONRPCMethod.ASSOCIATE_TOKEN) as String
+                (getOptionalJsonParameter("tokenIds", params, JSONRPCMethod.associateToken) as [JSONObject]?)?.map {
+                    try getJson($0, "token ID in tokenIds list", JSONRPCMethod.associateToken) as String
                 }
             self.commonTransactionParams = try CommonTransactionParams(
-                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.ASSOCIATE_TOKEN),
-                JSONRPCMethod.ASSOCIATE_TOKEN)
+                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.associateToken),
+                JSONRPCMethod.associateToken)
         }
     }
 }

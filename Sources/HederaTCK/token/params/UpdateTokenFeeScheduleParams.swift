@@ -27,18 +27,18 @@ internal struct UpdateTokenFeeScheduleParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.UPDATE_TOKEN_FEE_SCHEDULE)
+            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.updateTokenFeeSchedule)
             self.customFees = try
-                (getOptionalJsonParameter("customFees", params, JSONRPCMethod.UPDATE_TOKEN_FEE_SCHEDULE)
+                (getOptionalJsonParameter("customFees", params, JSONRPCMethod.updateTokenFeeSchedule)
                 as [JSONObject]?)?.map {
                     try CustomFee(
-                        getJson($0, "fee in custom fees list", JSONRPCMethod.UPDATE_TOKEN_FEE_SCHEDULE),
-                        JSONRPCMethod.UPDATE_TOKEN_FEE_SCHEDULE)
+                        getJson($0, "fee in custom fees list", JSONRPCMethod.updateTokenFeeSchedule),
+                        JSONRPCMethod.updateTokenFeeSchedule)
                 }
             self.commonTransactionParams = try CommonTransactionParams(
                 try getOptionalJsonParameter(
-                    "commonTransactionParams", params, JSONRPCMethod.UPDATE_TOKEN_FEE_SCHEDULE),
-                JSONRPCMethod.UPDATE_TOKEN_FEE_SCHEDULE)
+                    "commonTransactionParams", params, JSONRPCMethod.updateTokenFeeSchedule),
+                JSONRPCMethod.updateTokenFeeSchedule)
         }
     }
 }

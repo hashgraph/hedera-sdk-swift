@@ -27,12 +27,12 @@ internal struct DeleteAccountParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.deleteAccountId = try getOptionalJsonParameter("deleteAccountId", params, JSONRPCMethod.DELETE_ACCOUNT)
+            self.deleteAccountId = try getOptionalJsonParameter("deleteAccountId", params, JSONRPCMethod.deleteAccount)
             self.transferAccountId = try getOptionalJsonParameter(
-                "transferAccountId", params, JSONRPCMethod.DELETE_ACCOUNT)
+                "transferAccountId", params, JSONRPCMethod.deleteAccount)
             self.commonTransactionParams = try CommonTransactionParams(
-                getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.DELETE_ACCOUNT),
-                JSONRPCMethod.DELETE_ACCOUNT)
+                getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.deleteAccount),
+                JSONRPCMethod.deleteAccount)
         }
     }
 }

@@ -27,14 +27,14 @@ internal struct DissociateTokenParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.DISSOCIATE_TOKEN)
+            self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.dissociateToken)
             self.tokenIds = try
-                (getOptionalJsonParameter("tokenIds", params, JSONRPCMethod.DISSOCIATE_TOKEN) as [JSONObject]?)?.map {
-                    try getJson($0, "token ID in tokenIds list", JSONRPCMethod.DISSOCIATE_TOKEN) as String
+                (getOptionalJsonParameter("tokenIds", params, JSONRPCMethod.dissociateToken) as [JSONObject]?)?.map {
+                    try getJson($0, "token ID in tokenIds list", JSONRPCMethod.dissociateToken) as String
                 }
             self.commonTransactionParams = try CommonTransactionParams(
-                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.DISSOCIATE_TOKEN),
-                JSONRPCMethod.DISSOCIATE_TOKEN)
+                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.dissociateToken),
+                JSONRPCMethod.dissociateToken)
         }
     }
 }

@@ -48,40 +48,40 @@ internal struct CreateTokenParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.name = try getOptionalJsonParameter("name", params, JSONRPCMethod.CREATE_TOKEN)
-            self.symbol = try getOptionalJsonParameter("symbol", params, JSONRPCMethod.CREATE_TOKEN)
-            self.decimals = try getOptionalJsonParameter("decimals", params, JSONRPCMethod.CREATE_TOKEN)
-            self.initialSupply = try getOptionalJsonParameter("initialSupply", params, JSONRPCMethod.CREATE_TOKEN)
+            self.name = try getOptionalJsonParameter("name", params, JSONRPCMethod.createToken)
+            self.symbol = try getOptionalJsonParameter("symbol", params, JSONRPCMethod.createToken)
+            self.decimals = try getOptionalJsonParameter("decimals", params, JSONRPCMethod.createToken)
+            self.initialSupply = try getOptionalJsonParameter("initialSupply", params, JSONRPCMethod.createToken)
             self.treasuryAccountId = try getOptionalJsonParameter(
-                "treasuryAccountId", params, JSONRPCMethod.CREATE_TOKEN)
-            self.adminKey = try getOptionalJsonParameter("adminKey", params, JSONRPCMethod.CREATE_TOKEN)
-            self.kycKey = try getOptionalJsonParameter("kycKey", params, JSONRPCMethod.CREATE_TOKEN)
-            self.freezeKey = try getOptionalJsonParameter("freezeKey", params, JSONRPCMethod.CREATE_TOKEN)
-            self.wipeKey = try getOptionalJsonParameter("wipeKey", params, JSONRPCMethod.CREATE_TOKEN)
-            self.supplyKey = try getOptionalJsonParameter("supplyKey", params, JSONRPCMethod.CREATE_TOKEN)
-            self.freezeDefault = try getOptionalJsonParameter("freezeDefault", params, JSONRPCMethod.CREATE_TOKEN)
-            self.expirationTime = try getOptionalJsonParameter("expirationTime", params, JSONRPCMethod.CREATE_TOKEN)
+                "treasuryAccountId", params, JSONRPCMethod.createToken)
+            self.adminKey = try getOptionalJsonParameter("adminKey", params, JSONRPCMethod.createToken)
+            self.kycKey = try getOptionalJsonParameter("kycKey", params, JSONRPCMethod.createToken)
+            self.freezeKey = try getOptionalJsonParameter("freezeKey", params, JSONRPCMethod.createToken)
+            self.wipeKey = try getOptionalJsonParameter("wipeKey", params, JSONRPCMethod.createToken)
+            self.supplyKey = try getOptionalJsonParameter("supplyKey", params, JSONRPCMethod.createToken)
+            self.freezeDefault = try getOptionalJsonParameter("freezeDefault", params, JSONRPCMethod.createToken)
+            self.expirationTime = try getOptionalJsonParameter("expirationTime", params, JSONRPCMethod.createToken)
             self.autoRenewAccountId = try getOptionalJsonParameter(
-                "autoRenewAccountId", params, JSONRPCMethod.CREATE_TOKEN)
-            self.autoRenewPeriod = try getOptionalJsonParameter("autoRenewPeriod", params, JSONRPCMethod.CREATE_TOKEN)
-            self.memo = try getOptionalJsonParameter("memo", params, JSONRPCMethod.CREATE_TOKEN)
-            self.tokenType = try getOptionalJsonParameter("tokenType", params, JSONRPCMethod.CREATE_TOKEN)
-            self.supplyType = try getOptionalJsonParameter("supplyType", params, JSONRPCMethod.CREATE_TOKEN)
-            self.maxSupply = try getOptionalJsonParameter("maxSupply", params, JSONRPCMethod.CREATE_TOKEN)
-            self.feeScheduleKey = try getOptionalJsonParameter("feeScheduleKey", params, JSONRPCMethod.CREATE_TOKEN)
+                "autoRenewAccountId", params, JSONRPCMethod.createToken)
+            self.autoRenewPeriod = try getOptionalJsonParameter("autoRenewPeriod", params, JSONRPCMethod.createToken)
+            self.memo = try getOptionalJsonParameter("memo", params, JSONRPCMethod.createToken)
+            self.tokenType = try getOptionalJsonParameter("tokenType", params, JSONRPCMethod.createToken)
+            self.supplyType = try getOptionalJsonParameter("supplyType", params, JSONRPCMethod.createToken)
+            self.maxSupply = try getOptionalJsonParameter("maxSupply", params, JSONRPCMethod.createToken)
+            self.feeScheduleKey = try getOptionalJsonParameter("feeScheduleKey", params, JSONRPCMethod.createToken)
             self.customFees = try
-                (getOptionalJsonParameter("customFees", params, JSONRPCMethod.CREATE_TOKEN) as [JSONObject]?)?
+                (getOptionalJsonParameter("customFees", params, JSONRPCMethod.createToken) as [JSONObject]?)?
                 .map {
                     try CustomFee(
-                        getJson($0, "fee in custom fees list", JSONRPCMethod.CREATE_TOKEN),
-                        JSONRPCMethod.CREATE_TOKEN)
+                        getJson($0, "fee in custom fees list", JSONRPCMethod.createToken),
+                        JSONRPCMethod.createToken)
                 }
-            self.pauseKey = try getOptionalJsonParameter("pauseKey", params, JSONRPCMethod.CREATE_TOKEN)
-            self.metadata = try getOptionalJsonParameter("metadata", params, JSONRPCMethod.CREATE_TOKEN)
-            self.metadataKey = try getOptionalJsonParameter("metadataKey", params, JSONRPCMethod.CREATE_TOKEN)
+            self.pauseKey = try getOptionalJsonParameter("pauseKey", params, JSONRPCMethod.createToken)
+            self.metadata = try getOptionalJsonParameter("metadata", params, JSONRPCMethod.createToken)
+            self.metadataKey = try getOptionalJsonParameter("metadataKey", params, JSONRPCMethod.createToken)
             self.commonTransactionParams = try CommonTransactionParams(
-                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.CREATE_TOKEN),
-                JSONRPCMethod.CREATE_TOKEN)
+                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.createToken),
+                JSONRPCMethod.createToken)
         }
     }
 }

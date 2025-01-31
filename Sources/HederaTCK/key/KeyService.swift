@@ -76,32 +76,32 @@ internal class KeyService {
         _ params: GenerateKeyParams, _ privateKeys: inout [JSONObject], _ isList: Bool = false
     ) throws -> String {
         guard let type = KeyType(rawValue: params.type) else {
-            throw JSONError.invalidParams("\(JSONRPCMethod.GENERATE_KEY): type is NOT a valid value.")
+            throw JSONError.invalidParams("\(JSONRPCMethod.generateKey): type is NOT a valid value.")
         }
 
         if params.fromKey != nil, type != .ed25519PublicKeyType, type != .ecdsaSecp256k1PublicKeyType,
             type != .evmAddressKeyType
         {
             throw JSONError.invalidParams(
-                "\(JSONRPCMethod.GENERATE_KEY): fromKey MUST NOT be provided for types other than ed25519PublicKey, ecdsaSecp256k1PublicKey, or evmAddress."
+                "\(JSONRPCMethod.generateKey): fromKey MUST NOT be provided for types other than ed25519PublicKey, ecdsaSecp256k1PublicKey, or evmAddress."
             )
         }
 
         if params.threshold != nil, type != .thresholdKeyType {
             throw JSONError.invalidParams(
-                "\(JSONRPCMethod.GENERATE_KEY): threshold MUST NOT be provided for types other than thresholdKey.")
+                "\(JSONRPCMethod.generateKey): threshold MUST NOT be provided for types other than thresholdKey.")
         } else if params.threshold == nil, type == .thresholdKeyType {
             throw JSONError.invalidParams(
-                "\(JSONRPCMethod.GENERATE_KEY): threshold MUST be provided for thresholdKey types.")
+                "\(JSONRPCMethod.generateKey): threshold MUST be provided for thresholdKey types.")
         }
 
         if params.keys != nil, type != .listKeyType, type != .thresholdKeyType {
             throw JSONError.invalidParams(
-                "\(JSONRPCMethod.GENERATE_KEY): keys MUST NOT be provided for types other than keyList or thresholdKey."
+                "\(JSONRPCMethod.generateKey): keys MUST NOT be provided for types other than keyList or thresholdKey."
             )
         } else if params.keys == nil, type == .listKeyType || type == .thresholdKeyType {
             throw JSONError.invalidParams(
-                "\(JSONRPCMethod.GENERATE_KEY): keys MUST be provided for keyList and thresholdKey types.")
+                "\(JSONRPCMethod.generateKey): keys MUST be provided for keyList and thresholdKey types.")
         }
 
         switch type {
@@ -152,7 +152,7 @@ internal class KeyService {
                     return try PublicKey.fromStringEcdsa(fromKey).toEvmAddress()!.toString()
                 } catch {
                     throw JSONError.invalidParams(
-                        "\(JSONRPCMethod.GENERATE_KEY): fromKey for evmAddress MUST be an ECDSAsecp256k1 private or public key."
+                        "\(JSONRPCMethod.generateKey): fromKey for evmAddress MUST be an ECDSAsecp256k1 private or public key."
                     )
                 }
             }

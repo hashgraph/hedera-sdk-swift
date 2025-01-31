@@ -21,27 +21,27 @@ import Hedera
 
 /// Enumeration of implemented JSON-RPC endpoints.
 internal enum JSONRPCMethod: String {
-    case ASSOCIATE_TOKEN = "associateToken"
-    case BURN_TOKEN = "burnToken"
-    case CREATE_ACCOUNT = "createAccount"
-    case CREATE_TOKEN = "createToken"
-    case DELETE_ACCOUNT = "deleteAccount"
-    case DELETE_TOKEN = "deleteToken"
-    case DISSOCIATE_TOKEN = "dissociateToken"
-    case FREEZE_TOKEN = "freezeToken"
-    case GENERATE_KEY = "generateKey"
-    case GRANT_TOKEN_KYC = "grantTokenKyc"
-    case MINT_TOKEN = "mintToken"
-    case PAUSE_TOKEN = "pauseToken"
-    case RESET = "reset"
-    case REVOKE_TOKEN_KYC = "revokeTokenKyc"
-    case SETUP = "setup"
-    case UNFREEZE_TOKEN = "unfreezeToken"
-    case UNPAUSE_TOKEN = "unpauseToken"
-    case UPDATE_ACCOUNT = "updateAccount"
-    case UPDATE_TOKEN_FEE_SCHEDULE = "updateTokenFeeSchedule"
-    case UPDATE_TOKEN = "updateToken"
-    case UNDEFINED_METHOD
+    case associateToken = "associateToken"
+    case burnToken = "burnToken"
+    case createAccount = "createAccount"
+    case createToken = "createToken"
+    case deleteAccount = "deleteAccount"
+    case deleteToken = "deleteToken"
+    case dissociateToken = "dissociateToken"
+    case freezeToken = "freezeToken"
+    case generateKey = "generateKey"
+    case grantTokenKyc = "grantTokenKyc"
+    case mintToken = "mintToken"
+    case pauseToken = "pauseToken"
+    case reset = "reset"
+    case revokeTokenKyc = "revokeTokenKyc"
+    case setup = "setup"
+    case unfreezeToken = "unfreezeToken"
+    case unpauseToken = "unpauseToken"
+    case updateAccount = "updateAccount"
+    case updateTokenFeeSchedule = "updateTokenFeeSchedule"
+    case updateToken = "updateToken"
+    case undefinedMethod
 }
 
 /// Convert a String to an integer type.

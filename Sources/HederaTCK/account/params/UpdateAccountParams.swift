@@ -35,22 +35,22 @@ internal struct UpdateAccountParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.UPDATE_ACCOUNT)
-            self.key = try getOptionalJsonParameter("key", params, JSONRPCMethod.UPDATE_ACCOUNT)
-            self.autoRenewPeriod = try getOptionalJsonParameter("autoRenewPeriod", params, JSONRPCMethod.UPDATE_ACCOUNT)
-            self.expirationTime = try getOptionalJsonParameter("expirationTime", params, JSONRPCMethod.UPDATE_ACCOUNT)
+            self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.updateAccount)
+            self.key = try getOptionalJsonParameter("key", params, JSONRPCMethod.updateAccount)
+            self.autoRenewPeriod = try getOptionalJsonParameter("autoRenewPeriod", params, JSONRPCMethod.updateAccount)
+            self.expirationTime = try getOptionalJsonParameter("expirationTime", params, JSONRPCMethod.updateAccount)
             self.receiverSignatureRequired = try getOptionalJsonParameter(
-                "receiverSignatureRequired", params, JSONRPCMethod.UPDATE_ACCOUNT)
-            self.memo = try getOptionalJsonParameter("memo", params, JSONRPCMethod.UPDATE_ACCOUNT)
+                "receiverSignatureRequired", params, JSONRPCMethod.updateAccount)
+            self.memo = try getOptionalJsonParameter("memo", params, JSONRPCMethod.updateAccount)
             self.maxAutoTokenAssociations = try getOptionalJsonParameter(
-                "maxAutoTokenAssociations", params, JSONRPCMethod.UPDATE_ACCOUNT)
-            self.stakedAccountId = try getOptionalJsonParameter("stakedAccountId", params, JSONRPCMethod.UPDATE_ACCOUNT)
-            self.stakedNodeId = try getOptionalJsonParameter("stakedNodeId", params, JSONRPCMethod.UPDATE_ACCOUNT)
+                "maxAutoTokenAssociations", params, JSONRPCMethod.updateAccount)
+            self.stakedAccountId = try getOptionalJsonParameter("stakedAccountId", params, JSONRPCMethod.updateAccount)
+            self.stakedNodeId = try getOptionalJsonParameter("stakedNodeId", params, JSONRPCMethod.updateAccount)
             self.declineStakingReward = try getOptionalJsonParameter(
-                "declineStakingReward", params, JSONRPCMethod.UPDATE_ACCOUNT)
+                "declineStakingReward", params, JSONRPCMethod.updateAccount)
             self.commonTransactionParams = try CommonTransactionParams(
-                getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.UPDATE_ACCOUNT),
-                JSONRPCMethod.UPDATE_ACCOUNT)
+                getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.updateAccount),
+                JSONRPCMethod.updateAccount)
         }
     }
 }

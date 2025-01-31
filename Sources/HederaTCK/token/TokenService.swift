@@ -47,10 +47,10 @@ internal class TokenService {
 
         tokenBurnTransaction.tokenId = try CommonParams.getTokenId(params.tokenId)
         tokenBurnTransaction.amount =
-            try CommonParams.getAmount(params.amount, JSONRPCMethod.BURN_TOKEN) ?? tokenBurnTransaction.amount
+            try CommonParams.getAmount(params.amount, JSONRPCMethod.burnToken) ?? tokenBurnTransaction.amount
         tokenBurnTransaction.serials =
             try params.serialNumbers?.map {
-                toUint64(try toInt($0, "serial number in serialNumbers list", JSONRPCMethod.BURN_TOKEN))
+                toUint64(try toInt($0, "serial number in serialNumbers list", JSONRPCMethod.burnToken))
             } ?? tokenBurnTransaction.serials
         try params.commonTransactionParams?.fillOutTransaction(&tokenBurnTransaction)
 
@@ -70,7 +70,7 @@ internal class TokenService {
         tokenCreateTransaction.symbol = params.symbol ?? tokenCreateTransaction.symbol
         tokenCreateTransaction.decimals = params.decimals ?? tokenCreateTransaction.decimals
         tokenCreateTransaction.initialSupply =
-            try CommonParams.getSdkUInt64(params.initialSupply, "initialSupply", JSONRPCMethod.CREATE_TOKEN)
+            try CommonParams.getSdkUInt64(params.initialSupply, "initialSupply", JSONRPCMethod.createToken)
             ?? tokenCreateTransaction.initialSupply
         tokenCreateTransaction.treasuryAccountId = try CommonParams.getAccountId(params.treasuryAccountId)
         tokenCreateTransaction.adminKey = try CommonParams.getKey(params.adminKey)
@@ -80,10 +80,10 @@ internal class TokenService {
         tokenCreateTransaction.supplyKey = try CommonParams.getKey(params.supplyKey)
         tokenCreateTransaction.freezeDefault = params.freezeDefault ?? tokenCreateTransaction.freezeDefault
         tokenCreateTransaction.expirationTime = try CommonParams.getExpirationTime(
-            params.expirationTime, JSONRPCMethod.CREATE_TOKEN)
+            params.expirationTime, JSONRPCMethod.createToken)
         tokenCreateTransaction.autoRenewAccountId = try CommonParams.getAccountId(params.autoRenewAccountId)
         tokenCreateTransaction.autoRenewPeriod = try CommonParams.getAutoRenewPeriod(
-            params.autoRenewPeriod, JSONRPCMethod.CREATE_TOKEN)
+            params.autoRenewPeriod, JSONRPCMethod.createToken)
         tokenCreateTransaction.tokenMemo = params.memo ?? tokenCreateTransaction.tokenMemo
         tokenCreateTransaction.tokenType =
             try params.tokenType.flatMap {
@@ -98,11 +98,11 @@ internal class TokenService {
                     : { throw JSONError.invalidParams("\(#function): supplyType MUST be 'finite' or 'infinite'.") }()
             } ?? tokenCreateTransaction.tokenSupplyType
         tokenCreateTransaction.maxSupply =
-            try CommonParams.getSdkUInt64(params.maxSupply, "maxSupply", JSONRPCMethod.CREATE_TOKEN)
+            try CommonParams.getSdkUInt64(params.maxSupply, "maxSupply", JSONRPCMethod.createToken)
             ?? tokenCreateTransaction.maxSupply
         tokenCreateTransaction.feeScheduleKey = try CommonParams.getKey(params.feeScheduleKey)
         tokenCreateTransaction.customFees =
-            try CommonParams.getCustomFees(params.customFees, JSONRPCMethod.CREATE_TOKEN)
+            try CommonParams.getCustomFees(params.customFees, JSONRPCMethod.createToken)
             ?? tokenCreateTransaction.customFees
         tokenCreateTransaction.pauseKey = try CommonParams.getKey(params.pauseKey)
         tokenCreateTransaction.metadata =
@@ -179,7 +179,7 @@ internal class TokenService {
 
         tokenMintTransaction.tokenId = try CommonParams.getTokenId(params.tokenId)
         tokenMintTransaction.amount =
-            try CommonParams.getAmount(params.amount, JSONRPCMethod.MINT_TOKEN) ?? tokenMintTransaction.amount
+            try CommonParams.getAmount(params.amount, JSONRPCMethod.mintToken) ?? tokenMintTransaction.amount
         tokenMintTransaction.metadata =
             try params.metadata?.map {
                 try Data(hexEncoded: $0)
@@ -256,7 +256,7 @@ internal class TokenService {
 
         tokenFeeScheduleUpdateTransaction.tokenId = try CommonParams.getTokenId(params.tokenId)
         tokenFeeScheduleUpdateTransaction.customFees =
-            try CommonParams.getCustomFees(params.customFees, JSONRPCMethod.UPDATE_TOKEN_FEE_SCHEDULE)
+            try CommonParams.getCustomFees(params.customFees, JSONRPCMethod.updateTokenFeeSchedule)
             ?? tokenFeeScheduleUpdateTransaction.customFees
         try params.commonTransactionParams?.fillOutTransaction(&tokenFeeScheduleUpdateTransaction)
 
@@ -280,9 +280,9 @@ internal class TokenService {
         tokenUpdateTransaction.supplyKey = try CommonParams.getKey(params.supplyKey)
         tokenUpdateTransaction.autoRenewAccountId = try CommonParams.getAccountId(params.autoRenewAccountId)
         tokenUpdateTransaction.autoRenewPeriod = try CommonParams.getAutoRenewPeriod(
-            params.autoRenewPeriod, JSONRPCMethod.UPDATE_TOKEN)
+            params.autoRenewPeriod, JSONRPCMethod.updateToken)
         tokenUpdateTransaction.expirationTime = try CommonParams.getExpirationTime(
-            params.expirationTime, JSONRPCMethod.UPDATE_TOKEN)
+            params.expirationTime, JSONRPCMethod.updateToken)
         tokenUpdateTransaction.tokenMemo = params.memo
         tokenUpdateTransaction.feeScheduleKey = try CommonParams.getKey(params.feeScheduleKey)
         tokenUpdateTransaction.pauseKey = try CommonParams.getKey(params.pauseKey)

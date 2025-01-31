@@ -35,22 +35,22 @@ internal struct CreateAccountParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.key = try getOptionalJsonParameter("key", params, JSONRPCMethod.CREATE_ACCOUNT)
-            self.initialBalance = try getOptionalJsonParameter("initialBalance", params, JSONRPCMethod.CREATE_ACCOUNT)
+            self.key = try getOptionalJsonParameter("key", params, JSONRPCMethod.createAccount)
+            self.initialBalance = try getOptionalJsonParameter("initialBalance", params, JSONRPCMethod.createAccount)
             self.receiverSignatureRequired = try getOptionalJsonParameter(
-                "receiverSignatureRequired", params, JSONRPCMethod.CREATE_ACCOUNT)
-            self.autoRenewPeriod = try getOptionalJsonParameter("autoRenewPeriod", params, JSONRPCMethod.CREATE_ACCOUNT)
-            self.memo = try getOptionalJsonParameter("memo", params, JSONRPCMethod.CREATE_ACCOUNT)
+                "receiverSignatureRequired", params, JSONRPCMethod.createAccount)
+            self.autoRenewPeriod = try getOptionalJsonParameter("autoRenewPeriod", params, JSONRPCMethod.createAccount)
+            self.memo = try getOptionalJsonParameter("memo", params, JSONRPCMethod.createAccount)
             self.maxAutoTokenAssociations = try getOptionalJsonParameter(
-                "maxAutoTokenAssociations", params, JSONRPCMethod.CREATE_ACCOUNT)
-            self.stakedAccountId = try getOptionalJsonParameter("stakedAccountId", params, JSONRPCMethod.CREATE_ACCOUNT)
-            self.stakedNodeId = try getOptionalJsonParameter("stakedNodeId", params, JSONRPCMethod.CREATE_ACCOUNT)
+                "maxAutoTokenAssociations", params, JSONRPCMethod.createAccount)
+            self.stakedAccountId = try getOptionalJsonParameter("stakedAccountId", params, JSONRPCMethod.createAccount)
+            self.stakedNodeId = try getOptionalJsonParameter("stakedNodeId", params, JSONRPCMethod.createAccount)
             self.declineStakingReward = try getOptionalJsonParameter(
-                "declineStakingReward", params, JSONRPCMethod.CREATE_ACCOUNT)
-            self.alias = try getOptionalJsonParameter("alias", params, JSONRPCMethod.CREATE_ACCOUNT)
+                "declineStakingReward", params, JSONRPCMethod.createAccount)
+            self.alias = try getOptionalJsonParameter("alias", params, JSONRPCMethod.createAccount)
             self.commonTransactionParams = try CommonTransactionParams(
-                getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.CREATE_ACCOUNT),
-                JSONRPCMethod.CREATE_ACCOUNT)
+                getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.createAccount),
+                JSONRPCMethod.createAccount)
         }
     }
 }

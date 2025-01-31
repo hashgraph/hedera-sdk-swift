@@ -60,66 +60,66 @@ internal class TCKServer {
     private func processRequest(request: JSONRequest) async -> JSONResponse {
         do {
             let jsonRpcResponse: JSONObject
-            let method = JSONRPCMethod(rawValue: request.method) ?? JSONRPCMethod.UNDEFINED_METHOD
+            let method = JSONRPCMethod(rawValue: request.method) ?? JSONRPCMethod.undefinedMethod
 
             switch method {
             ///
             /// AccountService JSON-RPC methods.
             ///
-            case JSONRPCMethod.CREATE_ACCOUNT:
+            case JSONRPCMethod.createAccount:
                 jsonRpcResponse = try await AccountService.service.createAccount(CreateAccountParams(request))
-            case JSONRPCMethod.DELETE_ACCOUNT:
+            case JSONRPCMethod.deleteAccount:
                 jsonRpcResponse = try await AccountService.service.deleteAccount(DeleteAccountParams(request))
-            case JSONRPCMethod.UPDATE_ACCOUNT:
+            case JSONRPCMethod.updateAccount:
                 jsonRpcResponse = try await AccountService.service.updateAccount(UpdateAccountParams(request))
             ///
             /// KeyService JSON-RPC methods.
             ///
-            case JSONRPCMethod.GENERATE_KEY:
+            case JSONRPCMethod.generateKey:
                 jsonRpcResponse = try KeyService.service.generateKey(GenerateKeyParams(request))
             ///
             /// SdkClient JSON-RPC methods.
             ///
-            case JSONRPCMethod.RESET:
+            case JSONRPCMethod.reset:
                 jsonRpcResponse = try SDKClient.client.reset(ResetParams(request))
-            case JSONRPCMethod.SETUP:
+            case JSONRPCMethod.setup:
                 jsonRpcResponse = try SDKClient.client.setup(SetupParams(request))
             ///
             /// TokenService JSON-RPC methods.
             ///
-            case JSONRPCMethod.ASSOCIATE_TOKEN:
+            case JSONRPCMethod.associateToken:
                 jsonRpcResponse = try await TokenService.service.associateToken(AssociateTokenParams(request))
-            case JSONRPCMethod.BURN_TOKEN:
+            case JSONRPCMethod.burnToken:
                 jsonRpcResponse = try await TokenService.service.burnToken(BurnTokenParams(request))
-            case JSONRPCMethod.CREATE_TOKEN:
+            case JSONRPCMethod.createToken:
                 jsonRpcResponse = try await TokenService.service.createToken(CreateTokenParams(request))
-            case JSONRPCMethod.DELETE_TOKEN:
+            case JSONRPCMethod.deleteToken:
                 jsonRpcResponse = try await TokenService.service.deleteToken(DeleteTokenParams(request))
-            case JSONRPCMethod.DISSOCIATE_TOKEN:
+            case JSONRPCMethod.dissociateToken:
                 jsonRpcResponse = try await TokenService.service.dissociateToken(DissociateTokenParams(request))
-            case JSONRPCMethod.FREEZE_TOKEN:
+            case JSONRPCMethod.freezeToken:
                 jsonRpcResponse = try await TokenService.service.freezeToken(FreezeTokenParams(request))
-            case JSONRPCMethod.GRANT_TOKEN_KYC:
+            case JSONRPCMethod.grantTokenKyc:
                 jsonRpcResponse = try await TokenService.service.grantTokenKyc(GrantTokenKycParams(request))
-            case JSONRPCMethod.MINT_TOKEN:
+            case JSONRPCMethod.mintToken:
                 jsonRpcResponse = try await TokenService.service.mintToken(MintTokenParams(request))
-            case JSONRPCMethod.PAUSE_TOKEN:
+            case JSONRPCMethod.pauseToken:
                 jsonRpcResponse = try await TokenService.service.pauseToken(PauseTokenParams(request))
-            case JSONRPCMethod.REVOKE_TOKEN_KYC:
+            case JSONRPCMethod.revokeTokenKyc:
                 jsonRpcResponse = try await TokenService.service.revokeTokenKyc(RevokeTokenKycParams(request))
-            case JSONRPCMethod.UNFREEZE_TOKEN:
+            case JSONRPCMethod.unfreezeToken:
                 jsonRpcResponse = try await TokenService.service.unfreezeToken(UnfreezeTokenParams(request))
-            case JSONRPCMethod.UNPAUSE_TOKEN:
+            case JSONRPCMethod.unpauseToken:
                 jsonRpcResponse = try await TokenService.service.unpauseToken(UnpauseTokenParams(request))
-            case JSONRPCMethod.UPDATE_TOKEN_FEE_SCHEDULE:
+            case JSONRPCMethod.updateTokenFeeSchedule:
                 jsonRpcResponse =
                     try await TokenService.service.updateTokenFeeSchedule(UpdateTokenFeeScheduleParams(request))
-            case JSONRPCMethod.UPDATE_TOKEN:
+            case JSONRPCMethod.updateToken:
                 jsonRpcResponse = try await TokenService.service.updateToken(UpdateTokenParams(request))
             ///
             /// Undefined method or method not provided.
             ///
-            case JSONRPCMethod.UNDEFINED_METHOD:
+            case JSONRPCMethod.undefinedMethod:
                 throw JSONError.methodNotFound("\(request.method) not implemented.")
             }
 

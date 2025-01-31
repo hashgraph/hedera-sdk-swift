@@ -26,10 +26,10 @@ internal struct PauseTokenParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.PAUSE_TOKEN)
+            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.pauseToken)
             self.commonTransactionParams = try CommonTransactionParams(
-                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.PAUSE_TOKEN),
-                JSONRPCMethod.PAUSE_TOKEN)
+                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.pauseToken),
+                JSONRPCMethod.pauseToken)
         }
     }
 }

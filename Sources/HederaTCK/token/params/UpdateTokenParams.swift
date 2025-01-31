@@ -42,28 +42,28 @@ internal struct UpdateTokenParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.symbol = try getOptionalJsonParameter("symbol", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.name = try getOptionalJsonParameter("name", params, JSONRPCMethod.UPDATE_TOKEN)
+            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.updateToken)
+            self.symbol = try getOptionalJsonParameter("symbol", params, JSONRPCMethod.updateToken)
+            self.name = try getOptionalJsonParameter("name", params, JSONRPCMethod.updateToken)
             self.treasuryAccountId = try getOptionalJsonParameter(
-                "treasuryAccountId", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.adminKey = try getOptionalJsonParameter("adminKey", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.kycKey = try getOptionalJsonParameter("kycKey", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.freezeKey = try getOptionalJsonParameter("freezeKey", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.wipeKey = try getOptionalJsonParameter("wipeKey", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.supplyKey = try getOptionalJsonParameter("supplyKey", params, JSONRPCMethod.UPDATE_TOKEN)
+                "treasuryAccountId", params, JSONRPCMethod.updateToken)
+            self.adminKey = try getOptionalJsonParameter("adminKey", params, JSONRPCMethod.updateToken)
+            self.kycKey = try getOptionalJsonParameter("kycKey", params, JSONRPCMethod.updateToken)
+            self.freezeKey = try getOptionalJsonParameter("freezeKey", params, JSONRPCMethod.updateToken)
+            self.wipeKey = try getOptionalJsonParameter("wipeKey", params, JSONRPCMethod.updateToken)
+            self.supplyKey = try getOptionalJsonParameter("supplyKey", params, JSONRPCMethod.updateToken)
             self.autoRenewAccountId = try getOptionalJsonParameter(
-                "autoRenewAccountId", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.autoRenewPeriod = try getOptionalJsonParameter("autoRenewPeriod", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.expirationTime = try getOptionalJsonParameter("expirationTime", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.memo = try getOptionalJsonParameter("memo", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.feeScheduleKey = try getOptionalJsonParameter("feeScheduleKey", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.pauseKey = try getOptionalJsonParameter("pauseKey", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.metadata = try getOptionalJsonParameter("metadata", params, JSONRPCMethod.UPDATE_TOKEN)
-            self.metadataKey = try getOptionalJsonParameter("metadataKey", params, JSONRPCMethod.UPDATE_TOKEN)
+                "autoRenewAccountId", params, JSONRPCMethod.updateToken)
+            self.autoRenewPeriod = try getOptionalJsonParameter("autoRenewPeriod", params, JSONRPCMethod.updateToken)
+            self.expirationTime = try getOptionalJsonParameter("expirationTime", params, JSONRPCMethod.updateToken)
+            self.memo = try getOptionalJsonParameter("memo", params, JSONRPCMethod.updateToken)
+            self.feeScheduleKey = try getOptionalJsonParameter("feeScheduleKey", params, JSONRPCMethod.updateToken)
+            self.pauseKey = try getOptionalJsonParameter("pauseKey", params, JSONRPCMethod.updateToken)
+            self.metadata = try getOptionalJsonParameter("metadata", params, JSONRPCMethod.updateToken)
+            self.metadataKey = try getOptionalJsonParameter("metadataKey", params, JSONRPCMethod.updateToken)
             self.commonTransactionParams = try CommonTransactionParams(
-                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.UPDATE_TOKEN),
-                JSONRPCMethod.UPDATE_TOKEN)
+                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.updateToken),
+                JSONRPCMethod.updateToken)
         }
     }
 }

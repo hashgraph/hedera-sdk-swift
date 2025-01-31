@@ -27,11 +27,11 @@ internal struct GrantTokenKycParams {
 
     internal init(_ request: JSONRequest) throws {
         if let params = try getOptionalParams(request) {
-            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.GRANT_TOKEN_KYC)
-            self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.GRANT_TOKEN_KYC)
+            self.tokenId = try getOptionalJsonParameter("tokenId", params, JSONRPCMethod.grantTokenKyc)
+            self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.grantTokenKyc)
             self.commonTransactionParams = try CommonTransactionParams(
-                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.GRANT_TOKEN_KYC),
-                JSONRPCMethod.GRANT_TOKEN_KYC)
+                try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.grantTokenKyc),
+                JSONRPCMethod.grantTokenKyc)
         }
     }
 }

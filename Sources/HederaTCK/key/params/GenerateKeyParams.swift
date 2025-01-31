@@ -31,11 +31,11 @@ internal struct GenerateKeyParams {
     }
 
     private init(_ params: [String: JSONObject]) throws {
-        self.type = try getRequiredJsonParameter("type", params, JSONRPCMethod.GENERATE_KEY)
-        self.fromKey = try getOptionalJsonParameter("fromKey", params, JSONRPCMethod.GENERATE_KEY)
-        self.threshold = try getOptionalJsonParameter("threshold", params, JSONRPCMethod.GENERATE_KEY)
-        self.keys = try (getOptionalJsonParameter("keys", params, JSONRPCMethod.GENERATE_KEY) as [JSONObject]?)?.map {
-            try GenerateKeyParams(getJson($0, "key in keys list", JSONRPCMethod.GENERATE_KEY) as [String: JSONObject])
+        self.type = try getRequiredJsonParameter("type", params, JSONRPCMethod.generateKey)
+        self.fromKey = try getOptionalJsonParameter("fromKey", params, JSONRPCMethod.generateKey)
+        self.threshold = try getOptionalJsonParameter("threshold", params, JSONRPCMethod.generateKey)
+        self.keys = try (getOptionalJsonParameter("keys", params, JSONRPCMethod.generateKey) as [JSONObject]?)?.map {
+            try GenerateKeyParams(getJson($0, "key in keys list", JSONRPCMethod.generateKey) as [String: JSONObject])
         }
     }
 }

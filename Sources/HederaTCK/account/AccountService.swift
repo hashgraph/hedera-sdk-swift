@@ -31,19 +31,19 @@ internal class AccountService {
         accountCreateTransaction.key = try CommonParams.getKey(params.key)
         accountCreateTransaction.initialBalance =
             try params.initialBalance.flatMap {
-                Hbar.fromTinybars(try toInt($0, "initialBalance", JSONRPCMethod.CREATE_ACCOUNT))
+                Hbar.fromTinybars(try toInt($0, "initialBalance", JSONRPCMethod.createAccount))
             } ?? accountCreateTransaction.initialBalance
         accountCreateTransaction.receiverSignatureRequired =
             params.receiverSignatureRequired ?? accountCreateTransaction.receiverSignatureRequired
         accountCreateTransaction.autoRenewPeriod = try CommonParams.getAutoRenewPeriod(
-            params.autoRenewPeriod, JSONRPCMethod.CREATE_ACCOUNT)
+            params.autoRenewPeriod, JSONRPCMethod.createAccount)
         accountCreateTransaction.accountMemo = params.memo ?? accountCreateTransaction.accountMemo
         accountCreateTransaction.maxAutomaticTokenAssociations =
             params.maxAutoTokenAssociations ?? accountCreateTransaction.maxAutomaticTokenAssociations
         accountCreateTransaction.alias = try params.alias.flatMap { try EvmAddress.fromString($0) }
         accountCreateTransaction.stakedAccountId = try CommonParams.getAccountId(params.stakedAccountId)
         accountCreateTransaction.stakedNodeId = try CommonParams.getStakedNodeId(
-            params.stakedNodeId, JSONRPCMethod.CREATE_ACCOUNT)
+            params.stakedNodeId, JSONRPCMethod.createAccount)
         accountCreateTransaction.declineStakingReward =
             params.declineStakingReward ?? accountCreateTransaction.declineStakingReward
         try params.commonTransactionParams?.fillOutTransaction(&accountCreateTransaction)
@@ -76,15 +76,15 @@ internal class AccountService {
         accountUpdateTransaction.accountId = try CommonParams.getAccountId(params.accountId)
         accountUpdateTransaction.key = try CommonParams.getKey(params.key)
         accountUpdateTransaction.autoRenewPeriod = try CommonParams.getAutoRenewPeriod(
-            params.autoRenewPeriod, JSONRPCMethod.UPDATE_ACCOUNT)
+            params.autoRenewPeriod, JSONRPCMethod.updateAccount)
         accountUpdateTransaction.expirationTime = try CommonParams.getExpirationTime(
-            params.expirationTime, JSONRPCMethod.UPDATE_ACCOUNT)
+            params.expirationTime, JSONRPCMethod.updateAccount)
         accountUpdateTransaction.receiverSignatureRequired = params.receiverSignatureRequired
         accountUpdateTransaction.accountMemo = params.memo
         accountUpdateTransaction.maxAutomaticTokenAssociations = params.maxAutoTokenAssociations
         accountUpdateTransaction.stakedAccountId = try CommonParams.getAccountId(params.stakedAccountId)
         accountUpdateTransaction.stakedNodeId = try CommonParams.getStakedNodeId(
-            params.stakedNodeId, JSONRPCMethod.UPDATE_ACCOUNT)
+            params.stakedNodeId, JSONRPCMethod.updateAccount)
         accountUpdateTransaction.declineStakingReward = params.declineStakingReward
         try params.commonTransactionParams?.fillOutTransaction(&accountUpdateTransaction)
 
