@@ -25,7 +25,5 @@ cryptoCreateAccount {
   }
   memo: "fresh water"
   max_automatic_token_associations: 101
-  staked_account_id {
-    accountNum: 3
-  }
+  staked_node_id: 4
 }
