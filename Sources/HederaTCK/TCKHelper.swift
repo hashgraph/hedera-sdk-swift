@@ -19,7 +19,7 @@
  */
 import Hedera
 
-/// Enumeration of currently-implemented JSON-RPC endpoints.
+/// Enumeration of implemented JSON-RPC endpoints.
 internal enum JSONRPCMethod: String {
     case ASSOCIATE_TOKEN = "associateToken"
     case BURN_TOKEN = "burnToken"
@@ -42,38 +42,6 @@ internal enum JSONRPCMethod: String {
     case UPDATE_TOKEN_FEE_SCHEDULE = "updateTokenFeeSchedule"
     case UPDATE_TOKEN = "updateToken"
     case UNDEFINED_METHOD
-}
-
-/// Fill in a Transaction's commpon parameters based on JSON input.
-internal func fillOutCommonTransactionParameters<T: Transaction>(
-    transaction: inout T, params: CommonTransactionParams, client: Client
-)
-    throws
-{
-    if let transactionId = params.transactionId {
-        transaction.transactionId = try TransactionId.fromString(transactionId)
-    }
-
-    if let maxTransactionFee = params.maxTransactionFee {
-        transaction.maxTransactionFee = Hbar.fromTinybars(maxTransactionFee)
-    }
-
-    if let validTransactionDuration = params.validTransactionDuration {
-        transaction.transactionValidDuration = Duration(seconds: toUint64(validTransactionDuration))
-    }
-
-    if let memo = params.memo {
-        transaction.transactionMemo = memo
-    }
-
-    if let regenerateTransactionId = params.regenerateTransactionId {
-        transaction.regenerateTransactionId = regenerateTransactionId
-    }
-
-    if let signers = params.signers {
-        try transaction.freezeWith(client)
-        try signers.forEach { transaction.sign(try PrivateKey.fromStringDer($0)) }
-    }
 }
 
 /// Convert a String to an integer type.

@@ -17,6 +17,7 @@
  * limitations under the License.
  * ‍
  */
+import Hedera
 
 /// Struct to hold the parameters for all transactions.
 internal struct CommonTransactionParams {
@@ -39,5 +40,22 @@ internal struct CommonTransactionParams {
                 try getJson($0, "signer in signers list", funcName) as String
             }
         }
+    }
+
+    /// Fill in a Transaction's common parameters based on JSON input.
+    internal func fillOutTransaction<T: Transaction>(_ transaction: inout T) throws {
+        transaction.transactionId = try self.transactionId.flatMap { try TransactionId.fromString($0) }
+        transaction.maxTransactionFee = self.maxTransactionFee.flatMap { Hbar.fromTinybars($0) }
+        transaction.transactionValidDuration = self.validTransactionDuration.flatMap {
+            Duration(seconds: toUint64($0))
+        }
+        transaction.transactionMemo = self.memo ?? transaction.transactionMemo
+        transaction.regenerateTransactionId = self.regenerateTransactionId ?? transaction.regenerateTransactionId
+
+        try self.signers.map {
+            try transaction.freezeWith(SDKClient.client.getClient())
+            try $0.forEach { transaction.sign(try PrivateKey.fromStringDer($0)) }
+        }
+
     }
 }

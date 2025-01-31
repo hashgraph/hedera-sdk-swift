@@ -31,7 +31,7 @@ internal struct UnfreezeTokenParams {
             self.accountId = try getOptionalJsonParameter("accountId", params, JSONRPCMethod.UNFREEZE_TOKEN)
             self.commonTransactionParams = try CommonTransactionParams(
                 try getOptionalJsonParameter("commonTransactionParams", params, JSONRPCMethod.UNFREEZE_TOKEN),
-                JSONRPCMethod.FREEZE_TOKEN)
+                JSONRPCMethod.UNFREEZE_TOKEN)
         }
     }
 }

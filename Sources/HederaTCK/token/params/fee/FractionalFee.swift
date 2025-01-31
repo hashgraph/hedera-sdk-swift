@@ -46,11 +46,12 @@ internal struct FractionalFee {
             throw JSONError.invalidParams("\(funcName.rawValue): assessmentMethod MUST be 'inclusive' or 'exclusive'.")
         }
 
+        /// Unwrap of self.minimumAmount and self.maximumAmount can be safely forced since they are not optional.
         return Hedera.FractionalFee(
-            numerator: try toInt(self.numerator, "numerator", funcName),
-            denominator: try toInt(self.denominator, "denominator", funcName),
-            minimumAmount: toUint64(try toInt(self.minimumAmount, "minimumAmount", funcName)),
-            maximumAmount: toUint64(try toInt(self.maximumAmount, "maximumAmount", funcName)),
+            numerator: try CommonParams.getNumerator(self.numerator, funcName),
+            denominator: try CommonParams.getDenominator(self.denominator, funcName),
+            minimumAmount: try CommonParams.getSdkUInt64(self.minimumAmount, "minimumAmount", funcName)!,
+            maximumAmount: try CommonParams.getSdkUInt64(self.maximumAmount, "maximumAmount", funcName)!,
             assessmentMethod: self.assessmentMethod == "inclusive"
                 ? Hedera.FractionalFee.FeeAssessmentMethod.inclusive
                 : Hedera.FractionalFee.FeeAssessmentMethod.exclusive,

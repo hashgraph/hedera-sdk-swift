@@ -21,7 +21,7 @@ import Vapor
 
 @testable import Hedera
 
-private let server = TCKServer()
+let server = TCKServer()
 try TCKServer.main()
 
 internal class TCKServer {
@@ -45,11 +45,8 @@ internal class TCKServer {
                 return try encodeJsonRpcResponseToHttpResponse(jsonResponse: JSONResponse(id: nil, error: error))
             }
 
-            print(jsonRpcRequest)
             let response = await server.processRequest(request: jsonRpcRequest)
-            print(response)
-            return try encodeJsonRpcResponseToHttpResponse(
-                jsonResponse: response)
+            return try encodeJsonRpcResponseToHttpResponse(jsonResponse: response)
         }
 
         try app.run()

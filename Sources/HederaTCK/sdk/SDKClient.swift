@@ -17,9 +17,11 @@
  * limitations under the License.
  * ‍
  */
-@testable import Hedera
+import Hedera
 
+/// Client class that handles the connection to the network.
 internal class SDKClient {
+
     /// Singleton instance of SDKClient.
     static let client = SDKClient()
 

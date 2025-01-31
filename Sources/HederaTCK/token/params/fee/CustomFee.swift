@@ -43,7 +43,7 @@ internal struct CustomFee {
         }
     }
 
-    internal func toHederaCustomFee(_ funcName: JSONRPCMethod) throws -> Hedera.AnyCustomFee {
+    internal func toHederaCustomFee(_ funcName: JSONRPCMethod) throws -> AnyCustomFee {
         let feeCollectorAccountId = try AccountId.fromString(self.feeCollectorAccountId)
         let feeCollectorsExempt = self.feeCollectorsExempt
 
@@ -57,13 +57,14 @@ internal struct CustomFee {
         }
 
         if let fixedFee = self.fixedFee {
-            return .fixed(try fixedFee.toHederaFixedFee(feeCollectorAccountId, feeCollectorsExempt, funcName))
+            return AnyCustomFee.fixed(
+                try fixedFee.toHederaFixedFee(feeCollectorAccountId, feeCollectorsExempt, funcName))
         } else if let fractionalFee = self.fractionalFee {
-            return .fractional(
+            return AnyCustomFee.fractional(
                 try fractionalFee.toHederaFractionalFee(feeCollectorAccountId, feeCollectorsExempt, funcName))
         } else {
             /// Guaranteed at this point the fee is a royalty fee, just force the unpack.
-            return .royalty(
+            return AnyCustomFee.royalty(
                 try self.royaltyFee!.toHederaRoyaltyFee(feeCollectorAccountId, feeCollectorsExempt, funcName))
         }
     }

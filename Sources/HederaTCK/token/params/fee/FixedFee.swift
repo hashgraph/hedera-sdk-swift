@@ -36,9 +36,10 @@ internal struct FixedFee {
     ) throws
         -> Hedera.FixedFee
     {
+        /// Unwrap of self.amount can be safely forced since self.amount isn't optional.
         return Hedera.FixedFee(
-            amount: toUint64(try toInt(self.amount, "amount", funcName)),
-            denominatingTokenId: try self.denominatingTokenID.map { try TokenId.fromString($0) },
+            amount: try CommonParams.getSdkUInt64(self.amount, "amount", funcName)!,
+            denominatingTokenId: try CommonParams.getTokenId(self.denominatingTokenID),
             feeCollectorAccountId: feeCollectorAccountID,
             allCollectorsAreExempt: feeCollectorsExempt
         )

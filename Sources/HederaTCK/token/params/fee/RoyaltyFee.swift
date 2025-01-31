@@ -41,8 +41,8 @@ internal struct RoyaltyFee {
         -> Hedera.RoyaltyFee
     {
         return Hedera.RoyaltyFee(
-            numerator: try toInt(self.numerator, "numerator", funcName),
-            denominator: try toInt(self.denominator, "denominator", funcName),
+            numerator: try CommonParams.getNumerator(self.numerator, funcName),
+            denominator: try CommonParams.getDenominator(self.denominator, funcName),
             fallbackFee: try self.fallbackFee?.toHederaFixedFee(feeCollectorAccountID, feeCollectorsExempt, funcName),
             feeCollectorAccountId: feeCollectorAccountID,
             allCollectorsAreExempt: feeCollectorsExempt

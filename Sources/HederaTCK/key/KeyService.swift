@@ -22,7 +22,9 @@ import HederaProtobufs
 
 @testable import Hedera
 
+/// Service class that services key requests.
 internal class KeyService {
+
     /// Singleton instance of KeyService.
     static let service = KeyService()
 
@@ -42,8 +44,8 @@ internal class KeyService {
         return JSONObject.dictionary(["key": JSONObject.string(key)])
     }
 
-    /// Get a Hedera Key object from a hex-encoded key string.
-    internal func getHederaKey(_ key: String) throws -> Key {
+    /// Get a Hiero Key object from a hex-encoded key string.
+    internal func getHieroKey(_ key: String) throws -> Key {
         do {
             return Key.single(try PrivateKey.fromStringDer(key).publicKey)
         } catch {
@@ -130,7 +132,7 @@ internal class KeyService {
         case .listKeyType, .thresholdKeyType:
             /// It's guaranteed at this point that a list of keys is provided, so the unwrap can be safely forced.
             var keyList = KeyList(
-                keys: try params.keys!.map { try getHederaKey(generateKeyHelper($0, &privateKeys, true)) })
+                keys: try params.keys!.map { try getHieroKey(generateKeyHelper($0, &privateKeys, true)) })
 
             if type == KeyType.thresholdKeyType {
                 /// It's guaranteed at this point that a threshold is provided, so the unwrap can be safely forced.
