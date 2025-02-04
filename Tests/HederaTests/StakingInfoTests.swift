@@ -63,7 +63,7 @@ internal final class StakingInfoTests: XCTestCase {
 
     internal func testToBytesAccount() throws {
         assertSnapshot(
-            matching: try StakingInfo.fromBytes(Self.stakingInfoAccount.serializedData()).toBytes().toHexString(),
+            matching: try StakingInfo.fromBytes(Self.stakingInfoAccount.serializedData()).toBytes().hexStringEncoded(),
             as: .description)
     }
 
@@ -73,7 +73,7 @@ internal final class StakingInfoTests: XCTestCase {
 
     internal func testToBytesNode() throws {
         assertSnapshot(
-            matching: try StakingInfo.fromBytes(Self.stakingInfoNode.serializedData()).toBytes().toHexString(),
+            matching: try StakingInfo.fromBytes(Self.stakingInfoNode.serializedData()).toBytes().hexStringEncoded(),
             as: .description)
     }
 }

@@ -46,7 +46,7 @@ internal class SDKClient {
             do {
                 return Key.single(try PublicKey.fromStringDer(key))
             } catch {
-                return try Key(protobuf: try Proto_Key(serializedBytes: Data(hex: key)))
+                return try Key(protobuf: try Proto_Key(serializedBytes: key.data(using: .utf8)!))
             }
         }
     }
@@ -129,7 +129,7 @@ internal class SDKClient {
                 keyList.threshold = Int(threshold!)
             }
 
-            return Key.keyList(keyList).toProtobufBytes().toHexString()
+            return Key.keyList(keyList).toProtobufBytes().hexStringEncoded()
 
         case .evmAddressKeyType:
             guard let fromKey = fromKey else {

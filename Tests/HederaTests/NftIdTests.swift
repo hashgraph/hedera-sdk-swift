@@ -71,6 +71,6 @@ internal final class NftIdTests: XCTestCase {
     internal func testToBytes() throws {
         let nftId = TokenId(5005).nft(4920)
 
-        assertSnapshot(matching: nftId.toBytes().toHexString(), as: .description)
+        assertSnapshot(matching: nftId.toBytes().hexStringEncoded(), as: .description)
     }
 }
