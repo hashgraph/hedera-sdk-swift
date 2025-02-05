@@ -110,7 +110,7 @@ internal struct JSONResponse: Encodable {
 }
 
 internal enum JSONError: Encodable, Error {
-    case hederaError(String, JSONObject? = nil)
+    case hieroError(String, JSONObject? = nil)
     case invalidRequest(String, JSONObject? = nil)
     case methodNotFound(String, JSONObject? = nil)
     case invalidParams(String, JSONObject? = nil)
@@ -125,7 +125,7 @@ internal enum JSONError: Encodable, Error {
 
     internal var code: Int {
         switch self {
-        case .hederaError: return -32001
+        case .hieroError: return -32001
         case .invalidRequest: return -32600
         case .methodNotFound: return -32601
         case .invalidParams: return -32602
@@ -136,7 +136,7 @@ internal enum JSONError: Encodable, Error {
 
     internal var message: String {
         switch self {
-        case .hederaError(let message, _),
+        case .hieroError(let message, _),
             .invalidRequest(let message, _),
             .methodNotFound(let message, _),
             .invalidParams(let message, _),
@@ -148,7 +148,7 @@ internal enum JSONError: Encodable, Error {
 
     internal var data: JSONObject? {
         switch self {
-        case .hederaError(_, let data),
+        case .hieroError(_, let data),
             .invalidRequest(_, let data),
             .methodNotFound(_, let data),
             .invalidParams(_, let data),
