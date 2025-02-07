@@ -24,7 +24,7 @@ dependencies: [
 See ["Adding Package Dependencies to Your App"](https://developer.apple.com/documentation/swift_packages/adding_package_dependencies_to_your_app) for help on
 adding a swift package to an Xcode project.
 
-### Add to  code 
+### Add to Code 
 
 ```swift
 import Hiero
