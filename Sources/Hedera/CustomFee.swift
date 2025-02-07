@@ -278,7 +278,7 @@ public struct FixedFee: CustomFee, Equatable, ValidateChecksums {
 
     fileprivate func toFeeProtobuf() -> Proto_FixedFee {
         .with { proto in
-            proto.amount = Int64(amount)
+            proto.amount = Int64(truncatingIfNeeded: amount)
             if let denominatingTokenId = denominatingTokenId {
                 proto.denominatingTokenID = denominatingTokenId.toProtobuf()
             }
@@ -308,6 +308,25 @@ public struct FractionalFee: CustomFee, Equatable, ValidateChecksums {
     ) {
         self.denominator = amount.denominator
         self.numerator = amount.numerator
+        self.minimumAmount = minimumAmount
+        self.maximumAmount = maximumAmount
+        self.assessmentMethod = assessmentMethod
+        self.feeCollectorAccountId = feeCollectorAccountId
+        self.allCollectorsAreExempt = allCollectorsAreExempt
+    }
+
+    /// Create a new `CustomFixedFee`.
+    public init(
+        numerator: Int64 = 1,
+        denominator: Int64 = 1,
+        minimumAmount: UInt64 = 0,
+        maximumAmount: UInt64 = 0,
+        assessmentMethod: FeeAssessmentMethod = .exclusive,
+        feeCollectorAccountId: AccountId? = nil,
+        allCollectorsAreExempt: Bool = false
+    ) {
+        self.numerator = numerator
+        self.denominator = denominator
         self.minimumAmount = minimumAmount
         self.maximumAmount = maximumAmount
         self.assessmentMethod = assessmentMethod
@@ -425,9 +444,10 @@ public struct FractionalFee: CustomFee, Equatable, ValidateChecksums {
 
     internal func toFeeProtobuf() -> Proto_FractionalFee {
         .with { proto in
-            proto.fractionalAmount = amount.toProtobuf()
-            proto.minimumAmount = Int64(minimumAmount)
-            proto.maximumAmount = Int64(maximumAmount)
+            proto.fractionalAmount.numerator = numerator
+            proto.fractionalAmount.denominator = denominator
+            proto.minimumAmount = Int64(truncatingIfNeeded: minimumAmount)
+            proto.maximumAmount = Int64(truncatingIfNeeded: maximumAmount)
             proto.netOfTransfers = assessmentMethod == .exclusive
         }
     }
@@ -585,7 +605,8 @@ public struct RoyaltyFee: CustomFee, Equatable {
 
     internal func toFeeProtobuf() -> Proto_RoyaltyFee {
         .with { proto in
-            proto.exchangeValueFraction = self.exchangeValue.toProtobuf()
+            proto.exchangeValueFraction.numerator = self.numerator
+            proto.exchangeValueFraction.denominator = self.denominator
             if let fallbackFee = self.fallbackFee {
                 proto.fallbackFee = fallbackFee.toFeeProtobuf()
             }

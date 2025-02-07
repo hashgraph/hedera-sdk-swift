@@ -16,7 +16,7 @@ public struct Timestamp: Sendable, Equatable, Hashable, CustomStringConvertible,
     public let seconds: UInt64
     public let subSecondNanos: UInt32
 
-    internal init(seconds: UInt64, subSecondNanos: UInt32) {
+    public init(seconds: UInt64, subSecondNanos: UInt32) {
         self.seconds = seconds + UInt64(subSecondNanos) / nanosPerSecond
         self.subSecondNanos = subSecondNanos % UInt32(nanosPerSecond)
     }

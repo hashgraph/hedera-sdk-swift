@@ -285,7 +285,7 @@ extension AccountCreateTransaction: ToProtobuf {
             key?.toProtobufInto(&proto.key)
             proto.initialBalance = UInt64(truncatingIfNeeded: initialBalance.toTinybars())
             proto.receiverSigRequired = receiverSignatureRequired
-            autoRenewPeriod?.toProtobufInto(&proto.autoRenewPeriod)
+            (autoRenewPeriod ?? .days(90)).toProtobufInto(&proto.autoRenewPeriod)
             // autoRenewAccountId?.toProtobufInto(&proto.autoRenewAccount)
             proto.memo = accountMemo
             proto.maxAutomaticTokenAssociations = maxAutomaticTokenAssociations
@@ -294,12 +294,12 @@ extension AccountCreateTransaction: ToProtobuf {
                 proto.alias = alias.data
             }
 
-            if let stakedNodeId = stakedNodeId {
-                proto.stakedNodeID = Int64(truncatingIfNeeded: stakedNodeId)
-            }
-
             if let stakedAccountId = stakedAccountId {
                 proto.stakedAccountID = stakedAccountId.toProtobuf()
+            }
+
+            if let stakedNodeId = stakedNodeId {
+                proto.stakedNodeID = Int64(truncatingIfNeeded: stakedNodeId)
             }
 
             proto.declineReward = declineStakingReward

@@ -360,6 +360,10 @@ extension AccountUpdateTransaction: ToProtobuf {
             if let stakedNodeId = stakedNodeId {
                 proto.stakedNodeID = Int64(bitPattern: stakedNodeId)
             }
+
+            if let declineStakingReward = declineStakingReward {
+                proto.declineReward = Google_Protobuf_BoolValue(declineStakingReward)
+            }
         }
     }
 }
