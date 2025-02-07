@@ -46,7 +46,7 @@ See [examples](./Examples) for more usage.
 
 HederaProtobufs is entirely generated. The protobufs repo will be migrated to Hiero [in near future](https://github.com/LFDT-Hiero/hiero/blob/main/transition.md).
 
-### Required tooling
+### Required Tooling
 
 protoc
 protoc-gen-swift (from https://github.com/apple/swift-protobuf)
