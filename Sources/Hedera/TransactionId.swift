@@ -1,3 +1,4 @@
+import Atomics
 import Foundation
 import HederaProtobufs
 
@@ -15,6 +16,11 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
     public let scheduled: Bool
     public let nonce: Int32?
 
+    private static let nanosPerMillisecond: UInt64 = 1_000_000
+    private static let nanosToRemove: UInt64 = 10_000_000_000
+    private static let timestampIncrement: UInt64 = 1_000
+    private static let monotonicTime = ManagedAtomic<UInt64>(0)
+
     internal init(accountId: AccountId, validStart: Timestamp, scheduled: Bool = false, nonce: Int32? = nil) {
         self.accountId = accountId
         self.validStart = validStart
@@ -24,11 +30,28 @@ public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringL
 
     /// Generates a new transaction ID for the given account ID.
     public static func generateFrom(_ accountId: AccountId) -> Self {
-        let random = UInt64.random(in: 5_000_000_000..<8_000_000_000)
+        var currentTime: UInt64
+        var lastTime: UInt64
 
-        let validStart = Timestamp.now.subtracting(nanos: random)
+        repeat {
+            // Get the current time in nanoseconds and remove 10 seconds for time drift allowance.
+            // This ensures transaction is within the allowed time window.
+            currentTime = UInt64(Date().timeIntervalSince1970 * 1_000_000_000) - nanosToRemove
 
-        return Self(accountId: accountId, validStart: validStart)
+            // Retrieve the last recorded time
+            lastTime = monotonicTime.load(ordering: .relaxed)
+
+            // Ensure strictly increasing timestamps
+            if currentTime <= lastTime {
+                currentTime = lastTime + timestampIncrement
+            }
+        } while !monotonicTime.compareExchange(
+            expected: lastTime,
+            desired: currentTime,
+            ordering: .relaxed
+        ).exchanged
+
+        return Self(accountId: accountId, validStart: Timestamp(fromUnixTimestampNanos: currentTime))
     }
 
     /// Generates a new transaction ID for chunks.

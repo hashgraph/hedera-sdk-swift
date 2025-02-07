@@ -93,7 +93,7 @@ task submodule:install
 protoc --swift_opt=Visibility=Public --swift_opt=FileNaming=PathToUnderscores --swift_out=./Sources/HederaProtobufs/Services --proto_path=./Sources/HederaProtobufs/Protos/services Sources/HederaProtobufs/Protos/services/*.proto
 
 # generate GRPC (if needed)
-protoc --grpc-swift_opt=Visibility=Public,Server=false --grpc-swift_out=./Sources/HederaProtobufs/Services --proto_path=./Sources/HederaProtobufs/Protos/services Sources/HederaProtobufs/HederaProtobufs/Protos/services/*.proto
+protoc --grpc-swift_opt=Visibility=Public,Server=false --grpc-swift_out=./Sources/HederaProtobufs/Services --proto_path=./Sources/HederaProtobufs/Protos/services Sources/HederaProtobufs/Protos/services/*.proto
 ```
 
 ###  Integration Tests
