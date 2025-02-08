@@ -1,6 +1,6 @@
 /// Represents a transfer of an NFT from one account to another.
 
-import HederaProtobufs
+import HieroProtobufs
 
 public struct TokenNftTransfer: Sendable, Equatable {
     /// The ID of the NFT's token.

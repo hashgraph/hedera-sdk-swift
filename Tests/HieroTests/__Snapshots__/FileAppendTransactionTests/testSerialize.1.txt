@@ -1,9 +1,9 @@
-[HederaProtobufs.Proto_TransactionBody.OneOf_Data.fileAppend(HederaProtobufs.Proto_FileAppendTransactionBody:
+[HieroProtobufs.Proto_TransactionBody.OneOf_Data.fileAppend(HieroProtobufs.Proto_FileAppendTransactionBody:
 fileID {
   fileNum: 10
 }
 contents: "{foo: 231}"
-), HederaProtobufs.Proto_TransactionBody.OneOf_Data.fileAppend(HederaProtobufs.Proto_FileAppendTransactionBody:
+), HieroProtobufs.Proto_TransactionBody.OneOf_Data.fileAppend(HieroProtobufs.Proto_FileAppendTransactionBody:
 fileID {
   fileNum: 10
 }

@@ -19,7 +19,7 @@
   */
 
 import Foundation
-import HederaProtobufs
+import HieroProtobufs
 import NumberKit
 
 // swiftlint:disable file_length

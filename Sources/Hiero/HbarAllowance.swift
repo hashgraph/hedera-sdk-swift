@@ -1,4 +1,4 @@
-import HederaProtobufs
+import HieroProtobufs
 
 public struct HbarAllowance: Equatable, ValidateChecksums {
     public let ownerAccountId: AccountId

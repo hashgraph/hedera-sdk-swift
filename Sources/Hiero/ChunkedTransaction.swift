@@ -1,6 +1,6 @@
 import Foundation
 import GRPC
-import HederaProtobufs
+import HieroProtobufs
 
 public class ChunkedTransaction: Transaction {
     internal static let defaultMaxChunks = 20

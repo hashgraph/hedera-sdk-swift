@@ -1,7 +1,7 @@
 import SnapshotTesting
 import XCTest
 
-@testable import Hedera
+@testable import Hiero
 
 internal final class ContractIdTests: XCTestCase {
     internal func testParse() {

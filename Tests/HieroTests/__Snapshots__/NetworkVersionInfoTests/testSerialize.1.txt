@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_NetworkGetVersionInfoResponse:
+HieroProtobufs.Proto_NetworkGetVersionInfoResponse:
 hapiProtoVersion {
   major: 1
   minor: 2

@@ -1,8 +1,8 @@
-import HederaProtobufs
+import HieroProtobufs
 import SnapshotTesting
 import XCTest
 
-@testable import Hedera
+@testable import Hiero
 
 internal final class AccountBalanceQueryTests: XCTestCase {
     internal func testSerializeWithAccountId() {

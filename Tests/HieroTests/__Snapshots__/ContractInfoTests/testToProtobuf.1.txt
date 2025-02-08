@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_ContractGetInfoResponse.ContractInfo:
+HieroProtobufs.Proto_ContractGetInfoResponse.ContractInfo:
 contractID {
   contractNum: 1
 }

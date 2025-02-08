@@ -1,8 +1,9 @@
 /*
+ * ‌
  * Hedera Swift SDK
- *
- * Copyright (C) 2022 - 2024 Hedera Hashgraph, LLC
- *
+ * ​
+ * Copyright (C) 2022 - 2025 Hiero LLC
+ * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,10 +15,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * ‍
  */
 
 import Foundation
-import Hedera
+import Hiero
 import SwiftDotenv
 
 @main
@@ -167,7 +169,7 @@ extension Environment {
         PrivateKey(self["OPERATOR_KEY"]!.stringValue)!
     }
 
-    /// The name of the Hedera network this example should run against.
+    /// The name of the Hiero network this example should run against.
     internal var networkName: String {
         self["HEDERA_NETWORK"]?.stringValue ?? "testnet"
     }

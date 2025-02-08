@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_CustomFee:
+HieroProtobufs.Proto_CustomFee:
 fixed_fee {
   amount: 10
   denominating_token_id {

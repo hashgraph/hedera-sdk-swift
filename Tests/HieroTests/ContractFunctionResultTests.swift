@@ -1,8 +1,8 @@
-import HederaProtobufs
+import HieroProtobufs
 import NumberKit
 import XCTest
 
-@testable import Hedera
+@testable import Hiero
 
 extension ContractFunctionResult {
     internal static func sampleWithBytes(bytes: Data) -> Self {

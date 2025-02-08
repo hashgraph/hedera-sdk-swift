@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_Query:
+HieroProtobufs.Proto_Query:
 scheduleGetInfo {
   header {
   }

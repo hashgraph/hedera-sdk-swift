@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_CustomFee:
+HieroProtobufs.Proto_CustomFee:
 fee_collector_account_id {
   accountNum: 23423
 }

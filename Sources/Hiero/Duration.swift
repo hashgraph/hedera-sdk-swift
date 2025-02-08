@@ -1,5 +1,5 @@
 import Foundation
-import HederaProtobufs
+import HieroProtobufs
 
 public struct Duration: Equatable, Sendable {
     public let seconds: UInt64

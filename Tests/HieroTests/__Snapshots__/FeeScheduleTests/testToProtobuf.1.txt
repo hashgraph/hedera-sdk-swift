@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_FeeSchedule:
+HieroProtobufs.Proto_FeeSchedule:
 transactionFeeSchedule {
   fees {
     nodedata {

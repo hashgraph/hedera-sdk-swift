@@ -1,5 +1,5 @@
 import Foundation
-import HederaProtobufs
+import HieroProtobufs
 
 private let nanosPerSecond: UInt64 = 1_000_000_000
 

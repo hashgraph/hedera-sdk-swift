@@ -1,7 +1,7 @@
 import Foundation
 import XCTest
 
-@testable import Hedera
+@testable import Hiero
 
 // Frustratingly, there is no usable Rlp library for swift, so we had to write our own (Internal use only)
 // hence:

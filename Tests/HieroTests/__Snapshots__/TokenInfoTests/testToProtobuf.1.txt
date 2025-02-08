@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_TokenInfo:
+HieroProtobufs.Proto_TokenInfo:
 tokenId {
   realmNum: 6
   tokenNum: 9

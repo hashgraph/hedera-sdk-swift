@@ -1,4 +1,4 @@
-import HederaProtobufs
+import HieroProtobufs
 
 public struct KeyList: Sendable, ExpressibleByArrayLiteral, Equatable {
     public typealias ArrayLiteralElement = Key

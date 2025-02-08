@@ -1,6 +1,6 @@
 import XCTest
 
-@testable import Hedera
+@testable import Hiero
 
 internal final class EntityIdTests: XCTestCase {
     internal func testChecksumOnMainnet() {

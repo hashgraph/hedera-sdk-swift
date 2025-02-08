@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_TokenAllowance:
+HieroProtobufs.Proto_TokenAllowance:
 tokenId {
   realmNum: 3
   tokenNum: 5

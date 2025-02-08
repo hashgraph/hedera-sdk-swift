@@ -1,4 +1,4 @@
-import HederaProtobufs
+import HieroProtobufs
 import NumberKit
 
 extension Rational: ProtobufCodable where T == Int64 {

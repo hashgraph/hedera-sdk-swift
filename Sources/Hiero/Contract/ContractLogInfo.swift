@@ -1,5 +1,5 @@
 import Foundation
-import HederaProtobufs
+import HieroProtobufs
 
 /// The log information for an event returned by a smart contract function call.
 /// One function call may return several such events.

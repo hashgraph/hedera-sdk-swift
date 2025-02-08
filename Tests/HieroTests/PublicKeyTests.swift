@@ -1,6 +1,6 @@
 import XCTest
 
-@testable import Hedera
+@testable import Hiero
 
 internal final class PublicKeyTests: XCTestCase {
     internal func testParseEd25519() throws {

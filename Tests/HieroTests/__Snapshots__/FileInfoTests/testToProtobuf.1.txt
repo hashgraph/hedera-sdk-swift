@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_FileGetInfoResponse.FileInfo:
+HieroProtobufs.Proto_FileGetInfoResponse.FileInfo:
 fileID {
   fileNum: 1
 }

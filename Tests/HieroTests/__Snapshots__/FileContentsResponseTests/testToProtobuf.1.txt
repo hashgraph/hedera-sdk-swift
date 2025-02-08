@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_FileGetContentsResponse.FileContents:
+HieroProtobufs.Proto_FileGetContentsResponse.FileContents:
 fileID {
   fileNum: 5005
 }

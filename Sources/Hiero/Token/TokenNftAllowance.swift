@@ -1,4 +1,4 @@
-import HederaProtobufs
+import HieroProtobufs
 import SwiftProtobuf
 
 public struct TokenNftAllowance: Equatable, ValidateChecksums {

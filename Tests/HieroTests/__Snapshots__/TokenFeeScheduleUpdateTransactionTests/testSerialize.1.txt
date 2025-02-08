@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_TransactionBody:
+HieroProtobufs.Proto_TransactionBody:
 transactionID {
   transactionValidStart {
     seconds: 1554158542

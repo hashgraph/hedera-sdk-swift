@@ -1,5 +1,5 @@
 import Foundation
-import HederaProtobufs
+import HieroProtobufs
 
 /// Metadata for an individual chunk of a `TopicMessage`.
 public struct TopicMessageChunk: Sendable {

@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_ContractUpdateTransactionBody:
+HieroProtobufs.Proto_ContractUpdateTransactionBody:
 contractID {
   contractNum: 5007
 }

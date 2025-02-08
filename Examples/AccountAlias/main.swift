@@ -1,6 +1,24 @@
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * ‌
+ * Hedera Swift SDK
+ * ​
+ * Copyright (C) 2022 - 2025 Hiero LLC
+ * ​
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ‍
+ */
 
-import Hedera
+import Hiero
 import SwiftDotenv
 
 @main
@@ -11,12 +29,12 @@ internal enum Program {
 
         client.setOperator(env.operatorAccountId, env.operatorKey)
 
-        // Hedera supports a form of auto account creation.
+        // Hiero supports a form of auto account creation.
         //
         // You can "create" an account by generating a private key, and then deriving the public key,
-        // without any need to interact with the Hedera network.  The public key more or less acts as the user's
+        // without any need to interact with the Hiero network.  The public key more or less acts as the user's
         // account ID.  This public key is an account's aliasKey: a public key that aliases (or will eventually alias)
-        // to a Hedera account.
+        // to a Hiero account.
         //
         // An AccountId takes one of two forms: a normal `AccountId` with no `aliasKey` takes the form 0.0.123,
         // while an account ID with an `aliasKey` takes the form
@@ -28,9 +46,9 @@ internal enum Program {
         // transactions, however most queries and transactions involving such an AccountId won't work until Hbar has
         // been transferred to the aliasKey account.
         //
-        // There is no record in the Hedera network of an account associated with a given `aliasKey`
+        // There is no record in the Hiero network of an account associated with a given `aliasKey`
         // until an amount of Hbar is transferred to the account.  The moment that Hbar is transferred to that `aliasKey`
-        // AccountId is the moment that that account actually begins to exist in the Hedera ledger.
+        // AccountId is the moment that that account actually begins to exist in the Hiero ledger.
 
         print(#""Creating" a new account"#)
 

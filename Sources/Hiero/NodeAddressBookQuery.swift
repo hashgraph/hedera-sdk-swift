@@ -1,9 +1,27 @@
-// SPDX-License-Identifier: Apache-2.0
+/*
+ * ‌
+ * Hedera Swift SDK
+ * ​
+ * Copyright (C) 2022 - 2025 Hiero LLC
+ * ​
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ‍
+ */
 
 import AnyAsyncSequence
 import Foundation
 import GRPC
-import HederaProtobufs
+import HieroProtobufs
 
 public final class NodeAddressBookQuery: ValidateChecksums, MirrorQuery {
     public typealias Item = NodeAddress
@@ -75,7 +93,7 @@ extension NodeAddressBookQuery: MirrorRequest {
     internal func connect(context: Context, channel: GRPCChannel) -> GRPCAsyncResponseStream<GrpcItem> {
         let request = self.toProtobuf()
 
-        return HederaProtobufs.Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClient(channel: channel).getNodes(request)
+        return HieroProtobufs.Com_Hedera_Mirror_Api_Proto_NetworkServiceAsyncClient(channel: channel).getNodes(request)
     }
 
     internal static func collect<S>(_ stream: S) async throws -> Response

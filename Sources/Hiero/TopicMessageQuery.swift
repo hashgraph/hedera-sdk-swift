@@ -1,7 +1,7 @@
 import AnyAsyncSequence
 import Foundation
 import GRPC
-import HederaProtobufs
+import HieroProtobufs
 
 /// Query a stream of Hedera Consensus Service (HCS)
 /// messages for an HCS Topic via a specific (possibly open-ended) time range.
@@ -193,7 +193,7 @@ extension TopicMessageQuery: MirrorRequest {
             proto.limit = limit
         }
 
-        return HederaProtobufs.Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClient(channel: channel)
+        return HieroProtobufs.Com_Hedera_Mirror_Api_Proto_ConsensusServiceAsyncClient(channel: channel)
             .subscribeTopic(request)
     }
 }

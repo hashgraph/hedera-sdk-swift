@@ -1,4 +1,4 @@
-import HederaProtobufs
+import HieroProtobufs
 
 public struct TokenAllowance: Equatable, ValidateChecksums {
     public let tokenId: TokenId

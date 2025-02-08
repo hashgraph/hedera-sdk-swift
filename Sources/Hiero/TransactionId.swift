@@ -1,6 +1,6 @@
 import Atomics
 import Foundation
-import HederaProtobufs
+import HieroProtobufs
 
 public struct TransactionId: Sendable, Equatable, Hashable, ExpressibleByStringLiteral, LosslessStringConvertible,
     ValidateChecksums

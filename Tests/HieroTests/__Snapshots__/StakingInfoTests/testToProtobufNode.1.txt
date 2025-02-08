@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_StakingInfo:
+HieroProtobufs.Proto_StakingInfo:
 decline_reward: true
 stake_period_start {
   seconds: 1554158542

@@ -1,5 +1,5 @@
 import Foundation
-import HederaProtobufs
+import HieroProtobufs
 
 /// A transfer of ``Hbar`` that occured within a ``Transaction``
 ///

@@ -1,5 +1,5 @@
 import Foundation
-import HederaProtobufs
+import HieroProtobufs
 
 /// A custom transfer fee that was assessed during the handling of a ``TransferTransaction``.
 public struct AssessedCustomFee: Sendable, Equatable {

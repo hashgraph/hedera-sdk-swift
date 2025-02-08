@@ -1,4 +1,4 @@
-HederaProtobufs.Proto_ContractNonceInfo:
+HieroProtobufs.Proto_ContractNonceInfo:
 contract_id {
   contractNum: 2
 }

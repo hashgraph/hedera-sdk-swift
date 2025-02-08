@@ -1,7 +1,7 @@
 import Foundation
-import HederaProtobufs
+import HieroProtobufs
 
-/// The unique identifier for a smart contract on Hedera.
+/// The unique identifier for a smart contract on Hiero.
 public struct ContractId: EntityId {
     public let shard: UInt64
     public let realm: UInt64

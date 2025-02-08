@@ -1,9 +1,9 @@
 import SnapshotTesting
 import XCTest
 
-import struct HederaProtobufs.Proto_ContractNonceInfo
+import struct HieroProtobufs.Proto_ContractNonceInfo
 
-@testable import Hedera
+@testable import Hiero
 
 internal class ContractNonceInfoTests: XCTestCase {
     private static let info: Proto_ContractNonceInfo = .with { proto in

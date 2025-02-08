@@ -2,7 +2,7 @@
  * ‌
  * Hedera Swift SDK
  * ​
- * Copyright (C) 2023 - 2024 Hedera Hashgraph, LLC
+ * Copyright (C) 2022 - 2025 Hiero LLC
  * ​
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@
  * ‍
  */
 
-import HederaProtobufs
+import HieroProtobufs
 import SnapshotTesting
 import SwiftProtobuf
 import XCTest
 
-@testable import Hedera
+@testable import Hiero
 
 internal final class NodeDeleteTransactionTests: XCTestCase {
     private static func makeTransaction() throws -> NodeDeleteTransaction {
