@@ -63,7 +63,7 @@ public struct PrivateKey: LosslessStringConvertible, ExpressibleByStringLiteral,
     ///
     /// Please note that debugDescriptions of any kind should not be considered a stable format.
     public var debugDescription: String {
-        "PrivateKey(kind: \(String(reflecting: guts)), chainCode: \(String(describing: chainCode?.data))"
+        "PrivateKey(kind: \(String(reflecting: guts)))"
     }
 
     // we need to be sendable, so...
