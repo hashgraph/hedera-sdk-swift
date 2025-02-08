@@ -53,6 +53,10 @@ community Discord:
   <img alt="" src="https://user-images.githubusercontent.com/753919/167244200-b95cd3a6-6256-4eaf-b9b4-f1f192341485.png" height="60">
 </a>
 
+## Acknowledgments
+
+This product includes software developed by Marcin Krzyżanowski (https://krzyzanowskim.com) and distributed under the CryptoSwift license. See the [NOTICE](NOTICE) file for details.
+
 ## License
 
 Licensed under Apache License,
